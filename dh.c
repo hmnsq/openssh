@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/dh.h>
 
-#include "dh.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "dh.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 
-static const char *moduli_filename;
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+ಶೂನ್ಯ dh_ಗಣ_moduli_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ * get_moduli_filename(ಶೂನ್ಯ)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	ಹಿಂತಿರುಗಿ moduli_filename ? moduli_filename : ಮಾರ್ಗ_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+parse_ಅವಿಭಾಜ್ಯ(ಪೂರ್ಣಾಂಕ linenum, ಅಕ್ಷರ *ಸಾಲು, ರಚನೆ dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
-	long long n;
+	ಅಕ್ಷರ *cp, *arg;
+	ಅಕ್ಷರ *strsize, *gen, *ಅವಿಭಾಜ್ಯ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errstr = ಖಾಲಿ;
+	ದೀರ್ಘ ದೀರ್ಘ n;
 
-	dhg->p = dhg->g = NULL;
-	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	dhg->p = dhg->g = ಖಾಲಿ;
+	cp = ಸಾಲು;
+	ಆದರೆ ((arg = strdelim(&cp)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	ಆದರೆ (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	ಆದರೆ (!arg || !*arg || *arg == '#')
+		ಹಿಂತಿರುಗಿ 0;
 
-	/* time */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	/*ಸಮಯ*/
+	ಆದರೆ (cp == ಖಾಲಿ || *arg == '\0')
+		ಹೋಗು truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ಆದರೆ (cp == ಖಾಲಿ || *arg == '\0')
+		ಹೋಗು truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
-		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
-		goto fail;
+	ಆದರೆ (errstr != ಖಾಲಿ || n != MODULI_TYPE_ಸುರಕ್ಷಿತ) {
+		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_ಸುರಕ್ಷಿತ);
+		ಹೋಗು fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ಆದರೆ (cp == ಖಾಲಿ || *arg == '\0')
+		ಹೋಗು truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
-	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
+	ಆದರೆ (errstr != ಖಾಲಿ ||
+	    (n & MODULI_TESTS_ಸಂಯುಕ್ತ) || !(n & ~MODULI_TESTS_ಸಂಯುಕ್ತ)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	ಆದರೆ (cp == ಖಾಲಿ || *arg == '\0')
+		ಹೋಗು truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	ಆದರೆ (errstr != ಖಾಲಿ || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
-	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	strsize = strsep(&cp, " "); /*ಗಾತ್ರ*/
+	ಆದರೆ (cp == ಖಾಲಿ || *strsize == '\0' ||
+	    (dhg->ಗಾತ್ರ_2 = (ಪೂರ್ಣಾಂಕ)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
 	/* The whole group is one bit larger */
-	dhg->size++;
+	dhg->ಗಾತ್ರ_2++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
-		goto truncated;
-	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	ಆದರೆ (cp == ಖಾಲಿ || *gen == '\0')
+		ಹೋಗು truncated;
+	ಅವಿಭಾಜ್ಯ = strsep(&cp, " "); /*ಅವಿಭಾಜ್ಯ*/
+	ಆದರೆ (cp != ಖಾಲಿ || *ಅವಿಭಾಜ್ಯ == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
-	    (dhg->p = BN_new()) == NULL) {
+	ಆದರೆ ((dhg->g = BN_new()) == ಖಾಲಿ ||
+	    (dhg->p = BN_new()) == ಖಾಲಿ) {
 		error("parse_prime: BN_new failed");
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	ಆದರೆ (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	ಆದರೆ (BN_hex2bn(&dhg->p, ಅವಿಭಾಜ್ಯ) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	ಆದರೆ (BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dhg->p) != dhg->ಗಾತ್ರ_2) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
-		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
-		goto fail;
+		    linenum, BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dhg->p), dhg->ಗಾತ್ರ_2 - 1);
+		ಹೋಗು fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	ಆದರೆ (BN_cmp(dhg->g, BN_ಮೌಲ್ಯ_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
-		goto fail;
+		ಹೋಗು fail;
 	}
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
-	dhg->g = dhg->p = NULL;
-	return 0;
+	dhg->g = dhg->p = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+ಆರಿಸು_dh(ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ wantbits, ಪೂರ್ಣಾಂಕ max)
 {
 	FILE *f;
-	char *line = NULL;
-	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	ಅಕ್ಷರ *ಸಾಲು = ಖಾಲಿ;
+	ಗಾತ್ರ_t linesize = 0;
+	ಪೂರ್ಣಾಂಕ ಉತ್ತಮ, bestcount, which, linenum;
+	ರಚನೆ dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	ಆದರೆ ((f = fopen(get_moduli_filename(), "r")) == ಖಾಲಿ) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_fallback(max));
 	}
 
 	linenum = 0;
-	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ಉತ್ತಮ = bestcount = 0;
+	ಆಗ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
+		ಆದರೆ (!parse_ಅವಿಭಾಜ್ಯ(linenum, ಸಾಲು, &dhg))
+			ಮುಂದುವರಿ;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
-			continue;
+		ಆದರೆ (dhg.ಗಾತ್ರ_2 > max || dhg.ಗಾತ್ರ_2 < min)
+			ಮುಂದುವರಿ;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
-		    (dhg.size > best && best < wantbits)) {
-			best = dhg.size;
+		ಆದರೆ ((dhg.ಗಾತ್ರ_2 > wantbits && dhg.ಗಾತ್ರ_2 < ಉತ್ತಮ) ||
+		    (dhg.ಗಾತ್ರ_2 > ಉತ್ತಮ && ಉತ್ತಮ < wantbits)) {
+			ಉತ್ತಮ = dhg.ಗಾತ್ರ_2;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		ಆದರೆ (dhg.ಗಾತ್ರ_2 == ಉತ್ತಮ)
 			bestcount++;
 	}
-	free(line);
-	line = NULL;
+	ಬಿಡುಗಡೆ(ಸಾಲು);
+	ಸಾಲು = ಖಾಲಿ;
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	ಆದರೆ (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	which = arc4random_uniform(bestcount);
+	which = arc4random_ಏಕರೂಪ(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ಆಗ (getline(&ಸಾಲು, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
-		if ((dhg.size > max || dhg.size < min) ||
-		    dhg.size != best ||
+		ಆದರೆ (!parse_ಅವಿಭಾಜ್ಯ(linenum, ಸಾಲು, &dhg))
+			ಮುಂದುವರಿ;
+		ಆದರೆ ((dhg.ಗಾತ್ರ_2 > max || dhg.ಗಾತ್ರ_2 < min) ||
+		    dhg.ಗಾತ್ರ_2 != ಉತ್ತಮ ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
-	free(line);
-	line = NULL;
+	ಬಿಡುಗಡೆ(ಸಾಲು);
+	ಸಾಲು = ಖಾಲಿ;
 	fclose(f);
-	if (bestcount != which + 1) {
+	ಆದರೆ (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
-dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
+ಪೂರ್ಣಾಂಕ
+dh_pub_is_valid(ಸ್ಥಿರಾಂಕ DH *dh, ಸ್ಥಿರಾಂಕ BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ n = BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dh_pub);
+	ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು_ಗಣ = 0;
 	BIGNUM *tmp;
-	const BIGNUM *dh_p;
+	ಸ್ಥಿರಾಂಕ BIGNUM *dh_p;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ಖಾಲಿ, ಖಾಲಿ);
 
-	if (BN_is_negative(dh_pub)) {
+	ಆದರೆ (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	ಆದರೆ (BN_cmp(dh_pub, BN_ಮೌಲ್ಯ_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	ಆದರೆ ((tmp = BN_new()) == ಖಾಲಿ) {
 		error_f("BN_new failed");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	ಆದರೆ (!BN_sub(tmp, dh_p, BN_ಮೌಲ್ಯ_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
-			bits_set++;
-	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
+	ಗಾಗಿ (i = 0; i <= n; i++)
+		ಆದರೆ (BN_is_ಬಿಟ್_ಗಣ(dh_pub, i))
+			ಬಿಟ್ಟುಗಳು_ಗಣ++;
+	debug2("bits set: %d/%d", ಬಿಟ್ಟುಗಳು_ಗಣ, BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	ಆದರೆ (ಬಿಟ್ಟುಗಳು_ಗಣ < 4) {
 		logit("invalid public DH value (%d/%d)",
-		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		    ಬಿಟ್ಟುಗಳು_ಗಣ, BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dh_p));
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+ಪೂರ್ಣಾಂಕ
+dh_gen_ಕೀಲಿ(DH *dh, ಪೂರ್ಣಾಂಕ need)
 {
-	int pbits;
-	const BIGNUM *dh_p, *pub_key;
+	ಪೂರ್ಣಾಂಕ pbits;
+	ಸ್ಥಿರಾಂಕ BIGNUM *dh_p, *pub_ಕೀಲಿ;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ಖಾಲಿ, ಖಾಲಿ);
 
-	if (need < 0 || dh_p == NULL ||
-	    (pbits = BN_num_bits(dh_p)) <= 0 ||
-	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+	ಆದರೆ (need < 0 || dh_p == ಖಾಲಿ ||
+	    (pbits = BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(dh_p)) <= 0 ||
+	    need > ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ / 2 || 2 * need > pbits)
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
+	ಆದರೆ (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ಆದರೆ (!DH_ಗಣ_ಉದ್ದಳತೆ(dh, MINIMUM(need * 2, pbits - 1)))
+		ಹಿಂತಿರುಗಿ SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ಆದರೆ (DH_generate_ಕೀಲಿ(dh) == 0)
+		ಹಿಂತಿರುಗಿ SSH_ERR_LIBCRYPTO_ERROR;
+	DH_get0_ಕೀಲಿ(dh, &pub_ಕೀಲಿ, ಖಾಲಿ);
+	ಆದರೆ (!dh_pub_is_valid(dh, pub_ಕೀಲಿ))
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_FORMAT;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_ಗುಂಪು_asc(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *gen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *modulus)
 {
 	DH *dh;
-	BIGNUM *dh_p = NULL, *dh_g = NULL;
+	BIGNUM *dh_p = ಖಾಲಿ, *dh_g = ಖಾಲಿ;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	ಆದರೆ ((dh = DH_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಆದರೆ (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
-		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
-		goto fail;
-	return dh;
+		ಹೋಗು fail;
+	ಆದರೆ (!DH_set0_pqg(dh, dh_p, ಖಾಲಿ, dh_g))
+		ಹೋಗು fail;
+	ಹಿಂತಿರುಗಿ dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
@@ -334,25 +334,25 @@ dh_new_group_asc(const char *gen, const char *modulus)
  * value.
  */
 DH *
-dh_new_group(BIGNUM *gen, BIGNUM *modulus)
+dh_new_ಗುಂಪು(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	ಆದರೆ ((dh = DH_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಆದರೆ (!DH_set0_pqg(dh, modulus, ಖಾಲಿ, gen)) {
 		DH_free(dh);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
-	return dh;
+	ಹಿಂತಿರುಗಿ dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
-dh_new_group1(void)
+dh_new_group1(ಶೂನ್ಯ)
 {
-	static char *gen = "2", *group1 =
+	ಸ್ಥಿರ ಅಕ್ಷರ *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
-dh_new_group14(void)
+dh_new_group14(ಶೂನ್ಯ)
 {
-	static char *gen = "2", *group14 =
+	ಸ್ಥಿರ ಅಕ್ಷರ *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
-dh_new_group16(void)
+dh_new_group16(ಶೂನ್ಯ)
 {
-	static char *gen = "2", *group16 =
+	ಸ್ಥಿರ ಅಕ್ಷರ *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
-dh_new_group18(void)
+dh_new_group18(ಶೂನ್ಯ)
 {
-	static char *gen = "2", *group18 =
+	ಸ್ಥಿರ ಅಕ್ಷರ *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	ಹಿಂತಿರುಗಿ (dh_new_ಗುಂಪು_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_ಗುಂಪು_fallback(ಪೂರ್ಣಾಂಕ max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	ಆದರೆ (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		ಹಿಂತಿರುಗಿ dh_new_group14();
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		ಹಿಂತಿರುಗಿ dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	ಹಿಂತಿರುಗಿ dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	ಆದರೆ (ಬಿಟ್ಟುಗಳು <= 112)
+		ಹಿಂತಿರುಗಿ 2048;
+	ಆದರೆ (ಬಿಟ್ಟುಗಳು <= 128)
+		ಹಿಂತಿರುಗಿ 3072;
+	ಆದರೆ (ಬಿಟ್ಟುಗಳು <= 192)
+		ಹಿಂತಿರುಗಿ 7680;
+	ಹಿಂತಿರುಗಿ 8192;
 }
 
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

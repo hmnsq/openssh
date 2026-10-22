@@ -24,56 +24,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef GSSAPI
-#ifdef KRB5
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdarg.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
 
-#include "ssh-gss.h"
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
 
-extern ServerOptions options;
+ಬಾಹ್ಯ ServerOptions options;
 
-#ifdef HEIMDAL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HEIMDAL
 # include <krb5.h>
-#endif
-#ifdef HAVE_GSSAPI_KRB5_H
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_GSSAPI_KRB5_H
 # include <gssapi_krb5.h>
-#elif HAVE_GSSAPI_GSSAPI_KRB5_H
+#ಅಥವಾಆದರೆ HAVE_GSSAPI_GSSAPI_KRB5_H
 # include <gssapi/gssapi_krb5.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-static krb5_context krb_context = NULL;
+ಸ್ಥಿರ krb5_context krb_context = ಖಾಲಿ;
 
 /* Initialise the krb5 library, for the stuff that GSSAPI won't do */
 
-static int
-ssh_gssapi_krb5_init(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ssh_gssapi_krb5_init(ಶೂನ್ಯ)
 {
-	krb5_error_code problem;
+	krb5_error_ಸಂಕೇತ problem;
 
-	if (krb_context != NULL)
-		return 1;
+	ಆದರೆ (krb_context != ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 1;
 
 	problem = krb5_init_context(&krb_context);
-	if (problem) {
+	ಆದರೆ (problem) {
 		logit("Cannot initialize krb5 context");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /* Check if this user is OK to login. This only works with krb5 - other
@@ -81,131 +81,131 @@ ssh_gssapi_krb5_init(void)
  * Returns true if the user is OK to log in, otherwise returns 0
  */
 
-static int
-ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ssh_gssapi_krb5_userok(ssh_gssapi_client *client, ಅಕ್ಷರ *name)
 {
 	krb5_principal princ;
-	int retval;
-	const char *errmsg;
+	ಪೂರ್ಣಾಂಕ retval;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errmsg;
 
-	if (ssh_gssapi_krb5_init() == 0)
-		return 0;
+	ಆದರೆ (ssh_gssapi_krb5_init() == 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-	if ((retval = krb5_parse_name(krb_context, client->exportedname.value,
+	ಆದರೆ ((retval = krb5_parse_name(krb_context, client->exportedname.ಮೌಲ್ಯ,
 	    &princ))) {
-		errmsg = krb5_get_error_message(krb_context, retval);
+		errmsg = krb5_get_error_ಸಂದೇಶ(krb_context, retval);
 		logit("krb5_parse_name(): %.100s", errmsg);
-		krb5_free_error_message(krb_context, errmsg);
-		return 0;
+		krb5_free_error_ಸಂದೇಶ(krb_context, errmsg);
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (krb5_kuserok(krb_context, princ, name)) {
+	ಆದರೆ (krb5_kuserok(krb_context, princ, name)) {
 		retval = 1;
 		logit("Authorized to %s, krb5 principal %s (krb5_kuserok)",
-		    name, (char *)client->displayname.value);
-	} else
+		    name, (ಅಕ್ಷರ *)client->displayname.ಮೌಲ್ಯ);
+	} ಇಲ್ಲದಿದ್ದರೆ
 		retval = 0;
 
 	krb5_free_principal(krb_context, princ);
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
 
 /* This writes out any forwarded credentials from the structure populated
  * during userauth. Called after we have setuid to the user */
 
-static void
+ಸ್ಥಿರ ಶೂನ್ಯ
 ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
 {
 	krb5_ccache ccache;
-	krb5_error_code problem;
+	krb5_error_ಸಂಕೇತ problem;
 	krb5_principal princ;
-	OM_uint32 maj_status, min_status;
-	int len;
-	const char *errmsg;
+	OM_uint32 maj_ಸ್ಥಿತಿ, min_ಸ್ಥಿತಿ;
+	ಪೂರ್ಣಾಂಕ len;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errmsg;
 
-	if (client->creds == NULL) {
+	ಆದರೆ (client->creds == ಖಾಲಿ) {
 		debug("No credentials stored");
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	if (ssh_gssapi_krb5_init() == 0)
-		return;
+	ಆದರೆ (ssh_gssapi_krb5_init() == 0)
+		ಹಿಂತಿರುಗಿ;
 
-#ifdef HEIMDAL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HEIMDAL
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
-	if ((problem = krb5_cc_new_unique(krb_context, krb5_fcc_ops.prefix,
-	    NULL, &ccache)) != 0) {
-		errmsg = krb5_get_error_message(krb_context, problem);
+	ಆದರೆ ((problem = krb5_cc_new_unique(krb_context, krb5_fcc_ops.ಪೂರ್ವಪ್ರತ್ಯಯ,
+	    ಖಾಲಿ, &ccache)) != 0) {
+		errmsg = krb5_get_error_ಸಂದೇಶ(krb_context, problem);
 		logit("krb5_cc_new_unique(): %.100s", errmsg);
-# else
-	if ((problem = krb5_cc_gen_new(krb_context, &krb5_fcc_ops, &ccache))) {
+# ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ ((problem = krb5_cc_gen_new(krb_context, &krb5_fcc_ops, &ccache))) {
 	    logit("krb5_cc_gen_new(): %.100s",
-		krb5_get_err_text(krb_context, problem));
+		krb5_get_err_ಪಠ್ಯ(krb_context, problem));
 # endif
-		krb5_free_error_message(krb_context, errmsg);
-		return;
+		krb5_free_error_ಸಂದೇಶ(krb_context, errmsg);
+		ಹಿಂತಿರುಗಿ;
 	}
-#else
-	if ((problem = ssh_krb5_cc_gen(krb_context, &ccache))) {
-		errmsg = krb5_get_error_message(krb_context, problem);
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ ((problem = ssh_krb5_cc_gen(krb_context, &ccache))) {
+		errmsg = krb5_get_error_ಸಂದೇಶ(krb_context, problem);
 		logit("ssh_krb5_cc_gen(): %.100s", errmsg);
-		krb5_free_error_message(krb_context, errmsg);
-		return;
+		krb5_free_error_ಸಂದೇಶ(krb_context, errmsg);
+		ಹಿಂತಿರುಗಿ;
 	}
-#endif	/* #ifdef HEIMDAL */
+#ಆದರೆ_ಅಂತ್ಯ	/* #ifdef HEIMDAL */
 
-	if ((problem = krb5_parse_name(krb_context,
-	    client->exportedname.value, &princ))) {
-		errmsg = krb5_get_error_message(krb_context, problem);
+	ಆದರೆ ((problem = krb5_parse_name(krb_context,
+	    client->exportedname.ಮೌಲ್ಯ, &princ))) {
+		errmsg = krb5_get_error_ಸಂದೇಶ(krb_context, problem);
 		logit("krb5_parse_name(): %.100s", errmsg);
-		krb5_free_error_message(krb_context, errmsg);
-		return;
+		krb5_free_error_ಸಂದೇಶ(krb_context, errmsg);
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	if ((problem = krb5_cc_initialize(krb_context, ccache, princ))) {
-		errmsg = krb5_get_error_message(krb_context, problem);
+	ಆದರೆ ((problem = krb5_cc_initialize(krb_context, ccache, princ))) {
+		errmsg = krb5_get_error_ಸಂದೇಶ(krb_context, problem);
 		logit("krb5_cc_initialize(): %.100s", errmsg);
-		krb5_free_error_message(krb_context, errmsg);
+		krb5_free_error_ಸಂದೇಶ(krb_context, errmsg);
 		krb5_free_principal(krb_context, princ);
 		krb5_cc_destroy(krb_context, ccache);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	krb5_free_principal(krb_context, princ);
 
-	if ((maj_status = gss_krb5_copy_ccache(&min_status,
+	ಆದರೆ ((maj_ಸ್ಥಿತಿ = gss_krb5_copy_ccache(&min_ಸ್ಥಿತಿ,
 	    client->creds, ccache))) {
 		logit("gss_krb5_copy_ccache() failed");
 		krb5_cc_destroy(krb_context, ccache);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	client->store.filename = xstrdup(krb5_cc_get_name(krb_context, ccache));
 	client->store.envvar = "KRB5CCNAME";
-	len = strlen(client->store.filename) + 6;
+	len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(client->store.filename) + 6;
 	client->store.envval = xmalloc(len);
 	snprintf(client->store.envval, len, "FILE:%s", client->store.filename);
 
-#ifdef USE_PAM
-	if (options.use_pam)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PAM
+	ಆದರೆ (options.use_pam)
 		do_pam_putenv(client->store.envvar, client->store.envval);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	krb5_cc_close(krb_context, ccache);
 
-	return;
+	ಹಿಂತಿರುಗಿ;
 }
 
 ssh_gssapi_mech gssapi_kerberos_mech = {
 	"toWM5Slw5Ew8Mqkay+al2g==",
 	"Kerberos",
 	{9, "\x2A\x86\x48\x86\xF7\x12\x01\x02\x02"},
-	NULL,
+	ಖಾಲಿ,
 	&ssh_gssapi_krb5_userok,
-	NULL,
+	ಖಾಲಿ,
 	&ssh_gssapi_krb5_storecreds
 };
 
-#endif /* KRB5 */
+#ಆದರೆ_ಅಂತ್ಯ /* KRB5 */
 
-#endif /* GSSAPI */
+#ಆದರೆ_ಅಂತ್ಯ /* GSSAPI */

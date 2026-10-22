@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
+#ಆದರೆ !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
 
-#include <sys/types.h>
-#include <stdarg.h> /* needed for log.h */
-#include <string.h>
-#include <stdio.h>  /* needed for misc.h */
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h> /* needed for log.h */
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>  /* needed for misc.h */
 
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "cipher-chachapoly.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "cipher-chachapoly.h"
 
-struct chachapoly_ctx {
-	struct chacha_ctx main_ctx, header_ctx;
+ರಚನೆ chachapoly_ctx {
+	ರಚನೆ chacha_ctx main_ctx, ಶೀರ್ಷಿಕೆ_ctx;
 };
 
-struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+ರಚನೆ chachapoly_ctx *
+chachapoly_new(ಸ್ಥಿರಾಂಕ u_char *ಕೀಲಿ, u_int keylen)
 {
-	struct chachapoly_ctx *ctx;
+	ರಚನೆ chachapoly_ctx *ctx;
 
-	if (keylen != (32 + 32)) /* 2 x 256 bit keys */
-		return NULL;
-	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
-		return NULL;
-	chacha_keysetup(&ctx->main_ctx, key, 256);
-	chacha_keysetup(&ctx->header_ctx, key + 32, 256);
-	return ctx;
+	ಆದರೆ (keylen != (32 + 32)) /* 2 x 256 bit keys */
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	ಆದರೆ ((ctx = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ctx))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	chacha_keysetup(&ctx->main_ctx, ಕೀಲಿ, 256);
+	chacha_keysetup(&ctx->ಶೀರ್ಷಿಕೆ_ctx, ಕೀಲಿ + 32, 256);
+	ಹಿಂತಿರುಗಿ ctx;
 }
 
-void
-chachapoly_free(struct chachapoly_ctx *cpctx)
+ಶೂನ್ಯ
+chachapoly_free(ರಚನೆ chachapoly_ctx *cpctx)
 {
-	freezero(cpctx, sizeof(*cpctx));
+	freezero(cpctx, ಗಾತ್ರ(*cpctx));
 }
 
 /*
@@ -65,74 +65,74 @@ chachapoly_free(struct chachapoly_ctx *cpctx)
  * POLY1305_TAGLEN bytes at offset 'len'+'aadlen' as the authentication
  * tag. This tag is written on encryption and verified on decryption.
  */
-int
-chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
-    const u_char *src, u_int len, u_int aadlen, u_int authlen, int do_encrypt)
+ಪೂರ್ಣಾಂಕ
+chachapoly_crypt(ರಚನೆ chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
+    ಸ್ಥಿರಾಂಕ u_char *src, u_int len, u_int aadlen, u_int authlen, ಪೂರ್ಣಾಂಕ do_encrypt)
 {
 	u_char seqbuf[8];
-	const u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಸ್ಥಿರಾಂಕ u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
+	u_char expected_ಟ್ಯಾಗ್[POLY1305_TAGLEN], poly_ಕೀಲಿ[POLY1305_KEYLEN];
+	ಪೂರ್ಣಾಂಕ r = SSH_ERR_ಆಂತರಿಕ_ERROR;
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(poly_key, 0, sizeof(poly_key));
+	memset(poly_ಕೀಲಿ, 0, ಗಾತ್ರ(poly_ಕೀಲಿ));
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->main_ctx, seqbuf, NULL);
-	chacha_encrypt_bytes(&ctx->main_ctx,
-	    poly_key, poly_key, sizeof(poly_key));
+	chacha_ivsetup(&ctx->main_ctx, seqbuf, ಖಾಲಿ);
+	chacha_encrypt_ಬೈಟುಗಳು(&ctx->main_ctx,
+	    poly_ಕೀಲಿ, poly_ಕೀಲಿ, ಗಾತ್ರ(poly_ಕೀಲಿ));
 
 	/* If decrypting, check tag before anything else */
-	if (!do_encrypt) {
-		const u_char *tag = src + aadlen + len;
+	ಆದರೆ (!do_encrypt) {
+		ಸ್ಥಿರಾಂಕ u_char *ಟ್ಯಾಗ್ = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
-		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
+		poly1305_auth(expected_ಟ್ಯಾಗ್, src, aadlen + len, poly_ಕೀಲಿ);
+		ಆದರೆ (timingsafe_bcmp(expected_ಟ್ಯಾಗ್, ಟ್ಯಾಗ್, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
 	/* Crypt additional data */
-	if (aadlen) {
-		chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
-		chacha_encrypt_bytes(&ctx->header_ctx, src, dest, aadlen);
+	ಆದರೆ (aadlen) {
+		chacha_ivsetup(&ctx->ಶೀರ್ಷಿಕೆ_ctx, seqbuf, ಖಾಲಿ);
+		chacha_encrypt_ಬೈಟುಗಳು(&ctx->ಶೀರ್ಷಿಕೆ_ctx, src, dest, aadlen);
 	}
 
 	/* Set Chacha's block counter to 1 */
 	chacha_ivsetup(&ctx->main_ctx, seqbuf, one);
-	chacha_encrypt_bytes(&ctx->main_ctx, src + aadlen,
+	chacha_encrypt_ಬೈಟುಗಳು(&ctx->main_ctx, src + aadlen,
 	    dest + aadlen, len);
 
 	/* If encrypting, calculate and append tag */
-	if (do_encrypt) {
+	ಆದರೆ (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_ಕೀಲಿ);
 	}
 	r = 0;
- out:
-	explicit_bzero(expected_tag, sizeof(expected_tag));
-	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
-	return r;
+ ಹೊರಹೋಗು:
+	explicit_bzero(expected_ಟ್ಯಾಗ್, ಗಾತ್ರ(expected_ಟ್ಯಾಗ್));
+	explicit_bzero(seqbuf, ಗಾತ್ರ(seqbuf));
+	explicit_bzero(poly_ಕೀಲಿ, ಗಾತ್ರ(poly_ಕೀಲಿ));
+	ಹಿಂತಿರುಗಿ r;
 }
 
 /* Decrypt and extract the encrypted packet length */
-int
-chachapoly_get_length(struct chachapoly_ctx *ctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+ಪೂರ್ಣಾಂಕ
+chachapoly_get_ಉದ್ದಳತೆ(ರಚನೆ chachapoly_ctx *ctx,
+    u_int *plenp, u_int seqnr, ಸ್ಥಿರಾಂಕ u_char *cp, u_int len)
 {
 	u_char buf[4], seqbuf[8];
 
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	ಆದರೆ (len < 4)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಸಂದೇಶ_INCOMPLETE;
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
-	chacha_encrypt_bytes(&ctx->header_ctx, cp, buf, 4);
+	chacha_ivsetup(&ctx->ಶೀರ್ಷಿಕೆ_ctx, seqbuf, ಖಾಲಿ);
+	chacha_encrypt_ಬೈಟುಗಳು(&ctx->ಶೀರ್ಷಿಕೆ_ctx, cp, buf, 4);
 	*plenp = PEEK_U32(buf);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */

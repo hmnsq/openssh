@@ -92,788 +92,788 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#ಆದರೆ defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#ಆದರೆ !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
 
-#ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LONG_DOUBLE
+# define LDOUBLE ದೀರ್ಘ ದ್ವಿಗುಣ
+#ಇಲ್ಲದಿದ್ದರೆ
+# define LDOUBLE ದ್ವಿಗುಣ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef HAVE_LONG_LONG
-# define LLONG long long
-#else
-# define LLONG long
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LONG_LONG
+# define LLONG ದೀರ್ಘ ದೀರ್ಘ
+#ಇಲ್ಲದಿದ್ದರೆ
+# define LLONG ದೀರ್ಘ
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * dopr(): poor man's version of doprintf
  */
 
 /* format read states */
-#define DP_S_DEFAULT 0
-#define DP_S_FLAGS   1
-#define DP_S_MIN     2
-#define DP_S_DOT     3
-#define DP_S_MAX     4
-#define DP_S_MOD     5
-#define DP_S_CONV    6
-#define DP_S_DONE    7
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_DEFAULT 0
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_FLAGS   1
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_MIN     2
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_DOT     3
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_MAX     4
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_MOD     5
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_CONV    6
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_S_ಮುಗಿದ    7
 
 /* format flags - Bits */
-#define DP_F_MINUS	(1 << 0)
-#define DP_F_PLUS	(1 << 1)
-#define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
-#define DP_F_ZERO	(1 << 4)
-#define DP_F_UP		(1 << 5)
-#define DP_F_UNSIGNED	(1 << 6)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_MINUS	(1 << 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_PLUS	(1 << 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_SPACE	(1 << 2)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_ಅಂಕೆ	(1 << 3)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_ZERO	(1 << 4)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_ಮೇಲೆ		(1 << 5)
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_F_UNSIGNED	(1 << 6)
 
 /* Conversion Flags */
-#define DP_C_SHORT   1
-#define DP_C_LONG    2
-#define DP_C_LDOUBLE 3
-#define DP_C_LLONG   4
-#define DP_C_SIZE    5
-#define DP_C_INTMAX  6
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_SHORT   1
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_LONG    2
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_LDOUBLE 3
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_LLONG   4
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_ಗಾತ್ರ    5
+#ವ್ಯಾಖ್ಯಾನಿಸು DP_C_INTMAX  6
 
-#define char_to_int(p) ((p)- '0')
-#ifndef MAX
+#ವ್ಯಾಖ್ಯಾನಿಸು char_ಗಮ್ಯ_int(p) ((p)- '0')
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ MAX
 # define MAX(p,q) (((p) >= (q)) ? (p) : (q))
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
+#ವ್ಯಾಖ್ಯಾನಿಸು DOPR_OUTCH(buf, pos, buflen, thechar) \
+	ಮಾಡು { \
+		ಆದರೆ (pos + 1 >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ) { \
 			errno = ERANGE; \
-			return -1; \
+			ಹಿಂತಿರುಗಿ -1; \
 		} \
-		if (pos < buflen) \
+		ಆದರೆ (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} ಆಗ (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
-    va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ dopr(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t maxlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *format,
+    va_list ವಾದಗಳು_ಒಳ);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ fmtstr(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    ಅಕ್ಷರ *ಮೌಲ್ಯ, ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ fmtint(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    intmax_t ಮೌಲ್ಯ, ಪೂರ್ಣಾಂಕ ತಳ, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max, ಪೂರ್ಣಾಂಕ flags);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ fmtfp(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    LDOUBLE fvalue, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max, ಪೂರ್ಣಾಂಕ flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+dopr(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t maxlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *format, va_list ವಾದಗಳು_ಒಳ)
 {
-	char ch;
-	intmax_t value;
+	ಅಕ್ಷರ ch;
+	intmax_t ಮೌಲ್ಯ;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
-	size_t currlen;
-	va_list args;
+	ಅಕ್ಷರ *strvalue;
+	ಪೂರ್ಣಾಂಕ min;
+	ಪೂರ್ಣಾಂಕ max;
+	ಪೂರ್ಣಾಂಕ state;
+	ಪೂರ್ಣಾಂಕ flags;
+	ಪೂರ್ಣಾಂಕ cflags;
+	ಗಾತ್ರ_t currlen;
+	va_list ವಾದಗಳು;
 
-	VA_COPY(args, args_in);
+	VA_COPY(ವಾದಗಳು, ವಾದಗಳು_ಒಳ);
 
 	state = DP_S_DEFAULT;
 	currlen = flags = cflags = min = 0;
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
-			state = DP_S_DONE;
+	ಆಗ (state != DP_S_ಮುಗಿದ) {
+		ಆದರೆ (ch == '\0')
+			state = DP_S_ಮುಗಿದ;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		ಆಯ್ಕೆ(state) {
+		ಸ್ಥಿತಿ DP_S_DEFAULT:
+			ಆದರೆ (ch == '%')
 				state = DP_S_FLAGS;
-			else
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
+			ಇಲ್ಲದಿದ್ದರೆ
+				DOPR_OUTCH(ಬಫರ್, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_FLAGS:
+			ಆಯ್ಕೆ (ch) {
+			ಸ್ಥಿತಿ '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ '#':
+				flags |= DP_F_ಅಂಕೆ;
 				ch = *format++;
-				break;
-			case '0':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
 				state = DP_S_MIN;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
-				min = 10*min + char_to_int (ch);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_MIN:
+			ಆದರೆ (ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)ch)) {
+				min = 10*min + char_ಗಮ್ಯ_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ch == '*') {
+				min = va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_DOT:
+			ಆದರೆ (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_MAX:
+			ಆದರೆ (ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)ch)) {
+				ಆದರೆ (max < 0)
 					max = 0;
-				max = 10*max + char_to_int (ch);
+				max = 10*max + char_ಗಮ್ಯ_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ch == '*') {
+				max = va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_MOD:
+			ಆಯ್ಕೆ (ch) {
+			ಸ್ಥಿತಿ 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				ಆದರೆ (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
-				cflags = DP_C_SIZE;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'z':
+				cflags = DP_C_ಗಾತ್ರ;
 				ch = *format++;
-				break;
-			default:
-				break;
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ನಿಲ್ಲಿಸು;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_CONV:
+			ಆಯ್ಕೆ (ch) {
+			ಸ್ಥಿತಿ 'd':
+			ಸ್ಥಿತಿ 'i':
+				ಆದರೆ (cflags == DP_C_SHORT)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LONG)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ದೀರ್ಘ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LLONG)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, LLONG);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_ಗಾತ್ರ)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ssize_t);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_INTMAX)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, intmax_t);
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ);
+				ಆದರೆ (fmtint(ಬಫರ್, &currlen, maxlen,
+				    ಮೌಲ್ಯ, 10, min, max, flags) == -1)
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ಆದರೆ (cflags == DP_C_SHORT)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LONG)
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LLONG)
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ LLONG);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_ಗಾತ್ರ)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಗಾತ್ರ_t);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ notyet
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_INTMAX)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, uintmax_t);
+#ಆದರೆ_ಅಂತ್ಯ
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಆದರೆ (fmtint(ಬಫರ್, &currlen, maxlen, ಮೌಲ್ಯ,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ಆದರೆ (cflags == DP_C_SHORT)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LONG)
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LLONG)
+					ಮೌಲ್ಯ = (LLONG)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ LLONG);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_ಗಾತ್ರ)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಗಾತ್ರ_t);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ notyet
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_INTMAX)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, uintmax_t);
+#ಆದರೆ_ಅಂತ್ಯ
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಆದರೆ (fmtint(ಬಫರ್, &currlen, maxlen, ಮೌಲ್ಯ,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
-				flags |= DP_F_UP;
-			case 'x':
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'X':
+				flags |= DP_F_ಮೇಲೆ;
+			ಸ್ಥಿತಿ 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
-#ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
-#endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				ಆದರೆ (cflags == DP_C_SHORT)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LONG)
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಪೂರ್ಣಾಂಕ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LLONG)
+					ಮೌಲ್ಯ = (LLONG)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ LLONG);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_ಗಾತ್ರ)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, ಗಾತ್ರ_t);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ notyet
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_INTMAX)
+					ಮೌಲ್ಯ = va_arg (ವಾದಗಳು, uintmax_t);
+#ಆದರೆ_ಅಂತ್ಯ
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಮೌಲ್ಯ = (ದೀರ್ಘ)va_arg (ವಾದಗಳು, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ);
+				ಆದರೆ (fmtint(ಬಫರ್, &currlen, maxlen, ಮೌಲ್ಯ,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'f':
+				ಆದರೆ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (ವಾದಗಳು, LDOUBLE);
+				ಇಲ್ಲದಿದ್ದರೆ
+					fvalue = va_arg (ವಾದಗಳು, ದ್ವಿಗುಣ);
+				ಆದರೆ (fmtfp(ಬಫರ್, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
-				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'E':
+				flags |= DP_F_ಮೇಲೆ;
+			ಸ್ಥಿತಿ 'e':
+				ಆದರೆ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (ವಾದಗಳು, LDOUBLE);
+				ಇಲ್ಲದಿದ್ದರೆ
+					fvalue = va_arg (ವಾದಗಳು, ದ್ವಿಗುಣ);
+				ಆದರೆ (fmtfp(ಬಫರ್, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
-				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'G':
+				flags |= DP_F_ಮೇಲೆ;
+			ಸ್ಥಿತಿ 'g':
+				ಆದರೆ (cflags == DP_C_LDOUBLE)
+					fvalue = va_arg (ವಾದಗಳು, LDOUBLE);
+				ಇಲ್ಲದಿದ್ದರೆ
+					fvalue = va_arg (ವಾದಗಳು, ದ್ವಿಗುಣ);
+				ಆದರೆ (fmtfp(ಬಫರ್, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
-				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
-					max = strlen(strvalue);
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'c':
+				DOPR_OUTCH(ಬಫರ್, currlen, maxlen,
+				    va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ));
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 's':
+				strvalue = va_arg (ವಾದಗಳು, ಅಕ್ಷರ *);
+				ಆದರೆ (!strvalue) strvalue = "(NULL)";
+				ಆದರೆ (max == -1) {
+					max = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				ಆದರೆ (min > 0 && max >= 0 && min > max) max = min;
+				ಆದರೆ (fmtstr(ಬಫರ್, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
-				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+			ಸ್ಥಿತಿ 'p':
+				strvalue = va_arg (ವಾದಗಳು, ಶೂನ್ಯ *);
+				ಆದರೆ (fmtint(ಬಫರ್, &currlen, maxlen,
+				    (ದೀರ್ಘ) strvalue, 16, min, max, flags) == -1)
+					ಹೋಗು fail;
+				ನಿಲ್ಲಿಸು;
+#ಆದರೆ we_dont_want_this_ಒಳ_openssh
+			ಸ್ಥಿತಿ 'n':
+				ಆದರೆ (cflags == DP_C_SHORT) {
+					ಗಿಡ್ಡ ಪೂರ್ಣಾಂಕ *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, ಗಿಡ್ಡ ಪೂರ್ಣಾಂಕ *);
+					*ಅಂಕೆ = currlen;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LONG) {
+					ದೀರ್ಘ ಪೂರ್ಣಾಂಕ *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, ದೀರ್ಘ ಪೂರ್ಣಾಂಕ *);
+					*ಅಂಕೆ = (ದೀರ್ಘ ಪೂರ್ಣಾಂಕ)currlen;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_LLONG) {
+					LLONG *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, LLONG *);
+					*ಅಂಕೆ = (LLONG)currlen;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_ಗಾತ್ರ) {
+					ssize_t *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, ssize_t *);
+					*ಅಂಕೆ = (ssize_t)currlen;
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cflags == DP_C_INTMAX) {
+					intmax_t *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, intmax_t *);
+					*ಅಂಕೆ = (intmax_t)currlen;
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					ಪೂರ್ಣಾಂಕ *ಅಂಕೆ;
+					ಅಂಕೆ = va_arg (ವಾದಗಳು, ಪೂರ್ಣಾಂಕ *);
+					*ಅಂಕೆ = currlen;
 				}
-				break;
-#endif
-			case '%':
-				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+				ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+			ಸ್ಥಿತಿ '%':
+				DOPR_OUTCH(ಬಫರ್, currlen, maxlen, ch);
+				ನಿಲ್ಲಿಸು;
+			ಪೂರ್ವನಿಯೋಜಿತ:
 				/* Unknown, skip */
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ DP_S_ಮುಗಿದ:
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			ನಿಲ್ಲಿಸು; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
-			buffer[currlen] = '\0';
-		else if (maxlen > 0)
-			buffer[maxlen - 1] = '\0';
+	ಆದರೆ (maxlen != 0) {
+		ಆದರೆ (currlen < maxlen - 1)
+			ಬಫರ್[currlen] = '\0';
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (maxlen > 0)
+			ಬಫರ್[maxlen - 1] = '\0';
 	}
-	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	va_end(ವಾದಗಳು);
+	ಹಿಂತಿರುಗಿ currlen < ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ ? (ಪೂರ್ಣಾಂಕ)currlen : -1;
  fail:
-	va_end(args);
-	return -1;
+	va_end(ವಾದಗಳು);
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+fmtstr(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    ಅಕ್ಷರ *ಮೌಲ್ಯ, ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	ಪೂರ್ಣಾಂಕ padlen, strln;     /* amount to pad */
+	ಪೂರ್ಣಾಂಕ cnt = 0;
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
-#endif
-	if (value == 0) {
-		value = "<NULL>";
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_SNPRINTF
+	ಬರೆ("fmtstr min=%d max=%d s=[%s]\n", min, max, ಮೌಲ್ಯ);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (ಮೌಲ್ಯ == 0) {
+		ಮೌಲ್ಯ = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	ಗಾಗಿ (strln = 0; strln < max && ಮೌಲ್ಯ[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	ಆದರೆ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	ಆದರೆ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ ((padlen > 0) && (cnt < max)) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	ಆಗ (*ಮೌಲ್ಯ && (cnt < max)) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, *ಮೌಲ್ಯ);
+		ಮೌಲ್ಯ++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ ((padlen < 0) && (cnt < max)) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+fmtint(ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    intmax_t ಮೌಲ್ಯ, ಪೂರ್ಣಾಂಕ ತಳ, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max, ಪೂರ್ಣಾಂಕ flags)
 {
-	int signvalue = 0;
-	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	ಪೂರ್ಣಾಂಕ signvalue = 0;
+	ಚಿಹ್ನೆರಹಿತ LLONG uvalue;
+	ಅಕ್ಷರ convert[20];
+	ಪೂರ್ಣಾಂಕ ಇರಿಸು = 0;
+	ಪೂರ್ಣಾಂಕ spadlen = 0; /* amount to space pad */
+	ಪೂರ್ಣಾಂಕ zpadlen = 0; /* amount to zero pad */
+	ಪೂರ್ಣಾಂಕ caps = 0;
 
-	if (max < 0)
+	ಆದರೆ (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = ಮೌಲ್ಯ;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	ಆದರೆ(!(flags & DP_F_UNSIGNED)) {
+		ಆದರೆ( ಮೌಲ್ಯ < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -ಮೌಲ್ಯ;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	ಆದರೆ (flags & DP_F_ಮೇಲೆ) caps = 1; /* Should characters be upper case? */
 
-	do {
-		convert[place++] =
+	ಮಾಡು {
+		convert[ಇರಿಸು++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
-			[uvalue % (unsigned)base  ];
-		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
-	convert[place] = 0;
+			[uvalue % (ಚಿಹ್ನೆರಹಿತ)ತಳ  ];
+		uvalue = (uvalue / (ಚಿಹ್ನೆರಹಿತ)ತಳ );
+	} ಆಗ(uvalue && (ಇರಿಸು < 20));
+	ಆದರೆ (ಇರಿಸು == 20) ಇರಿಸು--;
+	convert[ಇರಿಸು] = 0;
 
-	zpadlen = max - place;
-	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	zpadlen = max - ಇರಿಸು;
+	spadlen = min - MAX (max, ಇರಿಸು) - (signvalue ? 1 : 0);
+	ಆದರೆ (zpadlen < 0) zpadlen = 0;
+	ಆದರೆ (spadlen < 0) spadlen = 0;
+	ಆದರೆ (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	ಆದರೆ (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
-#ifdef DEBUG_SNPRINTF
-	printf("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
-	    zpadlen, spadlen, min, max, place);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_SNPRINTF
+	ಬರೆ("zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
+	    zpadlen, spadlen, min, max, ಇರಿಸು);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Spaces */
-	while (spadlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ (spadlen > 0) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ಆದರೆ (signvalue)
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+	ಆದರೆ (zpadlen > 0) {
+		ಆಗ (zpadlen > 0) {
+			DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
-		--place;
-		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
+	ಆಗ (ಇರಿಸು > 0) {
+		--ಇರಿಸು;
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, convert[ಇರಿಸು]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ (spadlen < 0) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+ಸ್ಥಿರ LDOUBLE abs_val(LDOUBLE ಮೌಲ್ಯ)
 {
-	LDOUBLE result = value;
+	LDOUBLE ಫಲಿತಾಂಶ = ಮೌಲ್ಯ;
 
-	if (value < 0)
-		result = -value;
+	ಆದರೆ (ಮೌಲ್ಯ < 0)
+		ಫಲಿತಾಂಶ = -ಮೌಲ್ಯ;
 
-	return result;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
-static LDOUBLE POW10(int val)
+ಸ್ಥಿರ LDOUBLE POW10(ಪೂರ್ಣಾಂಕ val)
 {
-	LDOUBLE result = 1;
+	LDOUBLE ಫಲಿತಾಂಶ = 1;
 
-	while (val) {
-		result *= 10;
+	ಆಗ (val) {
+		ಫಲಿತಾಂಶ *= 10;
 		val--;
 	}
 
-	return result;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
-static LLONG ROUND(LDOUBLE value)
+ಸ್ಥಿರ LLONG ಸುತ್ತು_2(LDOUBLE ಮೌಲ್ಯ)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)ಮೌಲ್ಯ;
+	ಮೌಲ್ಯ = ಮೌಲ್ಯ - intpart;
+	ಆದರೆ (ಮೌಲ್ಯ >= 0.5) intpart++;
 
-	return intpart;
+	ಹಿಂತಿರುಗಿ intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+ಸ್ಥಿರ ದ್ವಿಗುಣ my_modf(ದ್ವಿಗುಣ x0, ದ್ವಿಗುಣ *iptr)
 {
-	int i;
-	long l;
-	double x = x0;
-	double f = 1.0;
+	ಪೂರ್ಣಾಂಕ i;
+	ದೀರ್ಘ l;
+	ದ್ವಿಗುಣ x = x0;
+	ದ್ವಿಗುಣ f = 1.0;
 
-	for (i=0;i<100;i++) {
-		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+	ಗಾಗಿ (i=0;i<100;i++) {
+		l = (ದೀರ್ಘ)x;
+		ಆದರೆ (l <= (x+1) && l >= (x-1)) ನಿಲ್ಲಿಸು;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	ಆದರೆ (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	ಆದರೆ (i != 0) {
+		ದ್ವಿಗುಣ i2;
+		ದ್ವಿಗುಣ ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		ಹಿಂತಿರುಗಿ ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	ಹಿಂತಿರುಗಿ x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+fmtfp (ಅಕ್ಷರ *ಬಫರ್, ಗಾತ್ರ_t *currlen, ಗಾತ್ರ_t maxlen,
+    LDOUBLE fvalue, ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ max, ಪೂರ್ಣಾಂಕ flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
-#endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	ಪೂರ್ಣಾಂಕ signvalue = 0;
+	ದ್ವಿಗುಣ ufvalue;
+	ಅಕ್ಷರ iconvert[311];
+	ಅಕ್ಷರ fconvert[311];
+	ಪೂರ್ಣಾಂಕ iplace = 0;
+	ಪೂರ್ಣಾಂಕ fplace = 0;
+	ಪೂರ್ಣಾಂಕ padlen = 0; /* amount to pad */
+	ಪೂರ್ಣಾಂಕ zpadlen = 0;
+#ಆದರೆ 0
+	ಪೂರ್ಣಾಂಕ caps = 0;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಪೂರ್ಣಾಂಕ idx;
+	ದ್ವಿಗುಣ intpart;
+	ದ್ವಿಗುಣ fracpart;
+	ದ್ವಿಗುಣ ತಾತ್ಕಾಲಿಕ;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	ಆದರೆ (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	ಆದರೆ (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
-#endif
+#ಆದರೆ 0
+	ಆದರೆ (flags & DP_F_ಮೇಲೆ) caps = 1; /* Should characters be upper case? */
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
-#endif
+#ಆದರೆ 0
+	 ಆದರೆ (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	ಆದರೆ (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
 	 * multiplying by a factor of 10
 	 */
 
-	temp = ufvalue;
-	my_modf(temp, &intpart);
+	ತಾತ್ಕಾಲಿಕ = ufvalue;
+	my_modf(ತಾತ್ಕಾಲಿಕ, &intpart);
 
-	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
+	fracpart = ಸುತ್ತು_2((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	ಆದರೆ (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
-		temp = intpart*0.1;
-		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+	ಮಾಡು {
+		ತಾತ್ಕಾಲಿಕ = intpart*0.1;
+		my_modf(ತಾತ್ಕಾಲಿಕ, &intpart);
+		idx = (ಪೂರ್ಣಾಂಕ) ((ತಾತ್ಕಾಲಿಕ -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} ಆಗ (intpart && (iplace < 311));
+	ಆದರೆ (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	ಆದರೆ (fracpart)
 	{
-		do {
-			temp = fracpart*0.1;
-			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+		ಮಾಡು {
+			ತಾತ್ಕಾಲಿಕ = fracpart*0.1;
+			my_modf(ತಾತ್ಕಾಲಿಕ, &fracpart);
+			idx = (ಪೂರ್ಣಾಂಕ) ((ತಾತ್ಕಾಲಿಕ -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} ಆಗ(fracpart && (fplace < 311));
+		ಆದರೆ (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	ಆದರೆ (zpadlen < 0) zpadlen = 0;
+	ಆದರೆ (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	ಆದರೆ (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ಆದರೆ ((flags & DP_F_ZERO) && (padlen > 0)) {
+		ಆದರೆ (signvalue) {
+			DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		ಆಗ (padlen > 0) {
+			DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ (padlen > 0) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
-		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
+	ಆದರೆ (signvalue)
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	ಆಗ (iplace > 0) {
 		--iplace;
-		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, iconvert[iplace]);
 	}
 
-#ifdef DEBUG_SNPRINTF
-	printf("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_SNPRINTF
+	ಬರೆ("fmtfp: fplace=%d zpadlen=%d\n", fplace, zpadlen);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/*
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
+	ಆದರೆ (max > 0) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
-			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
+		ಆಗ (zpadlen > 0) {
+			DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		ಆಗ (fplace > 0) {
 			--fplace;
-			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
+			DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
+	ಆಗ (padlen < 0) {
+		DOPR_OUTCH(ಬಫರ್, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#ಆದರೆ !defined(HAVE_VSNPRINTF)
+ಪೂರ್ಣಾಂಕ
+vsnprintf (ಅಕ್ಷರ *str, ಗಾತ್ರ_t ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ವಾದಗಳು)
 {
-	return dopr(str, count, fmt, args);
+	ಹಿಂತಿರುಗಿ dopr(str, ಎಣಿಕೆ_2, fmt, ವಾದಗಳು);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#ಆದರೆ !defined(HAVE_SNPRINTF)
+ಪೂರ್ಣಾಂಕ
+snprintf(ಅಕ್ಷರ *str, ಗಾತ್ರ_t ಎಣಿಕೆ_2, SNPRINTF_CONST ಅಕ್ಷರ *fmt, ...)
 {
-	size_t ret;
+	ಗಾತ್ರ_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ಎಣಿಕೆ_2, fmt, ap);
 	va_end(ap);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

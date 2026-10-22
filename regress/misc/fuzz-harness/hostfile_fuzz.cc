@@ -10,61 +10,61 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-extern "C" {
+ಬಾಹ್ಯ "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-static int log_initialized = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+noop_cb(ರಚನೆ hostkey_foreach_ಸಾಲು *l, ಶೂನ್ಯ *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(ಶೂನ್ಯ)l; (ಶೂನ್ಯ)ctx;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ಪೂರ್ಣಾಂಕ
+LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (!log_initialized) {
+	ಆದರೆ (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ u_int flag_combos[] = {
 		0,
-		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_ಹೊಂದಿಕೆ,
+		HKF_WANT_PARSE_ಕೀಲಿ,
+		HKF_WANT_ಹೊಂದಿಕೆ | HKF_WANT_PARSE_ಕೀಲಿ,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	ಗಾಗಿ (ಗಾತ್ರ_t i = 0; i < ಗಾತ್ರ(flag_combos)/ಗಾತ್ರ(flag_combos[0]); i++) {
+		FILE *f = fmemopen((ಶೂನ್ಯ *)ದತ್ತಾಂಶ, ಗಾತ್ರ_2, "r");
+		ಆದರೆ (f == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host = (flag_combos[i] & HKF_WANT_ಹೊಂದಿಕೆ) ?
+		    "example.com" : ಖಾಲಿ;
+		(ಶೂನ್ಯ)hostkeys_foreach_file("/fuzz", f, noop_cb, ಖಾಲಿ,
 		    host, "127.0.0.1", flag_combos[i], 0);
 		fclose(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
-				load_hostkeys_file(hk, "example.com",
+		FILE *f = fmemopen((ಶೂನ್ಯ *)ದತ್ತಾಂಶ, ಗಾತ್ರ_2, "r");
+		ಆದರೆ (f != ಖಾಲಿ) {
+			ರಚನೆ hostkeys *hk = init_hostkeys();
+			ಆದರೆ (hk != ಖಾಲಿ) {
+				ತುಂಬು_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
 			}
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
-		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
-			memcpy(hb, data, n);
+	ಆದರೆ (ಗಾತ್ರ_2 > 0) {
+		ಗಾತ್ರ_t n = ಗಾತ್ರ_2 < 256 ? ಗಾತ್ರ_2 : 256;
+		ಅಕ್ಷರ *hb = (ಅಕ್ಷರ *)ಸ್ಮರಣೆ_ಕೊಡು(n + 1);
+		ಆದರೆ (hb != ಖಾಲಿ) {
+			ಸ್ಮರಣೆ_ನಕಲು(hb, ದತ್ತಾಂಶ, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			ಅಕ್ಷರ *h = host_hash("example.com", hb, 0);
+			ಬಿಡುಗಡೆ(h);
+			ಬಿಡುಗಡೆ(hb);
 		}
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 } // extern "C"

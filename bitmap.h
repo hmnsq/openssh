@@ -15,43 +15,43 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BITMAP_H
-#define _BITMAP_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _BITMAP_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _BITMAP_H
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
 /* Simple bit vector routines */
 
-struct bitmap;
+ರಚನೆ bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+ರಚನೆ bitmap *bitmap_new(ಶೂನ್ಯ);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+ಶೂನ್ಯ bitmap_free(ರಚನೆ bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+ಶೂನ್ಯ bitmap_zero(ರಚನೆ bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+ಪೂರ್ಣಾಂಕ bitmap_test_ಬಿಟ್(ರಚನೆ bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+ಪೂರ್ಣಾಂಕ bitmap_ಗಣ_ಬಿಟ್(ರಚನೆ bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+ಶೂನ್ಯ bitmap_clear_ಬಿಟ್(ರಚನೆ bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+ಗಾತ್ರ_t bitmap_nbits(ರಚನೆ bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+ಗಾತ್ರ_t bitmap_nbytes(ರಚನೆ bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+ಪೂರ್ಣಾಂಕ bitmap_ಗಮ್ಯ_string(ರಚನೆ bitmap *b, ಶೂನ್ಯ *p, ಗಾತ್ರ_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+ಪೂರ್ಣಾಂಕ bitmap_from_string(ರಚನೆ bitmap *b, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *p, ಗಾತ್ರ_t l);
 
-#endif /* _BITMAP_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _BITMAP_H */

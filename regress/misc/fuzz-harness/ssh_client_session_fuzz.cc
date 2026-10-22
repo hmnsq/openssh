@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
-extern "C" void fuzz_one_message(const uint8_t *data, size_t size);
+ಬಾಹ್ಯ "C" ಶೂನ್ಯ fuzz_one_ಸಂದೇಶ(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ಬಾಹ್ಯ "C" ಪೂರ್ಣಾಂಕ
+LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	fuzz_one_message(data, size);
-	return 0;
+	fuzz_one_ಸಂದೇಶ(ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಹಿಂತಿರುಗಿ 0;
 }

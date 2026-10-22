@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+ಬಾಹ್ಯ "C" {
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "authfd.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+ಶೂನ್ಯ fuzz_arena_begin(ಶೂನ್ಯ);
+ಶೂನ್ಯ fuzz_arena_cleanup(ಶೂನ್ಯ);
 }
 
-#include "fixed-keys.h"
+#ಅನ್ತರ್ಭಾವ "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+ಸ್ಥಿರ ರಚನೆ sshkey *test_ಕೀಲಿಗಳು[3] = { ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ };
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+ಸ್ಥಿರ ರಚನೆ sshkey *
+ತುಂಬು_pubkey_or_die(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	ಅಕ್ಷರ *tmp, *cp;
+	ರಚನೆ sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ಆದರೆ ((k = sshkey_new(ಕೀಲಿ_UNSPEC)) == ಖಾಲಿ)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	ಆದರೆ ((tmp = cp = strdup(txt)) == ಖಾಲಿ)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	ಆದರೆ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	ಬಿಡುಗಡೆ(tmp);
+	ಹಿಂತಿರುಗಿ k;
 }
 
-static void
-setup(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸಿದ್ಧತೆ(ಶೂನ್ಯ)
 {
-	if (initialized)
-		return;
+	ಆದರೆ (initialized)
+		ಹಿಂತಿರುಗಿ;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_ಕೀಲಿಗಳು[0] = ತುಂಬು_pubkey_or_die(PUB_RSA);
+	test_ಕೀಲಿಗಳು[1] = ತುಂಬು_pubkey_or_die(PUB_ECDSA);
+	test_ಕೀಲಿಗಳು[2] = ತುಂಬು_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+ಎಣಿಕೆ {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_ಕೀಲಿ,
 	API_QUERY_EXTENSIONS,
-	API_LOCK_AGENT,
+	API_ಬೀಗ_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಸತತ_one(ಪೂರ್ಣಾಂಕ api, ರಚನೆ sshkey *k, ಪೂರ್ಣಾಂಕ ಬೀಗ_arg,
+    ಸ್ಥಿರಾಂಕ uint8_t *body, ಗಾತ್ರ_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	ಪೂರ್ಣಾಂಕ sv[2] = { -1, -1 };
+	ಆದರೆ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ಹಿಂತಿರುಗಿ;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(ಶೂನ್ಯ)ಲಿಖ(sv[0], hdr, ಗಾತ್ರ(hdr));
+	ಆದರೆ (bsize > 0)
+		(ಶೂನ್ಯ)ಲಿಖ(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	ಆಯ್ಕೆ (api) {
+	ಸ್ಥಿತಿ API_FETCH_IDENTITYLIST: {
+		ರಚನೆ ssh_identitylist *idl = ಖಾಲಿ;
+		(ಶೂನ್ಯ)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
-		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+	ಸ್ಥಿತಿ API_AGENT_SIGN: {
+		ಸ್ಥಿರಾಂಕ u_char ಸಂದೇಶ[16] = { 0 };
+		u_char *sig = ಖಾಲಿ;
+		ಗಾತ್ರ_t siglen = 0;
+		(ಶೂನ್ಯ)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    ಸಂದೇಶ, ಗಾತ್ರ(ಸಂದೇಶ), ಖಾಲಿ, 0);
+		ಬಿಡುಗಡೆ(sig);
+		ನಿಲ್ಲಿಸು;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	ಸ್ಥಿತಿ API_AGENT_HAS_ಕೀಲಿ:
+		(ಶೂನ್ಯ)ssh_agent_has_ಕೀಲಿ(sv[1], k);
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ API_QUERY_EXTENSIONS: {
+		ಅಕ್ಷರ **exts = ಖಾಲಿ;
+		ಪೂರ್ಣಾಂಕ n = ssh_agent_query_extensions(sv[1], &exts);
+		ಆದರೆ (n == 0 && exts != ಖಾಲಿ) {
+			ಗಾಗಿ (ಪೂರ್ಣಾಂಕ i = 0; exts[i] != ಖಾಲಿ; i++)
+				ಬಿಡುಗಡೆ(exts[i]);
+			ಬಿಡುಗಡೆ(exts);
 		}
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	ಸ್ಥಿತಿ API_ಬೀಗ_AGENT:
+		(ಶೂನ್ಯ)ssh_ಬೀಗ_agent(sv[1], ಬೀಗ_arg, "fuzz");
+		ನಿಲ್ಲಿಸು;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ಬಾಹ್ಯ "C" ಪೂರ್ಣಾಂಕ
+LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	setup();
+	ಸಿದ್ಧತೆ();
 
-	if (size > 65536)
-		return 0;
+	ಆದರೆ (ಗಾತ್ರ_2 > 65536)
+		ಹಿಂತಿರುಗಿ 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	ಸತತ_one(API_FETCH_IDENTITYLIST, ಖಾಲಿ,           0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_AGENT_SIGN,         test_ಕೀಲಿಗಳು[0],   0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_AGENT_SIGN,         test_ಕೀಲಿಗಳು[1],   0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_AGENT_SIGN,         test_ಕೀಲಿಗಳು[2],   0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_AGENT_HAS_ಕೀಲಿ,      test_ಕೀಲಿಗಳು[2],   0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_QUERY_EXTENSIONS,   ಖಾಲಿ,           0, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
+	ಸತತ_one(API_ಬೀಗ_AGENT,         ಖಾಲಿ,           1, ದತ್ತಾಂಶ, ಗಾತ್ರ_2);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

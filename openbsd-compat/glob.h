@@ -37,72 +37,72 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ಆದರೆ !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#ifndef _COMPAT_GLOB_H_
-#define	_COMPAT_GLOB_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _COMPAT_GLOB_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು	_COMPAT_GLOB_H_
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
 # define glob_t _ssh_compat_glob_t
 # define glob(a, b, c, d)  _ssh__compat_glob(a, b, c, d)
 # define globfree(a)  _ssh__compat_globfree(a)
 
-struct stat;
-typedef struct {
-	size_t gl_pathc;	/* Count of total paths so far. */
-	size_t gl_matchc;	/* Count of paths matching pattern. */
-	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
-	char **gl_pathv;	/* List of paths matching pattern. */
-	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
+ರಚನೆ stat;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	ಗಾತ್ರ_t gl_pathc;	/* Count of total paths so far. */
+	ಗಾತ್ರ_t gl_matchc;	/* Count of paths matching pattern. */
+	ಗಾತ್ರ_t gl_offs;		/* Reserved at beginning of gl_pathv. */
+	ಪೂರ್ಣಾಂಕ gl_flags;		/* Copy of flags parameter to glob. */
+	ಅಕ್ಷರ **gl_pathv;	/* List of paths matching pattern. */
+	ರಚನೆ stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	ಪೂರ್ಣಾಂಕ (*gl_errfunc)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
 	 * versions of closedir(3), readdir(3), opendir(3), stat(2)
 	 * and lstat(2).
 	 */
-	void (*gl_closedir)(void *);
-	struct dirent *(*gl_readdir)(void *);	
-	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	ಶೂನ್ಯ (*gl_closedir)(ಶೂನ್ಯ *);
+	ರಚನೆ dirent *(*gl_readdir)(ಶೂನ್ಯ *);	
+	ಶೂನ್ಯ *(*gl_opendir)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+	ಪೂರ್ಣಾಂಕ (*gl_lstat)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ stat *);
+	ಪೂರ್ಣಾಂಕ (*gl_stat)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ stat *);
 } glob_t;
 
-#define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
-#define	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
-#define	GLOB_ERR	0x0004	/* Return on error. */
-#define	GLOB_MARK	0x0008	/* Append / to matching directories. */
-#define	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
-#define	GLOB_NOSORT	0x0020	/* Don't sort. */
-#define	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_APPEND	0x0001	/* Append to output from previous call. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_DOOFFS	0x0002	/* Use gl_offs. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ERR	0x0004	/* Return on error. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_MARK	0x0008	/* Append / to matching directories. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOCHECK	0x0010	/* Return pattern itself if nothing matches. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOSORT	0x0020	/* Don't sort. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOESCAPE	0x1000	/* Disable backslash escaping. */
 
-#define	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
-#define	GLOB_ABORTED	(-2)	/* Unignored error. */
-#define	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
-#define	GLOB_NOSYS	(-4)	/* Function not supported. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOSPACE	(-1)	/* Malloc call failed. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ABORTED	(-2)	/* Unignored error. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOMATCH	(-3)	/* No match and GLOB_NOCHECK not set. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOSYS	(-4)	/* Function not supported. */
 
-#define	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
-#define	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
-#define	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
-#define	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
-#define	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
-#define	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
-#define GLOB_LIMIT	0x2000	/* Limit pattern match output to ARG_MAX */
-#define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
-#define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ALTDIRFUNC	0x0040	/* Use alternately specified directory funcs. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_BRACE	0x0080	/* Expand braces ala csh. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_MAGCHAR	0x0100	/* Pattern had globbing characters. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_NOMAGIC	0x0200	/* GLOB_NOCHECK without magic chars (csh). */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_QUOTE	0x0400	/* Quote special chars with \. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_TILDE	0x0800	/* Expand tilde names from the passwd file. */
+#ವ್ಯಾಖ್ಯಾನಿಸು GLOB_ಎಲ್ಲೆ	0x2000	/* Limit pattern match output to ARG_MAX */
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
+#ವ್ಯಾಖ್ಯಾನಿಸು GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
-void	globfree(glob_t *);
+ಪೂರ್ಣಾಂಕ	glob(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ (*)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ), glob_t *);
+ಶೂನ್ಯ	globfree(glob_t *);
 
-#endif /* !_GLOB_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* !_GLOB_H_ */
 
-#endif /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC)  ||
 	  !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOH_HAS_GL_STATV) */
 

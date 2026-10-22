@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openbsd-compat.h"
 
 /*
  * return 1 if the specified uid is a uid that may own a system directory
  * otherwise 0.
  */
-int
+ಪೂರ್ಣಾಂಕ
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
-		return 1;
-#ifdef PLATFORM_SYS_DIR_UID
-	if (uid == PLATFORM_SYS_DIR_UID)
-		return 1;
-#endif
-	return 0;
+	ಆದರೆ (uid == 0)
+		ಹಿಂತಿರುಗಿ 1;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PLATFORM_SYS_DIR_UID
+	ಆದರೆ (uid == PLATFORM_SYS_DIR_UID)
+		ಹಿಂತಿರುಗಿ 1;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ 0;
 }

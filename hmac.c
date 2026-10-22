@@ -15,153 +15,153 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "digest.h"
-#include "hmac.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "hmac.h"
 
-struct ssh_hmac_ctx {
-	int			 alg;
-	struct ssh_digest_ctx	*ictx;
-	struct ssh_digest_ctx	*octx;
-	struct ssh_digest_ctx	*digest;
+ರಚನೆ ssh_hmac_ctx {
+	ಪೂರ್ಣಾಂಕ			 alg;
+	ರಚನೆ ssh_digest_ctx	*ictx;
+	ರಚನೆ ssh_digest_ctx	*octx;
+	ರಚನೆ ssh_digest_ctx	*digest;
 	u_char			*buf;
-	size_t			 buf_len;
+	ಗಾತ್ರ_t			 buf_len;
 };
 
-size_t
-ssh_hmac_bytes(int alg)
+ಗಾತ್ರ_t
+ssh_hmac_ಬೈಟುಗಳು(ಪೂರ್ಣಾಂಕ alg)
 {
-	return ssh_digest_bytes(alg);
+	ಹಿಂತಿರುಗಿ ssh_digest_ಬೈಟುಗಳು(alg);
 }
 
-struct ssh_hmac_ctx *
-ssh_hmac_start(int alg)
+ರಚನೆ ssh_hmac_ctx *
+ssh_hmac_ಆರಂಭ(ಪೂರ್ಣಾಂಕ alg)
 {
-	struct ssh_hmac_ctx	*ret;
+	ರಚನೆ ssh_hmac_ctx	*ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ಆದರೆ ((ret = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ret))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	ret->alg = alg;
-	if ((ret->ictx = ssh_digest_start(alg)) == NULL ||
-	    (ret->octx = ssh_digest_start(alg)) == NULL ||
-	    (ret->digest = ssh_digest_start(alg)) == NULL)
-		goto fail;
+	ಆದರೆ ((ret->ictx = ssh_digest_ಆರಂಭ(alg)) == ಖಾಲಿ ||
+	    (ret->octx = ssh_digest_ಆರಂಭ(alg)) == ಖಾಲಿ ||
+	    (ret->digest = ssh_digest_ಆರಂಭ(alg)) == ಖಾಲಿ)
+		ಹೋಗು fail;
 	ret->buf_len = ssh_digest_blocksize(ret->ictx);
-	if ((ret->buf = calloc(1, ret->buf_len)) == NULL)
-		goto fail;
-	return ret;
+	ಆದರೆ ((ret->buf = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ret->buf_len)) == ಖಾಲಿ)
+		ಹೋಗು fail;
+	ಹಿಂತಿರುಗಿ ret;
 fail:
 	ssh_hmac_free(ret);
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-int
-ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+ಪೂರ್ಣಾಂಕ
+ssh_hmac_init(ರಚನೆ ssh_hmac_ctx *ctx, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *ಕೀಲಿ, ಗಾತ್ರ_t klen)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
 	/* reset ictx and octx if no is key given */
-	if (key != NULL) {
+	ಆದರೆ (ಕೀಲಿ != ಖಾಲಿ) {
 		/* truncate long keys */
-		if (klen <= ctx->buf_len)
-			memcpy(ctx->buf, key, klen);
-		else if (ssh_digest_memory(ctx->alg, key, klen, ctx->buf,
+		ಆದರೆ (klen <= ctx->buf_len)
+			ಸ್ಮರಣೆ_ನಕಲು(ctx->buf, ಕೀಲಿ, klen);
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ssh_digest_ಸ್ಮರಣೆ(ctx->alg, ಕೀಲಿ, klen, ctx->buf,
 		    ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+			ಹಿಂತಿರುಗಿ -1;
+		ಗಾಗಿ (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36;
-		if (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+		ಆದರೆ (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
+			ಹಿಂತಿರುಗಿ -1;
+		ಗಾಗಿ (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36 ^ 0x5c;
-		if (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
+		ಆದರೆ (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
+			ಹಿಂತಿರುಗಿ -1;
 		explicit_bzero(ctx->buf, ctx->buf_len);
 	}
 	/* start with ictx */
-	if (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
-		return -1;
-	return 0;
+	ಆದರೆ (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
+		ಹಿಂತಿರುಗಿ -1;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+ಪೂರ್ಣಾಂಕ
+ssh_hmac_update(ರಚನೆ ssh_hmac_ctx *ctx, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *m, ಗಾತ್ರ_t mlen)
 {
-	return ssh_digest_update(ctx->digest, m, mlen);
+	ಹಿಂತಿರುಗಿ ssh_digest_update(ctx->digest, m, mlen);
 }
 
-int
-ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b)
+ಪೂರ್ಣಾಂಕ
+ssh_hmac_update_ಬಫರ್(ರಚನೆ ssh_hmac_ctx *ctx, ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *b)
 {
-	return ssh_digest_update_buffer(ctx->digest, b);
+	ಹಿಂತಿರುಗಿ ssh_digest_update_ಬಫರ್(ctx->digest, b);
 }
 
-int
-ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+ಪೂರ್ಣಾಂಕ
+ssh_hmac_final(ರಚನೆ ssh_hmac_ctx *ctx, u_char *d, ಗಾತ್ರ_t dlen)
 {
-	size_t len;
+	ಗಾತ್ರ_t len;
 
-	len = ssh_digest_bytes(ctx->alg);
-	if (dlen < len ||
+	len = ssh_digest_ಬೈಟುಗಳು(ctx->alg);
+	ಆದರೆ (dlen < len ||
 	    ssh_digest_final(ctx->digest, ctx->buf, len))
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	/* switch to octx */
-	if (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
+	ಆದರೆ (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
 	    ssh_digest_update(ctx->digest, ctx->buf, len) < 0 ||
 	    ssh_digest_final(ctx->digest, d, dlen) < 0)
-		return -1;
-	return 0;
+		ಹಿಂತಿರುಗಿ -1;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-ssh_hmac_free(struct ssh_hmac_ctx *ctx)
+ಶೂನ್ಯ
+ssh_hmac_free(ರಚನೆ ssh_hmac_ctx *ctx)
 {
-	if (ctx != NULL) {
+	ಆದರೆ (ctx != ಖಾಲಿ) {
 		ssh_digest_free(ctx->ictx);
 		ssh_digest_free(ctx->octx);
 		ssh_digest_free(ctx->digest);
-		if (ctx->buf) {
+		ಆದರೆ (ctx->buf) {
 			explicit_bzero(ctx->buf, ctx->buf_len);
-			free(ctx->buf);
+			ಬಿಡುಗಡೆ(ctx->buf);
 		}
-		freezero(ctx, sizeof(*ctx));
+		freezero(ctx, ಗಾತ್ರ(*ctx));
 	}
 }
 
-#ifdef TEST
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ TEST
 
 /* cc -DTEST hmac.c digest.c buffer.c cleanup.c fatal.c log.c xmalloc.c -lcrypto */
-static void
-hmac_test(void *key, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
+ಸ್ಥಿರ ಶೂನ್ಯ
+hmac_test(ಶೂನ್ಯ *ಕೀಲಿ, ಗಾತ್ರ_t klen, ಶೂನ್ಯ *m, ಗಾತ್ರ_t mlen, u_char *e, ಗಾತ್ರ_t elen)
 {
-	struct ssh_hmac_ctx	*ctx;
-	size_t			 i;
+	ರಚನೆ ssh_hmac_ctx	*ctx;
+	ಗಾತ್ರ_t			 i;
 	u_char			 digest[16];
 
-	if ((ctx = ssh_hmac_start(SSH_DIGEST_MD5)) == NULL)
-		printf("ssh_hmac_start failed");
-	if (ssh_hmac_init(ctx, key, klen) < 0 ||
+	ಆದರೆ ((ctx = ssh_hmac_ಆರಂಭ(SSH_DIGEST_MD5)) == ಖಾಲಿ)
+		ಬರೆ("ssh_hmac_start failed");
+	ಆದರೆ (ssh_hmac_init(ctx, ಕೀಲಿ, klen) < 0 ||
 	    ssh_hmac_update(ctx, m, mlen) < 0 ||
-	    ssh_hmac_final(ctx, digest, sizeof(digest)) < 0)
-		printf("ssh_hmac_xxx failed");
+	    ssh_hmac_final(ctx, digest, ಗಾತ್ರ(digest)) < 0)
+		ಬರೆ("ssh_hmac_xxx failed");
 	ssh_hmac_free(ctx);
 
-	if (memcmp(e, digest, elen)) {
-		for (i = 0; i < elen; i++)
-			printf("[%zu] %2.2x %2.2x\n", i, e[i], digest[i]);
-		printf("mismatch\n");
-	} else
-		printf("ok\n");
+	ಆದರೆ (memcmp(e, digest, elen)) {
+		ಗಾಗಿ (i = 0; i < elen; i++)
+			ಬರೆ("[%zu] %2.2x %2.2x\n", i, e[i], digest[i]);
+		ಬರೆ("mismatch\n");
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ಬರೆ("ok\n");
 }
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
 	/* try test vectors from RFC 2104 */
 
@@ -184,14 +184,14 @@ main(int argc, char **argv)
 	u_char dig3[16] = {
 	    0x56, 0xbe, 0x34, 0x52, 0x1d, 0x14, 0x4c, 0x88,
 	    0xdb, 0xb8, 0xc7, 0x33, 0xf0, 0xe8, 0xb3, 0xf6 };
-	memset(key3, 0xaa, sizeof(key3));
-	memset(data3, 0xdd, sizeof(data3));
+	memset(key3, 0xaa, ಗಾತ್ರ(key3));
+	memset(data3, 0xdd, ಗಾತ್ರ(data3));
 
-	hmac_test(key1, sizeof(key1), data1, strlen(data1), dig1, sizeof(dig1));
-	hmac_test(key2, strlen(key2), data2, strlen(data2), dig2, sizeof(dig2));
-	hmac_test(key3, sizeof(key3), data3, sizeof(data3), dig3, sizeof(dig3));
+	hmac_test(key1, ಗಾತ್ರ(key1), data1, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(data1), dig1, ಗಾತ್ರ(dig1));
+	hmac_test(key2, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(key2), data2, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(data2), dig2, ಗಾತ್ರ(dig2));
+	hmac_test(key3, ಗಾತ್ರ(key3), data3, ಗಾತ್ರ(data3), dig3, ಗಾತ್ರ(dig3));
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

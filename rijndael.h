@@ -25,31 +25,31 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _PRIVATE_RIJNDAEL_H
-#define _PRIVATE_RIJNDAEL_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಖಾಸಗಿ_RIJNDAEL_H
+#ವ್ಯಾಖ್ಯಾನಿಸು ಖಾಸಗಿ_RIJNDAEL_H
 
-#define AES_MAXKEYBITS	(256)
-#define AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
+#ವ್ಯಾಖ್ಯಾನಿಸು AES_MAXKEYBITS	(256)
+#ವ್ಯಾಖ್ಯಾನಿಸು AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
 /* for 256-bit keys, fewer for less */
-#define AES_MAXROUNDS	14
+#ವ್ಯಾಖ್ಯಾನಿಸು AES_MAXROUNDS	14
 
-typedef unsigned char	u8;
-typedef unsigned short	u16;
-typedef unsigned int	u32;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ	u8;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಗಿಡ್ಡ	u16;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+ಪೂರ್ಣಾಂಕ	rijndael_ಕೀಲಿ_ಸಿದ್ಧತೆ_Enc(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ [], ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ [], ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	rijndaelEncrypt(ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ [], ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ u8 [16], u8 [16]);
 
 /*  The structure for key information */
-typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	ಪೂರ್ಣಾಂಕ	decrypt;
+	ಪೂರ್ಣಾಂಕ	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
-void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
-void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
+ಶೂನ್ಯ	 rijndael_ಗಣ_ಕೀಲಿ(rijndael_ctx *, u_char *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
+ಶೂನ್ಯ	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 
-#endif /* _PRIVATE_RIJNDAEL_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _PRIVATE_RIJNDAEL_H */

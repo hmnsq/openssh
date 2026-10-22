@@ -32,268 +32,268 @@ limitations under the License.
  * fuzzer-controlled USERAUTH_REQUEST.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <setjmp.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "servconf.h"
-#include "audit.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "ssh_api.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "myproposal.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
+#ಅನ್ತರ್ಭಾವ "audit.h"
 
 ServerOptions options;
-struct sshbuf *loginmsg = NULL;
-struct include_list includes;
-struct sshauthopt *auth_opts = NULL;
-struct passwd *privsep_pw = NULL;
+ರಚನೆ sshbuf *loginmsg = ಖಾಲಿ;
+ರಚನೆ include_list includes;
+ರಚನೆ sshauthopt *auth_opts = ಖಾಲಿ;
+ರಚನೆ passwd *privsep_pw = ಖಾಲಿ;
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ಸ್ಥಿರ jmp_buf fuzz_env;
+ಸ್ಥಿರ ಅಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಒಳ_fuzz = 0;
 
-void
-cleanup_exit(int code)
+ಶೂನ್ಯ
+cleanup_exit(ಪೂರ್ಣಾಂಕ ಸಂಕೇತ_2)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ಆದರೆ (ಒಳ_fuzz)
+		longjmp(fuzz_env, ಸಂಕೇತ_2 ? ಸಂಕೇತ_2 : 1);
+	_exit(ಸಂಕೇತ_2);
 }
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+__wrap_ssh_packet_write_wait(ರಚನೆ ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(ಶೂನ್ಯ)ssh;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static struct passwd g_fake_pw;
+ಸ್ಥಿರ ರಚನೆ passwd g_fake_pw;
 
-int
-mm_is_monitor(void)
+ಪೂರ್ಣಾಂಕ
+mm_is_monitor(ಶೂನ್ಯ)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *user)
+ರಚನೆ passwd *
+mm_getpwnamallow(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user)
 {
-	(void)ssh;
-	(void)user;
-	return &g_fake_pw;
+	(ಶೂನ್ಯ)ssh;
+	(ಶೂನ್ಯ)user;
+	ಹಿಂತಿರುಗಿ &g_fake_pw;
 }
 
-int
-mm_auth_password(struct ssh *ssh, char *password)
+ಪೂರ್ಣಾಂಕ
+mm_auth_password(ರಚನೆ ssh *ssh, ಅಕ್ಷರ *password)
 {
-	(void)ssh;
-	(void)password;
-	return 0;
+	(ಶೂನ್ಯ)ssh;
+	(ಶೂನ್ಯ)password;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+ಪೂರ್ಣಾಂಕ
+mm_user_ಕೀಲಿ_allowed(ರಚನೆ ssh *ssh, ರಚನೆ passwd *pw, ರಚನೆ sshkey *ಕೀಲಿ,
+    ಪೂರ್ಣಾಂಕ auth_attempt, ರಚನೆ sshauthopt **authoptsp)
 {
-	(void)ssh;
-	(void)pw;
-	(void)key;
-	(void)auth_attempt;
-	(void)authoptsp;
-	return 0;
+	(ಶೂನ್ಯ)ssh;
+	(ಶೂನ್ಯ)pw;
+	(ಶೂನ್ಯ)ಕೀಲಿ;
+	(ಶೂನ್ಯ)auth_attempt;
+	(ಶೂನ್ಯ)authoptsp;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
-    const char *host, struct sshkey *key)
+ಪೂರ್ಣಾಂಕ
+mm_hostbased_ಕೀಲಿ_allowed(ರಚನೆ ssh *ssh, ರಚನೆ passwd *pw, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	(void)ssh;
-	(void)pw;
-	(void)user;
-	(void)host;
-	(void)key;
-	return 0;
+	(ಶೂನ್ಯ)ssh;
+	(ಶೂನ್ಯ)pw;
+	(ಶೂನ್ಯ)user;
+	(ಶೂನ್ಯ)host;
+	(ಶೂನ್ಯ)ಕೀಲಿ;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ಪೂರ್ಣಾಂಕ
+mm_sshkey_verify(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *ಕೀಲಿ, ಸ್ಥಿರಾಂಕ u_char *sig, ಗಾತ್ರ_t siglen,
+    ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t datalen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alg, u_int compat,
+    ರಚನೆ sshkey_sig_details **detailsp)
 {
-	return sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
+	ಹಿಂತಿರುಗಿ sshkey_verify(ಕೀಲಿ, sig, siglen, ದತ್ತಾಂಶ, datalen, alg, compat,
 	    detailsp);
 }
 
-void
-mm_inform_authserv(char *service, char *style)
+ಶೂನ್ಯ
+mm_inform_authserv(ಅಕ್ಷರ *service, ಅಕ್ಷರ *style)
 {
-	(void)service;
-	(void)style;
+	(ಶೂನ್ಯ)service;
+	(ಶೂನ್ಯ)style;
 }
 
-void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+ಶೂನ್ಯ
+mm_audit_event(ರಚನೆ ssh *ssh, ssh_audit_event_t event)
 {
-	(void)ssh;
-	(void)event;
+	(ಶೂನ್ಯ)ssh;
+	(ಶೂನ್ಯ)event;
 }
 
-void
-mm_start_pam(struct ssh *ssh)
+ಶೂನ್ಯ
+mm_ಆರಂಭ_pam(ರಚನೆ ssh *ssh)
 {
-	(void)ssh;
+	(ಶೂನ್ಯ)ssh;
 }
 
-int
-mm_do_pam_account(void)
+ಪೂರ್ಣಾಂಕ
+mm_do_pam_account(ಶೂನ್ಯ)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+ಸ್ಥಿರ ರಚನೆ sshkey *
+ತುಂಬು_ಖಾಸಗಿ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ರಚನೆ sshbuf *b = sshbuf_from(str, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(str));
+	ರಚನೆ sshkey *k = ಖಾಲಿ;
+	ಆದರೆ (b == ಖಾಲಿ || sshkey_parse_ಖಾಸಗಿ_fileblob(b, "", &k, ಖಾಲಿ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	ಹಿಂತಿರುಗಿ k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ಸ್ಥಿರ ರಚನೆ sshkey *
+ತುಂಬು_ಬಹಿರಂಗ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	ಅಕ್ಷರ *tmp, *cp;
+	ರಚನೆ sshkey *k = sshkey_new(ಕೀಲಿ_UNSPEC);
+	ಆದರೆ (k == ಖಾಲಿ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	ಆದರೆ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	ಬಿಡುಗಡೆ(tmp);
+	ಹಿಂತಿರುಗಿ k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+pump(ರಚನೆ ssh *from, ರಚನೆ ssh *ಗಮ್ಯ, ಗಾತ್ರ_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	ಸ್ಥಿರಾಂಕ u_char *buf;
+	ಗಾತ್ರ_t len;
 	u_char type;
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	ಆದರೆ ((r = ssh_packet_ಮುಂದಿನ(from, &type)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	ಆದರೆ (len == 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ ((r = ssh_ಒಳಹರಿವು_append(ಗಮ್ಯ, buf, len)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಆದರೆ ((r = ssh_output_consume(from, len)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 	*transferred = len;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಸತತ_kex(ರಚನೆ ssh *client, ರಚನೆ ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	ಪೂರ್ಣಾಂಕ r;
+	ಗಾತ್ರ_t cn, sn;
+	ಗಾಗಿ (ಪೂರ್ಣಾಂಕ i = 0; i < 100; i++) {
+		ಆದರೆ ((r = pump(server, client, &sn)) != 0) ಹಿಂತಿರುಗಿ r;
+		ಆದರೆ ((r = pump(client, server, &cn)) != 0) ಹಿಂತಿರುಗಿ r;
+		ಆದರೆ (server->kex->ಮುಗಿದ && client->kex->ಮುಗಿದ)
+			ಹಿಂತಿರುಗಿ 0;
+		ಆದರೆ (cn == 0 && sn == 0)
+			ಹಿಂತಿರುಗಿ SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	ಹಿಂತಿರುಗಿ SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#ಅನ್ತರ್ಭಾವ "fixed-keys.h"
 
-struct sshbuf *cfg = NULL;
+ರಚನೆ sshbuf *cfg = ಖಾಲಿ;
 
-int auth_rhosts2(struct passwd *pw, const char *client_user,
-    const char *hostname, const char *ipaddr) { (void)pw;
-    (void)client_user; (void)hostname; (void)ipaddr; return 0; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
-void record_failed_login(struct ssh *ssh, const char *user,
-    const char *hostname, const char *ttyname) { (void)ssh; (void)user;
-    (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
-void restore_uid(void) { }
-char *mm_auth2_read_banner(void) { return NULL; }
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
-void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
+ಪೂರ್ಣಾಂಕ auth_rhosts2(ರಚನೆ passwd *pw, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *client_user,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hostname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ipaddr) { (ಶೂನ್ಯ)pw;
+    (ಶೂನ್ಯ)client_user; (ಶೂನ್ಯ)hostname; (ಶೂನ್ಯ)ipaddr; ಹಿಂತಿರುಗಿ 0; }
+ಪೂರ್ಣಾಂಕ platform_locked_account(ರಚನೆ passwd *pw) { (ಶೂನ್ಯ)pw; ಹಿಂತಿರುಗಿ 0; }
+ಶೂನ್ಯ ದಾಖಲೆ_failed_login(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hostname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ttyname) { (ಶೂನ್ಯ)ssh; (ಶೂನ್ಯ)user;
+    (ಶೂನ್ಯ)hostname; (ಶೂನ್ಯ)ttyname; }
+ಪೂರ್ಣಾಂಕ temporarily_use_uid(ರಚನೆ passwd *pw) { (ಶೂನ್ಯ)pw; ಹಿಂತಿರುಗಿ 0; }
+ಶೂನ್ಯ restore_uid(ಶೂನ್ಯ) { }
+ಅಕ್ಷರ *mm_auth2_read_banner(ಶೂನ್ಯ) { ಹಿಂತಿರುಗಿ ಖಾಲಿ; }
+ರಚನೆ connection_info *
+server_get_connection_info(ರಚನೆ ssh *ssh, ಪೂರ್ಣಾಂಕ populate, ಪೂರ್ಣಾಂಕ use_dns)
+    { (ಶೂನ್ಯ)ssh; (ಶೂನ್ಯ)populate; (ಶೂನ್ಯ)use_dns; ಹಿಂತಿರುಗಿ ಖಾಲಿ; }
+ಶೂನ್ಯ server_process_permitopen(ರಚನೆ ssh *ssh) { (ಶೂನ್ಯ)ssh; }
+ಶೂನ್ಯ server_process_channel_timeouts(ರಚನೆ ssh *ssh) { (ಶೂನ್ಯ)ssh; }
 
-#include "../../../auth2.c"
+#ಅನ್ತರ್ಭಾವ "../../../auth2.c"
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static Authctxt g_authctxt;
+ಸ್ಥಿರ ರಚನೆ ssh *g_client = ಖಾಲಿ;
+ಸ್ಥಿರ ರಚನೆ ssh *g_server = ಖಾಲಿ;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ g_init = 0;
+ಸ್ಥಿರ Authctxt g_authctxt;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+ಸ್ಥಿರ ಶೂನ್ಯ
+fuzz_reset_authctxt(ರಚನೆ ssh *ssh)
 {
-	unsigned int i;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ i;
 
-	free(g_authctxt.user);
-	free(g_authctxt.service);
-	free(g_authctxt.style);
-	free(g_authctxt.auth_method_info);
-	if (g_authctxt.auth_methods != NULL) {
-		for (i = 0; i < g_authctxt.num_auth_methods; i++)
-			free(g_authctxt.auth_methods[i]);
-		free(g_authctxt.auth_methods);
+	ಬಿಡುಗಡೆ(g_authctxt.user);
+	ಬಿಡುಗಡೆ(g_authctxt.service);
+	ಬಿಡುಗಡೆ(g_authctxt.style);
+	ಬಿಡುಗಡೆ(g_authctxt.auth_ವಿಧಾನ_info);
+	ಆದರೆ (g_authctxt.auth_methods != ಖಾಲಿ) {
+		ಗಾಗಿ (i = 0; i < g_authctxt.ಅಂಕೆ_auth_methods; i++)
+			ಬಿಡುಗಡೆ(g_authctxt.auth_methods[i]);
+		ಬಿಡುಗಡೆ(g_authctxt.auth_methods);
 	}
-	sshkey_free(g_authctxt.auth_method_key);
-	for (i = 0; i < g_authctxt.nprev_keys; i++)
-		sshkey_free(g_authctxt.prev_keys[i]);
-	free(g_authctxt.prev_keys);
+	sshkey_free(g_authctxt.auth_ವಿಧಾನ_ಕೀಲಿ);
+	ಗಾಗಿ (i = 0; i < g_authctxt.nprev_ಕೀಲಿಗಳು; i++)
+		sshkey_free(g_authctxt.prev_ಕೀಲಿಗಳು[i]);
+	ಬಿಡುಗಡೆ(g_authctxt.prev_ಕೀಲಿಗಳು);
 	sshbuf_free(g_authctxt.session_info);
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
+	memset(&g_authctxt, 0, ಗಾತ್ರ(g_authctxt));
 	ssh->authctxt = &g_authctxt;
 }
 
-static int
-init_once(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+init_once(ಶೂನ್ಯ)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	ಆದರೆ (g_init)
+		ಹಿಂತಿರುಗಿ 0;
+	ಸಂಕೇತ(SIGPIPE, SIG_IGN);
 	log_init("sshd_auth_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	memset(&g_fake_pw, 0, sizeof(g_fake_pw));
-	g_fake_pw.pw_name = (char *)"fuzz";
+	memset(&g_fake_pw, 0, ಗಾತ್ರ(g_fake_pw));
+	g_fake_pw.pw_name = (ಅಕ್ಷರ *)"fuzz";
 	g_fake_pw.pw_uid = 1000;
 	g_fake_pw.pw_gid = 1000;
-	g_fake_pw.pw_dir = (char *)"/tmp";
-	g_fake_pw.pw_shell = (char *)"/bin/sh";
+	g_fake_pw.pw_dir = (ಅಕ್ಷರ *)"/tmp";
+	g_fake_pw.pw_shell = (ಅಕ್ಷರ *)"/bin/sh";
 	privsep_pw = &g_fake_pw;
 
 	initialize_server_options(&options);
@@ -306,73 +306,73 @@ init_once(void)
 
 	loginmsg = sshbuf_new();
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ರಚನೆ sshkey *priv = ತುಂಬು_ಖಾಸಗಿ(PRIV_ED25519);
+	ರಚನೆ sshkey *pub = ತುಂಬು_ಬಹಿರಂಗ(PUB_ED25519);
+	ಅಕ್ಷರ *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	ಅಕ್ಷರ *proposal[PROPOSAL_MAX] = { 0 };
+	ಪೂರ್ಣಾಂಕ i;
+	ಗಾಗಿ (i = 0; i < PROPOSAL_MAX; i++) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p = defaults[i];
+		ಆದರೆ (i == PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ರಚನೆ kex_params kp;
+	ಸ್ಮರಣೆ_ನಕಲು(kp.proposal, proposal, ಗಾತ್ರ(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	ಆದರೆ (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
-	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
+	ಆದರೆ (ssh_ಕೂಡಿಸು_hostkey(g_server, priv) != 0 ||
+	    ssh_ಕೂಡಿಸು_hostkey(g_client, pub) != 0)
+		ಹಿಂತಿರುಗಿ -1;
+	ಆದರೆ (ಸತತ_kex(g_client, g_server) != 0)
+		ಹಿಂತಿರುಗಿ -1;
 
 	fuzz_reset_authctxt(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_USERAUTH_REQUEST,
-	    &input_userauth_request);
+	ssh_dispatch_ಗಣ(g_server, SSH2_ಸಂದೇಶ_USERAUTH_REQUEST,
+	    &ಒಳಹರಿವು_userauth_request);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	ಬಿಡುಗಡೆ(keyname);
+	ಗಾಗಿ (i = 0; i < PROPOSAL_MAX; i++)
+		ಬಿಡುಗಡೆ(proposal[i]);
 	g_init = 1;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-fuzz_userauth_one(const uint8_t *data, size_t size)
+ಶೂನ್ಯ
+fuzz_userauth_one(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	ಆದರೆ (init_once() != 0)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (ಗಾತ್ರ_2 > 65000)
+		ಹಿಂತಿರುಗಿ;
 
 	fuzz_reset_authctxt(g_server);
 
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
-		    data, size) != 0)
-			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
-	done:
+	ಒಳ_fuzz = 1;
+	ಆದರೆ (setjmp(fuzz_env) == 0) {
+		ಗಾತ್ರ_t transferred;
+		ಆದರೆ (ssh_packet_put(g_client, SSH2_ಸಂದೇಶ_USERAUTH_REQUEST,
+		    ದತ್ತಾಂಶ, ಗಾತ್ರ_2) != 0)
+			ಹೋಗು ಮುಗಿದ;
+		ಆದರೆ (pump(g_client, g_server, &transferred) != 0)
+			ಹೋಗು ಮುಗಿದ;
+		(ಶೂನ್ಯ)ssh_dispatch_ಸತತ(g_server, DISPATCH_NONBLOCK, ಖಾಲಿ);
+	ಮುಗಿದ:
 		;
 	}
-	in_fuzz = 0;
+	ಒಳ_fuzz = 0;
 }

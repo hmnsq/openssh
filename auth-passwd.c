@@ -36,180 +36,180 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
 
-#include "packet.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "auth-options.h"
 
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+ಬಾಹ್ಯ ರಚನೆ sshbuf *loginmsg;
+ಬಾಹ್ಯ ServerOptions options;
 
-#ifdef HAVE_LOGIN_CAP
-extern login_cap_t *lc;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LOGIN_CAP
+ಬಾಹ್ಯ login_cap_t *lc;
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#define DAY		(24L * 60 * 60) /* 1 day in seconds */
-#define TWO_WEEKS	(2L * 7 * DAY)	/* 2 weeks in seconds */
+#ವ್ಯಾಖ್ಯಾನಿಸು DAY		(24L * 60 * 60) /* 1 day in seconds */
+#ವ್ಯಾಖ್ಯಾನಿಸು TWO_WEEKS	(2L * 7 * DAY)	/* 2 weeks in seconds */
 
-#define MAX_PASSWORD_LEN	1024
+#ವ್ಯಾಖ್ಯಾನಿಸು MAX_PASSWORD_LEN	1024
 
 /*
  * Tries to authenticate the user using password.  Returns true if
  * authentication succeeds.
  */
-int
-auth_password(struct ssh *ssh, const char *password)
+ಪೂರ್ಣಾಂಕ
+auth_password(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	int result, ok = authctxt->valid;
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	static int expire_checked = 0;
-#endif
+	ರಚನೆ passwd *pw = authctxt->pw;
+	ಪೂರ್ಣಾಂಕ ಫಲಿತಾಂಶ, ok = authctxt->valid;
+#ಆದರೆ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ expire_checked = 0;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (strlen(password) > MAX_PASSWORD_LEN)
-		return 0;
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(password) > MAX_PASSWORD_LEN)
+		ಹಿಂತಿರುಗಿ 0;
 
-#ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_CYGWIN
+	ಆದರೆ (pw->pw_uid == 0 && options.permit_ಬೇರು_login != PERMIT_YES)
 		ok = 0;
-#endif
-	if (*password == '\0' && options.permit_empty_passwd == 0)
-		return 0;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (*password == '\0' && options.permit_ಖಾಲಿಗಳು_passwd == 0)
+		ಹಿಂತಿರುಗಿ 0;
 
-#ifdef KRB5
-	if (options.kerberos_authentication == 1) {
-		int ret = auth_krb5_password(authctxt, password);
-		if (ret == 1 || ret == 0)
-			return ret && ok;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
+	ಆದರೆ (options.kerberos_authentication == 1) {
+		ಪೂರ್ಣಾಂಕ ret = auth_krb5_password(authctxt, password);
+		ಆದರೆ (ret == 1 || ret == 0)
+			ಹಿಂತಿರುಗಿ ret && ok;
 		/* Fall back to ordinary passwd authentication. */
 	}
-#endif
-#ifdef HAVE_CYGWIN
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_CYGWIN
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
-			return 0;
-		cygwin_set_impersonation_token(hToken);
-		return ok;
+		ಆದರೆ (hToken == INVALID_HANDLE_ಮೌಲ್ಯ)
+			ಹಿಂತಿರುಗಿ 0;
+		cygwin_ಗಣ_impersonation_token(hToken);
+		ಹಿಂತಿರುಗಿ ok;
 	}
-#endif
-#ifdef USE_PAM
-	if (options.use_pam)
-		return (sshpam_auth_passwd(authctxt, password) && ok);
-#endif
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	if (!expire_checked) {
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PAM
+	ಆದರೆ (options.use_pam)
+		ಹಿಂತಿರುಗಿ (sshpam_auth_passwd(authctxt, password) && ok);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	ಆದರೆ (!expire_checked) {
 		expire_checked = 1;
-		if (auth_shadow_pwexpired(authctxt))
+		ಆದರೆ (auth_shadow_pwexpired(authctxt))
 			authctxt->force_pwchange = 1;
 	}
-#endif
-	result = sys_auth_passwd(ssh, password);
-	if (authctxt->force_pwchange)
+#ಆದರೆ_ಅಂತ್ಯ
+	ಫಲಿತಾಂಶ = sys_auth_passwd(ssh, password);
+	ಆದರೆ (authctxt->force_pwchange)
 		auth_restrict_session(ssh);
-	return (result && ok);
+	ಹಿಂತಿರುಗಿ (ಫಲಿತಾಂಶ && ok);
 }
 
-#ifdef BSD_AUTH
-static void
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BSD_AUTH
+ಸ್ಥಿರ ಶೂನ್ಯ
 warn_expiry(Authctxt *authctxt, auth_session_t *as)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 	int64_t pwtimeleft, actimeleft, daysleft, pwwarntime, acwarntime;
 
 	pwwarntime = acwarntime = TWO_WEEKS;
 
 	pwtimeleft = auth_check_change(as);
 	actimeleft = auth_check_expire(as);
-#ifdef HAVE_LOGIN_CAP
-	if (authctxt->valid) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LOGIN_CAP
+	ಆದರೆ (authctxt->valid) {
 		pwwarntime = login_getcaptime(lc, "password-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 		acwarntime = login_getcaptime(lc, "expire-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 	}
-#endif
-	if (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
 		daysleft = pwtimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		ಆದರೆ ((r = sshbuf_putf(loginmsg,
 		    "Your password will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if (actimeleft != 0 && actimeleft < acwarntime) {
+	ಆದರೆ (actimeleft != 0 && actimeleft < acwarntime) {
 		daysleft = actimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		ಆದರೆ ((r = sshbuf_putf(loginmsg,
 		    "Your account will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 }
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+ಪೂರ್ಣಾಂಕ
+sys_auth_passwd(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	auth_session_t *as;
-	static int expire_checked = 0;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ expire_checked = 0;
 
 	as = auth_usercheck(authctxt->pw->pw_name, authctxt->style, "auth-ssh",
-	    (char *)password);
-	if (as == NULL)
-		return (0);
-	if (auth_getstate(as) & AUTH_PWEXPIRED) {
+	    (ಅಕ್ಷರ *)password);
+	ಆದರೆ (as == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ (0);
+	ಆದರೆ (auth_getstate(as) & AUTH_PWEXPIRED) {
 		auth_close(as);
 		auth_restrict_session(ssh);
 		authctxt->force_pwchange = 1;
-		return (1);
-	} else {
-		if (!expire_checked) {
+		ಹಿಂತಿರುಗಿ (1);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (!expire_checked) {
 			expire_checked = 1;
 			warn_expiry(authctxt, as);
 		}
-		return (auth_close(as));
+		ಹಿಂತಿರುಗಿ (auth_close(as));
 	}
 }
-#elif !defined(CUSTOM_SYS_AUTH_PASSWD)
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+#ಅಥವಾಆದರೆ !defined(CUSTOM_SYS_AUTH_PASSWD)
+ಪೂರ್ಣಾಂಕ
+sys_auth_passwd(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	char *encrypted_password, *salt = NULL;
+	ರಚನೆ passwd *pw = authctxt->pw;
+	ಅಕ್ಷರ *encrypted_password, *salt = ಖಾಲಿ;
 
 	/* Just use the supplied fake password if authctxt is invalid */
-	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
+	ಅಕ್ಷರ *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	ಆದರೆ (pw_password == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	ಆದರೆ (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		ಹಿಂತಿರುಗಿ (1);
 
 	/*
 	 * Encrypt the candidate password using the proper salt, or pass a
 	 * NULL and let xcrypt pick one.
 	 */
-	if (authctxt->valid && pw_password[0] && pw_password[1])
+	ಆದರೆ (authctxt->valid && pw_password[0] && pw_password[1])
 		salt = pw_password;
 	encrypted_password = xcrypt(password, salt);
 
@@ -217,7 +217,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * Authentication is accepted if the encrypted passwords
 	 * are identical.
 	 */
-	return encrypted_password != NULL &&
+	ಹಿಂತಿರುಗಿ encrypted_password != ಖಾಲಿ &&
 	    strcmp(encrypted_password, pw_password) == 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

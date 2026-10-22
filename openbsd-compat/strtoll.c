@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOLL
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRTOLL
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -46,13 +46,13 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-long long
-strtoll(const char *nptr, char **endptr, int base)
+ದೀರ್ಘ ದೀರ್ಘ
+strtoll(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nptr, ಅಕ್ಷರ **endptr, ಪೂರ್ಣಾಂಕ ತಳ)
 {
-	const char *s;
-	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
+	ದೀರ್ಘ ದೀರ್ಘ acc, cutoff;
+	ಪೂರ್ಣಾಂಕ c;
+	ಪೂರ್ಣಾಂಕ neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,25 +60,25 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ಮಾಡು {
+		c = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) *s++;
+	} ಆಗ (ಖಾಲಿಯೇ(c));
+	ಆದರೆ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		neg = 0;
-		if (c == '+')
+		ಆದರೆ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ಆದರೆ ((ತಳ == 0 || ತಳ == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		ತಳ = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	ಆದರೆ (ತಳ == 0)
+		ತಳ = c == '0' ? 8 : 10;
 
 	/*
 	 * Compute the cutoff value between legal numbers and illegal
@@ -99,50 +99,50 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * overflow.
 	 */
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
-	cutlim = cutoff % base;
-	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
-			cutlim -= base;
+	cutlim = cutoff % ತಳ;
+	cutoff /= ತಳ;
+	ಆದರೆ (neg) {
+		ಆದರೆ (cutlim > 0) {
+			cutlim -= ತಳ;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ಗಾಗಿ (acc = 0, any = 0;; c = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) *s++) {
+		ಆದರೆ (ಅಂಕಿಯೇ(c))
 			c -= '0';
-		else if (isalpha(c))
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರವೇ(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (c >= ತಳ)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (any < 0)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (neg) {
+			ಆದರೆ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				any = 1;
-				acc *= base;
+				acc *= ತಳ;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				any = 1;
-				acc *= base;
+				acc *= ತಳ;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ಆದರೆ (endptr != 0)
+		*endptr = (ಅಕ್ಷರ *) (any ? s - 1 : nptr);
+	ಹಿಂತಿರುಗಿ (acc);
 }
-#endif /* HAVE_STRTOLL */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_STRTOLL */

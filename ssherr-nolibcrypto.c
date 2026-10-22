@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
 
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 
-const char *
-ssherr_libcrypto(void)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+ssherr_libcrypto(ಶೂನ್ಯ)
 {
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }

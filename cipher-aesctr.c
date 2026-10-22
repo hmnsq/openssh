@@ -15,69 +15,69 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "cipher-aesctr.h"
+#ಅನ್ತರ್ಭಾವ "cipher-aesctr.h"
 
 /*
  * increment counter 'ctr',
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
-#ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
-	u8 x, add = 1;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CONSTANT_ಸಮಯ_INCREMENT
+	ಗಾಗಿ (i = len - 1; i >= 0; i--)
+		ಆದರೆ (++ctr[i])	/* continue on overflow */
+			ಹಿಂತಿರುಗಿ;
+#ಇಲ್ಲದಿದ್ದರೆ
+	u8 x, ಕೂಡಿಸು = 1;
 
-	for (i = len - 1; i >= 0; i--) {
-		ctr[i] += add;
+	ಗಾಗಿ (i = len - 1; i >= 0; i--) {
+		ctr[i] += ಕೂಡಿಸು;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
 		x = (x | (x >> 4)) & 0xf;
 		x = (x | (x >> 2)) & 0x3;
 		x = (x | (x >> 1)) & 0x1;
-		add *= (x^1);
+		ಕೂಡಿಸು *= (x^1);
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-void
-aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
+ಶೂನ್ಯ
+aesctr_keysetup(aesctr_ctx *x,ಸ್ಥಿರಾಂಕ u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->ಸುತ್ತುಗಳು = rijndael_ಕೀಲಿ_ಸಿದ್ಧತೆ_Enc(x->ek, k, kbits);
 }
 
-void
-aesctr_ivsetup(aesctr_ctx *x,const u8 *iv)
+ಶೂನ್ಯ
+aesctr_ivsetup(aesctr_ctx *x,ಸ್ಥಿರಾಂಕ u8 *iv)
 {
-	memcpy(x->ctr, iv, AES_BLOCK_SIZE);
+	ಸ್ಮರಣೆ_ನಕಲು(x->ctr, iv, AES_ಖಂಡ_ಗಾತ್ರ);
 }
 
-void
-aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
+ಶೂನ್ಯ
+aesctr_encrypt_ಬೈಟುಗಳು(aesctr_ctx *x,ಸ್ಥಿರಾಂಕ u8 *m,u8 *c,u32 ಬೈಟುಗಳು)
 {
 	u32 n = 0;
-	u8 buf[AES_BLOCK_SIZE];
+	u8 buf[AES_ಖಂಡ_ಗಾತ್ರ];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
-			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
-			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
+	ಆಗ ((ಬೈಟುಗಳು--) > 0) {
+		ಆದರೆ (n == 0) {
+			rijndaelEncrypt(x->ek, x->ಸುತ್ತುಗಳು, x->ctr, buf);
+			aesctr_inc(x->ctr, AES_ಖಂಡ_ಗಾತ್ರ);
 		}
 		*(c++) = *(m++) ^ buf[n];
-		n = (n + 1) % AES_BLOCK_SIZE;
+		n = (n + 1) % AES_ಖಂಡ_ಗಾತ್ರ;
 	}
 }
-#endif /* !WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* !WITH_OPENSSL */

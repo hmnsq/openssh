@@ -27,88 +27,88 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <sys/tree.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/queue.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
+#ಅನ್ತರ್ಭಾವ <sys/wait.h>
+#ಅನ್ತರ್ಭಾವ <sys/tree.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/queue.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <paths.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/evp.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshpty.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "match.h"
-#include "servconf.h"
-#include "uidswap.h"
-#include "compat.h"
-#include "cipher.h"
-#include "digest.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "atomicio.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "authfd.h"
-#include "msg.h"
-#include "dispatch.h"
-#include "channels.h"
-#include "session.h"
-#include "monitor.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "auth-options.h"
-#include "version.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "srclimit.h"
-#include "ssh-sandbox.h"
-#include "dh.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "sshpty.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
+#ಅನ್ತರ್ಭಾವ "uidswap.h"
+#ಅನ್ತರ್ಭಾವ "compat.h"
+#ಅನ್ತರ್ಭಾವ "cipher.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "canohost.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "authfd.h"
+#ಅನ್ತರ್ಭಾವ "msg.h"
+#ಅನ್ತರ್ಭಾವ "dispatch.h"
+#ಅನ್ತರ್ಭಾವ "channels.h"
+#ಅನ್ತರ್ಭಾವ "session.h"
+#ಅನ್ತರ್ಭಾವ "monitor.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "monitor_wrap.h"
+#ಅನ್ತರ್ಭಾವ "auth-options.h"
+#ಅನ್ತರ್ಭಾವ "version.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sk-api.h"
+#ಅನ್ತರ್ಭಾವ "srclimit.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sandbox.h"
+#ಅನ್ತರ್ಭಾವ "dh.h"
 
 /* Privsep fds */
-#define PRIVSEP_MONITOR_FD		(STDERR_FILENO + 1)
-#define PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
-#define PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
+#ವ್ಯಾಖ್ಯಾನಿಸು PRIVSEP_MONITOR_FD		(STDERR_FILENO + 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
+#ವ್ಯಾಖ್ಯಾನಿಸು PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+ಬಾಹ್ಯ ಅಕ್ಷರ *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
 
 /* Name of the server configuration file. */
-char *config_file_name = _PATH_SERVER_CONFIG_FILE;
+ಅಕ್ಷರ *config_file_name = ಮಾರ್ಗ_SERVER_CONFIG_FILE;
 
 /*
  * Debug mode flag.  This can be set on the command line.  If debug
@@ -116,81 +116,81 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+ಪೂರ್ಣಾಂಕ debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ inetd_flag = 0;
 
 /* Saved arguments to main(). */
-static char **saved_argv;
-static int saved_argc;
+ಸ್ಥಿರ ಅಕ್ಷರ **saved_argv;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ saved_argc;
 
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+ಪೂರ್ಣಾಂಕ auth_sock = -1;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ have_agent = 0;
 
-u_int		num_hostkeys;
-struct sshkey	**host_pubkeys;		/* all public host keys */
-struct sshkey	**host_certificates;	/* all public host certificates */
+u_int		ಅಂಕೆ_hostkeys;
+ರಚನೆ sshkey	**host_pubkeys;		/* all public host keys */
+ರಚನೆ sshkey	**host_certificates;	/* all public host certificates */
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
 
 /* variables used for privilege separation */
-struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+ರಚನೆ monitor *pmonitor = ಖಾಲಿ;
+ಪೂರ್ಣಾಂಕ privsep_is_preauth = 1;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ privsep_chroot = 1;
 
 /* global connection state and authentication contexts */
-Authctxt *the_authctxt = NULL;
-struct ssh *the_active_state;
+Authctxt *the_authctxt = ಖಾಲಿ;
+ರಚನೆ ssh *the_ಸಕ್ರಿಯ_state;
 
 /* global key/cert auth options. XXX move to permanent ssh->authctxt? */
-struct sshauthopt *auth_opts = NULL;
+ರಚನೆ sshauthopt *auth_opts = ಖಾಲಿ;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
+ರಚನೆ sshbuf *cfg;
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+ರಚನೆ include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+ರಚನೆ sshbuf *loginmsg;
 
 /* Prototypes for various functions defined later in this file. */
-static void do_ssh2_kex(struct ssh *);
+ಸ್ಥಿರ ಶೂನ್ಯ do_ssh2_kex(ರಚನೆ ssh *);
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+ರಚನೆ passwd *privsep_pw = ಖಾಲಿ;
 
-#ifndef HAVE_PLEDGE
-static struct ssh_sandbox *box;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PLEDGE
+ಸ್ಥಿರ ರಚನೆ ssh_sandbox *box;
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* XXX stub */
-int
-mm_is_monitor(void)
+ಪೂರ್ಣಾಂಕ
+mm_is_monitor(ಶೂನ್ಯ)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void
-privsep_child_demote(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+privsep_ಮಗು_demote(ಶೂನ್ಯ)
 {
 	gid_t gidset[1];
 
-#ifndef HAVE_PLEDGE
-	if ((box = ssh_sandbox_init(pmonitor)) == NULL)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PLEDGE
+	ಆದರೆ ((box = ssh_sandbox_init(pmonitor)) == ಖಾಲಿ)
 		fatal_f("ssh_sandbox_init failed");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	/* Demote the child */
-	if (privsep_chroot) {
+	ಆದರೆ (privsep_chroot) {
 		/* Change our root directory */
-		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
-			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
+		ಆದರೆ (chroot(ಮಾರ್ಗ_PRIVSEP_CHROOT_DIR) == -1)
+			fatal("chroot(\"%s\"): %s", ಮಾರ್ಗ_PRIVSEP_CHROOT_DIR,
 			    strerror(errno));
-		if (chdir("/") == -1)
+		ಆದರೆ (chdir("/") == -1)
 			fatal("chdir(\"/\"): %s", strerror(errno));
 
 		/*
@@ -200,229 +200,229 @@ privsep_child_demote(void)
 		debug3("privsep user:group %u:%u", (u_int)privsep_pw->pw_uid,
 		    (u_int)privsep_pw->pw_gid);
 		gidset[0] = privsep_pw->pw_gid;
-		if (setgroups(1, gidset) == -1)
+		ಆದರೆ (setgroups(1, gidset) == -1)
 			fatal("setgroups: %.100s", strerror(errno));
-		permanently_set_uid(privsep_pw);
+		permanently_ಗಣ_uid(privsep_pw);
 	}
 
 	/* sandbox ourselves */
-#ifdef HAVE_PLEDGE
-	if (pledge("stdio", NULL) == -1)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PLEDGE
+	ಆದರೆ (pledge("stdio", ಖಾಲಿ) == -1)
 		fatal_f("pledge()");
-#else
-	ssh_sandbox_child(box);
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+	ssh_sandbox_ಮಗು(box);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static void
-append_hostkey_type(struct sshbuf *b, const char *s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+append_hostkey_type(ರಚನೆ sshbuf *b, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
+	ಆದರೆ (ಹೊಂದಿಕೆ_ನಮೂನೆ_list(s, options.hostkeyalgorithms, 0) != 1) {
 		debug3_f("%s key not permitted by HostkeyAlgorithms", s);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
-	if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
+	ಆದರೆ ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
 		fatal_fr(r, "sshbuf_putf");
 }
 
-static char *
-list_hostkey_types(void)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+list_hostkey_types(ಶೂನ್ಯ)
 {
-	struct sshbuf *b;
-	struct sshkey *key;
-	char *ret;
+	ರಚನೆ sshbuf *b;
+	ರಚನೆ sshkey *ಕೀಲಿ;
+	ಅಕ್ಷರ *ret;
 	u_int i;
 
-	if ((b = sshbuf_new()) == NULL)
+	ಆದರೆ ((b = sshbuf_new()) == ಖಾಲಿ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; i < options.num_host_key_files; i++) {
-		key = host_pubkeys[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA:
+	ಗಾಗಿ (i = 0; i < options.ಅಂಕೆ_host_ಕೀಲಿ_files; i++) {
+		ಕೀಲಿ = host_pubkeys[i];
+		ಆದರೆ (ಕೀಲಿ == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಆಯ್ಕೆ (ಕೀಲಿ->type) {
+		ಸ್ಥಿತಿ ಕೀಲಿ_RSA:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b, "rsa-sha2-512");
 			append_hostkey_type(b, "rsa-sha2-256");
 			/* FALLTHROUGH */
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519:
+		ಸ್ಥಿತಿ ಕೀಲಿ_MLDSA44_ED25519:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_SK:
+			append_hostkey_type(b, sshkey_ssh_name(ಕೀಲಿ));
+			ನಿಲ್ಲಿಸು;
 		}
 		/* If the private key has a cert peer, then list that too */
-		key = host_certificates[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA_CERT:
+		ಕೀಲಿ = host_certificates[i];
+		ಆದರೆ (ಕೀಲಿ == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಆಯ್ಕೆ (ಕೀಲಿ->type) {
+		ಸ್ಥಿತಿ ಕೀಲಿ_RSA_CERT:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b,
 			    "rsa-sha2-512-cert-v01@openssh.com");
 			append_hostkey_type(b,
 			    "rsa-sha2-256-cert-v01@openssh.com");
 			/* FALLTHROUGH */
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_MLDSA44_ED25519_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_SK_CERT:
+			append_hostkey_type(b, sshkey_ssh_name(ಕೀಲಿ));
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	if ((ret = sshbuf_dup_string(b)) == NULL)
+	ಆದರೆ ((ret = sshbuf_dup_string(b)) == ಖಾಲಿ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
 	debug_f("%s", ret);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+ರಚನೆ sshkey *
+get_hostkey_ಬಹಿರಂಗ_by_type(ಪೂರ್ಣಾಂಕ type, ಪೂರ್ಣಾಂಕ nid, ರಚನೆ ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	ರಚನೆ sshkey *ಕೀಲಿ;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			key = host_certificates[i];
-			break;
-		default:
-			key = host_pubkeys[i];
-			break;
+	ಗಾಗಿ (i = 0; i < options.ಅಂಕೆ_host_ಕೀಲಿ_files; i++) {
+		ಆಯ್ಕೆ (type) {
+		ಸ್ಥಿತಿ ಕೀಲಿ_RSA_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_MLDSA44_ED25519_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_SK_CERT:
+			ಕೀಲಿ = host_certificates[i];
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಕೀಲಿ = host_pubkeys[i];
+			ನಿಲ್ಲಿಸು;
 		}
-		if (key == NULL || key->type != type)
-			continue;
-		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
-				continue;
+		ಆದರೆ (ಕೀಲಿ == ಖಾಲಿ || ಕೀಲಿ->type != type)
+			ಮುಂದುವರಿ;
+		ಆಯ್ಕೆ (type) {
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_CERT:
+		ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK_CERT:
+			ಆದರೆ (ಕೀಲಿ->ecdsa_nid != nid)
+				ಮುಂದುವರಿ;
 			/* FALLTHROUGH */
-		default:
-			return key;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಹಿಂತಿರುಗಿ ಕೀಲಿ;
 		}
 	}
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+ರಚನೆ sshkey *
+get_hostkey_ಖಾಸಗಿ_by_type(ಪೂರ್ಣಾಂಕ type, ಪೂರ್ಣಾಂಕ nid, ರಚನೆ ssh *ssh)
 {
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_by_index(int ind)
+ರಚನೆ sshkey *
+get_hostkey_by_ಸೂಚ್ಯಂಕ(ಪೂರ್ಣಾಂಕ ind)
 {
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+ರಚನೆ sshkey *
+get_hostkey_ಬಹಿರಂಗ_by_ಸೂಚ್ಯಂಕ(ಪೂರ್ಣಾಂಕ ind, ರಚನೆ ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return host_pubkeys[ind];
+	ಆದರೆ (ind < 0 || (u_int)ind >= options.ಅಂಕೆ_host_ಕೀಲಿ_files)
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ host_pubkeys[ind];
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+get_hostkey_ಸೂಚ್ಯಂಕ(ರಚನೆ sshkey *ಕೀಲಿ, ಪೂರ್ಣಾಂಕ compare, ರಚನೆ ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+	ಗಾಗಿ (i = 0; i < options.ಅಂಕೆ_host_ಕೀಲಿ_files; i++) {
+		ಆದರೆ (sshkey_is_cert(ಕೀಲಿ)) {
+			ಆದರೆ (ಕೀಲಿ == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
-			    sshkey_equal(key, host_certificates[i])))
-				return (i);
-		} else {
-			if (key == host_pubkeys[i] ||
+			    sshkey_equal(ಕೀಲಿ, host_certificates[i])))
+				ಹಿಂತಿರುಗಿ (i);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (ಕೀಲಿ == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
-			    sshkey_equal(key, host_pubkeys[i])))
-				return (i);
+			    sshkey_equal(ಕೀಲಿ, host_pubkeys[i])))
+				ಹಿಂತಿರುಗಿ (i);
 		}
 	}
-	return (-1);
+	ಹಿಂತಿರುಗಿ (-1);
 }
 
-static void
-usage(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+usage(ಶೂನ್ಯ)
 {
-	fprintf(stderr, "%s, %s\n", SSH_VERSION, SSH_OPENSSL_VERSION);
+	fprintf(stderr, "%s, %s\n", SSH_ಆವೃತ್ತಿ, SSH_OPENSSL_ಆವೃತ್ತಿ);
 	fprintf(stderr,
 "usage: sshd [-46DdeGiqTtV] [-C connection_spec] [-c host_cert_file]\n"
 "            [-E log_file] [-f config_file] [-g login_grace_time]\n"
 "            [-h host_key_file] [-o option] [-p port] [-u len]\n"
 	);
-	exit(1);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-static void
-parse_hostkeys(struct sshbuf *hostkeys)
+ಸ್ಥಿರ ಶೂನ್ಯ
+parse_hostkeys(ರಚನೆ sshbuf *hostkeys)
 {
-	int r;
-	u_int num_keys = 0;
-	struct sshkey *k;
-	const u_char *cp;
-	size_t len;
+	ಪೂರ್ಣಾಂಕ r;
+	u_int ಅಂಕೆ_ಕೀಲಿಗಳು = 0;
+	ರಚನೆ sshkey *k;
+	ಸ್ಥಿರಾಂಕ u_char *cp;
+	ಗಾತ್ರ_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	ಆಗ (sshbuf_len(hostkeys) != 0) {
+		ಆದರೆ (ಅಂಕೆ_ಕೀಲಿಗಳು > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
-		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
+		    ಅಂಕೆ_ಕೀಲಿಗಳು, ಅಂಕೆ_ಕೀಲಿಗಳು + 1, ಗಾತ್ರ(*host_pubkeys));
 		host_certificates = xrecallocarray(host_certificates,
-		    num_keys, num_keys + 1, sizeof(*host_certificates));
+		    ಅಂಕೆ_ಕೀಲಿಗಳು, ಅಂಕೆ_ಕೀಲಿಗಳು + 1, ಗಾತ್ರ(*host_certificates));
 		/* public key */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = ಖಾಲಿ;
+		ಆದರೆ ((r = sshbuf_get_string_ನೇರ(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ಆದರೆ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_pubkeys[num_keys] = k;
-		if (k)
-			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
+		host_pubkeys[ಅಂಕೆ_ಕೀಲಿಗಳು] = k;
+		ಆದರೆ (k)
+			debug2_f("key %u: %s", ಅಂಕೆ_ಕೀಲಿಗಳು, sshkey_ssh_name(k));
 		/* certificate */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = ಖಾಲಿ;
+		ಆದರೆ ((r = sshbuf_get_string_ನೇರ(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ಆದರೆ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_certificates[num_keys] = k;
-		if (k)
-			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
-		num_keys++;
+		host_certificates[ಅಂಕೆ_ಕೀಲಿಗಳು] = k;
+		ಆದರೆ (k)
+			debug2_f("cert %u: %s", ಅಂಕೆ_ಕೀಲಿಗಳು, sshkey_ssh_name(k));
+		ಅಂಕೆ_ಕೀಲಿಗಳು++;
 	}
-	num_hostkeys = num_keys;
+	ಅಂಕೆ_hostkeys = ಅಂಕೆ_ಕೀಲಿಗಳು;
 }
 
-static void
-recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
+ಸ್ಥಿರ ಶೂನ್ಯ
+recv_privsep_state(ರಚನೆ ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 {
-	struct sshbuf *hostkeys;
+	ರಚನೆ sshbuf *hostkeys;
 
 	debug3_f("begin");
 
-	mm_get_state(ssh, o, NULL, timing_secretp,
-	    &hostkeys, NULL, NULL, NULL, NULL);
+	mm_get_state(ssh, o, ಖಾಲಿ, timing_secretp,
+	    &hostkeys, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ);
 	parse_hostkeys(hostkeys);
 
 	sshbuf_free(hostkeys);
@@ -433,43 +433,43 @@ recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ ac, ಅಕ್ಷರ **av)
 {
-	struct ssh *ssh = NULL;
-	extern char *optarg;
-	extern int optind;
-	int r, opt, have_key = 0;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
+	ರಚನೆ ssh *ssh = ಖಾಲಿ;
+	ಬಾಹ್ಯ ಅಕ್ಷರ *optarg;
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ optind;
+	ಪೂರ್ಣಾಂಕ r, opt, have_ಕೀಲಿ = 0;
+	ಪೂರ್ಣಾಂಕ sock_ಒಳ = -1, sock_ಹೊರಹೋಗು = -1, rexeced_flag = 0;
 	u_int i;
-	mode_t new_umask;
+	ಬಹುಲಕ_t new_umask;
 	Authctxt *authctxt;
 	sigset_t sigmask;
 	uint64_t timing_secret = 0;
 
 	closefrom(PRIVSEP_MIN_FREE_FD);
 	sigemptyset(&sigmask);
-	sigprocmask(SIG_SETMASK, &sigmask, NULL);
+	sigprocmask(SIG_SETMASK, &sigmask, ಖಾಲಿ);
 
-#ifdef HAVE_SECUREWARE
-	(void)set_auth_parameters(ac, av);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SECUREWARE
+	(ಶೂನ್ಯ)ಗಣ_auth_parameters(ac, av);
+#ಆದರೆ_ಅಂತ್ಯ
 	__progname = ssh_get_progname(av[0]);
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, ಗಾತ್ರ(*saved_argv));
+	ಗಾಗಿ (i = 0; (ಪೂರ್ಣಾಂಕ)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
-	saved_argv[i] = NULL;
+	saved_argv[i] = ಖಾಲಿ;
 
-	seed_rng();
+	ಬೀಜ_rng();
 
-#ifndef HAVE_SETPROCTITLE
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETPROCTITLE
 	/* Prepare for later setproctitle emulation */
 	compat_init_setproctitle(ac, av);
 	av = saved_argv;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -478,219 +478,219 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	ಆಗ ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
-		switch (opt) {
-		case '4':
+		ಆಯ್ಕೆ (opt) {
+		ಸ್ಥಿತಿ '4':
 			/* ignore */
-			break;
-		case '6':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '6':
 			/* ignore */
-			break;
-		case 'f':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'f':
 			/* ignore */
-			break;
-		case 'c':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'c':
 			/* ignore */
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'd':
+			ಆದರೆ (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
-		case 'E':
-		case 'e':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'D':
+		ಸ್ಥಿತಿ 'E':
+		ಸ್ಥಿತಿ 'e':
 			/* ignore */
-			break;
-		case 'i':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'r':
 			/* ignore */
-			break;
-		case 'R':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'R':
 			rexeced_flag = 1;
-			break;
-		case 'Q':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'q':
 			/* ignored */
-			break;
-		case 'b':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'p':
 			/* ignored */
-			break;
-		case 'g':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'g':
 			/* ignored */
-			break;
-		case 'k':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'h':
 			/* ignored */
-			break;
-		case 't':
-		case 'T':
-		case 'G':
-		case 'C':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 't':
+		ಸ್ಥಿತಿ 'T':
+		ಸ್ಥಿತಿ 'G':
+		ಸ್ಥಿತಿ 'C':
 			fatal("test/dump modes not supported");
-			break;
-		case 'u':
-			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'u':
+			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, ಖಾಲಿ);
+			ಆದರೆ (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
-				exit(1);
+				ನಿರ್ಗಮಿಸು(1);
 			}
-			break;
-		case 'o':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'o':
 			/* ignored */
-			break;
-		case 'V':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'V':
 			fprintf(stderr, "%s, %s\n",
-			    SSH_VERSION, SSH_OPENSSL_VERSION);
-			exit(0);
-		default:
+			    SSH_ಆವೃತ್ತಿ, SSH_OPENSSL_ಆವೃತ್ತಿ);
+			ನಿರ್ಗಮಿಸು(0);
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			usage();
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	if (!rexeced_flag)
+	ಆದರೆ (!rexeced_flag)
 		fatal("sshd-auth should not be executed directly");
 
 	log_init(__progname,
-	    options.log_level == SYSLOG_LEVEL_NOT_SET ?
+	    options.log_level == SYSLOG_LEVEL_NOT_ಗಣ ?
 	    SYSLOG_LEVEL_INFO : options.log_level,
-	    options.log_facility == SYSLOG_FACILITY_NOT_SET ?
+	    options.log_facility == SYSLOG_FACILITY_NOT_ಗಣ ?
 	    SYSLOG_FACILITY_AUTH : options.log_facility, 1);
 
 	/* XXX can't use monitor_init(); it makes fds */
-	pmonitor = xcalloc(1, sizeof(*pmonitor));
+	pmonitor = xcalloc(1, ಗಾತ್ರ(*pmonitor));
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_recvfd = PRIVSEP_MONITOR_FD;
 	pmonitor->m_log_sendfd = PRIVSEP_LOG_FD;
-	set_log_handler(mm_log_handler, pmonitor);
+	ಗಣ_log_handler(mm_log_handler, pmonitor);
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	ಆದರೆ (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
 	/* Connection passed by stdin/out */
-	if (inetd_flag) {
+	ಆದರೆ (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
-		sock_in = dup(STDIN_FILENO);
-		sock_out = dup(STDOUT_FILENO);
-	} else {
+		sock_ಒಳ = dup(STDIN_FILENO);
+		sock_ಹೊರಹೋಗು = dup(STDOUT_FILENO);
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* rexec case; accept()ed socket in ancestor listener */
-		sock_in = sock_out = dup(STDIN_FILENO);
+		sock_ಒಳ = sock_ಹೊರಹೋಗು = dup(STDIN_FILENO);
 	}
 
-	if (stdfd_devnull(1, 1, 0) == -1)
+	ಆದರೆ (stdfd_devnull(1, 1, 0) == -1)
 		error("stdfd_devnull failed");
-	debug("network sockets: %d, %d", sock_in, sock_out);
+	debug("network sockets: %d, %d", sock_ಒಳ, sock_ಹೊರಹೋಗು);
 
 	/*
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	ಆದರೆ ((ssh = ssh_packet_ಗಣ_connection(ಖಾಲಿ, sock_ಒಳ, sock_ಹೊರಹೋಗು)) == ಖಾಲಿ)
 		fatal("Unable to create connection");
-	the_active_state = ssh;
-	ssh_packet_set_server(ssh);
+	the_ಸಕ್ರಿಯ_state = ssh;
+	ssh_packet_ಗಣ_server(ssh);
 	pmonitor->m_pkex = &ssh->kex;
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	ಆದರೆ ((cfg = sshbuf_new()) == ಖಾಲಿ)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[session-auth early]");
 	recv_privsep_state(ssh, &options, &timing_secret);
 	options.timing_secret = timing_secret; /* XXX eliminate from unpriv */
-	ssh_packet_set_qos(ssh, options.ip_qos_interactive,
+	ssh_packet_ಗಣ_qos(ssh, options.ip_qos_interactive,
 	    options.ip_qos_bulk);
 
 	/* Reinit logging in case config set Level, Facility or Verbose. */
 	log_init(__progname, options.log_level, options.log_facility, 1);
-	set_log_handler(mm_log_handler, pmonitor);
+	ಗಣ_log_handler(mm_log_handler, pmonitor);
 
-	debug("sshd-auth version %s, %s", SSH_VERSION, SSH_OPENSSL_VERSION);
+	debug("sshd-auth version %s, %s", SSH_ಆವೃತ್ತಿ, SSH_OPENSSL_ಆವೃತ್ತಿ);
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	ಆದರೆ ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == ಖಾಲಿ) {
+		ಆದರೆ (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		privsep_pw = pwcopy(privsep_pw);
-		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
+		freezero(privsep_pw->pw_passwd, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
 	}
 	endpwent();
 
-#ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
-		dh_set_moduli_file(options.moduli_file);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+	ಆದರೆ (options.moduli_file != ಖಾಲಿ)
+		dh_ಗಣ_moduli_file(options.moduli_file);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	ಆದರೆ (options.host_ಕೀಲಿ_agent) {
+		ಆದರೆ (strcmp(options.host_ಕೀಲಿ_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+			    options.host_ಕೀಲಿ_agent, 1);
+		ಆದರೆ ((r = ssh_get_authentication_socket(ಖಾಲಿ)) == 0)
 			have_agent = 1;
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_ಕೀಲಿ_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	ಆದರೆ (options.ಅಂಕೆ_host_ಕೀಲಿ_files != ಅಂಕೆ_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
-		    options.num_host_key_files, num_hostkeys);
+		    options.ಅಂಕೆ_host_ಕೀಲಿ_files, ಅಂಕೆ_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (host_pubkeys[i] != NULL) {
-			have_key = 1;
-			break;
+	ಗಾಗಿ (i = 0; i < options.ಅಂಕೆ_host_ಕೀಲಿ_files; i++) {
+		ಆದರೆ (host_pubkeys[i] != ಖಾಲಿ) {
+			have_ಕೀಲಿ = 1;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	if (!have_key)
+	ಆದರೆ (!have_ಕೀಲಿ)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
 	new_umask = umask(0077) | 0022;
-	(void) umask(new_umask);
+	(ಶೂನ್ಯ) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
 	log_init(__progname, options.log_level, options.log_facility, 1);
-	set_log_handler(mm_log_handler, pmonitor);
-	for (i = 0; i < options.num_log_verbose; i++)
-		log_verbose_add(options.log_verbose[i]);
+	ಗಣ_log_handler(mm_log_handler, pmonitor);
+	ಗಾಗಿ (i = 0; i < options.ಅಂಕೆ_log_verbose; i++)
+		log_verbose_ಕೂಡಿಸು(options.log_verbose[i]);
 
 	/*
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	ಆದರೆ (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* This is the child authenticating a new connection. */
 	setproctitle("%s", "[session-auth]");
 
 	/* Executed child processes don't need these. */
-	FD_CLOSEONEXEC(sock_out);
-	FD_CLOSEONEXEC(sock_in);
+	FD_CLOSEONEXEC(sock_ಹೊರಹೋಗು);
+	FD_CLOSEONEXEC(sock_ಒಳ);
 
 	ssh_signal(SIGPIPE, SIG_IGN);
 	ssh_signal(SIGALRM, SIG_DFL);
@@ -701,36 +701,36 @@ main(int ac, char **av)
 
 	/* Prepare the channels layer */
 	channel_init_channels(ssh);
-	channel_set_af(ssh, options.address_family);
-	channel_set_tcp_keepalives(ssh,
+	channel_ಗಣ_af(ssh, options.ವಿಳಾಸ_family);
+	channel_ಗಣ_tcp_keepalives(ssh,
 	    options.tcp_keep_alive == SSH_KEEPALIVES_ALL);
 	server_process_channel_timeouts(ssh);
 	server_process_permitopen(ssh);
 
-	ssh_packet_set_nonblocking(ssh);
+	ssh_packet_ಗಣ_nonblocking(ssh);
 
 	/* allocate authentication context */
-	authctxt = xcalloc(1, sizeof(*authctxt));
+	authctxt = xcalloc(1, ಗಾತ್ರ(*authctxt));
 	ssh->authctxt = authctxt;
 
 	/* XXX global for cleanup, access from other modules */
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	ಆದರೆ ((auth_opts = sshauthopt_new_with_ಕೀಲಿಗಳು_defaults()) == ಖಾಲಿ)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	ಆದರೆ ((loginmsg = sshbuf_new()) == ಖಾಲಿ)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
-#ifdef GSSAPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
 	/* Cache supported mechanism OIDs for later use */
 	ssh_gssapi_prepare_supported_oids();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	privsep_child_demote();
+	privsep_ಮಗು_demote();
 
 	/* perform the key exchange */
 	/* authenticate user and start session */
@@ -742,66 +742,66 @@ main(int ac, char **av)
 	 */
 	mm_send_keystate(ssh, pmonitor);
 	sshauthopt_free(auth_opts);
-	ssh_packet_clear_keys(ssh);
-	exit(0);
+	ssh_packet_clear_ಕೀಲಿಗಳು(ssh);
+	ನಿರ್ಗಮಿಸು(0);
 }
 
-int
-sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slenp,
-    const u_char *data, size_t dlen, const char *alg)
+ಪೂರ್ಣಾಂಕ
+sshd_hostkey_sign(ರಚನೆ ssh *ssh, ರಚನೆ sshkey *privkey,
+    ರಚನೆ sshkey *pubkey, u_char **signature, ಗಾತ್ರ_t *slenp,
+    ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t dlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	ಆದರೆ (privkey) {
+		ಆದರೆ (mm_sshkey_sign(ssh, privkey, signature, slenp,
+		    ದತ್ತಾಂಶ, dlen, alg, options.sk_provider, ಖಾಲಿ,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+		    ದತ್ತಾಂಶ, dlen, alg, options.sk_provider, ಖಾಲಿ,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /* SSH2 key exchange */
-static void
-do_ssh2_kex(struct ssh *ssh)
+ಸ್ಥಿರ ಶೂನ್ಯ
+do_ssh2_kex(ರಚನೆ ssh *ssh)
 {
-	char *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
-	const char *compression = NULL;
-	struct kex *kex;
-	int r;
+	ಅಕ್ಷರ *hkalgs = ಖಾಲಿ, *myproposal[PROPOSAL_MAX];
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *compression = ಖಾಲಿ;
+	ರಚನೆ kex *kex;
+	ಪೂರ್ಣಾಂಕ r;
 
-	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
+	ssh_packet_ಗಣ_rekey_limits(ssh, options.rekey_ಎಲ್ಲೆ,
 	    options.rekey_interval);
 
-	if (options.compression == COMP_NONE)
+	ಆದರೆ (options.compression == COMP_NONE)
 		compression = "none";
 	hkalgs = list_hostkey_types();
 
 	kex_proposal_populate_entries(ssh, myproposal, options.kex_algorithms,
 	    options.ciphers, options.macs, compression, hkalgs);
 
-	free(hkalgs);
+	ಬಿಡುಗಡೆ(hkalgs);
 
-	if ((r = kex_exchange_identification(ssh, -1,
-	    options.version_addendum)) != 0)
+	ಆದರೆ ((r = kex_exchange_identification(ssh, -1,
+	    options.ಆವೃತ್ತಿ_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 	mm_sshkey_setcompat(ssh); /* tell monitor */
 
-	if ((ssh->compat & SSH_BUG_NOREKEY))
+	ಆದರೆ ((ssh->compat & SSH_BUG_NOREKEY))
 		debug("client does not support rekeying");
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	ಆದರೆ ((r = kex_ಸಿದ್ಧತೆ(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
-	kex_set_server_sig_algs(ssh, options.pubkey_accepted_algos);
-	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto);
+	kex_ಗಣ_server_sig_algs(ssh, options.pubkey_accepted_algos);
+	kex_ಗಣ_warn_weak_crypto(ssh, options.warn_weak_crypto);
 	kex = ssh->kex;
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 	kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 	kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
 	kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_server;
@@ -811,32 +811,32 @@ do_ssh2_kex(struct ssh *ssh)
 	kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
 	kex->kex[KEX_ECDH_SHA2] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->ತುಂಬು_host_ಬಹಿರಂಗ_ಕೀಲಿ=&get_hostkey_ಬಹಿರಂಗ_by_type;
+	kex->ತುಂಬು_host_ಖಾಸಗಿ_ಕೀಲಿ=&get_hostkey_ಖಾಸಗಿ_by_type;
+	kex->host_ಕೀಲಿ_ಸೂಚ್ಯಂಕ=&get_hostkey_ಸೂಚ್ಯಂಕ;
 	kex->sign = sshd_hostkey_sign;
 
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &kex->done);
+	ssh_dispatch_ಸತತ_fatal(ssh, DISPATCH_ಖಂಡ, &kex->ಮುಗಿದ);
 	kex_proposal_free_entries(myproposal);
 
-#ifdef DEBUG_KEXDH
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	ಆದರೆ ((r = sshpkt_ಆರಂಭ(ssh, SSH2_ಸಂದೇಶ_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send test");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	debug("KEX done");
 }
 
 /* server specific fatal cleanup */
-void
-cleanup_exit(int i)
+ಶೂನ್ಯ
+cleanup_exit(ಪೂರ್ಣಾಂಕ i)
 {
 	_exit(i);
 }

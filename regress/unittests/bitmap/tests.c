@@ -5,95 +5,95 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "bitmap.h"
+#ಅನ್ತರ್ಭಾವ "bitmap.h"
 
-#define DEFAULT_NTESTS 131
+#ವ್ಯಾಖ್ಯಾನಿಸು DEFAULT_NTESTS 131
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
-#ifdef WITH_OPENSSL
-	struct bitmap *b;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+	ರಚನೆ bitmap *b;
 	BIGNUM *bn;
-	size_t len;
-	int i, j, k, n, ntests = DEFAULT_NTESTS;
+	ಗಾತ್ರ_t len;
+	ಪೂರ್ಣಾಂಕ i, j, k, n, ntests = DEFAULT_NTESTS;
 	u_char bbuf[1024], bnbuf[1024];
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (test_is_fast())
+	ಆದರೆ (test_is_fast())
 		ntests /= 4;
-	else if (test_is_slow())
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (test_is_slow())
 		ntests *= 2;
 
-	TEST_START("bitmap_new");
+	TEST_ಆರಂಭ("bitmap_new");
 	b = bitmap_new();
-	ASSERT_PTR_NE(b, NULL);
+	ASSERT_PTR_NE(b, ಖಾಲಿ);
 	bn = BN_new();
-	ASSERT_PTR_NE(bn, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(bn, ಖಾಲಿ);
+	TEST_ಮುಗಿದ();
 
-	TEST_START("bitmap_set_bit / bitmap_test_bit");
-	for (i = -1; i < ntests; i++) {
-		for (j = -1; j < ntests; j++) {
-			for (k = -1; k < ntests; k++) {
+	TEST_ಆರಂಭ("bitmap_set_bit / bitmap_test_bit");
+	ಗಾಗಿ (i = -1; i < ntests; i++) {
+		ಗಾಗಿ (j = -1; j < ntests; j++) {
+			ಗಾಗಿ (k = -1; k < ntests; k++) {
 				bitmap_zero(b);
 				BN_clear(bn);
 
 				test_subtest_info("set %d/%d/%d", i, j, k);
 				/* Set bits */
-				if (i >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, i), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, i), 1);
+				ಆದರೆ (i >= 0) {
+					ASSERT_INT_EQ(bitmap_ಗಣ_ಬಿಟ್(b, i), 0);
+					ASSERT_INT_EQ(BN_ಗಣ_ಬಿಟ್(bn, i), 1);
 				}
-				if (j >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, j), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, j), 1);
+				ಆದರೆ (j >= 0) {
+					ASSERT_INT_EQ(bitmap_ಗಣ_ಬಿಟ್(b, j), 0);
+					ASSERT_INT_EQ(BN_ಗಣ_ಬಿಟ್(bn, j), 1);
 				}
-				if (k >= 0) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, k), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, k), 1);
+				ಆದರೆ (k >= 0) {
+					ASSERT_INT_EQ(bitmap_ಗಣ_ಬಿಟ್(b, k), 0);
+					ASSERT_INT_EQ(BN_ಗಣ_ಬಿಟ್(bn, k), 1);
 				}
 
 				/* Check perfect match between bitmap and bn */
 				test_subtest_info("match %d/%d/%d", i, j, k);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				ಗಾಗಿ (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ಬಿಟ್_ಗಣ(bn, n),
+					    bitmap_test_ಬಿಟ್(b, n));
 				}
 
 				/* Test length calculations */
 				test_subtest_info("length %d/%d/%d", i, j, k);
-				ASSERT_INT_EQ(BN_num_bits(bn),
-				    (int)bitmap_nbits(b));
-				ASSERT_INT_EQ(BN_num_bytes(bn),
-				    (int)bitmap_nbytes(b));
+				ASSERT_INT_EQ(BN_ಅಂಕೆ_ಬಿಟ್ಟುಗಳು(bn),
+				    (ಪೂರ್ಣಾಂಕ)bitmap_nbits(b));
+				ASSERT_INT_EQ(BN_ಅಂಕೆ_ಬೈಟುಗಳು(bn),
+				    (ಪೂರ್ಣಾಂಕ)bitmap_nbytes(b));
 
 				/* Test serialisation */
 				test_subtest_info("serialise %d/%d/%d",
 				    i, j, k);
 				len = bitmap_nbytes(b);
-				memset(bbuf, 0xfc, sizeof(bbuf));
-				ASSERT_INT_EQ(bitmap_to_string(b, bbuf,
-				    sizeof(bbuf)), 0);
-				for (n = len; n < (int)sizeof(bbuf); n++)
+				memset(bbuf, 0xfc, ಗಾತ್ರ(bbuf));
+				ASSERT_INT_EQ(bitmap_ಗಮ್ಯ_string(b, bbuf,
+				    ಗಾತ್ರ(bbuf)), 0);
+				ಗಾಗಿ (n = len; n < (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ(bbuf); n++)
 					ASSERT_U8_EQ(bbuf[n], 0xfc);
 				r = BN_bn2bin(bn, bnbuf);
 				ASSERT_INT_GE(r, 0);
-				ASSERT_INT_EQ(r, (int)len);
+				ASSERT_INT_EQ(r, (ಪೂರ್ಣಾಂಕ)len);
 				ASSERT_MEM_EQ(bbuf, bnbuf, len);
 
 				/* Test deserialisation */
@@ -102,45 +102,45 @@ tests(void)
 				bitmap_zero(b);
 				ASSERT_INT_EQ(bitmap_from_string(b, bnbuf,
 				    len), 0);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				ಗಾಗಿ (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ಬಿಟ್_ಗಣ(bn, n),
+					    bitmap_test_ಬಿಟ್(b, n));
 				}
 
 				/* Test clearing bits */
 				test_subtest_info("clear %d/%d/%d",
 				    i, j, k);
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(bitmap_set_bit(b, n), 0);
-					ASSERT_INT_EQ(BN_set_bit(bn, n), 1);
+				ಗಾಗಿ (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(bitmap_ಗಣ_ಬಿಟ್(b, n), 0);
+					ASSERT_INT_EQ(BN_ಗಣ_ಬಿಟ್(bn, n), 1);
 				}
-				if (i >= 0) {
-					bitmap_clear_bit(b, i);
-					BN_clear_bit(bn, i);
+				ಆದರೆ (i >= 0) {
+					bitmap_clear_ಬಿಟ್(b, i);
+					BN_clear_ಬಿಟ್(bn, i);
 				}
-				if (j >= 0) {
-					bitmap_clear_bit(b, j);
-					BN_clear_bit(bn, j);
+				ಆದರೆ (j >= 0) {
+					bitmap_clear_ಬಿಟ್(b, j);
+					BN_clear_ಬಿಟ್(bn, j);
 				}
-				if (k >= 0) {
-					bitmap_clear_bit(b, k);
-					BN_clear_bit(bn, k);
+				ಆದರೆ (k >= 0) {
+					bitmap_clear_ಬಿಟ್(b, k);
+					BN_clear_ಬಿಟ್(bn, k);
 				}
-				for (n = 0; n < ntests; n++) {
-					ASSERT_INT_EQ(BN_is_bit_set(bn, n),
-					    bitmap_test_bit(b, n));
+				ಗಾಗಿ (n = 0; n < ntests; n++) {
+					ASSERT_INT_EQ(BN_is_ಬಿಟ್_ಗಣ(bn, n),
+					    bitmap_test_ಬಿಟ್(b, n));
 				}
 			}
 		}
 	}
 	bitmap_free(b);
 	BN_free(bn);
-	TEST_DONE();
-#endif
+	TEST_ಮುಗಿದ();
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
-	printf("no benchmarks\n");
+	ಬರೆ("no benchmarks\n");
 }

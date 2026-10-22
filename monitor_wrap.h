@@ -25,90 +25,90 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MM_WRAP_H_
-#define _MM_WRAP_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _MM_WRAP_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _MM_WRAP_H_
 
-#define MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
+#ವ್ಯಾಖ್ಯಾನಿಸು MONITOR_MAX_MSGLEN		(4 * 1024 * 1024)
 /* The configuration has to fit in a monitor message along with other state */
-#define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
+#ವ್ಯಾಖ್ಯಾನಿಸು MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+ಎಣಿಕೆ mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+ರಚನೆ ssh;
+ರಚನೆ monitor;
+ರಚನೆ Authctxt;
+ರಚನೆ sshkey;
+ರಚನೆ sshauthopt;
+ರಚನೆ sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
-#ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
-#endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+ಶೂನ್ಯ mm_log_handler(LogLevel, ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಶೂನ್ಯ *);
+ಪೂರ್ಣಾಂಕ mm_is_monitor(ಶೂನ್ಯ);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+DH *mm_ಆರಿಸು_dh(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
+ಶೂನ್ಯ mm_sshkey_setcompat(ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ mm_sshkey_sign(ರಚನೆ ssh *, ರಚನೆ sshkey *, u_char **, ಗಾತ್ರ_t *,
+    ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, u_int compat);
+ಶೂನ್ಯ mm_inform_authserv(ಅಕ್ಷರ *, ಅಕ್ಷರ *);
+ರಚನೆ passwd *mm_getpwnamallow(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ *mm_auth2_read_banner(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಂಕ mm_auth_password(ರಚನೆ ssh *, ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ mm_ಕೀಲಿ_allowed(ಎಣಿಕೆ mm_keytype, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey *,
+    ಪೂರ್ಣಾಂಕ, ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ mm_user_ಕೀಲಿ_allowed(ರಚನೆ ssh *ssh, ರಚನೆ passwd *, ರಚನೆ sshkey *, ಪೂರ್ಣಾಂಕ,
+    ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ mm_hostbased_ಕೀಲಿ_allowed(ರಚನೆ ssh *, ರಚನೆ passwd *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey *);
+ಪೂರ್ಣಾಂಕ mm_sshkey_verify(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t,
+    ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, u_int, ರಚನೆ sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+ಶೂನ್ಯ mm_decode_activate_server_options(ರಚನೆ ssh *ssh, ರಚನೆ sshbuf *m);
 
-#ifdef GSSAPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
-   gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
-OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-#endif
+   gss_ಬಫರ್_desc *, gss_ಬಫರ್_desc *, OM_uint32 *);
+ಪೂರ್ಣಾಂಕ mm_ssh_gssapi_userok(ಅಕ್ಷರ *user);
+OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_ಬಫರ್_t, gss_ಬಫರ್_t);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PAM
+ಶೂನ್ಯ mm_ಆರಂಭ_pam(ರಚನೆ ssh *ssh);
+u_int mm_do_pam_account(ಶೂನ್ಯ);
+ಶೂನ್ಯ *mm_sshpam_init_ctx(ರಚನೆ Authctxt *);
+ಪೂರ್ಣಾಂಕ mm_sshpam_query(ಶೂನ್ಯ *, ಅಕ್ಷರ **, ಅಕ್ಷರ **, u_int *, ಅಕ್ಷರ ***, u_int **);
+ಪೂರ್ಣಾಂಕ mm_sshpam_respond(ಶೂನ್ಯ *, u_int, ಅಕ್ಷರ **);
+ಶೂನ್ಯ mm_sshpam_free_ctx(ಶೂನ್ಯ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SSH_AUDIT_EVENTS
+#ಅನ್ತರ್ಭಾವ "audit.h"
+ಶೂನ್ಯ mm_audit_event(ರಚನೆ ssh *, ssh_audit_event_t);
+ಶೂನ್ಯ mm_audit_ಸತತ_command(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+ರಚನೆ Session;
+ಶೂನ್ಯ mm_terminate(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಂಕ mm_pty_allocate(ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ *, ಅಕ್ಷರ *, ಗಾತ್ರ_t);
+ಶೂನ್ಯ mm_session_pty_cleanup2(ರಚನೆ Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+ಶೂನ್ಯ mm_send_keystate(ರಚನೆ ssh *, ರಚನೆ monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+ರಚನೆ ServerOptions;
+ಶೂನ್ಯ mm_get_state(ರಚನೆ ssh *, ರಚನೆ ServerOptions *,
+    ರಚನೆ sshbuf **, uint64_t *, ರಚನೆ sshbuf **, ರಚನೆ sshbuf **,
+    u_char **, ರಚನೆ sshbuf **, ರಚನೆ sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+ಪೂರ್ಣಾಂಕ mm_bsdauth_query(ಶೂನ್ಯ *, ಅಕ್ಷರ **, ಅಕ್ಷರ **, u_int *, ಅಕ್ಷರ ***, u_int **);
+ಪೂರ್ಣಾಂಕ mm_bsdauth_respond(ಶೂನ್ಯ *, u_int, ಅಕ್ಷರ **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+ಶೂನ್ಯ	 server_process_permitopen(ರಚನೆ ssh *);
+ಶೂನ್ಯ	 server_process_channel_timeouts(ರಚನೆ ssh *ssh);
+ರಚನೆ connection_info *
+	 server_get_connection_info(ರಚನೆ ssh *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
 
-#endif /* _MM_WRAP_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* _MM_WRAP_H_ */

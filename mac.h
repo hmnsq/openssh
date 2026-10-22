@@ -23,31 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SSHMAC_H
-#define SSHMAC_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SSHMAC_H
+#ವ್ಯಾಖ್ಯಾನಿಸು SSHMAC_H
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+ರಚನೆ sshmac {
+	ಅಕ್ಷರ	*name;
+	ಪೂರ್ಣಾಂಕ	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*ಕೀಲಿ;
+	u_int	ಕೀಲಿ_len;
+	ಪೂರ್ಣಾಂಕ	type;
+	ಪೂರ್ಣಾಂಕ	etm;		/* Encrypt-then-MAC */
+	ರಚನೆ ssh_hmac_ctx	*hmac_ctx;
+	ರಚನೆ umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
-    u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+ಪೂರ್ಣಾಂಕ	 mac_valid(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ	*mac_alg_list(ಅಕ್ಷರ);
+ಪೂರ್ಣಾಂಕ	 mac_ಸಿದ್ಧತೆ(ರಚನೆ sshmac *, ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 mac_init(ರಚನೆ sshmac *);
+ಪೂರ್ಣಾಂಕ	 mac_compute(ರಚನೆ sshmac *, uint32_t, ಸ್ಥಿರಾಂಕ u_char *, ಪೂರ್ಣಾಂಕ,
+    u_char *, ಗಾತ್ರ_t);
+ಪೂರ್ಣಾಂಕ	 mac_check(ರಚನೆ sshmac *, uint32_t, ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t,
+    ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t);
+ಶೂನ್ಯ	 mac_clear(ರಚನೆ sshmac *);
 
-#endif /* SSHMAC_H */
+#ಆದರೆ_ಅಂತ್ಯ /* SSHMAC_H */

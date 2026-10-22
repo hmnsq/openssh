@@ -25,10 +25,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MM_FDPASS_H_
-#define _MM_FDPASS_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _MM_FDPASS_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _MM_FDPASS_H_
 
-int mm_send_fd(int, int);
-int mm_receive_fd(int);
+ಪೂರ್ಣಾಂಕ mm_send_fd(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ mm_receive_fd(ಪೂರ್ಣಾಂಕ);
 
-#endif /* _MM_FDPASS_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* _MM_FDPASS_H_ */

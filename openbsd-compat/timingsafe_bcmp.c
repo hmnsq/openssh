@@ -17,18 +17,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/timingsafe_bcmp.c */
 
-#include "includes.h"
-#ifndef HAVE_TIMINGSAFE_BCMP
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TIMINGSAFE_BCMP
 
-int
-timingsafe_bcmp(const void *b1, const void *b2, size_t n)
+ಪೂರ್ಣಾಂಕ
+timingsafe_bcmp(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *b1, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *b2, ಗಾತ್ರ_t n)
 {
-	const unsigned char *p1 = b1, *p2 = b2;
-	int ret = 0;
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *p1 = b1, *p2 = b2;
+	ಪೂರ್ಣಾಂಕ ret = 0;
 
-	for (; n > 0; n--)
+	ಗಾಗಿ (; n > 0; n--)
 		ret |= *p1++ ^ *p2++;
-	return (ret != 0);
+	ಹಿಂತಿರುಗಿ (ret != 0);
 }
 
-#endif /* TIMINGSAFE_BCMP */
+#ಆದರೆ_ಅಂತ್ಯ /* TIMINGSAFE_BCMP */

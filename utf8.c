@@ -20,29 +20,29 @@
  * in particular to sanitize untrusted strings for terminal output.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#ifdef HAVE_LANGINFO_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LANGINFO_H
 # include <langinfo.h>
-#endif
-#include <limits.h>
-#include <locale.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <locale.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಆದರೆ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
-#ifdef HAVE_WCHAR_H
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_WCHAR_H
 # include <wchar.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "utf8.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
 
-static int	 dangerous_locale(void);
-static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 dangerous_locale(ಶೂನ್ಯ);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 grow_dst(ಅಕ್ಷರ **, ಗಾತ್ರ_t *, ಗಾತ್ರ_t, ಅಕ್ಷರ **, ಗಾತ್ರ_t);
 
 
 /*
@@ -56,12 +56,12 @@ static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
  * returns for US-ASCII on various operating systems.
  */
 
-static int
-dangerous_locale(void) {
-	char	*loc;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+dangerous_locale(ಶೂನ್ಯ) {
+	ಅಕ್ಷರ	*loc;
 
 	loc = nl_langinfo(CODESET);
-	return strcmp(loc, "UTF-8") != 0 &&
+	ಹಿಂತಿರುಗಿ strcmp(loc, "UTF-8") != 0 &&
 	    strcmp(loc, "US-ASCII") != 0 &&		/* OpenBSD */
 	    strcmp(loc, "ANSI_X3.4-1968") != 0 &&	/* Linux */
 	    strcmp(loc, "ISO8859-1") != 0 &&		/* AIX */
@@ -69,23 +69,23 @@ dangerous_locale(void) {
 	    strcmp(loc, "") != 0;			/* Solaris 6 */
 }
 
-static int
-grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+grow_dst(ಅಕ್ಷರ **dst, ಗಾತ್ರ_t *sz, ಗಾತ್ರ_t maxsz, ಅಕ್ಷರ **dp, ಗಾತ್ರ_t need)
 {
-	char	*tp;
-	size_t	 tsz;
+	ಅಕ್ಷರ	*tp;
+	ಗಾತ್ರ_t	 tsz;
 
-	if (*dp + need < *dst + *sz)
-		return 0;
+	ಆದರೆ (*dp + need < *dst + *sz)
+		ಹಿಂತಿರುಗಿ 0;
 	tsz = *sz + 128;
-	if (tsz > maxsz)
+	ಆದರೆ (tsz > maxsz)
 		tsz = maxsz;
-	if ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
-		return -1;
+	ಆದರೆ ((tp = recallocarray(*dst, *sz, tsz, 1)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
 	*dp = tp + (*dp - *dst);
 	*dst = tp;
 	*sz = tsz;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -100,117 +100,117 @@ grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
  * written is returned in *wp.
  */
 
-int
-vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
+ಪೂರ್ಣಾಂಕ
+vasnmprintf(ಅಕ್ಷರ **str, ಗಾತ್ರ_t maxsz, ಪೂರ್ಣಾಂಕ *wp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ap)
 {
-	char	*src;	/* Source string returned from vasprintf. */
-	char	*sp;	/* Pointer into src. */
-	char	*dst;	/* Destination string to be returned. */
-	char	*dp;	/* Pointer into dst. */
-	char	*tp;	/* Temporary pointer for dst. */
-	size_t	 sz;	/* Number of bytes allocated for dst. */
+	ಅಕ್ಷರ	*src;	/* Source string returned from vasprintf. */
+	ಅಕ್ಷರ	*sp;	/* Pointer into src. */
+	ಅಕ್ಷರ	*dst;	/* Destination string to be returned. */
+	ಅಕ್ಷರ	*dp;	/* Pointer into dst. */
+	ಅಕ್ಷರ	*tp;	/* Temporary pointer for dst. */
+	ಗಾತ್ರ_t	 sz;	/* Number of bytes allocated for dst. */
 	wchar_t	 wc;	/* Wide character at sp. */
-	int	 len;	/* Number of bytes in the character at sp. */
-	int	 ret;	/* Number of bytes needed to format src. */
-	int	 width;	/* Display width of the character wc. */
-	int	 total_width, max_width, print;
+	ಪೂರ್ಣಾಂಕ	 len;	/* Number of bytes in the character at sp. */
+	ಪೂರ್ಣಾಂಕ	 ret;	/* Number of bytes needed to format src. */
+	ಪೂರ್ಣಾಂಕ	 ಅಗಲ;	/* Display width of the character wc. */
+	ಪೂರ್ಣಾಂಕ	 ಒಟ್ಟು_ಅಗಲ, max_ಅಗಲ, print;
 
-	src = NULL;
-	if ((ret = vasprintf(&src, fmt, ap)) <= 0)
-		goto fail;
+	src = ಖಾಲಿ;
+	ಆದರೆ ((ret = vasprintf(&src, fmt, ap)) <= 0)
+		ಹೋಗು fail;
 
-	sz = strlen(src) + 1;
-	if ((dst = malloc(sz)) == NULL) {
-		free(src);
+	sz = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(src) + 1;
+	ಆದರೆ ((dst = ಸ್ಮರಣೆ_ಕೊಡು(sz)) == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(src);
 		ret = -1;
-		goto fail;
+		ಹೋಗು fail;
 	}
 
-	if (maxsz > INT_MAX)
-		maxsz = INT_MAX;
+	ಆದರೆ (maxsz > ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)
+		maxsz = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
 
 	sp = src;
 	dp = dst;
 	ret = 0;
 	print = 1;
-	total_width = 0;
-	max_width = wp == NULL ? INT_MAX : *wp;
-	while (*sp != '\0') {
-		if ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
-			(void)mbtowc(NULL, NULL, MB_CUR_MAX);
-			if (dangerous_locale()) {
+	ಒಟ್ಟು_ಅಗಲ = 0;
+	max_ಅಗಲ = wp == ಖಾಲಿ ? ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ : *wp;
+	ಆಗ (*sp != '\0') {
+		ಆದರೆ ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
+			(ಶೂನ್ಯ)mbtowc(ಖಾಲಿ, ಖಾಲಿ, MB_CUR_MAX);
+			ಆದರೆ (dangerous_locale()) {
 				ret = -1;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 			len = 1;
-			width = -1;
-		} else if (wp == NULL &&
+			ಅಗಲ = -1;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (wp == ಖಾಲಿ &&
 		    (wc == L'\n' || wc == L'\r' || wc == L'\t')) {
 			/*
 			 * Don't use width uninitialized; the actual
 			 * value doesn't matter because total_width
 			 * is only returned for wp != NULL.
 			 */
-			width = 0;
-		} else if ((width = wcwidth(wc)) == -1 &&
+			ಅಗಲ = 0;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((ಅಗಲ = wcwidth(wc)) == -1 &&
 		    dangerous_locale()) {
 			ret = -1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
 		/* Valid, printable character. */
 
-		if (width >= 0) {
-			if (print && (dp - dst >= (int)maxsz - len ||
-			    total_width > max_width - width))
+		ಆದರೆ (ಅಗಲ >= 0) {
+			ಆದರೆ (print && (dp - dst >= (ಪೂರ್ಣಾಂಕ)maxsz - len ||
+			    ಒಟ್ಟು_ಅಗಲ > max_ಅಗಲ - ಅಗಲ))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			ಆದರೆ (print) {
+				ಆದರೆ (grow_dst(&dst, &sz, maxsz,
 				    &dp, len) == -1) {
 					ret = -1;
-					break;
+					ನಿಲ್ಲಿಸು;
 				}
-				total_width += width;
-				memcpy(dp, sp, len);
+				ಒಟ್ಟು_ಅಗಲ += ಅಗಲ;
+				ಸ್ಮರಣೆ_ನಕಲು(dp, sp, len);
 				dp += len;
 			}
 			sp += len;
-			if (ret >= 0)
+			ಆದರೆ (ret >= 0)
 				ret += len;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 
 		/* Escaping required. */
 
-		while (len > 0) {
-			if (print && (dp - dst >= (int)maxsz - 4 ||
-			    total_width > max_width - 4))
+		ಆಗ (len > 0) {
+			ಆದರೆ (print && (dp - dst >= (ಪೂರ್ಣಾಂಕ)maxsz - 4 ||
+			    ಒಟ್ಟು_ಅಗಲ > max_ಅಗಲ - 4))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			ಆದರೆ (print) {
+				ಆದರೆ (grow_dst(&dst, &sz, maxsz,
 				    &dp, 4) == -1) {
 					ret = -1;
-					break;
+					ನಿಲ್ಲಿಸು;
 				}
 				tp = vis(dp, *sp, VIS_OCTAL | VIS_ALL, 0);
-				width = tp - dp;
-				total_width += width;
+				ಅಗಲ = tp - dp;
+				ಒಟ್ಟು_ಅಗಲ += ಅಗಲ;
 				dp = tp;
-			} else
-				width = 4;
+			} ಇಲ್ಲದಿದ್ದರೆ
+				ಅಗಲ = 4;
 			len--;
 			sp++;
-			if (ret >= 0)
-				ret += width;
+			ಆದರೆ (ret >= 0)
+				ret += ಅಗಲ;
 		}
-		if (len > 0)
-			break;
+		ಆದರೆ (len > 0)
+			ನಿಲ್ಲಿಸು;
 	}
-	free(src);
+	ಬಿಡುಗಡೆ(src);
 	*dp = '\0';
 	*str = dst;
-	if (wp != NULL)
-		*wp = total_width;
+	ಆದರೆ (wp != ಖಾಲಿ)
+		*wp = ಒಟ್ಟು_ಅಗಲ;
 
 	/*
 	 * If the string was truncated by the width limit but
@@ -220,52 +220,52 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	 * works as expected.
 	 */
 
-	if (ret < (int)maxsz && !print)
+	ಆದರೆ (ret < (ಪೂರ್ಣಾಂಕ)maxsz && !print)
 		ret = -1;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 
 fail:
-	if (wp != NULL)
+	ಆದರೆ (wp != ಖಾಲಿ)
 		*wp = 0;
-	if (ret == 0) {
+	ಆದರೆ (ret == 0) {
 		*str = src;
-		return 0;
-	} else {
-		*str = NULL;
-		return -1;
+		ಹಿಂತಿರುಗಿ 0;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		*str = ಖಾಲಿ;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 }
 
-int
-snmprintf(char *str, size_t sz, int *wp, const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ
+snmprintf(ಅಕ್ಷರ *str, ಗಾತ್ರ_t sz, ಪೂರ್ಣಾಂಕ *wp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
 	va_list	 ap;
-	char	*cp = NULL;
-	int	 ret;
+	ಅಕ್ಷರ	*cp = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ	 ret;
 
 	va_start(ap, fmt);
 	ret = vasnmprintf(&cp, sz, wp, fmt, ap);
 	va_end(ap);
-	if (cp != NULL) {
-		(void)strlcpy(str, cp, sz);
-		free(cp);
-	} else
+	ಆದರೆ (cp != ಖಾಲಿ) {
+		(ಶೂನ್ಯ)strlcpy(str, cp, sz);
+		ಬಿಡುಗಡೆ(cp);
+	} ಇಲ್ಲದಿದ್ದರೆ
 		*str = '\0';
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ
+asmprintf(ಅಕ್ಷರ **outp, ಗಾತ್ರ_t sz, ಪೂರ್ಣಾಂಕ *wp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ಪೂರ್ಣಾಂಕ	 ret;
 
-	*outp = NULL;
+	*outp = ಖಾಲಿ;
 	va_start(ap, fmt);
 	ret = vasnmprintf(outp, sz, wp, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
@@ -273,44 +273,44 @@ asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
  * return the number of non-NUL bytes written.
  */
 
-int
-vfmprintf(FILE *stream, const char *fmt, va_list ap)
+ಪೂರ್ಣಾಂಕ
+vfmprintf(FILE *ಹರಿವು, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ap)
 {
-	char	*str = NULL;
-	int	 ret;
+	ಅಕ್ಷರ	*str = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ	 ret;
 
-	if ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
-		free(str);
-		return -1;
+	ಆದರೆ ((ret = vasnmprintf(&str, ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ, ಖಾಲಿ, fmt, ap)) < 0) {
+		ಬಿಡುಗಡೆ(str);
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (fputs(str, stream) == EOF)
+	ಆದರೆ (fputs(str, ಹರಿವು) == EOF)
 		ret = -1;
-	free(str);
-	return ret;
+	ಬಿಡುಗಡೆ(str);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-fmprintf(FILE *stream, const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ
+fmprintf(FILE *ಹರಿವು, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ಪೂರ್ಣಾಂಕ	 ret;
 
 	va_start(ap, fmt);
-	ret = vfmprintf(stream, fmt, ap);
+	ret = vfmprintf(ಹರಿವು, fmt, ap);
 	va_end(ap);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-mprintf(const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ
+mprintf(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ಪೂರ್ಣಾಂಕ	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stdout, fmt, ap);
 	va_end(ap);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
@@ -323,35 +323,35 @@ mprintf(const char *fmt, ...)
  *      what's out there first.
  * XXX: alternately runtime probe that toupper('i') != 'I' and vice-versa?
  */
-void
-msetlocale(void)
+ಶೂನ್ಯ
+msetlocale(ಶೂನ್ಯ)
 {
-	const char *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
-	char *cp;
-	int i;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", ಖಾಲಿ };
+	ಅಕ್ಷರ *cp;
+	ಪೂರ್ಣಾಂಕ i;
 
 	/*
 	 * We can't yet cope with dotless/dotted I in Turkic locales,
 	 * so fall back to the C locale for these.
 	 */
-	for (i = 0; vars[i] != NULL; i++) {
-		if ((cp = getenv(vars[i])) == NULL)
-			continue;
-		if (strncasecmp(cp, "tr", 2) != 0 &&
+	ಗಾಗಿ (i = 0; vars[i] != ಖಾಲಿ; i++) {
+		ಆದರೆ ((cp = getenv(vars[i])) == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (strncasecmp(cp, "tr", 2) != 0 &&
 		    strncasecmp(cp, "crh", 3) != 0 &&
 		    strncasecmp(cp, "az", 2) != 0)
-			break;
+			ನಿಲ್ಲಿಸು;
 		/*
 		 * If we're in a UTF-8 locale then prefer to use
 		 * the C.UTF-8 locale (or equivalent) if it exists.
 		 */
-		if ((strcasestr(cp, "UTF-8") != NULL ||
-		    strcasestr(cp, "UTF8") != NULL) &&
-		    (setlocale(LC_CTYPE, "C.UTF-8") != NULL ||
-		    setlocale(LC_CTYPE, "POSIX.UTF-8") != NULL))
-			return;
+		ಆದರೆ ((strcasestr(cp, "UTF-8") != ಖಾಲಿ ||
+		    strcasestr(cp, "UTF8") != ಖಾಲಿ) &&
+		    (setlocale(LC_CTYPE, "C.UTF-8") != ಖಾಲಿ ||
+		    setlocale(LC_CTYPE, "POSIX.UTF-8") != ಖಾಲಿ))
+			ಹಿಂತಿರುಗಿ;
 		setlocale(LC_CTYPE, "C");
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	/* We can handle this locale */
 	setlocale(LC_CTYPE, "");

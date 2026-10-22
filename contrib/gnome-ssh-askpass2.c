@@ -36,12 +36,12 @@
  * you don't trust your X server. We grab the keyboard always.
  */
 
-#define GRAB_TRIES	16
-#define GRAB_WAIT	250 /* milliseconds */
+#ವ್ಯಾಖ್ಯಾನಿಸು GRAB_TRIES	16
+#ವ್ಯಾಖ್ಯಾನಿಸು GRAB_WAIT	250 /* milliseconds */
 
-#define PROMPT_ENTRY	0
-#define PROMPT_CONFIRM	1
-#define PROMPT_NONE	2
+#ವ್ಯಾಖ್ಯಾನಿಸು PROMPT_ನಮೂದು	0
+#ವ್ಯಾಖ್ಯಾನಿಸು PROMPT_CONFIRM	1
+#ವ್ಯಾಖ್ಯಾನಿಸು PROMPT_NONE	2
 
 /*
  * Compile with:
@@ -52,248 +52,248 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#ಅನ್ತರ್ಭಾವ <X11/Xlib.h>
+#ಅನ್ತರ್ಭಾವ <gtk/gtk.h>
+#ಅನ್ತರ್ಭಾವ <gdk/gdkx.h>
+#ಅನ್ತರ್ಭಾವ <gdk/gdkkeysyms.h>
 
-static void
-report_failed_grab (GtkWidget *parent_window, const char *what)
+ಸ್ಥಿರ ಶೂನ್ಯ
+report_failed_grab (GtkWidget *ಪೋಷಕ_ಕಿಟಕಿ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *what)
 {
 	GtkWidget *err;
 
-	err = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+	err = gtk_ಸಂದೇಶ_dialog_new(GTK_ಕಿಟಕಿ(ಪೋಷಕ_ಕಿಟಕಿ), 0,
+	    GTK_ಸಂದೇಶ_ERROR, GTK_BUTTONS_CLOSE,
 	    "Could not grab %s. A malicious client may be eavesdropping "
 	    "on your session.", what);
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
+	gtk_ಕಿಟಕಿ_ಗಣ_position(GTK_ಕಿಟಕಿ(err), GTK_WIN_POS_CENTER);
 
-	gtk_dialog_run(GTK_DIALOG(err));
+	gtk_dialog_ಸತತ(GTK_DIALOG(err));
 
 	gtk_widget_destroy(err);
 }
 
-static void
-ok_dialog(GtkWidget *entry, gpointer dialog)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ok_dialog(GtkWidget *ನಮೂದು, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+ಸ್ಥಿರ gboolean
+check_none(GtkWidget *widget, Gdk_Event_ಕೀಲಿ *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	ಆಯ್ಕೆ (event->keyval) {
+	ಸ್ಥಿತಿ GDK_ಕೀಲಿ_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		ಹಿಂತಿರುಗಿ TRUE;
+	ಸ್ಥಿತಿ GDK_ಕೀಲಿ_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		ಹಿಂತಿರುಗಿ TRUE;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		/* eat all other key events */
-		return TRUE;
+		ಹಿಂತಿರುಗಿ TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+parse_env_hex_color(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *env, GdkColor *c)
 {
-	const char *s;
-	unsigned long ul;
-	char *ep;
-	size_t n;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ul;
+	ಅಕ್ಷರ *ep;
+	ಗಾತ್ರ_t n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	ಆದರೆ ((s = getenv(env)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	memset(c, 0, sizeof(*c));
+	memset(c, 0, ಗಾತ್ರ(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	ಆದರೆ (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(s, "0x", 2) == 0)
 		s += 2;
-	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
+	n = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s);
+	ಆದರೆ (n != 3 && n != 6)
+		ಹೋಗು bad;
 	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	ಆದರೆ (*ep != '\0' || ul > 0xffffff) {
  bad:
 		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	ಆದರೆ (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+passphrase_dialog(ಅಕ್ಷರ *ಸಂದೇಶ_2, ಪೂರ್ಣಾಂಕ prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
-	GtkWidget *parent_window, *dialog, *entry;
-	GdkGrabStatus status;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *failed;
+	ಅಕ್ಷರ *passphrase, *local;
+	ಪೂರ್ಣಾಂಕ ಫಲಿತಾಂಶ, grab_tries, grab_server, grab_ಸೂಚಕ;
+	ಪೂರ್ಣಾಂಕ buttons, default_response;
+	GtkWidget *ಪೋಷಕ_ಕಿಟಕಿ, *dialog, *ನಮೂದು;
+	Gdk_Grab_ಸ್ಥಿತಿ ಸ್ಥಿತಿ_2;
 	GdkColor fg, bg;
-	int fg_set = 0, bg_set = 0;
+	ಪೂರ್ಣಾಂಕ fg_ಗಣ = 0, bg_ಗಣ = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != ಖಾಲಿ);
+	grab_ಸೂಚಕ = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != ಖಾಲಿ);
 	grab_tries = 0;
 
-	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
-	bg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
+	fg_ಗಣ = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
+	bg_ಗಣ = parse_env_hex_color("GNOME_SSH_ASKPASS_BG_COLOR", &bg);
 
 	/* Create an invisible parent window so that GtkDialog doesn't
 	 * complain.  */
-	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	ಪೋಷಕ_ಕಿಟಕಿ = gtk_ಕಿಟಕಿ_new(GTK_ಕಿಟಕಿ_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	ಆಯ್ಕೆ (prompt_type) {
+	ಸ್ಥಿತಿ PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
 
-	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
-	    GTK_MESSAGE_QUESTION, buttons, "%s", message);
+	dialog = gtk_ಸಂದೇಶ_dialog_new(GTK_ಕಿಟಕಿ(ಪೋಷಕ_ಕಿಟಕಿ), 0,
+	    GTK_ಸಂದೇಶ_QUESTION, buttons, "%s", ಸಂದೇಶ_2);
 
-	gtk_window_set_title(GTK_WINDOW(dialog), "OpenSSH");
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
-	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
-	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
+	gtk_ಕಿಟಕಿ_ಗಣ_title(GTK_ಕಿಟಕಿ(dialog), "OpenSSH");
+	gtk_ಕಿಟಕಿ_ಗಣ_position (GTK_ಕಿಟಕಿ(dialog), GTK_WIN_POS_CENTER);
+	gtk_ಕಿಟಕಿ_ಗಣ_keep_above(GTK_ಕಿಟಕಿ(dialog), TRUE);
+	gtk_dialog_ಗಣ_default_response(GTK_DIALOG(dialog), default_response);
+	gtk_ಕಿಟಕಿ_ಗಣ_keep_above(GTK_ಕಿಟಕಿ(dialog), TRUE);
 
-	if (fg_set)
-		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
-		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
+	ಆದರೆ (fg_ಗಣ)
+		gtk_widget_modify_fg(dialog, GTK_STATE_ಸಾಮಾನ್ಯ, &fg);
+	ಆದರೆ (bg_ಗಣ)
+		gtk_widget_modify_bg(dialog, GTK_STATE_ಸಾಮಾನ್ಯ, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
-		entry = gtk_entry_new();
-		if (fg_set)
-			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
-			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
-		gtk_box_pack_start(
+	ಆದರೆ (prompt_type == PROMPT_ನಮೂದು || prompt_type == PROMPT_NONE) {
+		ನಮೂದು = gtk_ನಮೂದು_new();
+		ಆದರೆ (fg_ಗಣ)
+			gtk_widget_modify_fg(ನಮೂದು, GTK_STATE_ಸಾಮಾನ್ಯ, &fg);
+		ಆದರೆ (bg_ಗಣ)
+			gtk_widget_modify_bg(ನಮೂದು, GTK_STATE_ಸಾಮಾನ್ಯ, &bg);
+		gtk_box_pack_ಆರಂಭ(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
-		    entry, FALSE, FALSE, 0);
-		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
-			gtk_widget_show(entry);
+		    ನಮೂದು, FALSE, FALSE, 0);
+		gtk_ನಮೂದು_ಗಣ_visibility(GTK_ನಮೂದು(ನಮೂದು), FALSE);
+		gtk_widget_grab_focus(ನಮೂದು);
+		ಆದರೆ (prompt_type == PROMPT_ನಮೂದು) {
+			gtk_widget_show(ನಮೂದು);
 			/* Make <enter> close dialog */
-			g_signal_connect(G_OBJECT(entry), "activate",
+			g_signal_connect(G_OBJECT(ನಮೂದು), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
 			 * hack - it uses a hidden entry that responds to a
 			 * couple of keypress events (escape and tab only).
 			 */
-			gtk_widget_realize(entry);
-			g_signal_connect(G_OBJECT(entry), "key_press_event",
+			gtk_widget_realize(ನಮೂದು);
+			g_signal_connect(G_OBJECT(ನಮೂದು), "key_press_event",
 			    G_CALLBACK(check_none), dialog);
 		}
 	}
 
 	/* Grab focus */
 	gtk_widget_show_now(dialog);
-	if (grab_pointer) {
-		for(;;) {
-			status = gdk_pointer_grab(
-			    (gtk_widget_get_window(GTK_WIDGET(dialog))), TRUE,
-			    0, NULL, NULL, GDK_CURRENT_TIME);
-			if (status == GDK_GRAB_SUCCESS)
-				break;
+	ಆದರೆ (grab_ಸೂಚಕ) {
+		ಗಾಗಿ(;;) {
+			ಸ್ಥಿತಿ_2 = gdk_ಸೂಚಕ_grab(
+			    (gtk_widget_get_ಕಿಟಕಿ(GTK_WIDGET(dialog))), TRUE,
+			    0, ಖಾಲಿ, ಖಾಲಿ, GDK_CURRENT_ಸಮಯ);
+			ಆದರೆ (ಸ್ಥಿತಿ_2 == GDK_GRAB_SUCCESS)
+				ನಿಲ್ಲಿಸು;
 			usleep(GRAB_WAIT * 1000);
-			if (++grab_tries > GRAB_TRIES) {
+			ಆದರೆ (++grab_tries > GRAB_TRIES) {
 				failed = "mouse";
-				goto nograb;
+				ಹೋಗು nograb;
 			}
 		}
 	}
-	for(;;) {
-		status = gdk_keyboard_grab(
-		    gtk_widget_get_window(GTK_WIDGET(dialog)), FALSE,
-		    GDK_CURRENT_TIME);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+	ಗಾಗಿ(;;) {
+		ಸ್ಥಿತಿ_2 = gdk_keyboard_grab(
+		    gtk_widget_get_ಕಿಟಕಿ(GTK_WIDGET(dialog)), FALSE,
+		    GDK_CURRENT_ಸಮಯ);
+		ಆದರೆ (ಸ್ಥಿತಿ_2 == GDK_GRAB_SUCCESS)
+			ನಿಲ್ಲಿಸು;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES) {
+		ಆದರೆ (++grab_tries > GRAB_TRIES) {
 			failed = "keyboard";
-			goto nograbkb;
+			ಹೋಗು nograbkb;
 		}
 	}
-	if (grab_server) {
+	ಆದರೆ (grab_server) {
 		gdk_x11_grab_server();
 	}
 
-	result = gtk_dialog_run(GTK_DIALOG(dialog));
+	ಫಲಿತಾಂಶ = gtk_dialog_ಸತತ(GTK_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	ಆದರೆ (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
-	if (grab_pointer)
-		gdk_pointer_ungrab(GDK_CURRENT_TIME);
-	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
+	ಆದರೆ (grab_ಸೂಚಕ)
+		gdk_ಸೂಚಕ_ungrab(GDK_CURRENT_ಸಮಯ);
+	gdk_keyboard_ungrab(GDK_CURRENT_ಸಮಯ);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
-		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+	ಆದರೆ (prompt_type == PROMPT_ನಮೂದು) {
+		passphrase = g_strdup(gtk_ನಮೂದು_get_ಪಠ್ಯ(GTK_ನಮೂದು(ನಮೂದು)));
+		ಆದರೆ (ಫಲಿತಾಂಶ == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
+			    ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(passphrase), ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ);
+			ಆದರೆ (local != ಖಾಲಿ) {
 				puts(local);
-				memset(local, '\0', strlen(local));
+				memset(local, '\0', ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(local));
 				g_free(local);
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				puts(passphrase);
 			}
 		}
 		/* Zero passphrase in memory */
-		memset(passphrase, '\b', strlen(passphrase));
-		gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
-		memset(passphrase, '\0', strlen(passphrase));
+		memset(passphrase, '\b', ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(passphrase));
+		gtk_ನಮೂದು_ಗಣ_ಪಠ್ಯ(GTK_ನಮೂದು(ನಮೂದು), passphrase);
+		memset(passphrase, '\0', ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(passphrase));
 		g_free(passphrase);
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	ಆದರೆ (ಫಲಿತಾಂಶ != GTK_RESPONSE_OK && ಫಲಿತಾಂಶ != GTK_RESPONSE_YES)
+		ಹಿಂತಿರುಗಿ -1;
+	ಹಿಂತಿರುಗಿ 0;
 
  nograbkb:
 	/*
@@ -301,41 +301,41 @@ passphrase_dialog(char *message, int prompt_type)
 	 * the failure to the user.  Note that XGrabServer() cannot
 	 * fail.
 	 */
-	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	gdk_ಸೂಚಕ_ungrab(GDK_CURRENT_ಸಮಯ);
  nograb:
-	if (grab_server)
+	ಆದರೆ (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
 	gtk_widget_destroy(dialog);
 	
-	report_failed_grab(parent_window, failed);
+	report_failed_grab(ಪೋಷಕ_ಕಿಟಕಿ, failed);
 
-	return (-1);
+	ಹಿಂತಿರುಗಿ (-1);
 }
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	ಅಕ್ಷರ *ಸಂದೇಶ_2, *prompt_ಬಹುಲಕ;
+	ಪೂರ್ಣಾಂಕ ಫಲಿತಾಂಶ, prompt_type = PROMPT_ನಮೂದು;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
-		message = g_strjoinv(" ", argv + 1);
-	} else {
-		message = g_strdup("Enter your OpenSSH passphrase:");
+	ಆದರೆ (argc > 1) {
+		ಸಂದೇಶ_2 = g_strjoinv(" ", argv + 1);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಸಂದೇಶ_2 = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	ಆದರೆ ((prompt_ಬಹುಲಕ = getenv("SSH_ASKPASS_PROMPT")) != ಖಾಲಿ) {
+		ಆದರೆ (strcasecmp(prompt_ಬಹುಲಕ, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcasecmp(prompt_ಬಹುಲಕ, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message, prompt_type);
-	g_free(message);
+	ಫಲಿತಾಂಶ = passphrase_dialog(ಸಂದೇಶ_2, prompt_type);
+	g_free(ಸಂದೇಶ_2);
 
-	return (result);
+	ಹಿಂತಿರುಗಿ (ಫಲಿತಾಂಶ);
 }

@@ -14,58 +14,58 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#define TMPFILE "utimensat.tmp"
-#define TMPFILE2 "utimensat.tmp2"
+#ವ್ಯಾಖ್ಯಾನಿಸು TMPFILE "utimensat.tmp"
+#ವ್ಯಾಖ್ಯಾನಿಸು TMPFILE2 "utimensat.tmp2"
 
-#ifndef AT_SYMLINK_NOFOLLOW
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ AT_SYMLINK_NOFOLLOW
 # define AT_SYMLINK_NOFOLLOW 0x80000000
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-int utimensat(int, const char *, const struct timespec[2], int);
+ಪೂರ್ಣಾಂಕ utimensat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ timespec[2], ಪೂರ್ಣಾಂಕ);
 
-static void
-cleanup(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+cleanup(ಶೂನ್ಯ)
 {
-	(void)unlink(TMPFILE);
-	(void)unlink(TMPFILE2);
+	(ಶೂನ್ಯ)unlink(TMPFILE);
+	(ಶೂನ್ಯ)unlink(TMPFILE2);
 }
 
-static void
-fail(char *msg, long expect, long got)
+ಸ್ಥಿರ ಶೂನ್ಯ
+fail(ಅಕ್ಷರ *ಸಂದೇಶ, ದೀರ್ಘ expect, ದೀರ್ಘ got)
 {
-	int saved_errno = errno;
+	ಪೂರ್ಣಾಂಕ saved_errno = errno;
 
-	if (expect == got && got == 0)
-		fprintf(stderr, "utimensat: %s: %s\n", msg,
+	ಆದರೆ (expect == got && got == 0)
+		fprintf(stderr, "utimensat: %s: %s\n", ಸಂದೇಶ,
 		     strerror(saved_errno));
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
-		     msg, expect, got);
+		     ಸಂದೇಶ, expect, got);
 	cleanup();
-	exit(1);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-int
-main(void)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಶೂನ್ಯ)
 {
-	int fd;
-	struct stat sb;
-	struct timespec ts[2];
+	ಪೂರ್ಣಾಂಕ fd;
+	ರಚನೆ stat sb;
+	ರಚನೆ timespec ts[2];
 
 	cleanup();
-	if ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
+	ಆದರೆ ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
 		fail("open", 0, 0);
 	close(fd);
 
@@ -73,32 +73,32 @@ main(void)
 	ts[0].tv_nsec = 23456789;
 	ts[1].tv_sec = 34567890;
 	ts[1].tv_nsec = 45678901;
-	if (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
+	ಆದರೆ (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
 		fail("utimensat", 0, 0);
 
-	if (stat(TMPFILE, &sb) == -1)
+	ಆದರೆ (stat(TMPFILE, &sb) == -1)
 		fail("stat", 0, 0);
-#if 0
+#ಆದರೆ 0
 	/*
 	 * This test only works on filesystems mounted 'noatime', otherwise the
 	 * stat() above resets atime. Skip by default.
 	 */
-	if (sb.st_atime != 12345678)
+	ಆದರೆ (sb.st_atime != 12345678)
 		fail("st_atime", 0, 0);
-#endif
-	if (sb.st_mtime != 34567890)
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (sb.st_mtime != 34567890)
 		fail("st_mtime", 0, 0);
-#if 0
+#ಆದರೆ 0
 	/*
 	 * Results expected to be rounded to the nearest microsecond.
 	 * Depends on timestamp precision in kernel and filesystem so
 	 * disabled by default.
 	 */
-	if (sb.st_atim.tv_nsec != 23456000)
+	ಆದರೆ (sb.st_atim.tv_nsec != 23456000)
 		fail("atim.tv_nsec", 23456000, sb.st_atim.tv_nsec);
-	if (sb.st_mtim.tv_nsec != 45678000)
+	ಆದರೆ (sb.st_mtim.tv_nsec != 45678000)
 		fail("mtim.tv_nsec", 45678000, sb.st_mtim.tv_nsec);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/*
 	 * POSIX specifies that when given a symlink, AT_SYMLINK_NOFOLLOW
@@ -107,20 +107,20 @@ main(void)
 	 * with instead of following a symlink when explicitly asked not to.
 	 * Here we just test that it does not update the destination.
 	 */
-	if (rename(TMPFILE, TMPFILE2) == -1)
+	ಆದರೆ (rename(TMPFILE, TMPFILE2) == -1)
 		fail("rename", 0, 0);
-	if (symlink(TMPFILE2, TMPFILE) == -1)
+	ಆದರೆ (symlink(TMPFILE2, TMPFILE) == -1)
 		fail("symlink", 0, 0);
 	ts[0].tv_sec = 11223344;
 	ts[1].tv_sec = 55667788;
-	(void)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
-	if (stat(TMPFILE2, &sb) == -1)
+	(ಶೂನ್ಯ)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
+	ಆದರೆ (stat(TMPFILE2, &sb) == -1)
 		fail("stat", 0, 0 );
-	if (sb.st_atime == 11223344)
+	ಆದರೆ (sb.st_atime == 11223344)
 		fail("utimensat symlink st_atime", 0, 0 );
-	if (sb.st_mtime == 55667788)
+	ಆದರೆ (sb.st_mtime == 55667788)
 		fail("utimensat symlink st_mtime", 0, 0 );
 
 	cleanup();
-	exit(0);
+	ನಿರ್ಗಮಿಸು(0);
 }

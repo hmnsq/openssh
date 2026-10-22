@@ -5,120 +5,120 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
-#endif /* WITH_OPENSSL */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/ec.h>
+#ಅನ್ತರ್ಭಾವ <openssl/rsa.h>
+#ಅನ್ತರ್ಭಾವ <openssl/objects.h>
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */
 
-#include "openbsd-compat/openssl-compat.h"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
-#include "common.h"
+#ಅನ್ತರ್ಭಾವ "common.h"
 
-struct sshbuf *
-load_file(const char *name)
+ರಚನೆ sshbuf *
+ತುಂಬು_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	struct sshbuf *ret = NULL;
+	ರಚನೆ sshbuf *ret = ಖಾಲಿ;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_ತುಂಬು_file(test_ದತ್ತಾಂಶ_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+ರಚನೆ sshbuf *
+ತುಂಬು_ಪಠ್ಯ_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
-	size_t len;
+	ರಚನೆ sshbuf *ret = ತುಂಬು_file(name);
+	ಸ್ಥಿರಾಂಕ u_char *p;
+	ಗಾತ್ರ_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	ಗಾಗಿ (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		ಆದರೆ (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
-			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+			ASSERT_INT_EQ(sshbuf_consume_ಕೊನೆ(ret, 1), 0);
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 BIGNUM *
-load_bignum(const char *name)
+ತುಂಬು_bignum(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	BIGNUM *ret = NULL;
-	struct sshbuf *buf;
+	BIGNUM *ret = ಖಾಲಿ;
+	ರಚನೆ sshbuf *buf;
 
-	buf = load_text_file(name);
-	ASSERT_INT_NE(BN_hex2bn(&ret, (const char *)sshbuf_ptr(buf)), 0);
+	buf = ತುಂಬು_ಪಠ್ಯ_file(name);
+	ASSERT_INT_NE(BN_hex2bn(&ret, (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *)sshbuf_ptr(buf)), 0);
 	sshbuf_free(buf);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-const BIGNUM *
-rsa_n(struct sshkey *k)
+ಸ್ಥಿರಾಂಕ BIGNUM *
+rsa_n(ರಚನೆ sshkey *k)
 {
-	const BIGNUM *n = NULL;
+	ಸ್ಥಿರಾಂಕ BIGNUM *n = ಖಾಲಿ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
-	return n;
+	ASSERT_PTR_NE(k, ಖಾಲಿ);
+	ASSERT_PTR_NE(k->pkey, ಖಾಲಿ);
+	RSA_get0_ಕೀಲಿ(EVP_PKEY_get0_RSA(k->pkey), &n, ಖಾಲಿ, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ n;
 }
 
-const BIGNUM *
-rsa_e(struct sshkey *k)
+ಸ್ಥಿರಾಂಕ BIGNUM *
+rsa_e(ರಚನೆ sshkey *k)
 {
-	const BIGNUM *e = NULL;
+	ಸ್ಥಿರಾಂಕ BIGNUM *e = ಖಾಲಿ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
-	return e;
+	ASSERT_PTR_NE(k, ಖಾಲಿ);
+	ASSERT_PTR_NE(k->pkey, ಖಾಲಿ);
+	RSA_get0_ಕೀಲಿ(EVP_PKEY_get0_RSA(k->pkey), ಖಾಲಿ, &e, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ e;
 }
 
-const BIGNUM *
-rsa_p(struct sshkey *k)
+ಸ್ಥಿರಾಂಕ BIGNUM *
+rsa_p(ರಚನೆ sshkey *k)
 {
-	const BIGNUM *p = NULL;
+	ಸ್ಥಿರಾಂಕ BIGNUM *p = ಖಾಲಿ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, NULL);
-	return p;
+	ASSERT_PTR_NE(k, ಖಾಲಿ);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), ಖಾಲಿ);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ p;
 }
 
-const BIGNUM *
-rsa_q(struct sshkey *k)
+ಸ್ಥಿರಾಂಕ BIGNUM *
+rsa_q(ರಚನೆ sshkey *k)
 {
-	const BIGNUM *q = NULL;
+	ಸ್ಥಿರಾಂಕ BIGNUM *q = ಖಾಲಿ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), NULL, &q);
-	return q;
+	ASSERT_PTR_NE(k, ಖಾಲಿ);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), ಖಾಲಿ);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), ಖಾಲಿ, &q);
+	ಹಿಂತಿರುಗಿ q;
 }
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

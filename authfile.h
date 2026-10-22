@@ -24,31 +24,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AUTHFILE_H
-#define AUTHFILE_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ AUTHFILE_H
+#ವ್ಯಾಖ್ಯಾನಿಸು AUTHFILE_H
 
-struct sshbuf;
-struct sshkey;
+ರಚನೆ sshbuf;
+ರಚನೆ sshkey;
 
 /* XXX document these */
 /* XXX some of these could probably be merged/retired */
 
-int sshkey_save_private(struct sshkey *, const char *,
-    const char *, const char *, int, const char *, int);
-int sshkey_load_cert(const char *, struct sshkey **);
-int sshkey_load_public(const char *, struct sshkey **, char **);
-int sshkey_load_private(const char *, const char *, struct sshkey **, char **);
-int sshkey_load_private_cert(int, const char *, const char *,
-    struct sshkey **);
-int sshkey_load_private_type(int, const char *, const char *,
-    struct sshkey **, char **);
-int sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp);
-int sshkey_perm_ok(int, const char *);
-int sshkey_in_file(struct sshkey *, const char *, int, int);
-int sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file);
-int sshkey_advance_past_options(char **cpp);
-int sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment);
+ಪೂರ್ಣಾಂಕ sshkey_save_ಖಾಸಗಿ(ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_cert(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey **);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_ಬಹಿರಂಗ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey **, ಅಕ್ಷರ **);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_ಖಾಸಗಿ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey **, ಅಕ್ಷರ **);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_ಖಾಸಗಿ_cert(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ರಚನೆ sshkey **);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_ಖಾಸಗಿ_type(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ರಚನೆ sshkey **, ಅಕ್ಷರ **);
+ಪೂರ್ಣಾಂಕ sshkey_ತುಂಬು_ಖಾಸಗಿ_type_fd(ಪೂರ್ಣಾಂಕ fd, ಪೂರ್ಣಾಂಕ type, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *passphrase,
+    ರಚನೆ sshkey **keyp, ಅಕ್ಷರ **commentp);
+ಪೂರ್ಣಾಂಕ sshkey_perm_ok(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ sshkey_ಒಳ_file(ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ sshkey_check_revoked(ರಚನೆ sshkey *ಕೀಲಿ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *revoked_ಕೀಲಿಗಳು_file);
+ಪೂರ್ಣಾಂಕ sshkey_advance_past_options(ಅಕ್ಷರ **cpp);
+ಪೂರ್ಣಾಂಕ sshkey_save_ಬಹಿರಂಗ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *ಕೀಲಿ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *comment);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

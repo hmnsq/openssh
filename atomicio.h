@@ -26,28 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ATOMICIO_H
-#define _ATOMICIO_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _ATOMICIO_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _ATOMICIO_H
 
-struct iovec;
+ರಚನೆ iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+ಗಾತ್ರ_t
+atomicio6(ssize_t (*f) (ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *, ಗಾತ್ರ_t), ಪೂರ್ಣಾಂಕ fd, ಶೂನ್ಯ *_s, ಗಾತ್ರ_t n,
+    ಪೂರ್ಣಾಂಕ (*cb)(ಶೂನ್ಯ *, ಗಾತ್ರ_t), ಶೂನ್ಯ *);
+ಗಾತ್ರ_t	atomicio(ssize_t (*)(ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *, ಗಾತ್ರ_t), ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *, ಗಾತ್ರ_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#ವ್ಯಾಖ್ಯಾನಿಸು vwrite (ssize_t (*)(ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *, ಗಾತ್ರ_t))ಲಿಖ
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+ಗಾತ್ರ_t
+atomiciov6(ssize_t (*f) (ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ರಚನೆ iovec *, ಪೂರ್ಣಾಂಕ), ಪೂರ್ಣಾಂಕ fd,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ iovec *_iov, ಪೂರ್ಣಾಂಕ iovcnt, ಪೂರ್ಣಾಂಕ (*cb)(ಶೂನ್ಯ *, ಗಾತ್ರ_t), ಶೂನ್ಯ *);
+ಗಾತ್ರ_t	atomiciov(ssize_t (*)(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ರಚನೆ iovec *, ಪೂರ್ಣಾಂಕ),
+    ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ರಚನೆ iovec *, ಪೂರ್ಣಾಂಕ);
 
-#endif /* _ATOMICIO_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _ATOMICIO_H */

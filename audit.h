@@ -22,16 +22,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_AUDIT_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#ಅನ್ತರ್ಭಾವ "loginrec.h"
 
-struct ssh;
+ರಚನೆ ssh;
 
-enum ssh_audit_event_type {
+ಎಣಿಕೆ ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
-	SSH_LOGIN_ROOT_DENIED,
+	SSH_LOGIN_ಬೇರು_DENIED,
 	SSH_AUTH_SUCCESS,
 	SSH_AUTH_FAIL_NONE,
 	SSH_AUTH_FAIL_PASSWD,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+ಶೂನ್ಯ	audit_connection_from(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	audit_event(ರಚನೆ ssh *, ssh_audit_event_t);
+ಶೂನ್ಯ	audit_session_open(ರಚನೆ logininfo *);
+ಶೂನ್ಯ	audit_session_close(ರಚನೆ logininfo *);
+ಶೂನ್ಯ	audit_ಸತತ_command(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ssh_audit_event_t audit_classify_auth(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-#endif /* _SSH_AUDIT_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _SSH_AUDIT_H */

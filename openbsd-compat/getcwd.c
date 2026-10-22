@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#ಆದರೆ !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <dirent.h>
+#ಅನ್ತರ್ಭಾವ <sys/dir.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#define	ISDOT(dp) \
+#ವ್ಯಾಖ್ಯಾನಿಸು	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+ಅಕ್ಷರ *
+getcwd(ಅಕ್ಷರ *pt, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	ರಚನೆ dirent *dp;
+	DIR *dir = ಖಾಲಿ;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
-	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	ಪೂರ್ಣಾಂಕ ಮೊದಲ;
+	ಅಕ್ಷರ *bpt, *bup;
+	ರಚನೆ stat s;
+	dev_t ಬೇರು_dev;
+	ino_t ಬೇರು_ino;
+	ಗಾತ್ರ_t ptsize, upsize;
+	ಪೂರ್ಣಾಂಕ save_errno;
+	ಅಕ್ಷರ *ept, *eup, *ಮೇಲೆ;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	ಆದರೆ (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		ಆದರೆ (ಗಾತ್ರ_2 == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಗಾತ್ರ_2 == 1) {
 			errno = ERANGE;
-			return (NULL);
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		}
-		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+		ept = pt + ಗಾತ್ರ_2;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ ((pt = ಸ್ಮರಣೆ_ಕೊಡು(ptsize = MAXPATHLEN)) == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,32 +91,32 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
-	eup = up + upsize;
-	bup = up;
-	up[0] = '.';
-	up[1] = '\0';
+	ಆದರೆ ((ಮೇಲೆ = ಸ್ಮರಣೆ_ಕೊಡು(upsize = MAXPATHLEN)) == ಖಾಲಿ)
+		ಹೋಗು err;
+	eup = ಮೇಲೆ + upsize;
+	bup = ಮೇಲೆ;
+	ಮೇಲೆ[0] = '.';
+	ಮೇಲೆ[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	ಆದರೆ (stat("/", &s))
+		ಹೋಗು err;
+	ಬೇರು_dev = s.st_dev;
+	ಬೇರು_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	ಗಾಗಿ (ಮೊದಲ = 1;; ಮೊದಲ = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		ಆದರೆ (lstat(ಮೇಲೆ, &s))
+			ಹೋಗು err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		ಆದರೆ (ಬೇರು_dev == dev && ಬೇರು_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -124,8 +124,8 @@ getcwd(char *pt, size_t size)
 			 * been that way and stuff would probably break.
 			 */
 			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			ಬಿಡುಗಡೆ(ಮೇಲೆ);
+			ಹಿಂತಿರುಗಿ (pt);
 		}
 
 		/*
@@ -133,22 +133,22 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		ಆದರೆ (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			ಅಕ್ಷರ *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
-			bup = nup + (bup - up);
-			up = nup;
-			eup = up + upsize;
+			ಆದರೆ ((nup = realloc(ಮೇಲೆ, upsize *= 2)) == ಖಾಲಿ)
+				ಹೋಗು err;
+			bup = nup + (bup - ಮೇಲೆ);
+			ಮೇಲೆ = nup;
+			eup = ಮೇಲೆ + upsize;
 		}
 		*bup++ = '.';
 		*bup++ = '.';
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		ಆದರೆ (!(dir = opendir(ಮೇಲೆ)) || fstat(dirfd(dir), &s))
+			ಹೋಗು err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		ಆದರೆ (s.st_dev == dev) {
+			ಗಾಗಿ (;;) {
+				ಆದರೆ (!(dp = readdir(dir)))
+					ಹೋಗು notfound;
+				ಆದರೆ (dp->d_fileno == ino)
+					ನಿಲ್ಲಿಸು;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
-				memcpy(bup, dp->d_name, dp->d_namlen + 1);
+		} ಇಲ್ಲದಿದ್ದರೆ
+			ಗಾಗಿ (;;) {
+				ಆದರೆ (!(dp = readdir(dir)))
+					ಹೋಗು notfound;
+				ಆದರೆ (ISDOT(dp))
+					ಮುಂದುವರಿ;
+				ಸ್ಮರಣೆ_ನಕಲು(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				ಆದರೆ (lstat(ಮೇಲೆ, &s)) {
+					ಆದರೆ (!save_errno)
 						save_errno = errno;
 					errno = 0;
-					continue;
+					ಮುಂದುವರಿ;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				ಆದರೆ (s.st_dev == dev && s.st_ino == ino)
+					ನಿಲ್ಲಿಸು;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
-			size_t len;
-			char *npt;
+		ಆದರೆ (bpt - pt < dp->d_namlen + (ಮೊದಲ ? 1 : 2)) {
+			ಗಾತ್ರ_t len;
+			ಅಕ್ಷರ *npt;
 
-			if (!ptsize) {
+			ಆದರೆ (!ptsize) {
 				errno = ERANGE;
-				goto err;
+				ಹೋಗು err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			ಆದರೆ ((npt = realloc(pt, ptsize *= 2)) == ಖಾಲಿ)
+				ಹೋಗು err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		ಆದರೆ (!ಮೊದಲ)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
-		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		ಸ್ಮರಣೆ_ನಕಲು(bpt, dp->d_name, dp->d_namlen);
+		(ಶೂನ್ಯ)closedir(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	ಆದರೆ (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	ಆದರೆ (ptsize)
+		ಬಿಡುಗಡೆ(pt);
+	ಬಿಡುಗಡೆ(ಮೇಲೆ);
+	ಆದರೆ (dir)
+		(ಶೂನ್ಯ)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
-#endif /* !defined(HAVE_GETCWD) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_GETCWD) */

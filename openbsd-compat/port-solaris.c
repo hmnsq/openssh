@@ -14,120 +14,120 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <errno.h>
-#ifdef HAVE_FCNTL_H
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#ifdef USE_SOLARIS_PROCESS_CONTRACTS
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_SOLARIS_PROCESS_CONTRACTS
 
-#include <libcontract.h>
-#include <sys/contract/process.h>
-#include <sys/ctfs.h>
+#ಅನ್ತರ್ಭಾವ <libcontract.h>
+#ಅನ್ತರ್ಭಾವ <sys/contract/process.h>
+#ಅನ್ತರ್ಭಾವ <sys/ctfs.h>
 
-#define CT_TEMPLATE	CTFS_ROOT "/process/template"
-#define CT_LATEST	CTFS_ROOT "/process/latest"
+#ವ್ಯಾಖ್ಯಾನಿಸು CT_TEMPLATE	CTFS_ಬೇರು "/process/template"
+#ವ್ಯಾಖ್ಯಾನಿಸು CT_LATEST	CTFS_ಬೇರು "/process/latest"
 
-static int tmpl_fd = -1;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ tmpl_fd = -1;
 
 /* Lookup the latest process contract */
-static ctid_t
-get_active_process_contract_id(void)
+ಸ್ಥಿರ ctid_t
+get_ಸಕ್ರಿಯ_process_contract_id(ಶೂನ್ಯ)
 {
-	int stat_fd;
+	ಪೂರ್ಣಾಂಕ stat_fd;
 	ctid_t ctid = -1;
 	ct_stathdl_t stathdl;
 
-	if ((stat_fd = open64(CT_LATEST, O_RDONLY)) == -1) {
+	ಆದರೆ ((stat_fd = open64(CT_LATEST, O_RDONLY)) == -1) {
 		error("%s: Error opening 'latest' process "
 		    "contract: %s", __func__, strerror(errno));
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (ct_status_read(stat_fd, CTD_COMMON, &stathdl) != 0) {
+	ಆದರೆ (ct_ಸ್ಥಿತಿ_read(stat_fd, CTD_COMMON, &stathdl) != 0) {
 		error("%s: Error reading process contract "
 		    "status: %s", __func__, strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if ((ctid = ct_status_get_id(stathdl)) < 0) {
+	ಆದರೆ ((ctid = ct_ಸ್ಥಿತಿ_get_id(stathdl)) < 0) {
 		error("%s: Error getting process contract id: %s",
 		    __func__, strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	ct_status_free(stathdl);
- out:
+	ct_ಸ್ಥಿತಿ_free(stathdl);
+ ಹೊರಹೋಗು:
 	close(stat_fd);
-	return ctid;
+	ಹಿಂತಿರುಗಿ ctid;
 }
 
-void
-solaris_contract_pre_fork(void)
+ಶೂನ್ಯ
+solaris_contract_pre_fork(ಶೂನ್ಯ)
 {
-	if ((tmpl_fd = open64(CT_TEMPLATE, O_RDWR)) == -1) {
+	ಆದರೆ ((tmpl_fd = open64(CT_TEMPLATE, O_RDWR)) == -1) {
 		error("%s: open %s: %s", __func__,
 		    CT_TEMPLATE, strerror(errno));
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
 	debug2("%s: setting up process contract template on fd %d",
 	    __func__, tmpl_fd);
 
 	/* First we set the template parameters and event sets. */
-	if (ct_pr_tmpl_set_param(tmpl_fd, CT_PR_PGRPONLY) != 0) {
+	ಆದರೆ (ct_pr_tmpl_ಗಣ_param(tmpl_fd, CT_PR_PGRPONLY) != 0) {
 		error("%s: Error setting process contract parameter set "
 		    "(pgrponly): %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (ct_pr_tmpl_set_fatal(tmpl_fd, CT_PR_EV_HWERR) != 0) {
+	ಆದರೆ (ct_pr_tmpl_ಗಣ_fatal(tmpl_fd, CT_PR_EV_HWERR) != 0) {
 		error("%s: Error setting process contract template "
 		    "fatal events: %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (ct_tmpl_set_critical(tmpl_fd, 0) != 0) {
+	ಆದರೆ (ct_tmpl_ಗಣ_critical(tmpl_fd, 0) != 0) {
 		error("%s: Error setting process contract template "
 		    "critical events: %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (ct_tmpl_set_informative(tmpl_fd, CT_PR_EV_HWERR) != 0) {
+	ಆದರೆ (ct_tmpl_ಗಣ_informative(tmpl_fd, CT_PR_EV_HWERR) != 0) {
 		error("%s: Error setting process contract template "
 		    "informative events: %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
 
 	/* Now make this the active template for this process. */
-	if (ct_tmpl_activate(tmpl_fd) != 0) {
+	ಆದರೆ (ct_tmpl_activate(tmpl_fd) != 0) {
 		error("%s: Error activating process contract "
 		    "template: %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
-	return;
+	ಹಿಂತಿರುಗಿ;
 
  fail:
-	if (tmpl_fd != -1) {
+	ಆದರೆ (tmpl_fd != -1) {
 		close(tmpl_fd);
 		tmpl_fd = -1;
 	}
 }
 
-void
-solaris_contract_post_fork_child()
+ಶೂನ್ಯ
+solaris_contract_post_fork_ಮಗು()
 {
 	debug2("%s: clearing process contract template on fd %d",
 	    __func__, tmpl_fd);
 
 	/* Clear the active template. */
-	if (ct_tmpl_clear(tmpl_fd) != 0)
+	ಆದರೆ (ct_tmpl_clear(tmpl_fd) != 0)
 		error("%s: Error clearing active process contract "
 		    "template: %s", __func__, strerror(errno));
 
@@ -135,20 +135,20 @@ solaris_contract_post_fork_child()
 	tmpl_fd = -1;
 }
 
-void
-solaris_contract_post_fork_parent(pid_t pid)
+ಶೂನ್ಯ
+solaris_contract_post_fork_ಪೋಷಕ(pid_t pid)
 {
 	ctid_t ctid;
-	char ctl_path[256];
-	int r, ctl_fd = -1, stat_fd = -1;
+	ಅಕ್ಷರ ctl_ಮಾರ್ಗ[256];
+	ಪೂರ್ಣಾಂಕ r, ctl_fd = -1, stat_fd = -1;
 
 	debug2("%s: clearing template (fd %d)", __func__, tmpl_fd);
 
-	if (tmpl_fd == -1)
-		return;
+	ಆದರೆ (tmpl_fd == -1)
+		ಹಿಂತಿರುಗಿ;
 
 	/* First clear the active template. */
-	if ((r = ct_tmpl_clear(tmpl_fd)) != 0)
+	ಆದರೆ ((r = ct_tmpl_clear(tmpl_fd)) != 0)
 		error("%s: Error clearing active process contract "
 		    "template: %s", __func__, strerror(errno));
 
@@ -160,100 +160,100 @@ solaris_contract_post_fork_parent(pid_t pid)
 	 * th active contract failed (r != 0), then we have nothing
 	 * more do.
 	 */
-	if (r != 0 || pid <= 0)
-		return;
+	ಆದರೆ (r != 0 || pid <= 0)
+		ಹಿಂತಿರುಗಿ;
 
 	/* Now lookup and abandon the contract we've created. */
-	ctid = get_active_process_contract_id();
+	ctid = get_ಸಕ್ರಿಯ_process_contract_id();
 
 	debug2("%s: abandoning contract id %ld", __func__, ctid);
 
-	snprintf(ctl_path, sizeof(ctl_path),
-	    CTFS_ROOT "/process/%ld/ctl", ctid);
-	if ((ctl_fd = open64(ctl_path, O_WRONLY)) < 0) {
+	snprintf(ctl_ಮಾರ್ಗ, ಗಾತ್ರ(ctl_ಮಾರ್ಗ),
+	    CTFS_ಬೇರು "/process/%ld/ctl", ctid);
+	ಆದರೆ ((ctl_fd = open64(ctl_ಮಾರ್ಗ, O_WRONLY)) < 0) {
 		error("%s: Error opening process contract "
 		    "ctl file: %s", __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
-	if (ct_ctl_abandon(ctl_fd) < 0) {
+	ಆದರೆ (ct_ctl_abandon(ctl_fd) < 0) {
 		error("%s: Error abandoning process contract: %s",
 		    __func__, strerror(errno));
-		goto fail;
+		ಹೋಗು fail;
 	}
 	close(ctl_fd);
-	return;
+	ಹಿಂತಿರುಗಿ;
 
  fail:
-	if (tmpl_fd != -1) {
+	ಆದರೆ (tmpl_fd != -1) {
 		close(tmpl_fd);
 		tmpl_fd = -1;
 	}
-	if (stat_fd != -1)
+	ಆದರೆ (stat_fd != -1)
 		close(stat_fd);
-	if (ctl_fd != -1)
+	ಆದರೆ (ctl_fd != -1)
 		close(ctl_fd);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef USE_SOLARIS_PROJECTS
-#include <sys/task.h>
-#include <project.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_SOLARIS_PROJECTS
+#ಅನ್ತರ್ಭಾವ <sys/task.h>
+#ಅನ್ತರ್ಭಾವ <project.h>
 
 /*
  * Get/set solaris default project.
  * If we fail, just run along gracefully.
  */
-void
-solaris_set_default_project(struct passwd *pw)
+ಶೂನ್ಯ
+solaris_ಗಣ_default_project(ರಚನೆ passwd *pw)
 {
-	struct project  *defaultproject;
-	struct project   tempproject;
-	char buf[1024];
+	ರಚನೆ project  *defaultproject;
+	ರಚನೆ project   tempproject;
+	ಅಕ್ಷರ buf[1024];
 
 	/* get default project, if we fail just return gracefully  */
-	if ((defaultproject = getdefaultproj(pw->pw_name, &tempproject, &buf,
-	    sizeof(buf))) != NULL) {
+	ಆದರೆ ((defaultproject = getdefaultproj(pw->pw_name, &tempproject, &buf,
+	    ಗಾತ್ರ(buf))) != ಖಾಲಿ) {
 		/* set default project */
-		if (setproject(defaultproject->pj_name, pw->pw_name,
-		    TASK_NORMAL) != 0)
+		ಆದರೆ (setproject(defaultproject->pj_name, pw->pw_name,
+		    TASK_ಸಾಮಾನ್ಯ) != 0)
 			debug("setproject(%s): %s", defaultproject->pj_name,
 			    strerror(errno));
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* debug on getdefaultproj() error */
 		debug("getdefaultproj(%s): %s", pw->pw_name, strerror(errno));
 	}
 }
-#endif /* USE_SOLARIS_PROJECTS */
+#ಆದರೆ_ಅಂತ್ಯ /* USE_SOLARIS_PROJECTS */
 
-#ifdef USE_SOLARIS_PRIVS
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_SOLARIS_PRIVS
 # ifdef HAVE_PRIV_H
 #  include <priv.h>
 # endif
 
-priv_set_t *
-solaris_basic_privset(void)
+priv_ಗಣ_t *
+solaris_basic_privset(ಶೂನ್ಯ)
 {
-	priv_set_t *pset;
+	priv_ಗಣ_t *pset;
 
-#ifdef HAVE_PRIV_BASICSET
-	if ((pset = priv_allocset()) == NULL) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_PRIV_BASICSET
+	ಆದರೆ ((pset = priv_allocset()) == ಖಾಲಿ) {
 		error("priv_allocset: %s", strerror(errno));
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 	priv_basicset(pset);
-#else
-	if ((pset = priv_str_to_set("basic", ",", NULL)) == NULL) {
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ ((pset = priv_str_ಗಮ್ಯ_ಗಣ("basic", ",", ಖಾಲಿ)) == ಖಾಲಿ) {
 		error("priv_str_to_set: %s", strerror(errno));
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-#endif
-	return pset;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ pset;
 }
 
-void
-solaris_drop_privs_pinfo_net_fork_exec(void)
+ಶೂನ್ಯ
+solaris_drop_privs_pinfo_net_fork_exec(ಶೂನ್ಯ)
 {
-	priv_set_t *pset = NULL, *npset = NULL;
+	priv_ಗಣ_t *pset = ಖಾಲಿ, *npset = ಖಾಲಿ;
 
 	/*
 	 * Note: this variant avoids dropping DAC filesystem rights, in case
@@ -271,28 +271,28 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 	 * etc etc).
 	 */
 
-	if ((pset = priv_allocset()) == NULL)
+	ಆದರೆ ((pset = priv_allocset()) == ಖಾಲಿ)
 		fatal("priv_allocset: %s", strerror(errno));
-	if ((npset = solaris_basic_privset()) == NULL)
+	ಆದರೆ ((npset = solaris_basic_privset()) == ಖಾಲಿ)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_addset(npset, PRIV_FILE_CHOWN) != 0 ||
+	ಆದರೆ (priv_addset(npset, PRIV_FILE_CHOWN) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_READ) != 0 ||
-	    priv_addset(npset, PRIV_FILE_DAC_SEARCH) != 0 ||
+	    priv_addset(npset, PRIV_FILE_DAC_ಹುಡುಕು) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_WRITE) != 0 ||
 	    priv_addset(npset, PRIV_FILE_OWNER) != 0)
 		fatal("priv_addset: %s", strerror(errno));
 
-	if (priv_delset(npset, PRIV_PROC_EXEC) != 0 ||
-#ifdef PRIV_NET_ACCESS
+	ಆದರೆ (priv_delset(npset, PRIV_PROC_EXEC) != 0 ||
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PRIV_NET_ACCESS
 	    priv_delset(npset, PRIV_NET_ACCESS) != 0 ||
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	    priv_delset(npset, PRIV_PROC_FORK) != 0 ||
 	    priv_delset(npset, PRIV_PROC_INFO) != 0 ||
 	    priv_delset(npset, PRIV_PROC_SESSION) != 0)
 		fatal("priv_delset: %s", strerror(errno));
 
-#ifdef PRIV_XPOLICY
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PRIV_XPOLICY
 	/*
 	 * It is possible that the user has an extended policy
 	 * in place; the LIMIT set restricts the extended policy
@@ -300,83 +300,83 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 	 * PRIV_XPOLICY is newly defined in Solaris 11 though the extended
 	 * policy was not implemented until Solaris 11.1.
 	 */
-	if (getpflags(PRIV_XPOLICY) == 1) {
-		if (getppriv(PRIV_LIMIT, pset) != 0)
+	ಆದರೆ (getpflags(PRIV_XPOLICY) == 1) {
+		ಆದರೆ (getppriv(PRIV_ಎಲ್ಲೆ, pset) != 0)
 			fatal("getppriv: %s", strerror(errno));
 		priv_intersect(pset, npset);
-		if (setppriv(PRIV_SET, PRIV_LIMIT, npset) != 0)
+		ಆದರೆ (setppriv(PRIV_ಗಣ, PRIV_ಎಲ್ಲೆ, npset) != 0)
 			fatal("setppriv: %s", strerror(errno));
-	} else
-#endif
+	} ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
 	{
 		/* Cannot exec, so we can kill the limit set. */
 		priv_emptyset(pset);
-		if (setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0)
+		ಆದರೆ (setppriv(PRIV_ಗಣ, PRIV_ಎಲ್ಲೆ, pset) != 0)
 			fatal("setppriv: %s", strerror(errno));
 	}
 
-	if (getppriv(PRIV_PERMITTED, pset) != 0)
+	ಆದರೆ (getppriv(PRIV_PERMITTED, pset) != 0)
 		fatal("getppriv: %s", strerror(errno));
 
 	priv_intersect(pset, npset);
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, npset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_INHERITABLE, npset) != 0)
+	ಆದರೆ (setppriv(PRIV_ಗಣ, PRIV_PERMITTED, npset) != 0 ||
+	    setppriv(PRIV_ಗಣ, PRIV_INHERITABLE, npset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 
 	priv_freeset(pset);
 	priv_freeset(npset);
 }
 
-void
-solaris_drop_privs_root_pinfo_net(void)
+ಶೂನ್ಯ
+solaris_drop_privs_ಬೇರು_pinfo_net(ಶೂನ್ಯ)
 {
-	priv_set_t *pset = NULL;
+	priv_ಗಣ_t *pset = ಖಾಲಿ;
 
 	/* Start with "basic" and drop everything we don't need. */
-	if ((pset = solaris_basic_privset()) == NULL)
+	ಆದರೆ ((pset = solaris_basic_privset()) == ಖಾಲಿ)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
-#ifdef PRIV_NET_ACCESS
+	ಆದರೆ (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PRIV_NET_ACCESS
 	    priv_delset(pset, PRIV_NET_ACCESS) != 0 ||
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	    priv_delset(pset, PRIV_PROC_INFO) != 0 ||
 	    priv_delset(pset, PRIV_PROC_SESSION) != 0)
 		fatal("priv_delset: %s", strerror(errno));
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_INHERITABLE, pset) != 0)
+	ಆದರೆ (setppriv(PRIV_ಗಣ, PRIV_PERMITTED, pset) != 0 ||
+	    setppriv(PRIV_ಗಣ, PRIV_ಎಲ್ಲೆ, pset) != 0 ||
+	    setppriv(PRIV_ಗಣ, PRIV_INHERITABLE, pset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 
 	priv_freeset(pset);
 }
 
-void
-solaris_drop_privs_root_pinfo_net_exec(void)
+ಶೂನ್ಯ
+solaris_drop_privs_ಬೇರು_pinfo_net_exec(ಶೂನ್ಯ)
 {
-	priv_set_t *pset = NULL;
+	priv_ಗಣ_t *pset = ಖಾಲಿ;
 
 
 	/* Start with "basic" and drop everything we don't need. */
-	if ((pset = solaris_basic_privset()) == NULL)
+	ಆದರೆ ((pset = solaris_basic_privset()) == ಖಾಲಿ)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
-#ifdef PRIV_NET_ACCESS
+	ಆದರೆ (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ PRIV_NET_ACCESS
 	    priv_delset(pset, PRIV_NET_ACCESS) != 0 ||
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	    priv_delset(pset, PRIV_PROC_EXEC) != 0 ||
 	    priv_delset(pset, PRIV_PROC_INFO) != 0)
 		fatal("priv_delset: %s", strerror(errno));
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_INHERITABLE, pset) != 0)
+	ಆದರೆ (setppriv(PRIV_ಗಣ, PRIV_PERMITTED, pset) != 0 ||
+	    setppriv(PRIV_ಗಣ, PRIV_ಎಲ್ಲೆ, pset) != 0 ||
+	    setppriv(PRIV_ಗಣ, PRIV_INHERITABLE, pset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 
 	priv_freeset(pset);
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

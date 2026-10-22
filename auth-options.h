@@ -16,91 +16,91 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef AUTH_OPTIONS_H
-#define AUTH_OPTIONS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ AUTH_OPTIONS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+ರಚನೆ passwd;
+ರಚನೆ sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
-#define SSH_AUTHOPT_PERMIT_MAX	4096
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_AUTHOPT_PERMIT_MAX	4096
 
 /* Maximum number of environment directives to accept */
-#define SSH_AUTHOPT_ENV_MAX	1024
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_AUTHOPT_ENV_MAX	1024
 
 /*
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+ರಚನೆ sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	ಪೂರ್ಣಾಂಕ permit_ಪೋರ್ಟ್_forwarding_flag;
+	ಪೂರ್ಣಾಂಕ permit_agent_forwarding_flag;
+	ಪೂರ್ಣಾಂಕ permit_x11_forwarding_flag;
+	ಪೂರ್ಣಾಂಕ permit_pty_flag;
+	ಪೂರ್ಣಾಂಕ permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	ಪೂರ್ಣಾಂಕ restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	ಪೂರ್ಣಾಂಕ cert_authority;
+	ಅಕ್ಷರ *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	ಪೂರ್ಣಾಂಕ force_tun_device;
+	ಅಕ್ಷರ *force_command;
 
 	/* Custom environment */
-	size_t nenv;
-	char **env;
+	ಗಾತ್ರ_t nenv;
+	ಅಕ್ಷರ **env;
 
 	/* Permitted port forwardings */
-	size_t npermitopen;
-	char **permitopen;
+	ಗಾತ್ರ_t npermitopen;
+	ಅಕ್ಷರ **permitopen;
 
 	/* Permitted listens (remote forwarding) */
-	size_t npermitlisten;
-	char **permitlisten;
+	ಗಾತ್ರ_t npermitlisten;
+	ಅಕ್ಷರ **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	ಅಕ್ಷರ *required_from_host_cert;
+	ಅಕ್ಷರ *required_from_host_ಕೀಲಿಗಳು;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	ಪೂರ್ಣಾಂಕ no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	ಪೂರ್ಣಾಂಕ require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+ರಚನೆ sshauthopt *sshauthopt_new(ಶೂನ್ಯ);
+ರಚನೆ sshauthopt *sshauthopt_new_with_ಕೀಲಿಗಳು_defaults(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshauthopt_free(ರಚನೆ sshauthopt *opts);
+ರಚನೆ sshauthopt *sshauthopt_copy(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *orig);
+ಪೂರ್ಣಾಂಕ sshauthopt_serialise(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *opts, ರಚನೆ sshbuf *m, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ sshauthopt_deserialise(ರಚನೆ sshbuf *m, ರಚನೆ sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+ರಚನೆ sshauthopt *sshauthopt_parse(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+ರಚನೆ sshauthopt *sshauthopt_from_cert(ರಚನೆ sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+ರಚನೆ sshauthopt *sshauthopt_ವಿಲೀನ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *primary,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *additional, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **errstrp);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

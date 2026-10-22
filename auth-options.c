@@ -15,588 +15,588 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/queue.h>
 
-#include <stdlib.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "match.h"
-#include "ssh2.h"
-#include "auth-options.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "auth-options.h"
 
-static int
-dup_strings(char ***dstp, size_t *ndstp, char **src, size_t nsrc)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+dup_ಅಕ್ಷರಸರಣಿಗಳು(ಅಕ್ಷರ ***dstp, ಗಾತ್ರ_t *ndstp, ಅಕ್ಷರ **src, ಗಾತ್ರ_t nsrc)
 {
-	char **dst;
-	size_t i, j;
+	ಅಕ್ಷರ **dst;
+	ಗಾತ್ರ_t i, j;
 
-	*dstp = NULL;
+	*dstp = ಖಾಲಿ;
 	*ndstp = 0;
 
-	if (nsrc == 0)
-		return 0;
-	if (nsrc >= SIZE_MAX / sizeof(*src) ||
-	    (dst = calloc(nsrc, sizeof(*src))) == NULL)
-		return -1;
-	for (i = 0; i < nsrc; i++) {
-		if ((dst[i] = strdup(src[i])) == NULL) {
-			for (j = 0; j < i; j++)
-				free(dst[j]);
-			free(dst);
-			return -1;
+	ಆದರೆ (nsrc == 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (nsrc >= SIZE_MAX / ಗಾತ್ರ(*src) ||
+	    (dst = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(nsrc, ಗಾತ್ರ(*src))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
+	ಗಾಗಿ (i = 0; i < nsrc; i++) {
+		ಆದರೆ ((dst[i] = strdup(src[i])) == ಖಾಲಿ) {
+			ಗಾಗಿ (j = 0; j < i; j++)
+				ಬಿಡುಗಡೆ(dst[j]);
+			ಬಿಡುಗಡೆ(dst);
+			ಹಿಂತಿರುಗಿ -1;
 		}
 	}
 	/* success */
 	*dstp = dst;
 	*ndstp = nsrc;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#define OPTIONS_CRITICAL	1
-#define OPTIONS_EXTENSIONS	2
-static int
-cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
-    u_int which, int crit)
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTIONS_CRITICAL	1
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTIONS_EXTENSIONS	2
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+cert_option_list(ರಚನೆ sshauthopt *opts, ರಚನೆ sshbuf *oblob,
+    u_int which, ಪೂರ್ಣಾಂಕ crit)
 {
-	char *command, *allowed;
-	char *name = NULL;
-	struct sshbuf *c = NULL, *data = NULL;
-	int r, ret = -1, found;
+	ಅಕ್ಷರ *command, *allowed;
+	ಅಕ್ಷರ *name = ಖಾಲಿ;
+	ರಚನೆ sshbuf *c = ಖಾಲಿ, *ದತ್ತಾಂಶ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ r, ret = -1, ಸಿಕ್ಕಿತು;
 
-	if ((c = sshbuf_fromb(oblob)) == NULL) {
+	ಆದರೆ ((c = sshbuf_fromb(oblob)) == ಖಾಲಿ) {
 		error_f("sshbuf_fromb failed");
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	while (sshbuf_len(c) > 0) {
-		sshbuf_free(data);
-		data = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
-		    (r = sshbuf_froms(c, &data)) != 0) {
+	ಆಗ (sshbuf_len(c) > 0) {
+		sshbuf_free(ದತ್ತಾಂಶ);
+		ದತ್ತಾಂಶ = ಖಾಲಿ;
+		ಆದರೆ ((r = sshbuf_get_cstring(c, &name, ಖಾಲಿ)) != 0 ||
+		    (r = sshbuf_froms(c, &ದತ್ತಾಂಶ)) != 0) {
 			error_r(r, "Unable to parse certificate options");
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 		debug3("found certificate option \"%.100s\" len %zu",
-		    name, sshbuf_len(data));
-		found = 0;
-		if ((which & OPTIONS_EXTENSIONS) != 0) {
-			if (strcmp(name, "no-touch-required") == 0) {
+		    name, sshbuf_len(ದತ್ತಾಂಶ));
+		ಸಿಕ್ಕಿತು = 0;
+		ಆದರೆ ((which & OPTIONS_EXTENSIONS) != 0) {
+			ಆದರೆ (strcmp(name, "no-touch-required") == 0) {
 				opts->no_require_user_presence = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-X11-forwarding") == 0) {
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name, "permit-X11-forwarding") == 0) {
 				opts->permit_x11_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name,
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name,
 			    "permit-agent-forwarding") == 0) {
 				opts->permit_agent_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name,
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name,
 			    "permit-port-forwarding") == 0) {
-				opts->permit_port_forwarding_flag = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-pty") == 0) {
+				opts->permit_ಪೋರ್ಟ್_forwarding_flag = 1;
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name, "permit-pty") == 0) {
 				opts->permit_pty_flag = 1;
-				found = 1;
-			} else if (strcmp(name, "permit-user-rc") == 0) {
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name, "permit-user-rc") == 0) {
 				opts->permit_user_rc = 1;
-				found = 1;
+				ಸಿಕ್ಕಿತು = 1;
 			}
 		}
-		if (!found && (which & OPTIONS_CRITICAL) != 0) {
-			if (strcmp(name, "verify-required") == 0) {
+		ಆದರೆ (!ಸಿಕ್ಕಿತು && (which & OPTIONS_CRITICAL) != 0) {
+			ಆದರೆ (strcmp(name, "verify-required") == 0) {
 				opts->require_verify = 1;
-				found = 1;
-			} else if (strcmp(name, "force-command") == 0) {
-				if ((r = sshbuf_get_cstring(data, &command,
-				    NULL)) != 0) {
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name, "force-command") == 0) {
+				ಆದರೆ ((r = sshbuf_get_cstring(ದತ್ತಾಂಶ, &command,
+				    ಖಾಲಿ)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
-				if (opts->force_command != NULL) {
+				ಆದರೆ (opts->force_command != ಖಾಲಿ) {
 					error("Certificate has multiple "
 					    "force-command options");
-					free(command);
-					goto out;
+					ಬಿಡುಗಡೆ(command);
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
 				opts->force_command = command;
-				found = 1;
-			} else if (strcmp(name, "source-address") == 0) {
-				if ((r = sshbuf_get_cstring(data, &allowed,
-				    NULL)) != 0) {
+				ಸಿಕ್ಕಿತು = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(name, "source-address") == 0) {
+				ಆದರೆ ((r = sshbuf_get_cstring(ದತ್ತಾಂಶ, &allowed,
+				    ಖಾಲಿ)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
-					goto out;
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
-				if (opts->required_from_host_cert != NULL) {
+				ಆದರೆ (opts->required_from_host_cert != ಖಾಲಿ) {
 					error("Certificate has multiple "
 					    "source-address options");
-					free(allowed);
-					goto out;
+					ಬಿಡುಗಡೆ(allowed);
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
 				/* Check syntax */
-				if (addr_match_cidr_list(NULL, allowed) == -1) {
+				ಆದರೆ (addr_ಹೊಂದಿಕೆ_cidr_list(ಖಾಲಿ, allowed) == -1) {
 					error("Certificate source-address "
 					    "contents invalid");
-					free(allowed);
-					goto out;
+					ಬಿಡುಗಡೆ(allowed);
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
 				opts->required_from_host_cert = allowed;
-				found = 1;
+				ಸಿಕ್ಕಿತು = 1;
 			}
 		}
 
-		if (!found) {
-			if (crit) {
+		ಆದರೆ (!ಸಿಕ್ಕಿತು) {
+			ಆದರೆ (crit) {
 				error("Certificate critical option \"%s\" "
 				    "is not supported", name);
-				goto out;
-			} else {
+				ಹೋಗು ಹೊರಹೋಗು;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				logit("Certificate extension \"%s\" "
 				    "is not supported", name);
 			}
-		} else if (sshbuf_len(data) != 0) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sshbuf_len(ದತ್ತಾಂಶ) != 0) {
 			error("Certificate option \"%s\" corrupt "
 			    "(extra data)", name);
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		free(name);
-		name = NULL;
+		ಬಿಡುಗಡೆ(name);
+		name = ಖಾಲಿ;
 	}
 	/* successfully parsed all options */
 	ret = 0;
 
- out:
-	free(name);
-	sshbuf_free(data);
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(name);
+	sshbuf_free(ದತ್ತಾಂಶ);
 	sshbuf_free(c);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-struct sshauthopt *
-sshauthopt_new(void)
+ರಚನೆ sshauthopt *
+sshauthopt_new(ಶೂನ್ಯ)
 {
-	struct sshauthopt *ret;
+	ರಚನೆ sshauthopt *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ಆದರೆ ((ret = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*ret))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	ret->force_tun_device = -1;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-void
-sshauthopt_free(struct sshauthopt *opts)
+ಶೂನ್ಯ
+sshauthopt_free(ರಚನೆ sshauthopt *opts)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
-	if (opts == NULL)
-		return;
+	ಆದರೆ (opts == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
 
-	free(opts->cert_principals);
-	free(opts->force_command);
-	free(opts->required_from_host_cert);
-	free(opts->required_from_host_keys);
+	ಬಿಡುಗಡೆ(opts->cert_principals);
+	ಬಿಡುಗಡೆ(opts->force_command);
+	ಬಿಡುಗಡೆ(opts->required_from_host_cert);
+	ಬಿಡುಗಡೆ(opts->required_from_host_ಕೀಲಿಗಳು);
 
-	for (i = 0; i < opts->nenv; i++)
-		free(opts->env[i]);
-	free(opts->env);
+	ಗಾಗಿ (i = 0; i < opts->nenv; i++)
+		ಬಿಡುಗಡೆ(opts->env[i]);
+	ಬಿಡುಗಡೆ(opts->env);
 
-	for (i = 0; i < opts->npermitopen; i++)
-		free(opts->permitopen[i]);
-	free(opts->permitopen);
+	ಗಾಗಿ (i = 0; i < opts->npermitopen; i++)
+		ಬಿಡುಗಡೆ(opts->permitopen[i]);
+	ಬಿಡುಗಡೆ(opts->permitopen);
 
-	for (i = 0; i < opts->npermitlisten; i++)
-		free(opts->permitlisten[i]);
-	free(opts->permitlisten);
+	ಗಾಗಿ (i = 0; i < opts->npermitlisten; i++)
+		ಬಿಡುಗಡೆ(opts->permitlisten[i]);
+	ಬಿಡುಗಡೆ(opts->permitlisten);
 
-	freezero(opts, sizeof(*opts));
+	freezero(opts, ಗಾತ್ರ(*opts));
 }
 
-struct sshauthopt *
-sshauthopt_new_with_keys_defaults(void)
+ರಚನೆ sshauthopt *
+sshauthopt_new_with_ಕೀಲಿಗಳು_defaults(ಶೂನ್ಯ)
 {
-	struct sshauthopt *ret = NULL;
+	ರಚನೆ sshauthopt *ret = ಖಾಲಿ;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ಆದರೆ ((ret = sshauthopt_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 	/* Defaults for authorized_keys flags */
-	ret->permit_port_forwarding_flag = 1;
+	ret->permit_ಪೋರ್ಟ್_forwarding_flag = 1;
 	ret->permit_agent_forwarding_flag = 1;
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
  * Parse and record a permitopen/permitlisten directive.
  * Return 0 on success. Return -1 on failure and sets *errstrp to error reason.
  */
-static int
-handle_permit(const char **optsp, int allow_bare_port,
-    char ***permitsp, size_t *npermitsp, const char **errstrp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+handle_permit(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **optsp, ಪೂರ್ಣಾಂಕ allow_bare_ಪೋರ್ಟ್,
+    ಅಕ್ಷರ ***permitsp, ಗಾತ್ರ_t *npermitsp, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **errstrp)
 {
-	char *opt, *tmp, *cp, *host, **permits = *permitsp;
-	size_t npermits = *npermitsp;
-	const char *errstr = "unknown error";
+	ಅಕ್ಷರ *opt, *tmp, *cp, *host, **permits = *permitsp;
+	ಗಾತ್ರ_t npermits = *npermitsp;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errstr = "unknown error";
 
-	if (npermits > SSH_AUTHOPT_PERMIT_MAX) {
+	ಆದರೆ (npermits > SSH_AUTHOPT_PERMIT_MAX) {
 		*errstrp = "too many permission directives";
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if ((opt = opt_dequote(optsp, &errstr)) == NULL) {
-		return -1;
+	ಆದರೆ ((opt = opt_dequote(optsp, &errstr)) == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (allow_bare_port && strchr(opt, ':') == NULL) {
+	ಆದರೆ (allow_bare_ಪೋರ್ಟ್ && strchr(opt, ':') == ಖಾಲಿ) {
 		/*
 		 * Allow a bare port number in permitlisten to indicate a
 		 * listen_host wildcard.
 		 */
-		if (asprintf(&tmp, "*:%s", opt) == -1) {
-			free(opt);
+		ಆದರೆ (asprintf(&tmp, "*:%s", opt) == -1) {
+			ಬಿಡುಗಡೆ(opt);
 			*errstrp = "memory allocation failed";
-			return -1;
+			ಹಿಂತಿರುಗಿ -1;
 		}
-		free(opt);
+		ಬಿಡುಗಡೆ(opt);
 		opt = tmp;
 	}
-	if ((tmp = strdup(opt)) == NULL) {
-		free(opt);
+	ಆದರೆ ((tmp = strdup(opt)) == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(opt);
 		*errstrp = "memory allocation failed";
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 	cp = tmp;
 	/* validate syntax before recording it. */
-	host = hpdelim2(&cp, NULL);
-	if (host == NULL || strlen(host) >= NI_MAXHOST) {
-		free(tmp);
-		free(opt);
+	host = hpdelim2(&cp, ಖಾಲಿ);
+	ಆದರೆ (host == ಖಾಲಿ || ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(host) >= NI_MAXHOST) {
+		ಬಿಡುಗಡೆ(tmp);
+		ಬಿಡುಗಡೆ(opt);
 		*errstrp = "invalid permission hostname";
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 	/*
 	 * don't want to use permitopen_port to avoid
 	 * dependency on channels.[ch] here.
 	 */
-	if (cp == NULL ||
+	ಆದರೆ (cp == ಖಾಲಿ ||
 	    (strcmp(cp, "*") != 0 && a2port(cp) <= 0)) {
-		free(tmp);
-		free(opt);
+		ಬಿಡುಗಡೆ(tmp);
+		ಬಿಡುಗಡೆ(opt);
 		*errstrp = "invalid permission port";
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 	/* XXX - add streamlocal support */
-	free(tmp);
+	ಬಿಡುಗಡೆ(tmp);
 	/* Record it */
-	if ((permits = recallocarray(permits, npermits, npermits + 1,
-	    sizeof(*permits))) == NULL) {
-		free(opt);
+	ಆದರೆ ((permits = recallocarray(permits, npermits, npermits + 1,
+	    ಗಾತ್ರ(*permits))) == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(opt);
 		/* NB. don't update *permitsp if alloc fails */
 		*errstrp = "memory allocation failed";
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 	permits[npermits++] = opt;
 	*permitsp = permits;
 	*npermitsp = npermits;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-struct sshauthopt *
-sshauthopt_parse(const char *opts, const char **errstrp)
+ರಚನೆ sshauthopt *
+sshauthopt_parse(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opts, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **errstrp)
 {
-	char **oarray, *opt, *cp, *tmp;
-	int r;
-	struct sshauthopt *ret = NULL;
-	const char *errstr = "unknown error";
+	ಅಕ್ಷರ **oarray, *opt, *cp, *tmp;
+	ಪೂರ್ಣಾಂಕ r;
+	ರಚನೆ sshauthopt *ret = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errstr = "unknown error";
 	uint64_t valid_before;
-	size_t i, l;
+	ಗಾತ್ರ_t i, l;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
-		goto alloc_fail;
+	ಆದರೆ (errstrp != ಖಾಲಿ)
+		*errstrp = ಖಾಲಿ;
+	ಆದರೆ ((ret = sshauthopt_new_with_ಕೀಲಿಗಳು_defaults()) == ಖಾಲಿ)
+		ಹೋಗು alloc_fail;
 
-	if (opts == NULL)
-		return ret;
+	ಆದರೆ (opts == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ret;
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	ಆಗ (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("restrict", 0, &opts)) != -1) {
+		ಆದರೆ ((r = opt_flag("restrict", 0, &opts)) != -1) {
 			ret->restricted = 1;
-			ret->permit_port_forwarding_flag = 0;
+			ret->permit_ಪೋರ್ಟ್_forwarding_flag = 0;
 			ret->permit_agent_forwarding_flag = 0;
 			ret->permit_x11_forwarding_flag = 0;
 			ret->permit_pty_flag = 0;
 			ret->permit_user_rc = 0;
-		} else if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->cert_authority = r;
-		} else if ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
-			ret->permit_port_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
+			ret->permit_ಪೋರ್ಟ್_forwarding_flag = r == 1;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
 			ret->permit_agent_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
 			ret->permit_x11_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("touch-required", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("touch-required", 1, &opts)) != -1) {
 			ret->no_require_user_presence = r != 1; /* NB. flip */
-		} else if ((r = opt_flag("verify-required", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("verify-required", 1, &opts)) != -1) {
 			ret->require_verify = r == 1;
-		} else if ((r = opt_flag("pty", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("pty", 1, &opts)) != -1) {
 			ret->permit_pty_flag = r == 1;
-		} else if ((r = opt_flag("user-rc", 1, &opts)) != -1) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((r = opt_flag("user-rc", 1, &opts)) != -1) {
 			ret->permit_user_rc = r == 1;
-		} else if (opt_match(&opts, "command")) {
-			if (ret->force_command != NULL) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "command")) {
+			ಆದರೆ (ret->force_command != ಖಾಲಿ) {
 				errstr = "multiple \"command\" clauses";
-				goto fail;
+				ಹೋಗು fail;
 			}
 			ret->force_command = opt_dequote(&opts, &errstr);
-			if (ret->force_command == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "principals")) {
-			if (ret->cert_principals != NULL) {
+			ಆದರೆ (ret->force_command == ಖಾಲಿ)
+				ಹೋಗು fail;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "principals")) {
+			ಆದರೆ (ret->cert_principals != ಖಾಲಿ) {
 				errstr = "multiple \"principals\" clauses";
-				goto fail;
+				ಹೋಗು fail;
 			}
 			ret->cert_principals = opt_dequote(&opts, &errstr);
-			if (ret->cert_principals == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+			ಆದರೆ (ret->cert_principals == ಖಾಲಿ)
+				ಹೋಗು fail;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "from")) {
+			ಆದರೆ (ret->required_from_host_ಕೀಲಿಗಳು != ಖಾಲಿ) {
 				errstr = "multiple \"from\" clauses";
-				goto fail;
+				ಹೋಗು fail;
 			}
-			ret->required_from_host_keys = opt_dequote(&opts,
+			ret->required_from_host_ಕೀಲಿಗಳು = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "expiry-time")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &valid_before) != 0 ||
+			ಆದರೆ (ret->required_from_host_ಕೀಲಿಗಳು == ಖಾಲಿ)
+				ಹೋಗು fail;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "expiry-time")) {
+			ಆದರೆ ((opt = opt_dequote(&opts, &errstr)) == ಖಾಲಿ)
+				ಹೋಗು fail;
+			ಆದರೆ (parse_absolute_ಸಮಯ(opt, &valid_before) != 0 ||
 			    valid_before == 0) {
-				free(opt);
+				ಬಿಡುಗಡೆ(opt);
 				errstr = "invalid expires time";
-				goto fail;
+				ಹೋಗು fail;
 			}
-			free(opt);
-			if (ret->valid_before == 0 ||
+			ಬಿಡುಗಡೆ(opt);
+			ಆದರೆ (ret->valid_before == 0 ||
 			    valid_before < ret->valid_before)
 				ret->valid_before = valid_before;
-		} else if (opt_match(&opts, "environment")) {
-			if (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "environment")) {
+			ಆದರೆ (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
 				errstr = "too many environment strings";
-				goto fail;
+				ಹೋಗು fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
+			ಆದರೆ ((opt = opt_dequote(&opts, &errstr)) == ಖಾಲಿ)
+				ಹೋಗು fail;
 			/* env name must be alphanumeric and followed by '=' */
-			if ((tmp = strchr(opt, '=')) == NULL) {
-				free(opt);
+			ಆದರೆ ((tmp = strchr(opt, '=')) == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				ಹೋಗು fail;
 			}
-			if ((cp = strdup(opt)) == NULL) {
-				free(opt);
-				goto alloc_fail;
+			ಆದರೆ ((cp = strdup(opt)) == ಖಾಲಿ) {
+				ಬಿಡುಗಡೆ(opt);
+				ಹೋಗು alloc_fail;
 			}
-			l = (size_t)(tmp - opt);
+			l = (ಗಾತ್ರ_t)(tmp - opt);
 			cp[l] = '\0'; /* truncate at '=' */
-			if (!valid_env_name(cp)) {
-				free(cp);
-				free(opt);
+			ಆದರೆ (!valid_env_name(cp)) {
+				ಬಿಡುಗಡೆ(cp);
+				ಬಿಡುಗಡೆ(opt);
 				errstr = "invalid environment string";
-				goto fail;
+				ಹೋಗು fail;
 			}
 			/* Check for duplicates; XXX O(n*log(n)) */
-			for (i = 0; i < ret->nenv; i++) {
-				if (strncmp(ret->env[i], cp, l) == 0 &&
+			ಗಾಗಿ (i = 0; i < ret->nenv; i++) {
+				ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ret->env[i], cp, l) == 0 &&
 				    ret->env[i][l] == '=')
-					break;
+					ನಿಲ್ಲಿಸು;
 			}
-			free(cp);
+			ಬಿಡುಗಡೆ(cp);
 			/* First match wins */
-			if (i >= ret->nenv) {
+			ಆದರೆ (i >= ret->nenv) {
 				/* Append it. */
 				oarray = ret->env;
-				if ((ret->env = recallocarray(ret->env,
+				ಆದರೆ ((ret->env = recallocarray(ret->env,
 				    ret->nenv, ret->nenv + 1,
-				    sizeof(*ret->env))) == NULL) {
-					free(opt);
+				    ಗಾತ್ರ(*ret->env))) == ಖಾಲಿ) {
+					ಬಿಡುಗಡೆ(opt);
 					/* put it back for cleanup */
 					ret->env = oarray;
-					goto alloc_fail;
+					ಹೋಗು alloc_fail;
 				}
 				ret->env[ret->nenv++] = opt;
-				opt = NULL; /* transferred */
+				opt = ಖಾಲಿ; /* transferred */
 			}
-			free(opt);
-		} else if (opt_match(&opts, "permitopen")) {
-			if (handle_permit(&opts, 0, &ret->permitopen,
+			ಬಿಡುಗಡೆ(opt);
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "permitopen")) {
+			ಆದರೆ (handle_permit(&opts, 0, &ret->permitopen,
 			    &ret->npermitopen, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "permitlisten")) {
-			if (handle_permit(&opts, 1, &ret->permitlisten,
+				ಹೋಗು fail;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "permitlisten")) {
+			ಆದರೆ (handle_permit(&opts, 1, &ret->permitlisten,
 			    &ret->npermitlisten, &errstr) != 0)
-				goto fail;
-		} else if (opt_match(&opts, "tunnel")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			ret->force_tun_device = a2tun(opt, NULL);
-			free(opt);
-			if (ret->force_tun_device == SSH_TUNID_ERR) {
+				ಹೋಗು fail;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opt_ಹೊಂದಿಕೆ(&opts, "tunnel")) {
+			ಆದರೆ ((opt = opt_dequote(&opts, &errstr)) == ಖಾಲಿ)
+				ಹೋಗು fail;
+			ret->force_tun_device = a2tun(opt, ಖಾಲಿ);
+			ಬಿಡುಗಡೆ(opt);
+			ಆದರೆ (ret->force_tun_device == SSH_TUNID_ERR) {
 				errstr = "invalid tun device";
-				goto fail;
+				ಹೋಗು fail;
 			}
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		ಆದರೆ (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			ನಿಲ್ಲಿಸು;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		ಆದರೆ (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			ಹೋಗು fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		ಆದರೆ (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			ಹೋಗು fail;
 		}
 	}
 
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	ಆದರೆ (errstrp != ಖಾಲಿ)
+		*errstrp = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ ret;
 
 alloc_fail:
 	errstr = "memory allocation failed";
 fail:
 	sshauthopt_free(ret);
-	if (errstrp != NULL)
+	ಆದರೆ (errstrp != ಖಾಲಿ)
 		*errstrp = errstr;
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-struct sshauthopt *
-sshauthopt_from_cert(struct sshkey *k)
+ರಚನೆ sshauthopt *
+sshauthopt_from_cert(ರಚನೆ sshkey *k)
 {
-	struct sshauthopt *ret;
+	ರಚನೆ sshauthopt *ret;
 
-	if (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
+	ಆದರೆ (k == ಖಾಲಿ || !sshkey_type_is_cert(k->type) || k->cert == ಖಾಲಿ ||
 	    k->cert->type != SSH2_CERT_TYPE_USER)
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ಆದರೆ ((ret = sshauthopt_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 	/* Handle options and critical extensions separately */
-	if (cert_option_list(ret, k->cert->critical,
+	ಆದರೆ (cert_option_list(ret, k->cert->critical,
 	    OPTIONS_CRITICAL, 1) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	if (cert_option_list(ret, k->cert->extensions,
+	ಆದರೆ (cert_option_list(ret, k->cert->extensions,
 	    OPTIONS_EXTENSIONS, 0) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 	/* success */
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
  * Merges "additional" options to "primary" and returns the result.
  * NB. Some options from primary have primacy.
  */
-struct sshauthopt *
-sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp)
+ರಚನೆ sshauthopt *
+sshauthopt_ವಿಲೀನ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *primary,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *additional, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **errstrp)
 {
-	struct sshauthopt *ret;
-	const char *errstr = "internal error";
-	const char *tmp;
+	ರಚನೆ sshauthopt *ret;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errstr = "internal error";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *tmp;
 
-	if (errstrp != NULL)
-		*errstrp = NULL;
+	ಆದರೆ (errstrp != ಖಾಲಿ)
+		*errstrp = ಖಾಲಿ;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		goto alloc_fail;
+	ಆದರೆ ((ret = sshauthopt_new()) == ಖಾಲಿ)
+		ಹೋಗು alloc_fail;
 
 	/* cert_authority and cert_principals are cleared in result */
 
 	/* Prefer access lists from primary. */
 	/* XXX err is both set and mismatch? */
 	tmp = primary->required_from_host_cert;
-	if (tmp == NULL)
+	ಆದರೆ (tmp == ಖಾಲಿ)
 		tmp = additional->required_from_host_cert;
-	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
-		goto alloc_fail;
-	tmp = primary->required_from_host_keys;
-	if (tmp == NULL)
-		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
-		goto alloc_fail;
+	ಆದರೆ (tmp != ಖಾಲಿ && (ret->required_from_host_cert = strdup(tmp)) == ಖಾಲಿ)
+		ಹೋಗು alloc_fail;
+	tmp = primary->required_from_host_ಕೀಲಿಗಳು;
+	ಆದರೆ (tmp == ಖಾಲಿ)
+		tmp = additional->required_from_host_ಕೀಲಿಗಳು;
+	ಆದರೆ (tmp != ಖಾಲಿ && (ret->required_from_host_ಕೀಲಿಗಳು = strdup(tmp)) == ಖಾಲಿ)
+		ಹೋಗು alloc_fail;
 
 	/*
 	 * force_tun_device, permitopen/permitlisten and environment all
 	 * prefer the primary.
 	 */
 	ret->force_tun_device = primary->force_tun_device;
-	if (ret->force_tun_device == -1)
+	ಆದರೆ (ret->force_tun_device == -1)
 		ret->force_tun_device = additional->force_tun_device;
-	if (primary->nenv > 0) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	ಆದರೆ (primary->nenv > 0) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->env, &ret->nenv,
 		    primary->env, primary->nenv) != 0)
-			goto alloc_fail;
-	} else if (additional->nenv) {
-		if (dup_strings(&ret->env, &ret->nenv,
+			ಹೋಗು alloc_fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (additional->nenv) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->env, &ret->nenv,
 		    additional->env, additional->nenv) != 0)
-			goto alloc_fail;
+			ಹೋಗು alloc_fail;
 	}
-	if (primary->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	ಆದರೆ (primary->npermitopen > 0) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitopen, &ret->npermitopen,
 		    primary->permitopen, primary->npermitopen) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+			ಹೋಗು alloc_fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (additional->npermitopen > 0) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitopen, &ret->npermitopen,
 		    additional->permitopen, additional->npermitopen) != 0)
-			goto alloc_fail;
+			ಹೋಗು alloc_fail;
 	}
 
-	if (primary->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	ಆದರೆ (primary->npermitlisten > 0) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitlisten, &ret->npermitlisten,
 		    primary->permitlisten, primary->npermitlisten) != 0)
-			goto alloc_fail;
-	} else if (additional->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+			ಹೋಗು alloc_fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (additional->npermitlisten > 0) {
+		ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitlisten, &ret->npermitlisten,
 		    additional->permitlisten, additional->npermitlisten) != 0)
-			goto alloc_fail;
+			ಹೋಗು alloc_fail;
 	}
 
-#define OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
-#define OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTFLAG_AND(x) ret->x = (primary->x == 1) && (additional->x == 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTFLAG_OR(x) ret->x = (primary->x == 1) || (additional->x == 1)
 	/* Permissive flags are logical-AND (i.e. must be set in both) */
-	OPTFLAG_AND(permit_port_forwarding_flag);
+	OPTFLAG_AND(permit_ಪೋರ್ಟ್_forwarding_flag);
 	OPTFLAG_AND(permit_agent_forwarding_flag);
 	OPTFLAG_AND(permit_x11_forwarding_flag);
 	OPTFLAG_AND(permit_pty_flag);
@@ -605,12 +605,12 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	/* Restrictive flags are logical-OR (i.e. must be set in either) */
 	OPTFLAG_OR(require_verify);
 	OPTFLAG_OR(restricted);
-#undef OPTFLAG_AND
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು OPTFLAG_AND
 
 	/* Earliest expiry time should win */
-	if (primary->valid_before != 0)
+	ಆದರೆ (primary->valid_before != 0)
 		ret->valid_before = primary->valid_before;
-	if (additional->valid_before != 0 &&
+	ಆದರೆ (additional->valid_before != 0 &&
 	    additional->valid_before < ret->valid_before)
 		ret->valid_before = additional->valid_before;
 
@@ -618,54 +618,54 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * When both multiple forced-command are specified, only
 	 * proceed if they are identical, otherwise fail.
 	 */
-	if (primary->force_command != NULL &&
-	    additional->force_command != NULL) {
-		if (strcmp(primary->force_command,
+	ಆದರೆ (primary->force_command != ಖಾಲಿ &&
+	    additional->force_command != ಖಾಲಿ) {
+		ಆದರೆ (strcmp(primary->force_command,
 		    additional->force_command) == 0) {
 			/* ok */
 			ret->force_command = strdup(primary->force_command);
-			if (ret->force_command == NULL)
-				goto alloc_fail;
-		} else {
+			ಆದರೆ (ret->force_command == ಖಾಲಿ)
+				ಹೋಗು alloc_fail;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			errstr = "forced command options do not match";
-			goto fail;
+			ಹೋಗು fail;
 		}
-	} else if (primary->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    primary->force_command)) == NULL)
-			goto alloc_fail;
-	} else if (additional->force_command != NULL) {
-		if ((ret->force_command = strdup(
-		    additional->force_command)) == NULL)
-			goto alloc_fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (primary->force_command != ಖಾಲಿ) {
+		ಆದರೆ ((ret->force_command = strdup(
+		    primary->force_command)) == ಖಾಲಿ)
+			ಹೋಗು alloc_fail;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (additional->force_command != ಖಾಲಿ) {
+		ಆದರೆ ((ret->force_command = strdup(
+		    additional->force_command)) == ಖಾಲಿ)
+			ಹೋಗು alloc_fail;
 	}
 	/* success */
-	if (errstrp != NULL)
-		*errstrp = NULL;
-	return ret;
+	ಆದರೆ (errstrp != ಖಾಲಿ)
+		*errstrp = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ ret;
 
  alloc_fail:
 	errstr = "memory allocation failed";
  fail:
-	if (errstrp != NULL)
+	ಆದರೆ (errstrp != ಖಾಲಿ)
 		*errstrp = errstr;
 	sshauthopt_free(ret);
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
  * Copy options
  */
-struct sshauthopt *
-sshauthopt_copy(const struct sshauthopt *orig)
+ರಚನೆ sshauthopt *
+sshauthopt_copy(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *orig)
 {
-	struct sshauthopt *ret;
+	ರಚನೆ sshauthopt *ret;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ಆದರೆ ((ret = sshauthopt_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-#define OPTSCALAR(x) ret->x = orig->x
-	OPTSCALAR(permit_port_forwarding_flag);
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTSCALAR(x) ret->x = orig->x
+	OPTSCALAR(permit_ಪೋರ್ಟ್_forwarding_flag);
 	OPTSCALAR(permit_agent_forwarding_flag);
 	OPTSCALAR(permit_x11_forwarding_flag);
 	OPTSCALAR(permit_pty_flag);
@@ -676,131 +676,131 @@ sshauthopt_copy(const struct sshauthopt *orig)
 	OPTSCALAR(valid_before);
 	OPTSCALAR(no_require_user_presence);
 	OPTSCALAR(require_verify);
-#undef OPTSCALAR
-#define OPTSTRING(x) \
-	do { \
-		if (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು OPTSCALAR
+#ವ್ಯಾಖ್ಯಾನಿಸು OPTSTRING(x) \
+	ಮಾಡು { \
+		ಆದರೆ (orig->x != ಖಾಲಿ && (ret->x = strdup(orig->x)) == ಖಾಲಿ) { \
 			sshauthopt_free(ret); \
-			return NULL; \
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ; \
 		} \
-	} while (0)
+	} ಆಗ (0)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
-	OPTSTRING(required_from_host_keys);
-#undef OPTSTRING
+	OPTSTRING(required_from_host_ಕೀಲಿಗಳು);
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು OPTSTRING
 
-	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
-	    dup_strings(&ret->permitopen, &ret->npermitopen,
+	ಆದರೆ (dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
+	    dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitopen, &ret->npermitopen,
 	    orig->permitopen, orig->npermitopen) != 0 ||
-	    dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	    dup_ಅಕ್ಷರಸರಣಿಗಳು(&ret->permitlisten, &ret->npermitlisten,
 	    orig->permitlisten, orig->npermitlisten) != 0) {
 		sshauthopt_free(ret);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static int
-serialise_array(struct sshbuf *m, char **a, size_t n)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+serialise_array(ರಚನೆ sshbuf *m, ಅಕ್ಷರ **a, ಗಾತ್ರ_t n)
 {
-	struct sshbuf *b;
-	size_t i;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ರಚನೆ sshbuf *b;
+	ಗಾತ್ರ_t i;
+	ಪೂರ್ಣಾಂಕ r = SSH_ERR_ಆಂತರಿಕ_ERROR;
 
-	if (n > INT_MAX)
-		return SSH_ERR_INTERNAL_ERROR;
+	ಆದರೆ (n > ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಆಂತರಿಕ_ERROR;
 
-	if ((b = sshbuf_new()) == NULL) {
-		return SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ ((b = sshbuf_new()) == ಖಾಲಿ) {
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_put_cstring(b, a[i])) != 0)
-			goto out;
+	ಗಾಗಿ (i = 0; i < n; i++) {
+		ಆದರೆ ((r = sshbuf_put_cstring(b, a[i])) != 0)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if ((r = sshbuf_put_u32(m, n)) != 0 ||
+	ಆದರೆ ((r = sshbuf_put_u32(m, n)) != 0 ||
 	    (r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	/* success */
 	r = 0;
- out:
+ ಹೊರಹೋಗು:
 	sshbuf_free(b);
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
-static int
-deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+deserialise_array(ರಚನೆ sshbuf *m, ಅಕ್ಷರ ***ap, ಗಾತ್ರ_t *np)
 {
-	char **a = NULL;
-	size_t i, n = 0;
-	struct sshbuf *b = NULL;
+	ಅಕ್ಷರ **a = ಖಾಲಿ;
+	ಗಾತ್ರ_t i, n = 0;
+	ರಚನೆ sshbuf *b = ಖಾಲಿ;
 	u_int tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಂಕ r = SSH_ERR_ಆಂತರಿಕ_ERROR;
 
-	if ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
+	ಆದರೆ ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
 	    (r = sshbuf_froms(m, &b)) != 0)
-		goto out;
-	if (tmp > INT_MAX) {
+		ಹೋಗು ಹೊರಹೋಗು;
+	ಆದರೆ (tmp > ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	n = tmp;
-	if (n > 0 && (a = calloc(n, sizeof(*a))) == NULL) {
+	ಆದರೆ (n > 0 && (a = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(n, ಗಾತ್ರ(*a))) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
-			goto out;
+	ಗಾಗಿ (i = 0; i < n; i++) {
+		ಆದರೆ ((r = sshbuf_get_cstring(b, &a[i], ಖಾಲಿ)) != 0)
+			ಹೋಗು ಹೊರಹೋಗು;
 	}
 	/* success */
 	r = 0;
 	*ap = a;
-	a = NULL;
+	a = ಖಾಲಿ;
 	*np = n;
 	n = 0;
- out:
-	if (a != NULL) {
-		for (i = 0; i < n; i++)
-			free(a[i]);
-		free(a);
+ ಹೊರಹೋಗು:
+	ಆದರೆ (a != ಖಾಲಿ) {
+		ಗಾಗಿ (i = 0; i < n; i++)
+			ಬಿಡುಗಡೆ(a[i]);
+		ಬಿಡುಗಡೆ(a);
 	}
 	sshbuf_free(b);
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
-static int
-serialise_nullable_string(struct sshbuf *m, const char *s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+serialise_nullable_string(ರಚನೆ sshbuf *m, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
+	ಆದರೆ ((r = sshbuf_put_u8(m, s == ಖಾಲಿ)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s)) != 0)
-		return r;
-	return 0;
+		ಹಿಂತಿರುಗಿ r;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *m, char **sp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+deserialise_nullable_string(ರಚನೆ sshbuf *m, ಅಕ್ಷರ **sp)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 	u_char flag;
 
-	*sp = NULL;
-	if ((r = sshbuf_get_u8(m, &flag)) != 0 ||
-	    (r = sshbuf_get_cstring(m, flag ? NULL : sp, NULL)) != 0)
-		return r;
-	return 0;
+	*sp = ಖಾಲಿ;
+	ಆದರೆ ((r = sshbuf_get_u8(m, &flag)) != 0 ||
+	    (r = sshbuf_get_cstring(m, flag ? ಖಾಲಿ : sp, ಖಾಲಿ)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
-    int untrusted)
+ಪೂರ್ಣಾಂಕ
+sshauthopt_serialise(ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *opts, ರಚನೆ sshbuf *m,
+    ಪೂರ್ಣಾಂಕ untrusted)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ಪೂರ್ಣಾಂಕ r = SSH_ERR_ಆಂತರಿಕ_ERROR;
 
 	/* Flag options */
-	if ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
+	ಆದರೆ ((r = sshbuf_put_u8(m, opts->permit_ಪೋರ್ಟ್_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_agent_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_x11_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_pty_flag)) != 0 ||
@@ -809,61 +809,61 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = sshbuf_put_u8(m, opts->cert_authority)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->no_require_user_presence)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->require_verify)) != 0)
-		return r;
+		ಹಿಂತಿರುಗಿ r;
 
 	/* Simple integer options */
-	if ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
-		return r;
+	ಆದರೆ ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
+	ಆದರೆ ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
 	    (r = sshbuf_put_u32(m, (opts->force_tun_device < 0) ?
 	    0 : (u_int)opts->force_tun_device)) != 0)
-		return r;
+		ಹಿಂತಿರುಗಿ r;
 
 	/* String options; these may be NULL */
-	if ((r = serialise_nullable_string(m,
+	ಆದರೆ ((r = serialise_nullable_string(m,
 	    untrusted ? "yes" : opts->cert_principals)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? "true" : opts->force_command)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
+	    untrusted ? ಖಾಲಿ : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
-		return r;
+	    untrusted ? ಖಾಲಿ : opts->required_from_host_ಕೀಲಿಗಳು)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 
 	/* Array options */
-	if ((r = serialise_array(m, opts->env,
+	ಆದರೆ ((r = serialise_array(m, opts->env,
 	    untrusted ? 0 : opts->nenv)) != 0 ||
 	    (r = serialise_array(m, opts->permitopen,
 	    untrusted ? 0 : opts->npermitopen)) != 0 ||
 	    (r = serialise_array(m, opts->permitlisten,
 	    untrusted ? 0 : opts->npermitlisten)) != 0)
-		return r;
+		ಹಿಂತಿರುಗಿ r;
 
 	/* success */
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
+ಪೂರ್ಣಾಂಕ
+sshauthopt_deserialise(ರಚನೆ sshbuf *m, ರಚನೆ sshauthopt **optsp)
 {
-	struct sshauthopt *opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ರಚನೆ sshauthopt *opts = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ r = SSH_ERR_ಆಂತರಿಕ_ERROR;
 	u_char f;
 	u_int tmp;
 
-	if ((opts = calloc(1, sizeof(*opts))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ ((opts = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, ಗಾತ್ರ(*opts))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 
 	/* Flag options */
-#define OPT_FLAG(x) \
-	do { \
-		if ((r = sshbuf_get_u8(m, &f)) != 0) \
-			goto out; \
+#ವ್ಯಾಖ್ಯಾನಿಸು OPT_FLAG(x) \
+	ಮಾಡು { \
+		ಆದರೆ ((r = sshbuf_get_u8(m, &f)) != 0) \
+			ಹೋಗು ಹೊರಹೋಗು; \
 		opts->x = f; \
-	} while (0)
-	OPT_FLAG(permit_port_forwarding_flag);
+	} ಆಗ (0)
+	OPT_FLAG(permit_ಪೋರ್ಟ್_forwarding_flag);
 	OPT_FLAG(permit_agent_forwarding_flag);
 	OPT_FLAG(permit_x11_forwarding_flag);
 	OPT_FLAG(permit_pty_flag);
@@ -872,40 +872,40 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 	OPT_FLAG(cert_authority);
 	OPT_FLAG(no_require_user_presence);
 	OPT_FLAG(require_verify);
-#undef OPT_FLAG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು OPT_FLAG
 
 	/* Simple integer options */
-	if ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
-		goto out;
+	ಆದರೆ ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_get_u8(m, &f)) != 0 ||
+	ಆದರೆ ((r = sshbuf_get_u8(m, &f)) != 0 ||
 	    (r = sshbuf_get_u32(m, &tmp)) != 0)
-		goto out;
-	opts->force_tun_device = f ? -1 : (int)tmp;
+		ಹೋಗು ಹೊರಹೋಗು;
+	opts->force_tun_device = f ? -1 : (ಪೂರ್ಣಾಂಕ)tmp;
 
 	/* String options may be NULL */
-	if ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
+	ಆದರೆ ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
 	    (r = deserialise_nullable_string(m, &opts->force_command)) != 0 ||
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
 	    (r = deserialise_nullable_string(m,
-	    &opts->required_from_host_keys)) != 0)
-		goto out;
+	    &opts->required_from_host_ಕೀಲಿಗಳು)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* Array options */
-	if ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
+	ಆದರೆ ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitopen, &opts->npermitopen)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitlisten, &opts->npermitlisten)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* success */
 	r = 0;
 	*optsp = opts;
-	opts = NULL;
- out:
+	opts = ಖಾಲಿ;
+ ಹೊರಹೋಗು:
 	sshauthopt_free(opts);
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }

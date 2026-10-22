@@ -58,175 +58,175 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಅನ್ತರ್ಭಾವ "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <dirent.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#ಆದರೆ !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#ಅನ್ತರ್ಭಾವ "charclass.h"
 
-#ifdef TILDE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ TILDE
 # undef TILDE
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define	DOLLAR		'$'
-#define	DOT		'.'
-#define	EOS		'\0'
-#define	LBRACKET	'['
-#define	NOT		'!'
-#define	QUESTION	'?'
-#define	QUOTE		'\\'
-#define	RANGE		'-'
-#define	RBRACKET	']'
-#define	SEP		'/'
-#define	STAR		'*'
-#define	TILDE		'~'
-#define	UNDERSCORE	'_'
-#define	LBRACE		'{'
-#define	RBRACE		'}'
-#define	SLASH		'/'
-#define	COMMA		','
+#ವ್ಯಾಖ್ಯಾನಿಸು	DOLLAR		'$'
+#ವ್ಯಾಖ್ಯಾನಿಸು	DOT		'.'
+#ವ್ಯಾಖ್ಯಾನಿಸು	EOS		'\0'
+#ವ್ಯಾಖ್ಯಾನಿಸು	LBRACKET	'['
+#ವ್ಯಾಖ್ಯಾನಿಸು	NOT		'!'
+#ವ್ಯಾಖ್ಯಾನಿಸು	QUESTION	'?'
+#ವ್ಯಾಖ್ಯಾನಿಸು	QUOTE		'\\'
+#ವ್ಯಾಖ್ಯಾನಿಸು	RANGE		'-'
+#ವ್ಯಾಖ್ಯಾನಿಸು	RBRACKET	']'
+#ವ್ಯಾಖ್ಯಾನಿಸು	SEP		'/'
+#ವ್ಯಾಖ್ಯಾನಿಸು	ನಕ್ಷತ್ರ		'*'
+#ವ್ಯಾಖ್ಯಾನಿಸು	TILDE		'~'
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNDERSCORE	'_'
+#ವ್ಯಾಖ್ಯಾನಿಸು	LBRACE		'{'
+#ವ್ಯಾಖ್ಯಾನಿಸು	RBRACE		'}'
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLASH		'/'
+#ವ್ಯಾಖ್ಯಾನಿಸು	COMMA		','
 
-#ifndef DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ DEBUG
 
-#define	M_QUOTE		0x8000
-#define	M_PROTECT	0x4000
-#define	M_MASK		0xffff
-#define	M_ASCII		0x00ff
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_QUOTE		0x8000
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_PROTECT	0x4000
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ಮುಖವಾಡ		0xffff
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ASCII		0x00ff
 
-typedef u_short Char;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ u_short Char;
 
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 
-#define	M_QUOTE		0x80
-#define	M_PROTECT	0x40
-#define	M_MASK		0xff
-#define	M_ASCII		0x7f
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_QUOTE		0x80
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_PROTECT	0x40
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ಮುಖವಾಡ		0xff
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ASCII		0x7f
 
-typedef char Char;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಅಕ್ಷರ Char;
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 
-#define	CHAR(c)		((Char)((c)&M_ASCII))
-#define	META(c)		((Char)((c)|M_QUOTE))
-#define	M_ALL		META('*')
-#define	M_END		META(']')
-#define	M_NOT		META('!')
-#define	M_ONE		META('?')
-#define	M_RNG		META('-')
-#define	M_SET		META('[')
-#define	M_CLASS		META(':')
-#define	ismeta(c)	(((c)&M_QUOTE) != 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	CHAR(c)		((Char)((c)&M_ASCII))
+#ವ್ಯಾಖ್ಯಾನಿಸು	META(c)		((Char)((c)|M_QUOTE))
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ALL		META('*')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ಕೊನೆ		META(']')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_NOT		META('!')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ONE		META('?')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_RNG		META('-')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_ಗಣ		META('[')
+#ವ್ಯಾಖ್ಯಾನಿಸು	M_CLASS		META(':')
+#ವ್ಯಾಖ್ಯಾನಿಸು	ismeta(c)	(((c)&M_QUOTE) != 0)
 
-#define	GLOB_LIMIT_MALLOC	65536
-#define	GLOB_LIMIT_STAT		2048
-#define	GLOB_LIMIT_READDIR	16384
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ಎಲ್ಲೆ_MALLOC	65536
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ಎಲ್ಲೆ_STAT		2048
+#ವ್ಯಾಖ್ಯಾನಿಸು	GLOB_ಎಲ್ಲೆ_READDIR	16384
 
-struct glob_lim {
-	size_t	glim_malloc;
-	size_t	glim_stat;
-	size_t	glim_readdir;
+ರಚನೆ glob_lim {
+	ಗಾತ್ರ_t	glim_malloc;
+	ಗಾತ್ರ_t	glim_stat;
+	ಗಾತ್ರ_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+ರಚನೆ glob_ಮಾರ್ಗ_stat {
+	ಅಕ್ಷರ		*gps_ಮಾರ್ಗ;
+	ರಚನೆ stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
-#ifdef DEBUG
-static void	 qprintf(const char *, Char *);
-#endif
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 compare(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 compare_gps(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 g_Ctoc(ಸ್ಥಿರಾಂಕ Char *, ಅಕ್ಷರ *, ಗಾತ್ರ_t);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 g_lstat(Char *, ರಚನೆ stat *, glob_t *);
+ಸ್ಥಿರ DIR	*g_opendir(Char *, glob_t *);
+ಸ್ಥಿರ Char	*g_strchr(ಸ್ಥಿರಾಂಕ Char *, ಪೂರ್ಣಾಂಕ);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 g_strncmp(ಸ್ಥಿರಾಂಕ Char *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಗಾತ್ರ_t);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 g_stat(Char *, ರಚನೆ stat *, glob_t *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 glob0(ಸ್ಥಿರಾಂಕ Char *, glob_t *, ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 glob1(Char *, Char *, glob_t *, ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 globextend(ಸ್ಥಿರಾಂಕ Char *, glob_t *, ರಚನೆ glob_lim *,
+		    ರಚನೆ stat *);
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ Char *
+		 globtilde(ಸ್ಥಿರಾಂಕ Char *, Char *, ಗಾತ್ರ_t, glob_t *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 globexp1(ಸ್ಥಿರಾಂಕ Char *, glob_t *, ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 globexp2(ಸ್ಥಿರಾಂಕ Char *, ಸ್ಥಿರಾಂಕ Char *, glob_t *,
+		    ರಚನೆ glob_lim *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ(Char *, Char *, Char *);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+ಸ್ಥಿರ ಶೂನ್ಯ	 qprintf(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, Char *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+ಪೂರ್ಣಾಂಕ
+glob(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಪೂರ್ಣಾಂಕ flags, ಪೂರ್ಣಾಂಕ (*errfunc)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	ಸ್ಥಿರಾಂಕ u_char *patnext;
+	ಪೂರ್ಣಾಂಕ c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	ರಚನೆ glob_lim ಎಲ್ಲೆ = { 0, 0, 0 };
 
-	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	patnext = (u_char *) ನಮೂನೆ;
+	ಆದರೆ (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = ಖಾಲಿ;
+		pglob->gl_statv = ಖಾಲಿ;
+		ಆದರೆ (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	ಆದರೆ (strnlen(ನಮೂನೆ, PATH_MAX) == PATH_MAX)
+		ಹಿಂತಿರುಗಿ(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	ಆದರೆ (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		ಹಿಂತಿರುಗಿ GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	ಆದರೆ (flags & GLOB_NOESCAPE)
+		ಆಗ (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	ಇಲ್ಲದಿದ್ದರೆ {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		ಆಗ (bufnext < bufend && (c = *patnext++) != EOS)
+			ಆದರೆ (c == QUOTE) {
+				ಆದರೆ ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} ಇಲ್ಲದಿದ್ದರೆ
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	ಆದರೆ (flags & GLOB_BRACE)
+		ಹಿಂತಿರುಗಿ globexp1(patbuf, pglob, &ಎಲ್ಲೆ);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ glob0(patbuf, pglob, &ಎಲ್ಲೆ);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+globexp1(ಸ್ಥಿರಾಂಕ Char *ನಮೂನೆ, glob_t *pglob, ರಚನೆ glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	ಸ್ಥಿರಾಂಕ Char* ptr = ನಮೂನೆ;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	ಆದರೆ (ನಮೂನೆ[0] == LBRACE && ನಮೂನೆ[1] == RBRACE && ನಮೂನೆ[2] == EOS)
+		ಹಿಂತಿರುಗಿ glob0(ನಮೂನೆ, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	ಆದರೆ ((ptr = (ಸ್ಥಿರಾಂಕ Char *) g_strchr(ptr, LBRACE)) != ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ globexp2(ptr, ನಮೂನೆ, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	ಹಿಂತಿರುಗಿ glob0(ನಮೂನೆ, pglob, limitp);
 }
 
 
@@ -255,104 +255,104 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+globexp2(ಸ್ಥಿರಾಂಕ Char *ptr, ಸ್ಥಿರಾಂಕ Char *ನಮೂನೆ, glob_t *pglob,
+    ರಚನೆ glob_lim *limitp)
 {
-	int     i, rv;
+	ಪೂರ್ಣಾಂಕ     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	ಸ್ಥಿರಾಂಕ Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	ಗಾಗಿ (lm = patbuf, pm = ನಮೂನೆ; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	ಗಾಗಿ (i = 0, pe = ++ptr; *pe; pe++)
+		ಆದರೆ (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			ಗಾಗಿ (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			ಆದರೆ (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (*pe == RBRACE) {
+			ಆದರೆ (i == 0)
+				ನಿಲ್ಲಿಸು;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	ಆದರೆ (i != 0 || *pe == EOS)
+		ಹಿಂತಿರುಗಿ glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	ಗಾಗಿ (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		ಆಯ್ಕೆ (*pm) {
+		ಸ್ಥಿತಿ LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			ಗಾಗಿ (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			ಆದರೆ (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case LBRACE:
+		ಸ್ಥಿತಿ LBRACE:
 			i++;
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case RBRACE:
-			if (i) {
+		ಸ್ಥಿತಿ RBRACE:
+			ಆದರೆ (i) {
 				i--;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		ಸ್ಥಿತಿ COMMA:
+			ಆದರೆ (i && *pm == COMMA)
+				ನಿಲ್ಲಿಸು;
+			ಇಲ್ಲದಿದ್ದರೆ {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				ಗಾಗಿ (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				ಗಾಗಿ (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
-#ifdef DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
 				qprintf("globexp2:", patbuf);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				ಆದರೆ (rv && rv != GLOB_NOMATCH)
+					ಹಿಂತಿರುಗಿ rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		default:
-			break;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ Char *
+globtilde(ಸ್ಥಿರಾಂಕ Char *ನಮೂನೆ, Char *patbuf, ಗಾತ್ರ_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	ರಚನೆ passwd *pwd;
+	ಅಕ್ಷರ *h;
+	ಸ್ಥಿರಾಂಕ Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	ಆದರೆ (*ನಮೂನೆ != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		ಹಿಂತಿರುಗಿ ನಮೂನೆ;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	ಗಾಗಿ (p = ನಮೂನೆ + 1, h = (ಅಕ್ಷರ *) patbuf;
+	    h < (ಅಕ್ಷರ *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
-#endif
+#ಆದರೆ 0
+	ಆದರೆ (h == (ಅಕ್ಷರ *)eb)
+		ಹಿಂತಿರುಗಿ what;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (((char *) patbuf)[0] == EOS) {
+	ಆದರೆ (((ಅಕ್ಷರ *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
-#endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+#ಆದರೆ 0
+		ಆದರೆ (issetugid() != 0 || (h = getenv("HOME")) == ಖಾಲಿ) {
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ ((getuid() != geteuid()) || (h = getenv("HOME")) == ಖಾಲಿ) {
+			ಆದರೆ ((pwd = getpwuid(getuid())) == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ ನಮೂನೆ;
+			ಇಲ್ಲದಿದ್ದರೆ
 				h = pwd->pw_dir;
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		ಆದರೆ ((pwd = getpwnam((ಅಕ್ಷರ*) patbuf)) == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ ನಮೂನೆ;
+		ಇಲ್ಲದಿದ್ದರೆ
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	ಗಾಗಿ (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	ಆಗ (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	ಹಿಂತಿರುಗಿ patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+g_strncmp(ಸ್ಥಿರಾಂಕ Char *s1, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s2, ಗಾತ್ರ_t n)
 {
-	int rv = 0;
+	ಪೂರ್ಣಾಂಕ rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	ಆಗ (n--) {
+		rv = *(Char *)s1 - *(ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)s2++;
+		ಆದರೆ (rv)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (*s1++ == '\0')
+			ನಿಲ್ಲಿಸು;
 	}
-	return rv;
+	ಹಿಂತಿರುಗಿ rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+g_charclass(ಸ್ಥಿರಾಂಕ Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	ಸ್ಥಿರಾಂಕ Char *ನಮೂನೆ = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
-	size_t len;
+	ಸ್ಥಿರಾಂಕ Char *colon;
+	ರಚನೆ cclass *cc;
+	ಗಾತ್ರ_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	ಆದರೆ ((colon = g_strchr(ನಮೂನೆ, ':')) == ಖಾಲಿ || colon[1] != ']')
+		ಹಿಂತಿರುಗಿ 1;	/* not a character class */
 
-	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	len = (ಗಾತ್ರ_t)(colon - ನಮೂನೆ);
+	ಗಾಗಿ (cc = cclasses; cc->name != ಖಾಲಿ; cc++) {
+		ಆದರೆ (!g_strncmp(ನಮೂನೆ, cc->name, len) && cc->name[len] == '\0')
+			ನಿಲ್ಲಿಸು;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	ಆದರೆ (cc->name == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -469,86 +469,86 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+glob0(ಸ್ಥಿರಾಂಕ Char *ನಮೂನೆ, glob_t *pglob, ರಚನೆ glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
-	size_t oldpathc;
+	ಸ್ಥಿರಾಂಕ Char *qpatnext;
+	ಪೂರ್ಣಾಂಕ c, err;
+	ಗಾತ್ರ_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
-	qpatnext = globtilde(pattern, patbuf, PATH_MAX, pglob);
+	qpatnext = globtilde(ನಮೂನೆ, patbuf, PATH_MAX, pglob);
 	oldpathc = pglob->gl_pathc;
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	ಆಗ ((c = *qpatnext++) != EOS) {
+		ಆಯ್ಕೆ (c) {
+		ಸ್ಥಿತಿ LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			ಆದರೆ (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			ಆದರೆ (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == ಖಾಲಿ) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				ಆದರೆ (c == NOT)
 					--qpatnext;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			*bufnext++ = M_SET;
-			if (c == NOT)
+			*bufnext++ = M_ಗಣ;
+			ಆದರೆ (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			ಮಾಡು {
+				ಆದರೆ (c == LBRACKET && *qpatnext == ':') {
+					ಮಾಡು {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						ಆದರೆ (err)
+							ನಿಲ್ಲಿಸು;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} ಆಗ (c == LBRACKET && *qpatnext == ':');
+					ಆದರೆ (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						ಹಿಂತಿರುಗಿ GLOB_NOMATCH;
+					ಆದರೆ (c == RBRACKET)
+						ನಿಲ್ಲಿಸು;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				ಆದರೆ (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} ಆಗ ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
-			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			*bufnext++ = M_ಕೊನೆ;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ ನಕ್ಷತ್ರ:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			ಆದರೆ (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			*bufnext++ = CHAR(c);
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 	*bufnext = EOS;
-#ifdef DEBUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
 	qprintf("glob0:", patbuf);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	ಆದರೆ ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		ಹಿಂತಿರುಗಿ(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,69 +556,69 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	ಆದರೆ (pglob->gl_pathc == oldpathc) {
+		ಆದರೆ ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			ಹಿಂತಿರುಗಿ(globextend(ನಮೂನೆ, pglob, limitp, ಖಾಲಿ));
+		ಇಲ್ಲದಿದ್ದರೆ
+			ಹಿಂತಿರುಗಿ(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	ಆದರೆ (!(pglob->gl_flags & GLOB_NOSORT)) {
+		ಆದರೆ ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
-			size_t i;
-			size_t n = pglob->gl_pathc - oldpathc;
-			size_t o = pglob->gl_offs + oldpathc;
+			ರಚನೆ glob_ಮಾರ್ಗ_stat *ಮಾರ್ಗ_stat;
+			ಗಾತ್ರ_t i;
+			ಗಾತ್ರ_t n = pglob->gl_pathc - oldpathc;
+			ಗಾತ್ರ_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
-				path_stat[i].gps_path = pglob->gl_pathv[o + i];
-				path_stat[i].gps_stat = pglob->gl_statv[o + i];
+			ಆದರೆ ((ಮಾರ್ಗ_stat = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(n, ಗಾತ್ರ(*ಮಾರ್ಗ_stat))) == ಖಾಲಿ)
+				ಹಿಂತಿರುಗಿ GLOB_NOSPACE;
+			ಗಾಗಿ (i = 0; i < n; i++) {
+				ಮಾರ್ಗ_stat[i].gps_ಮಾರ್ಗ = pglob->gl_pathv[o + i];
+				ಮಾರ್ಗ_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
-				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
-				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
+			qsort(ಮಾರ್ಗ_stat, n, ಗಾತ್ರ(*ಮಾರ್ಗ_stat), compare_gps);
+			ಗಾಗಿ (i = 0; i < n; i++) {
+				pglob->gl_pathv[o + i] = ಮಾರ್ಗ_stat[i].gps_ಮಾರ್ಗ;
+				pglob->gl_statv[o + i] = ಮಾರ್ಗ_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			ಬಿಡುಗಡೆ(ಮಾರ್ಗ_stat);
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, ಗಾತ್ರ(ಅಕ್ಷರ *),
 			    compare);
 		}
 	}
-	return(0);
+	ಹಿಂತಿರುಗಿ(0);
 }
 
-static int
-compare(const void *p, const void *q)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+compare(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *p, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	ಹಿಂತಿರುಗಿ(strcmp(*(ಅಕ್ಷರ **)p, *(ಅಕ್ಷರ **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+compare_gps(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *_p, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ glob_ಮಾರ್ಗ_stat *p = (ಸ್ಥಿರಾಂಕ ರಚನೆ glob_ಮಾರ್ಗ_stat *)_p;
+	ಸ್ಥಿರಾಂಕ ರಚನೆ glob_ಮಾರ್ಗ_stat *q = (ಸ್ಥಿರಾಂಕ ರಚನೆ glob_ಮಾರ್ಗ_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	ಹಿಂತಿರುಗಿ(strcmp(p->gps_ಮಾರ್ಗ, q->gps_ಮಾರ್ಗ));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+glob1(Char *ನಮೂನೆ, Char *ನಮೂನೆ_ಕೊನೆಯ, glob_t *pglob, ರಚನೆ glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	ಆದರೆ (*ನಮೂನೆ == EOS)
+		ಹಿಂತಿರುಗಿ(0);
+	ಹಿಂತಿರುಗಿ(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
-	    pattern, pattern_last, pglob, limitp));
+	    ನಮೂನೆ, ನಮೂನೆ_ಕೊನೆಯ, pglob, limitp));
 }
 
 /*
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
-glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+glob2(Char *pathbuf, Char *pathbuf_ಕೊನೆಯ, Char *pathend, Char *pathend_ಕೊನೆಯ,
+    Char *ನಮೂನೆ, Char *ನಮೂನೆ_ಕೊನೆಯ, glob_t *pglob, ರಚನೆ glob_lim *limitp)
 {
-	struct stat sb;
+	ರಚನೆ stat sb;
 	Char *p, *q;
-	int anymeta;
+	ಪೂರ್ಣಾಂಕ anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	ಗಾಗಿ (anymeta = 0;;) {
+		ಆದರೆ (*ನಮೂನೆ == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
-			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
+			ಆದರೆ ((pglob->gl_flags & GLOB_ಎಲ್ಲೆ) &&
+			    limitp->glim_stat++ >= GLOB_ಎಲ್ಲೆ_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				ಹಿಂತಿರುಗಿ(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			ಆದರೆ (g_lstat(pathbuf, &sb, pglob))
+				ಹಿಂತಿರುಗಿ(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			ಆದರೆ (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				ಆದರೆ (pathend+1 > pathend_ಕೊನೆಯ)
+					ಹಿಂತಿರುಗಿ (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			ಹಿಂತಿರುಗಿ(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
-		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		p = ನಮೂನೆ;
+		ಆಗ (*p != EOS && *p != SEP) {
+			ಆದರೆ (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			ಆದರೆ (q+1 > pathend_ಕೊನೆಯ)
+				ಹಿಂತಿರುಗಿ (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		ಆದರೆ (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
-			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
-				*pathend++ = *pattern++;
+			ನಮೂನೆ = p;
+			ಆಗ (*ನಮೂನೆ == SEP) {
+				ಆದರೆ (pathend+1 > pathend_ಕೊನೆಯ)
+					ಹಿಂತಿರುಗಿ (1);
+				*pathend++ = *ನಮೂನೆ++;
 			}
-		} else
+		} ಇಲ್ಲದಿದ್ದರೆ
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
-			    pathend_last, pattern, p, pattern_last,
+			ಹಿಂತಿರುಗಿ(glob3(pathbuf, pathbuf_ಕೊನೆಯ, pathend,
+			    pathend_ಕೊನೆಯ, ನಮೂನೆ, p, ನಮೂನೆ_ಕೊನೆಯ,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
-glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+glob3(Char *pathbuf, Char *pathbuf_ಕೊನೆಯ, Char *pathend, Char *pathend_ಕೊನೆಯ,
+    Char *ನಮೂನೆ, Char *restpattern, Char *restpattern_ಕೊನೆಯ, glob_t *pglob,
+    ರಚನೆ glob_lim *limitp)
 {
-	struct dirent *dp;
+	ರಚನೆ dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	ಪೂರ್ಣಾಂಕ err;
+	ಅಕ್ಷರ buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	ರಚನೆ dirent *(*readdirfunc)(ಶೂನ್ಯ *);
 
-	if (pathend > pathend_last)
-		return (1);
+	ಆದರೆ (pathend > pathend_ಕೊನೆಯ)
+		ಹಿಂತಿರುಗಿ (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	ಆದರೆ ((dirp = g_opendir(pathbuf, pglob)) == ಖಾಲಿ) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		ಆದರೆ (pglob->gl_errfunc) {
+			ಆದರೆ (g_Ctoc(pathbuf, buf, ಗಾತ್ರ(buf)))
+				ಹಿಂತಿರುಗಿ(GLOB_ABORTED);
+			ಆದರೆ (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				ಹಿಂತಿರುಗಿ(GLOB_ABORTED);
 		}
-		return(0);
+		ಹಿಂತಿರುಗಿ(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ಆದರೆ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	ಇಲ್ಲದಿದ್ದರೆ
+		readdirfunc = (ರಚನೆ dirent *(*)(ಶೂನ್ಯ *))readdir;
+	ಆಗ ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
-		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
+		ಆದರೆ ((pglob->gl_flags & GLOB_ಎಲ್ಲೆ) &&
+		    limitp->glim_readdir++ >= GLOB_ಎಲ್ಲೆ_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		ಆದರೆ (dp->d_name[0] == DOT && *ನಮೂನೆ != DOT)
+			ಮುಂದುವರಿ;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		ಆಗ (dc < pathend_ಕೊನೆಯ && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		ಆದರೆ (dc >= pathend_ಕೊನೆಯ) {
 			*dc = EOS;
 			err = 1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		ಆದರೆ (!ಹೊಂದಿಕೆ(pathend, ನಮೂನೆ, restpattern)) {
 			*pathend = EOS;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
-		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		err = glob2(pathbuf, pathbuf_ಕೊನೆಯ, --dc, pathend_ಕೊನೆಯ,
+		    restpattern, restpattern_ಕೊನೆಯ, pglob, limitp);
+		ಆದರೆ (err)
+			ನಿಲ್ಲಿಸು;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	ಆದರೆ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		closedir(dirp);
-	return(err);
+	ಹಿಂತಿರುಗಿ(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+globextend(ಸ್ಥಿರಾಂಕ Char *ಮಾರ್ಗ, glob_t *pglob, ರಚನೆ glob_lim *limitp,
+    ರಚನೆ stat *sb)
 {
-	char **pathv;
-	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	ಅಕ್ಷರ **pathv;
+	ಗಾತ್ರ_t i, newn, len;
+	ಅಕ್ಷರ *copy = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ Char *p;
+	ರಚನೆ stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	ಆದರೆ (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / ಗಾತ್ರ(*pathv) <= newn ||
+	    SIZE_MAX / ಗಾತ್ರ(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		ಗಾಗಿ (i = pglob->gl_offs; i < newn - 2; i++) {
+			ಆದರೆ (pglob->gl_pathv && pglob->gl_pathv[i])
+				ಬಿಡುಗಡೆ(pglob->gl_pathv[i]);
+			ಆದರೆ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				ಬಿಡುಗಡೆ(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		ಬಿಡುಗಡೆ(pglob->gl_pathv);
+		pglob->gl_pathv = ಖಾಲಿ;
+		ಬಿಡುಗಡೆ(pglob->gl_statv);
+		pglob->gl_statv = ಖಾಲಿ;
+		ಹಿಂತಿರುಗಿ(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, ಗಾತ್ರ(*pathv));
+	ಆದರೆ (pathv == ಖಾಲಿ)
+		ಹೋಗು nospace;
+	ಆದರೆ (pglob->gl_pathv == ಖಾಲಿ && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		ಗಾಗಿ (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = ಖಾಲಿ;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	ಆದರೆ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, ಗಾತ್ರ(*statv));
+		ಆದರೆ (statv == ಖಾಲಿ)
+			ಹೋಗು nospace;
+		ಆದರೆ (pglob->gl_statv == ಖಾಲಿ && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			ಗಾಗಿ (i = pglob->gl_offs; i > 0; i--)
+				*--statv = ಖಾಲಿ;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
-			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
+		ಆದರೆ (sb == ಖಾಲಿ)
+			statv[pglob->gl_offs + pglob->gl_pathc] = ಖಾಲಿ;
+		ಇಲ್ಲದಿದ್ದರೆ {
+			limitp->glim_malloc += ಗಾತ್ರ(**statv);
+			ಆದರೆ ((pglob->gl_flags & GLOB_ಎಲ್ಲೆ) &&
+			    limitp->glim_malloc >= GLOB_ಎಲ್ಲೆ_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				ಹಿಂತಿರುಗಿ(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
-			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			ಆದರೆ ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(**statv))) == ಖಾಲಿ)
+				ಹೋಗು copy_error;
+			ಸ್ಮರಣೆ_ನಕಲು(statv[pglob->gl_offs + pglob->gl_pathc], sb,
+			    ಗಾತ್ರ(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = ಖಾಲಿ;
 	}
 
-	for (p = path; *p++;)
+	ಗಾಗಿ (p = ಮಾರ್ಗ; *p++;)
 		;
-	len = (size_t)(p - path);
+	len = (ಗಾತ್ರ_t)(p - ಮಾರ್ಗ);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	ಆದರೆ ((copy = ಸ್ಮರಣೆ_ಕೊಡು(len)) != ಖಾಲಿ) {
+		ಆದರೆ (g_Ctoc(ಮಾರ್ಗ, copy, len)) {
+			ಬಿಡುಗಡೆ(copy);
+			ಹಿಂತಿರುಗಿ(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = ಖಾಲಿ;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
-	    GLOB_LIMIT_MALLOC) {
+	ಆದರೆ ((pglob->gl_flags & GLOB_ಎಲ್ಲೆ) &&
+	    (newn * ಗಾತ್ರ(*pathv)) + limitp->glim_malloc >
+	    GLOB_ಎಲ್ಲೆ_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		ಹಿಂತಿರುಗಿ(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	ಹಿಂತಿರುಗಿ(copy == ಖಾಲಿ ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,178 +900,178 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
-match(Char *name, Char *pat, Char *patend)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	ಪೂರ್ಣಾಂಕ ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = ಖಾಲಿ;
+	Char *nextn = ಖಾಲಿ;
 
 loop:
-	while (pat < patend) {
+	ಆಗ (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		ಆಯ್ಕೆ (c & M_ಮುಖವಾಡ) {
+		ಸ್ಥಿತಿ M_ALL:
+			ಆಗ (pat < patend && (*pat & M_ಮುಖವಾಡ) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			ಆದರೆ (pat == patend)
+				ಹಿಂತಿರುಗಿ(1);
+			ಆದರೆ (*name == EOS)
+				ಹಿಂತಿರುಗಿ(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ M_ONE:
+			ಆದರೆ (*name++ == EOS)
+				ಹೋಗು fail;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ M_ಗಣ:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			ಆದರೆ ((k = *name++) == EOS)
+				ಹೋಗು fail;
+			ಆದರೆ ((negate_range = ((*pat & M_ಮುಖವಾಡ) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
-					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+			ಆಗ (((c = *pat++) & M_ಮುಖವಾಡ) != M_ಕೊನೆ) {
+				ಆದರೆ ((c & M_ಮುಖವಾಡ) == M_CLASS) {
+					Char idx = *pat & M_ಮುಖವಾಡ;
+					ಆದರೆ (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				ಆದರೆ ((*pat & M_ಮುಖವಾಡ) == M_RNG) {
+					ಆದರೆ (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			ಆದರೆ (ok == negate_range)
+				ಹೋಗು fail;
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಆದರೆ (*name++ != c)
+				ಹೋಗು fail;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	ಆದರೆ (*name == EOS)
+		ಹಿಂತಿರುಗಿ(1);
 
 fail:
-	if (nextn) {
+	ಆದರೆ (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		ಹೋಗು loop;
 	}
-	return(0);
+	ಹಿಂತಿರುಗಿ(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+ಶೂನ್ಯ
 globfree(glob_t *pglob)
 {
-	size_t i;
-	char **pp;
+	ಗಾತ್ರ_t i;
+	ಅಕ್ಷರ **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	ಆದರೆ (pglob->gl_pathv != ಖಾಲಿ) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		ಗಾಗಿ (i = pglob->gl_pathc; i--; ++pp)
+			ಬಿಡುಗಡೆ(*pp);
+		ಬಿಡುಗಡೆ(pglob->gl_pathv);
+		pglob->gl_pathv = ಖಾಲಿ;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	ಆದರೆ (pglob->gl_statv != ಖಾಲಿ) {
+		ಗಾಗಿ (i = 0; i < pglob->gl_pathc; i++) {
+			ಬಿಡುಗಡೆ(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		ಬಿಡುಗಡೆ(pglob->gl_statv);
+		pglob->gl_statv = ಖಾಲಿ;
 	}
 }
 
-static DIR *
+ಸ್ಥಿರ DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ಅಕ್ಷರ buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	ಆದರೆ (!*str)
+		strlcpy(buf, ".", ಗಾತ್ರ buf);
+	ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (g_Ctoc(str, buf, ಗಾತ್ರ(buf)))
+			ಹಿಂತಿರುಗಿ(ಖಾಲಿ);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	ಆದರೆ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಹಿಂತಿರುಗಿ((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	ಹಿಂತಿರುಗಿ(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+g_lstat(Char *fn, ರಚನೆ stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ಅಕ್ಷರ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	ಆದರೆ (g_Ctoc(fn, buf, ಗಾತ್ರ(buf)))
+		ಹಿಂತಿರುಗಿ(-1);
+	ಆದರೆ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಹಿಂತಿರುಗಿ((*pglob->gl_lstat)(buf, sb));
+	ಹಿಂತಿರುಗಿ(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+g_stat(Char *fn, ರಚನೆ stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	ಅಕ್ಷರ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	ಆದರೆ (g_Ctoc(fn, buf, ಗಾತ್ರ(buf)))
+		ಹಿಂತಿರುಗಿ(-1);
+	ಆದರೆ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		ಹಿಂತಿರುಗಿ((*pglob->gl_stat)(buf, sb));
+	ಹಿಂತಿರುಗಿ(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+ಸ್ಥಿರ Char *
+g_strchr(ಸ್ಥಿರಾಂಕ Char *str, ಪೂರ್ಣಾಂಕ ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	ಮಾಡು {
+		ಆದರೆ (*str == ch)
+			ಹಿಂತಿರುಗಿ ((Char *)str);
+	} ಆಗ (*str++);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+g_Ctoc(ಸ್ಥಿರಾಂಕ Char *str, ಅಕ್ಷರ *buf, ಗಾತ್ರ_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	ಆಗ (len--) {
+		ಆದರೆ ((*buf++ = *str++) == EOS)
+			ಹಿಂತಿರುಗಿ (0);
 	}
-	return (1);
+	ಹಿಂತಿರುಗಿ (1);
 }
 
-#ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG
+ಸ್ಥಿರ ಶೂನ್ಯ
+qprintf(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(ಶೂನ್ಯ)ಬರೆ("%s:\n", str);
+	ಗಾಗಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)ಬರೆ("%c", CHAR(*p));
+	(ಶೂನ್ಯ)ಬರೆ("\n");
+	ಗಾಗಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)ಬರೆ("%c", *p & M_PROTECT ? '"' : ' ');
+	(ಶೂನ್ಯ)ಬರೆ("\n");
+	ಗಾಗಿ (p = s; *p; p++)
+		(ಶೂನ್ಯ)ಬರೆ("%c", ismeta(*p) ? '_' : ' ');
+	(ಶೂನ್ಯ)ಬರೆ("\n");
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) ||
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) ||
           !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) */

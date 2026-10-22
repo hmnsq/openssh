@@ -23,27 +23,27 @@
  *
  */
 
-#ifndef _BSD_WAITPID_H
-#define _BSD_WAITPID_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _BSD_WAITPID_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _BSD_WAITPID_H
 
-#ifndef HAVE_WAITPID
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_WAITPID
 /* Clean out any potential issues */
-#undef WIFEXITED
-#undef WIFSTOPPED
-#undef WIFSIGNALED
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು WIFEXITED
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು WIFSTOPPED
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು WIFSIGNALED
 
 /* Define required functions to mimic a POSIX look and feel */
-#define _W_INT(w)	(*(int*)&(w))	/* convert union wait to int */
-#define WIFEXITED(w)	(!((_W_INT(w)) & 0377))
-#define WIFSTOPPED(w)	((_W_INT(w)) & 0100)
-#define WIFSIGNALED(w)	(!WIFEXITED(w) && !WIFSTOPPED(w))
-#define WEXITSTATUS(w)	(int)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
-#define WTERMSIG(w)	(int)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
-#define WCOREFLAG	0x80
-#define WCOREDUMP(w)	((_W_INT(w)) & WCOREFLAG)
+#ವ್ಯಾಖ್ಯಾನಿಸು _W_INT(w)	(*(ಪೂರ್ಣಾಂಕ*)&(w))	/* convert union wait to int */
+#ವ್ಯಾಖ್ಯಾನಿಸು WIFEXITED(w)	(!((_W_INT(w)) & 0377))
+#ವ್ಯಾಖ್ಯಾನಿಸು WIFSTOPPED(w)	((_W_INT(w)) & 0100)
+#ವ್ಯಾಖ್ಯಾನಿಸು WIFSIGNALED(w)	(!WIFEXITED(w) && !WIFSTOPPED(w))
+#ವ್ಯಾಖ್ಯಾನಿಸು WEXITSTATUS(w)	(ಪೂರ್ಣಾಂಕ)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
+#ವ್ಯಾಖ್ಯಾನಿಸು WTERMSIG(w)	(ಪೂರ್ಣಾಂಕ)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
+#ವ್ಯಾಖ್ಯಾನಿಸು WCOREFLAG	0x80
+#ವ್ಯಾಖ್ಯಾನಿಸು WCOREDUMP(w)	((_W_INT(w)) & WCOREFLAG)
 
 /* Prototype */
-pid_t waitpid(int, int *, int);
+pid_t waitpid(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ);
 
-#endif /* !HAVE_WAITPID */
-#endif /* _BSD_WAITPID_H */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_WAITPID */
+#ಆದರೆ_ಅಂತ್ಯ /* _BSD_WAITPID_H */

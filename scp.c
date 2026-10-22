@@ -71,166 +71,166 @@
  *
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/uio.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/wait.h>
+#ಅನ್ತರ್ಭಾವ <sys/uio.h>
 
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#ifdef HAVE_FNMATCH_H
-#include <fnmatch.h>
-#endif
-#include <glob.h>
-#include <libgen.h>
-#include <locale.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
-#include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
-#include <vis.h>
-#endif
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <dirent.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FNMATCH_H
+#ಅನ್ತರ್ಭಾವ <fnmatch.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <glob.h>
+#ಅನ್ತರ್ಭಾವ <libgen.h>
+#ಅನ್ತರ್ಭಾವ <locale.h>
+#ಅನ್ತರ್ಭಾವ <poll.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <util.h>
+#ಆದರೆ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ಅನ್ತರ್ಭಾವ <vis.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "progressmeter.h"
-#include "utf8.h"
-#include "sftp.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "progressmeter.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
+#ಅನ್ತರ್ಭಾವ "sftp.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
+#ಅನ್ತರ್ಭಾವ "sftp-common.h"
+#ಅನ್ತರ್ಭಾವ "sftp-client.h"
 
-extern char *__progname;
+ಬಾಹ್ಯ ಅಕ್ಷರ *__progname;
 
-#define COPY_BUFLEN	16384
+#ವ್ಯಾಖ್ಯಾನಿಸು COPY_BUFLEN	16384
 
-int do_cmd(char *, char *, char *, int, int, char *, int *, int *, pid_t *);
-int do_cmd2(char *, char *, int, char *, int, int);
+ಪೂರ್ಣಾಂಕ do_cmd(ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ *, pid_t *);
+ಪೂರ್ಣಾಂಕ do_cmd2(ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
 
 /* Struct for addargs */
-arglist args;
-arglist remote_remote_args;
+arglist ವಾದಗಳು;
+arglist remote_remote_ವಾದಗಳು;
 
 /* Bandwidth limit */
-long long limit_kbps = 0;
-struct bwlimit bwlimit;
+ದೀರ್ಘ ದೀರ್ಘ ಎಲ್ಲೆ_kbps = 0;
+ರಚನೆ bwlimit bwlimit;
 
 /* Name of current file being transferred. */
-char *curfile;
+ಅಕ್ಷರ *curfile;
 
 /* This is set to non-zero to enable verbose mode. */
-int verbose_mode = 0;
+ಪೂರ್ಣಾಂಕ verbose_ಬಹುಲಕ = 0;
 LogLevel log_level = SYSLOG_LEVEL_INFO;
 
 /* This is set to zero if the progressmeter is not desired. */
-int showprogress = 1;
+ಪೂರ್ಣಾಂಕ showprogress = 1;
 
 /*
  * This is set to non-zero if remote-remote copy should be piped
  * through this process.
  */
-int throughlocal = 1;
+ಪೂರ್ಣಾಂಕ throughlocal = 1;
 
 /* Non-standard port to use for the ssh connection or -1. */
-int sshport = -1;
+ಪೂರ್ಣಾಂಕ sshport = -1;
 
 /* This is the program to execute for the secure connection. ("ssh" or -S) */
-char *ssh_program = _PATH_SSH_PROGRAM;
+ಅಕ್ಷರ *ssh_ಕಾರ್ಯಕ್ರಮ = ಮಾರ್ಗ_SSH_ಕಾರ್ಯಕ್ರಮ;
 
 /* This is used to store the pid of ssh_program */
 pid_t do_cmd_pid = -1;
 pid_t do_cmd_pid2 = -1;
 
 /* SFTP copy parameters */
-size_t sftp_copy_buflen;
-size_t sftp_nrequests;
+ಗಾತ್ರ_t sftp_copy_buflen;
+ಗಾತ್ರ_t sftp_nrequests;
 
 /* Needed for sftp */
-volatile sig_atomic_t interrupted = 0;
+ಅಸ್ಥಿರ sig_atomic_t interrupted = 0;
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+ಪೂರ್ಣಾಂಕ sftp_glob(ರಚನೆ sftp_conn *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ,
+    ಪೂರ್ಣಾಂಕ (*)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ), glob_t *); /* proto for sftp-glob.c */
 
-static void
-killchild(int signo)
+ಸ್ಥಿರ ಶೂನ್ಯ
+killchild(ಪೂರ್ಣಾಂಕ signo)
 {
-	if (do_cmd_pid > 1) {
+	ಆದರೆ (do_cmd_pid > 1) {
 		kill(do_cmd_pid, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid, NULL, 0);
+		(ಶೂನ್ಯ)waitpid(do_cmd_pid, ಖಾಲಿ, 0);
 	}
-	if (do_cmd_pid2 > 1) {
+	ಆದರೆ (do_cmd_pid2 > 1) {
 		kill(do_cmd_pid2, signo ? signo : SIGTERM);
-		(void)waitpid(do_cmd_pid2, NULL, 0);
+		(ಶೂನ್ಯ)waitpid(do_cmd_pid2, ಖಾಲಿ, 0);
 	}
 
-	if (signo)
+	ಆದರೆ (signo)
 		_exit(1);
-	exit(1);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-static void
-suspone(int pid, int signo)
+ಸ್ಥಿರ ಶೂನ್ಯ
+suspone(ಪೂರ್ಣಾಂಕ pid, ಪೂರ್ಣಾಂಕ signo)
 {
-	int status;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2;
 
-	if (pid > 1) {
+	ಆದರೆ (pid > 1) {
 		kill(pid, signo);
-		while (waitpid(pid, &status, WUNTRACED) == -1 &&
+		ಆಗ (waitpid(pid, &ಸ್ಥಿತಿ_2, WUNTRACED) == -1 &&
 		    errno == EINTR)
 			;
 	}
 }
 
-static void
-suspchild(int signo)
+ಸ್ಥಿರ ಶೂನ್ಯ
+suspchild(ಪೂರ್ಣಾಂಕ signo)
 {
-	int save_errno = errno;
+	ಪೂರ್ಣಾಂಕ save_errno = errno;
 	suspone(do_cmd_pid, signo);
 	suspone(do_cmd_pid2, signo);
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
 do_local_cmd(arglist *a)
 {
-	char *cp;
-	int status;
+	ಅಕ್ಷರ *cp;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2;
 	pid_t pid;
 
-	if (a->num == 0)
+	ಆದರೆ (a->ಅಂಕೆ == 0)
 		fatal("do_local_cmd: no arguments");
 
-	if (verbose_mode) {
-		cp = argv_assemble(a->num, a->list);
+	ಆದರೆ (verbose_ಬಹುಲಕ) {
+		cp = argv_assemble(a->ಅಂಕೆ, a->list);
 		fmprintf(stderr, "Executing: %s\n", cp);
-		free(cp);
+		ಬಿಡುಗಡೆ(cp);
 	}
-	if ((pid = fork()) == -1)
+	ಆದರೆ ((pid = fork()) == -1)
 		fatal("do_local_cmd: fork: %s", strerror(errno));
 
-	if (pid == 0) {
+	ಆದರೆ (pid == 0) {
 		execvp(a->list[0], a->list);
 		perror(a->list[0]);
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
 	do_cmd_pid = pid;
@@ -238,16 +238,16 @@ do_local_cmd(arglist *a)
 	ssh_signal(SIGINT, killchild);
 	ssh_signal(SIGHUP, killchild);
 
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	ಆಗ (waitpid(pid, &ಸ್ಥಿತಿ_2, 0) == -1)
+		ಆದರೆ (errno != EINTR)
 			fatal("do_local_cmd: waitpid: %s", strerror(errno));
 
 	do_cmd_pid = -1;
 
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return (-1);
+	ಆದರೆ (!WIFEXITED(ಸ್ಥಿತಿ_2) || WEXITSTATUS(ಸ್ಥಿತಿ_2) != 0)
+		ಹಿಂತಿರುಗಿ (-1);
 
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
 
 /*
@@ -256,33 +256,33 @@ do_local_cmd(arglist *a)
  * assigns the input and output file descriptors on success.
  */
 
-int
-do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
-    char *cmd, int *fdin, int *fdout, pid_t *pid)
+ಪೂರ್ಣಾಂಕ
+do_cmd(ಅಕ್ಷರ *ಕಾರ್ಯಕ್ರಮ, ಅಕ್ಷರ *host, ಅಕ್ಷರ *remuser, ಪೂರ್ಣಾಂಕ ಪೋರ್ಟ್, ಪೂರ್ಣಾಂಕ subsystem,
+    ಅಕ್ಷರ *cmd, ಪೂರ್ಣಾಂಕ *fdin, ಪೂರ್ಣಾಂಕ *fdout, pid_t *pid)
 {
-#ifdef USE_PIPES
-	int pin[2], pout[2];
-#else
-	int sv[2];
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PIPES
+	ಪೂರ್ಣಾಂಕ pin[2], pout[2];
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಪೂರ್ಣಾಂಕ sv[2];
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (verbose_mode)
+	ಆದರೆ (verbose_ಬಹುಲಕ)
 		fmprintf(stderr,
 		    "Executing: program %s host %s, user %s, command %s\n",
-		    program, host,
+		    ಕಾರ್ಯಕ್ರಮ, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
-		port = sshport;
+	ಆದರೆ (ಪೋರ್ಟ್ == -1)
+		ಪೋರ್ಟ್ = sshport;
 
-#ifdef USE_PIPES
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PIPES
+	ಆದರೆ (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("pipe: %s", strerror(errno));
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	/* Create a socket pair for communicating with ssh. */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
+	ಆದರೆ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) == -1)
 		fatal("socketpair: %s", strerror(errno));
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	ssh_signal(SIGTSTP, suspchild);
 	ssh_signal(SIGTTIN, suspchild);
@@ -290,13 +290,13 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	*pid = fork();
-	switch (*pid) {
-	case -1:
+	ಆಯ್ಕೆ (*pid) {
+	ಸ್ಥಿತಿ -1:
 		fatal("fork: %s", strerror(errno));
-	case 0:
+	ಸ್ಥಿತಿ 0:
 		/* Child. */
-#ifdef USE_PIPES
-		if (dup2(pin[0], STDIN_FILENO) == -1 ||
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PIPES
+		ಆದರೆ (dup2(pin[0], STDIN_FILENO) == -1 ||
 		    dup2(pout[1], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
@@ -305,49 +305,49 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
-#else
-		if (dup2(sv[0], STDIN_FILENO) == -1 ||
+#ಇಲ್ಲದಿದ್ದರೆ
+		ಆದರೆ (dup2(sv[0], STDIN_FILENO) == -1 ||
 		    dup2(sv[0], STDOUT_FILENO) == -1) {
 			error("dup2: %s", strerror(errno));
 			_exit(1);
 		}
 		close(sv[0]);
 		close(sv[1]);
-#endif
-		replacearg(&args, 0, "%s", program);
-		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+#ಆದರೆ_ಅಂತ್ಯ
+		replacearg(&ವಾದಗಳು, 0, "%s", ಕಾರ್ಯಕ್ರಮ);
+		ಆದರೆ (ಪೋರ್ಟ್ != -1) {
+			addargs(&ವಾದಗಳು, "-p");
+			addargs(&ವಾದಗಳು, "%d", ಪೋರ್ಟ್);
 		}
-		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+		ಆದರೆ (remuser != ಖಾಲಿ) {
+			addargs(&ವಾದಗಳು, "-l");
+			addargs(&ವಾದಗಳು, "%s", remuser);
 		}
-		if (subsystem)
-			addargs(&args, "-s");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+		ಆದರೆ (subsystem)
+			addargs(&ವಾದಗಳು, "-s");
+		addargs(&ವಾದಗಳು, "--");
+		addargs(&ವಾದಗಳು, "%s", host);
+		addargs(&ವಾದಗಳು, "%s", cmd);
 
-		execvp(program, args.list);
-		perror(program);
+		execvp(ಕಾರ್ಯಕ್ರಮ, ವಾದಗಳು.list);
+		perror(ಕಾರ್ಯಕ್ರಮ);
 		_exit(1);
-	default:
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		/* Parent.  Close the other side, and return the local side. */
-#ifdef USE_PIPES
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_PIPES
 		close(pin[0]);
 		close(pout[1]);
 		*fdout = pin[1];
 		*fdin = pout[0];
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 		close(sv[0]);
 		*fdin = sv[1];
 		*fdout = sv[1];
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 		ssh_signal(SIGTERM, killchild);
 		ssh_signal(SIGINT, killchild);
 		ssh_signal(SIGHUP, killchild);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 }
 
@@ -356,108 +356,108 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
  * input and output descriptors to be setup by a previous call to do_cmd().
  * This way the input and output of two commands can be connected.
  */
-int
-do_cmd2(char *host, char *remuser, int port, char *cmd,
-    int fdin, int fdout)
+ಪೂರ್ಣಾಂಕ
+do_cmd2(ಅಕ್ಷರ *host, ಅಕ್ಷರ *remuser, ಪೂರ್ಣಾಂಕ ಪೋರ್ಟ್, ಅಕ್ಷರ *cmd,
+    ಪೂರ್ಣಾಂಕ fdin, ಪೂರ್ಣಾಂಕ fdout)
 {
-	int status;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2;
 	pid_t pid;
 
-	if (verbose_mode)
+	ಆದರೆ (verbose_ಬಹುಲಕ)
 		fmprintf(stderr,
 		    "Executing: 2nd program %s host %s, user %s, command %s\n",
-		    ssh_program, host,
+		    ssh_ಕಾರ್ಯಕ್ರಮ, host,
 		    remuser ? remuser : "(unspecified)", cmd);
 
-	if (port == -1)
-		port = sshport;
+	ಆದರೆ (ಪೋರ್ಟ್ == -1)
+		ಪೋರ್ಟ್ = sshport;
 
 	/* Fork a child to execute the command on the remote host using ssh. */
 	pid = fork();
-	if (pid == 0) {
-		if (dup2(fdin, 0) == -1)
+	ಆದರೆ (pid == 0) {
+		ಆದರೆ (dup2(fdin, 0) == -1)
 			perror("dup2");
-		if (dup2(fdout, 1) == -1)
+		ಆದರೆ (dup2(fdout, 1) == -1)
 			perror("dup2");
 
-		replacearg(&args, 0, "%s", ssh_program);
-		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+		replacearg(&ವಾದಗಳು, 0, "%s", ssh_ಕಾರ್ಯಕ್ರಮ);
+		ಆದರೆ (ಪೋರ್ಟ್ != -1) {
+			addargs(&ವಾದಗಳು, "-p");
+			addargs(&ವಾದಗಳು, "%d", ಪೋರ್ಟ್);
 		}
-		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+		ಆದರೆ (remuser != ಖಾಲಿ) {
+			addargs(&ವಾದಗಳು, "-l");
+			addargs(&ವಾದಗಳು, "%s", remuser);
 		}
-		addargs(&args, "-oBatchMode=yes");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+		addargs(&ವಾದಗಳು, "-oBatchMode=yes");
+		addargs(&ವಾದಗಳು, "--");
+		addargs(&ವಾದಗಳು, "%s", host);
+		addargs(&ವಾದಗಳು, "%s", cmd);
 
-		execvp(ssh_program, args.list);
-		perror(ssh_program);
-		exit(1);
-	} else if (pid == -1) {
+		execvp(ssh_ಕಾರ್ಯಕ್ರಮ, ವಾದಗಳು.list);
+		perror(ssh_ಕಾರ್ಯಕ್ರಮ);
+		ನಿರ್ಗಮಿಸು(1);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (pid == -1) {
 		fatal("fork: %s", strerror(errno));
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	ಆಗ (waitpid(pid, &ಸ್ಥಿತಿ_2, 0) == -1)
+		ಆದರೆ (errno != EINTR)
 			fatal("do_cmd2: waitpid: %s", strerror(errno));
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-typedef struct {
-	size_t cnt;
-	char *buf;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	ಗಾತ್ರ_t cnt;
+	ಅಕ್ಷರ *buf;
 } BUF;
 
-BUF *allocbuf(BUF *, int, int);
-void lostconn(int);
-int okname(char *);
-void run_err(const char *,...)
-    __attribute__((__format__ (printf, 1, 2)))
+BUF *allocbuf(BUF *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ lostconn(ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ okname(ಅಕ್ಷರ *);
+ಶೂನ್ಯ ಸತತ_err(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,...)
+    __attribute__((__format__ (ಬರೆ, 1, 2)))
     __attribute__((__nonnull__ (1)));
-int note_err(const char *,...)
-    __attribute__((__format__ (printf, 1, 2)));
-void verifydir(char *);
+ಪೂರ್ಣಾಂಕ note_err(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,...)
+    __attribute__((__format__ (ಬರೆ, 1, 2)));
+ಶೂನ್ಯ verifydir(ಅಕ್ಷರ *);
 
-struct passwd *pwd;
+ರಚನೆ passwd *pwd;
 uid_t userid;
-int errs, remin, remout, remin2, remout2;
-int Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
+ಪೂರ್ಣಾಂಕ errs, remin, remout, remin2, remout2;
+ಪೂರ್ಣಾಂಕ Tflag, pflag, iamremote, iamrecursive, targetshouldbedirectory;
 
-#define	CMDNEEDS	64
-char cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
+#ವ್ಯಾಖ್ಯಾನಿಸು	CMDNEEDS	64
+ಅಕ್ಷರ cmd[CMDNEEDS];		/* must hold "rcp -r -p -d\0" */
 
-enum scp_mode_e {
-	MODE_SCP,
-	MODE_SFTP
+ಎಣಿಕೆ scp_ಬಹುಲಕ_e {
+	ಬಹುಲಕ_SCP,
+	ಬಹುಲಕ_SFTP
 };
 
-int response(void);
-void rsource(char *, struct stat *);
-void sink(int, char *[], const char *);
-void source(int, char *[]);
-void tolocal(int, char *[], enum scp_mode_e, char *sftp_direct);
-void toremote(int, char *[], enum scp_mode_e, char *sftp_direct);
-void usage(void);
+ಪೂರ್ಣಾಂಕ response(ಶೂನ್ಯ);
+ಶೂನ್ಯ rsource(ಅಕ್ಷರ *, ರಚನೆ stat *);
+ಶೂನ್ಯ sink(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *[], ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ ಮೂಲ(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *[]);
+ಶೂನ್ಯ tolocal(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *[], ಎಣಿಕೆ scp_ಬಹುಲಕ_e, ಅಕ್ಷರ *sftp_ನೇರ);
+ಶೂನ್ಯ toremote(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *[], ಎಣಿಕೆ scp_ಬಹುಲಕ_e, ಅಕ್ಷರ *sftp_ನೇರ);
+ಶೂನ್ಯ usage(ಶೂನ್ಯ);
 
-void source_sftp(int, char *, char *, struct sftp_conn *);
-void sink_sftp(int, char *, const char *, struct sftp_conn *);
-void throughlocal_sftp(struct sftp_conn *, struct sftp_conn *,
-    char *, char *);
+ಶೂನ್ಯ ಮೂಲ_sftp(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಅಕ್ಷರ *, ರಚನೆ sftp_conn *);
+ಶೂನ್ಯ sink_sftp(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sftp_conn *);
+ಶೂನ್ಯ throughlocal_sftp(ರಚನೆ sftp_conn *, ರಚನೆ sftp_conn *,
+    ಅಕ್ಷರ *, ಅಕ್ಷರ *);
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	int ch, fflag, tflag, status, r, n;
-	char **newargv, *argv0;
-	const char *errstr;
-	extern char *optarg;
-	extern int optind;
-	enum scp_mode_e mode = MODE_SFTP;
-	char *sftp_direct = NULL;
-	long long llv;
+	ಪೂರ್ಣಾಂಕ ch, fflag, tflag, ಸ್ಥಿತಿ_2, r, n;
+	ಅಕ್ಷರ **newargv, *argv0;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errstr;
+	ಬಾಹ್ಯ ಅಕ್ಷರ *optarg;
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ optind;
+	ಎಣಿಕೆ scp_ಬಹುಲಕ_e ಬಹುಲಕ = ಬಹುಲಕ_SFTP;
+	ಅಕ್ಷರ *sftp_ನೇರ = ಖಾಲಿ;
+	ದೀರ್ಘ ದೀರ್ಘ llv;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -466,8 +466,8 @@ main(int argc, char **argv)
 
 	/* Copy argv, because we modify it */
 	argv0 = argv[0];
-	newargv = xcalloc(MAXIMUM(argc + 1, 1), sizeof(*newargv));
-	for (n = 0; n < argc; n++)
+	newargv = xcalloc(ಗರಿಷ್ಠ(argc + 1, 1), ಗಾತ್ರ(*newargv));
+	ಗಾಗಿ (n = 0; n < argc; n++)
 		newargv[n] = xstrdup(argv[n]);
 	argv = newargv;
 
@@ -475,147 +475,147 @@ main(int argc, char **argv)
 
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
-	memset(&args, '\0', sizeof(args));
-	memset(&remote_remote_args, '\0', sizeof(remote_remote_args));
-	args.list = remote_remote_args.list = NULL;
-	addargs(&args, "%s", ssh_program);
-	addargs(&args, "-x");
-	addargs(&args, "-oPermitLocalCommand=no");
-	addargs(&args, "-oClearAllForwardings=yes");
-	addargs(&args, "-oRemoteCommand=none");
-	addargs(&args, "-oRequestTTY=no");
-	addargs(&args, "-oControlMaster=no");
+	memset(&ವಾದಗಳು, '\0', ಗಾತ್ರ(ವಾದಗಳು));
+	memset(&remote_remote_ವಾದಗಳು, '\0', ಗಾತ್ರ(remote_remote_ವಾದಗಳು));
+	ವಾದಗಳು.list = remote_remote_ವಾದಗಳು.list = ಖಾಲಿ;
+	addargs(&ವಾದಗಳು, "%s", ssh_ಕಾರ್ಯಕ್ರಮ);
+	addargs(&ವಾದಗಳು, "-x");
+	addargs(&ವಾದಗಳು, "-oPermitLocalCommand=no");
+	addargs(&ವಾದಗಳು, "-oClearAllForwardings=yes");
+	addargs(&ವಾದಗಳು, "-oRemoteCommand=none");
+	addargs(&ವಾದಗಳು, "-oRequestTTY=no");
+	addargs(&ವಾದಗಳು, "-oControlMaster=no");
 
 	fflag = Tflag = tflag = 0;
-	while ((ch = getopt(argc, argv,
+	ಆಗ ((ch = getopt(argc, argv,
 	    "12346ABCTdfOpqRrstvD:F:J:M:P:S:c:i:l:o:X:")) != -1) {
-		switch (ch) {
+		ಆಯ್ಕೆ (ch) {
 		/* User-visible flags. */
-		case '1':
+		ಸ್ಥಿತಿ '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '2':
 			/* Ignored */
-			break;
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
-			addargs(&args, "-%c", ch);
-			addargs(&remote_remote_args, "-%c", ch);
-			break;
-		case 'D':
-			sftp_direct = optarg;
-			break;
-		case '3':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'A':
+		ಸ್ಥಿತಿ '4':
+		ಸ್ಥಿತಿ '6':
+		ಸ್ಥಿತಿ 'C':
+			addargs(&ವಾದಗಳು, "-%c", ch);
+			addargs(&remote_remote_ವಾದಗಳು, "-%c", ch);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'D':
+			sftp_ನೇರ = optarg;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '3':
 			throughlocal = 1;
-			break;
-		case 'R':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'R':
 			fprintf(stderr, "warning: remote/remote -R copy mode "
 			    "is deprecated and will soon be removed\n");
 			throughlocal = 0;
-			break;
-		case 'o':
-		case 'c':
-		case 'i':
-		case 'F':
-		case 'J':
-			addargs(&remote_remote_args, "-%c", ch);
-			addargs(&remote_remote_args, "%s", optarg);
-			addargs(&args, "-%c", ch);
-			addargs(&args, "%s", optarg);
-			break;
-		case 'O':
-			mode = MODE_SCP;
-			break;
-		case 's':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'o':
+		ಸ್ಥಿತಿ 'c':
+		ಸ್ಥಿತಿ 'i':
+		ಸ್ಥಿತಿ 'F':
+		ಸ್ಥಿತಿ 'J':
+			addargs(&remote_remote_ವಾದಗಳು, "-%c", ch);
+			addargs(&remote_remote_ವಾದಗಳು, "%s", optarg);
+			addargs(&ವಾದಗಳು, "-%c", ch);
+			addargs(&ವಾದಗಳು, "%s", optarg);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'O':
+			ಬಹುಲಕ = ಬಹುಲಕ_SCP;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 's':
 			/* Ignored */
-			break;
-		case 'P':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'P':
 			sshport = a2port(optarg);
-			if (sshport <= 0)
+			ಆದರೆ (sshport <= 0)
 				fatal("bad port \"%s\"\n", optarg);
-			break;
-		case 'B':
-			addargs(&remote_remote_args, "-oBatchmode=yes");
-			addargs(&args, "-oBatchmode=yes");
-			break;
-		case 'l':
-			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'B':
+			addargs(&remote_remote_ವಾದಗಳು, "-oBatchmode=yes");
+			addargs(&ವಾದಗಳು, "-oBatchmode=yes");
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'l':
+			ಎಲ್ಲೆ_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			ಆದರೆ (errstr != ಖಾಲಿ)
 				usage();
-			limit_kbps *= 1024; /* kbps */
-			bandwidth_limit_init(&bwlimit, limit_kbps, COPY_BUFLEN);
-			break;
-		case 'p':
+			ಎಲ್ಲೆ_kbps *= 1024; /* kbps */
+			bandwidth_ಎಲ್ಲೆ_init(&bwlimit, ಎಲ್ಲೆ_kbps, COPY_BUFLEN);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'p':
 			pflag = 1;
-			break;
-		case 'r':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'r':
 			iamrecursive = 1;
-			break;
-		case 'S':
-			ssh_program = xstrdup(optarg);
-			break;
-		case 'v':
-			addargs(&args, "-v");
-			addargs(&remote_remote_args, "-v");
-			if (verbose_mode == 0)
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'S':
+			ssh_ಕಾರ್ಯಕ್ರಮ = xstrdup(optarg);
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'v':
+			addargs(&ವಾದಗಳು, "-v");
+			addargs(&remote_remote_ವಾದಗಳು, "-v");
+			ಆದರೆ (verbose_ಬಹುಲಕ == 0)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			verbose_mode = 1;
-			break;
-		case 'q':
-			addargs(&args, "-q");
-			addargs(&remote_remote_args, "-q");
+			verbose_ಬಹುಲಕ = 1;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'q':
+			addargs(&ವಾದಗಳು, "-q");
+			addargs(&remote_remote_ವಾದಗಳು, "-q");
 			showprogress = 0;
-			break;
-		case 'X':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'X':
 			/* Please keep in sync with sftp.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
-				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+			ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(optarg, "buffer=", 7) == 0) {
+				r = ಪರಿಶೀಲನೆ_scaled(optarg + 7, &llv);
+				ಆದರೆ (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				ಆದರೆ (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
-				sftp_copy_buflen = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+				sftp_copy_buflen = (ಗಾತ್ರ_t)llv;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				ಆದರೆ (errstr != ಖಾಲಿ) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				sftp_nrequests = (size_t)llv;
-			} else {
+				sftp_nrequests = (ಗಾತ್ರ_t)llv;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				fatal("Invalid -X option");
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 
 		/* Server options. */
-		case 'd':
+		ಸ್ಥಿತಿ 'd':
 			targetshouldbedirectory = 1;
-			break;
-		case 'f':	/* "from" */
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'f':	/* "from" */
 			iamremote = 1;
 			fflag = 1;
-			break;
-		case 't':	/* "to" */
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 't':	/* "to" */
 			iamremote = 1;
 			tflag = 1;
-#ifdef HAVE_CYGWIN
-			setmode(0, O_BINARY);
-#endif
-			break;
-		case 'T':
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_CYGWIN
+			setmode(0, O_ದ್ವಿಮಾನ);
+#ಆದರೆ_ಅಂತ್ಯ
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'T':
 			Tflag = 1;
-			break;
-		default:
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			usage();
 		}
 	}
@@ -625,236 +625,236 @@ main(int argc, char **argv)
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
 	/* Do this last because we want the user to be able to override it */
-	addargs(&args, "-oForwardAgent=no");
+	addargs(&ವಾದಗಳು, "-oForwardAgent=no");
 
-	if (iamremote)
-		mode = MODE_SCP;
+	ಆದರೆ (iamremote)
+		ಬಹುಲಕ = ಬಹುಲಕ_SCP;
 
-	if ((pwd = getpwuid(userid = getuid())) == NULL)
+	ಆದರೆ ((pwd = getpwuid(userid = getuid())) == ಖಾಲಿ)
 		fatal("unknown user %u", (u_int) userid);
 
-	if (!isatty(STDOUT_FILENO))
+	ಆದರೆ (!isatty(STDOUT_FILENO))
 		showprogress = 0;
 
-	if (pflag) {
+	ಆದರೆ (pflag) {
 		/* Cannot pledge: -p allows setuid/setgid files... */
-	} else {
-		if (pledge("stdio rpath wpath cpath fattr tty proc exec",
-		    NULL) == -1) {
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (pledge("stdio rpath wpath cpath fattr tty proc exec",
+		    ಖಾಲಿ) == -1) {
 			perror("pledge");
-			exit(1);
+			ನಿರ್ಗಮಿಸು(1);
 		}
 	}
 
 	remin = STDIN_FILENO;
 	remout = STDOUT_FILENO;
 
-	if (fflag) {
+	ಆದರೆ (fflag) {
 		/* Follow "protocol", send data. */
-		(void) response();
-		source(argc, argv);
-		exit(errs != 0);
+		(ಶೂನ್ಯ) response();
+		ಮೂಲ(argc, argv);
+		ನಿರ್ಗಮಿಸು(errs != 0);
 	}
-	if (tflag) {
+	ಆದರೆ (tflag) {
 		/* Receive data. */
-		sink(argc, argv, NULL);
-		exit(errs != 0);
+		sink(argc, argv, ಖಾಲಿ);
+		ನಿರ್ಗಮಿಸು(errs != 0);
 	}
-	if (argc < 2)
+	ಆದರೆ (argc < 2)
 		usage();
-	if (argc > 2)
+	ಆದರೆ (argc > 2)
 		targetshouldbedirectory = 1;
 
 	remin = remout = -1;
 	do_cmd_pid = -1;
 	/* Command to be executed on remote system using "ssh". */
-	(void) snprintf(cmd, sizeof cmd, "scp%s%s%s%s",
-	    verbose_mode ? " -v" : "",
+	(ಶೂನ್ಯ) snprintf(cmd, ಗಾತ್ರ cmd, "scp%s%s%s%s",
+	    verbose_ಬಹುಲಕ ? " -v" : "",
 	    iamrecursive ? " -r" : "", pflag ? " -p" : "",
 	    targetshouldbedirectory ? " -d" : "");
 
-	(void) ssh_signal(SIGPIPE, lostconn);
+	(ಶೂನ್ಯ) ssh_signal(SIGPIPE, lostconn);
 
-	if (colon(argv[argc - 1]))	/* Dest is remote host. */
-		toremote(argc, argv, mode, sftp_direct);
-	else {
-		if (targetshouldbedirectory)
+	ಆದರೆ (colon(argv[argc - 1]))	/* Dest is remote host. */
+		toremote(argc, argv, ಬಹುಲಕ, sftp_ನೇರ);
+	ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (targetshouldbedirectory)
 			verifydir(argv[argc - 1]);
-		tolocal(argc, argv, mode, sftp_direct);	/* Dest is local host. */
+		tolocal(argc, argv, ಬಹುಲಕ, sftp_ನೇರ);	/* Dest is local host. */
 	}
 	/*
 	 * Finally check the exit status of the ssh process, if one was forked
 	 * and no error has occurred yet
 	 */
-	if (do_cmd_pid != -1 && (mode == MODE_SFTP || errs == 0)) {
-		if (remin != -1)
-		    (void) close(remin);
-		if (remout != -1)
-		    (void) close(remout);
-		if (waitpid(do_cmd_pid, &status, 0) == -1)
+	ಆದರೆ (do_cmd_pid != -1 && (ಬಹುಲಕ == ಬಹುಲಕ_SFTP || errs == 0)) {
+		ಆದರೆ (remin != -1)
+		    (ಶೂನ್ಯ) close(remin);
+		ಆದರೆ (remout != -1)
+		    (ಶೂನ್ಯ) close(remout);
+		ಆದರೆ (waitpid(do_cmd_pid, &ಸ್ಥಿತಿ_2, 0) == -1)
 			errs = 1;
-		else {
-			if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (!WIFEXITED(ಸ್ಥಿತಿ_2) || WEXITSTATUS(ಸ್ಥಿತಿ_2) != 0)
 				errs = 1;
 		}
 	}
-	exit(errs != 0);
+	ನಿರ್ಗಮಿಸು(errs != 0);
 }
 
 /* Callback from atomicio6 to update progress meter and limit bandwidth */
-static int
-scpio(void *_cnt, size_t s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+scpio(ಶೂನ್ಯ *_cnt, ಗಾತ್ರ_t s)
 {
 	off_t *cnt = (off_t *)_cnt;
 
 	*cnt += s;
-	refresh_progress_meter(0);
-	if (limit_kbps > 0)
-		bandwidth_limit(&bwlimit, s);
-	return 0;
+	refresh_ಪ್ರಗತಿ_meter(0);
+	ಆದರೆ (ಎಲ್ಲೆ_kbps > 0)
+		bandwidth_ಎಲ್ಲೆ(&bwlimit, s);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-do_times(int fd, int verb, const struct stat *sb)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+do_times(ಪೂರ್ಣಾಂಕ fd, ಪೂರ್ಣಾಂಕ verb, ಸ್ಥಿರಾಂಕ ರಚನೆ stat *sb)
 {
 	/* strlen(2^64) == 20; strlen(10^6) == 7 */
-	char buf[(20 + 7 + 2) * 2 + 2];
+	ಅಕ್ಷರ buf[(20 + 7 + 2) * 2 + 2];
 
-	(void)snprintf(buf, sizeof(buf), "T%llu 0 %llu 0\n",
-	    (unsigned long long) (sb->st_mtime < 0 ? 0 : sb->st_mtime),
-	    (unsigned long long) (sb->st_atime < 0 ? 0 : sb->st_atime));
-	if (verb) {
+	(ಶೂನ್ಯ)snprintf(buf, ಗಾತ್ರ(buf), "T%llu 0 %llu 0\n",
+	    (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) (sb->st_mtime < 0 ? 0 : sb->st_mtime),
+	    (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) (sb->st_atime < 0 ? 0 : sb->st_atime));
+	ಆದರೆ (verb) {
 		fprintf(stderr, "File mtime %lld atime %lld\n",
-		    (long long)sb->st_mtime, (long long)sb->st_atime);
+		    (ದೀರ್ಘ ದೀರ್ಘ)sb->st_mtime, (ದೀರ್ಘ ದೀರ್ಘ)sb->st_atime);
 		fprintf(stderr, "Sending file timestamps: %s", buf);
 	}
-	(void) atomicio(vwrite, fd, buf, strlen(buf));
-	return (response());
+	(ಶೂನ್ಯ) atomicio(vwrite, fd, buf, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(buf));
+	ಹಿಂತಿರುಗಿ (response());
 }
 
-static int
-parse_scp_uri(const char *uri, char **userp, char **hostp, int *portp,
-    char **pathp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+parse_scp_uri(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *uri, ಅಕ್ಷರ **userp, ಅಕ್ಷರ **hostp, ಪೂರ್ಣಾಂಕ *portp,
+    ಅಕ್ಷರ **pathp)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
 	r = parse_uri("scp", uri, userp, hostp, portp, pathp);
-	if (r == 0 && *pathp == NULL)
+	ಆದರೆ (r == 0 && *pathp == ಖಾಲಿ)
 		*pathp = xstrdup(".");
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
 /* Appends a string to an array; returns 0 on success, -1 on alloc failure */
-static int
-append(char *cp, char ***ap, size_t *np)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+append(ಅಕ್ಷರ *cp, ಅಕ್ಷರ ***ap, ಗಾತ್ರ_t *np)
 {
-	char **tmp;
+	ಅಕ್ಷರ **tmp;
 
-	if ((tmp = reallocarray(*ap, *np + 1, sizeof(*tmp))) == NULL)
-		return -1;
+	ಆದರೆ ((tmp = reallocarray(*ap, *np + 1, ಗಾತ್ರ(*tmp))) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
 	tmp[(*np)] = cp;
 	(*np)++;
 	*ap = tmp;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
  * Finds the start and end of the first brace pair in the pattern.
  * returns 0 on success or -1 for invalid patterns.
  */
-static int
-find_brace(const char *pattern, int *startp, int *endp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಕಂಡುಹಿಡಿ_brace(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಪೂರ್ಣಾಂಕ *startp, ಪೂರ್ಣಾಂಕ *endp)
 {
-	int i;
-	int in_bracket, brace_level;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ ಒಳ_bracket, brace_level;
 
 	*startp = *endp = -1;
-	in_bracket = brace_level = 0;
-	for (i = 0; i < INT_MAX && *endp < 0 && pattern[i] != '\0'; i++) {
-		switch (pattern[i]) {
-		case '\\':
+	ಒಳ_bracket = brace_level = 0;
+	ಗಾಗಿ (i = 0; i < ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ && *endp < 0 && ನಮೂನೆ[i] != '\0'; i++) {
+		ಆಯ್ಕೆ (ನಮೂನೆ[i]) {
+		ಸ್ಥಿತಿ '\\':
 			/* skip next character */
-			if (pattern[i + 1] != '\0')
+			ಆದರೆ (ನಮೂನೆ[i + 1] != '\0')
 				i++;
-			break;
-		case '[':
-			in_bracket = 1;
-			break;
-		case ']':
-			in_bracket = 0;
-			break;
-		case '{':
-			if (in_bracket)
-				break;
-			if (pattern[i + 1] == '}') {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '[':
+			ಒಳ_bracket = 1;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ ']':
+			ಒಳ_bracket = 0;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '{':
+			ಆದರೆ (ಒಳ_bracket)
+				ನಿಲ್ಲಿಸು;
+			ಆದರೆ (ನಮೂನೆ[i + 1] == '}') {
 				/* Protect a single {}, for find(1), like csh */
 				i++; /* skip */
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			if (*startp == -1)
+			ಆದರೆ (*startp == -1)
 				*startp = i;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
-			if (*startp < 0) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '}':
+			ಆದರೆ (ಒಳ_bracket)
+				ನಿಲ್ಲಿಸು;
+			ಆದರೆ (*startp < 0) {
 				/* Unbalanced brace */
-				return -1;
+				ಹಿಂತಿರುಗಿ -1;
 			}
-			if (--brace_level <= 0)
+			ಆದರೆ (--brace_level <= 0)
 				*endp = i;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 	/* unbalanced brackets/braces */
-	if (*endp < 0 && (*startp >= 0 || in_bracket))
-		return -1;
-	return 0;
+	ಆದರೆ (*endp < 0 && (*startp >= 0 || ಒಳ_bracket))
+		ಹಿಂತಿರುಗಿ -1;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
  * Assembles and records a successfully-expanded pattern, returns -1 on
  * alloc failure.
  */
-static int
-emit_expansion(const char *pattern, int brace_start, int brace_end,
-    int sel_start, int sel_end, char ***patternsp, size_t *npatternsp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+emit_expansion(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಪೂರ್ಣಾಂಕ brace_ಆರಂಭ, ಪೂರ್ಣಾಂಕ brace_ಕೊನೆ,
+    ಪೂರ್ಣಾಂಕ sel_ಆರಂಭ, ಪೂರ್ಣಾಂಕ sel_ಕೊನೆ, ಅಕ್ಷರ ***patternsp, ಗಾತ್ರ_t *npatternsp)
 {
-	char *cp;
-	size_t pattern_len;
-	int o = 0, tail_len;
+	ಅಕ್ಷರ *cp;
+	ಗಾತ್ರ_t ನಮೂನೆ_len;
+	ಪೂರ್ಣಾಂಕ o = 0, ಬಾಲ_len;
 
-	if ((pattern_len = strlen(pattern)) == 0 || pattern_len >= INT_MAX)
-		return -1;
+	ಆದರೆ ((ನಮೂನೆ_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ)) == 0 || ನಮೂನೆ_len >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)
+		ಹಿಂತಿರುಗಿ -1;
 
-	tail_len = strlen(pattern + brace_end + 1);
-	if ((cp = malloc(brace_start + (sel_end - sel_start) +
-	    tail_len + 1)) == NULL)
-		return -1;
+	ಬಾಲ_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ + brace_ಕೊನೆ + 1);
+	ಆದರೆ ((cp = ಸ್ಮರಣೆ_ಕೊಡು(brace_ಆರಂಭ + (sel_ಕೊನೆ - sel_ಆರಂಭ) +
+	    ಬಾಲ_len + 1)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
 
 	/* Pattern before initial brace */
-	if (brace_start > 0) {
-		memcpy(cp, pattern, brace_start);
-		o = brace_start;
+	ಆದರೆ (brace_ಆರಂಭ > 0) {
+		ಸ್ಮರಣೆ_ನಕಲು(cp, ನಮೂನೆ, brace_ಆರಂಭ);
+		o = brace_ಆರಂಭ;
 	}
 	/* Current braced selection */
-	if (sel_end - sel_start > 0) {
-		memcpy(cp + o, pattern + sel_start,
-		    sel_end - sel_start);
-		o += sel_end - sel_start;
+	ಆದರೆ (sel_ಕೊನೆ - sel_ಆರಂಭ > 0) {
+		ಸ್ಮರಣೆ_ನಕಲು(cp + o, ನಮೂನೆ + sel_ಆರಂಭ,
+		    sel_ಕೊನೆ - sel_ಆರಂಭ);
+		o += sel_ಕೊನೆ - sel_ಆರಂಭ;
 	}
 	/* Remainder of pattern after closing brace */
-	if (tail_len > 0) {
-		memcpy(cp + o, pattern + brace_end + 1, tail_len);
-		o += tail_len;
+	ಆದರೆ (ಬಾಲ_len > 0) {
+		ಸ್ಮರಣೆ_ನಕಲು(cp + o, ನಮೂನೆ + brace_ಕೊನೆ + 1, ಬಾಲ_len);
+		o += ಬಾಲ_len;
 	}
 	cp[o] = '\0';
-	if (append(cp, patternsp, npatternsp) != 0) {
-		free(cp);
-		return -1;
+	ಆದರೆ (append(cp, patternsp, npatternsp) != 0) {
+		ಬಿಡುಗಡೆ(cp);
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /*
@@ -866,219 +866,219 @@ emit_expansion(const char *pattern, int brace_start, int brace_end,
  * Signals whether expansion was performed via *expanded and whether
  * pattern was invalid via *invalid.
  */
-static int
-brace_expand_one(const char *pattern, char ***patternsp, size_t *npatternsp,
-    int *expanded, int *invalid)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+brace_expand_one(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಅಕ್ಷರ ***patternsp, ಗಾತ್ರ_t *npatternsp,
+    ಪೂರ್ಣಾಂಕ *expanded, ಪೂರ್ಣಾಂಕ *invalid)
 {
-	int i;
-	int in_bracket, brace_start, brace_end, brace_level;
-	int sel_start, sel_end;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ ಒಳ_bracket, brace_ಆರಂಭ, brace_ಕೊನೆ, brace_level;
+	ಪೂರ್ಣಾಂಕ sel_ಆರಂಭ, sel_ಕೊನೆ;
 
 	*invalid = *expanded = 0;
 
-	if (find_brace(pattern, &brace_start, &brace_end) != 0) {
+	ಆದರೆ (ಕಂಡುಹಿಡಿ_brace(ನಮೂನೆ, &brace_ಆರಂಭ, &brace_ಕೊನೆ) != 0) {
 		*invalid = 1;
-		return 0;
-	} else if (brace_start == -1)
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (brace_ಆರಂಭ == -1)
+		ಹಿಂತಿರುಗಿ 0;
 
-	in_bracket = brace_level = 0;
-	for (i = sel_start = brace_start + 1; i < brace_end; i++) {
-		switch (pattern[i]) {
-		case '{':
-			if (in_bracket)
-				break;
+	ಒಳ_bracket = brace_level = 0;
+	ಗಾಗಿ (i = sel_ಆರಂಭ = brace_ಆರಂಭ + 1; i < brace_ಕೊನೆ; i++) {
+		ಆಯ್ಕೆ (ನಮೂನೆ[i]) {
+		ಸ್ಥಿತಿ '{':
+			ಆದರೆ (ಒಳ_bracket)
+				ನಿಲ್ಲಿಸು;
 			brace_level++;
-			break;
-		case '}':
-			if (in_bracket)
-				break;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '}':
+			ಆದರೆ (ಒಳ_bracket)
+				ನಿಲ್ಲಿಸು;
 			brace_level--;
-			break;
-		case '[':
-			in_bracket = 1;
-			break;
-		case ']':
-			in_bracket = 0;
-			break;
-		case '\\':
-			if (i < brace_end - 1)
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '[':
+			ಒಳ_bracket = 1;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ ']':
+			ಒಳ_bracket = 0;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '\\':
+			ಆದರೆ (i < brace_ಕೊನೆ - 1)
 				i++; /* skip */
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-		if (pattern[i] == ',' || i == brace_end - 1) {
-			if (in_bracket || brace_level > 0)
-				continue;
+		ಆದರೆ (ನಮೂನೆ[i] == ',' || i == brace_ಕೊನೆ - 1) {
+			ಆದರೆ (ಒಳ_bracket || brace_level > 0)
+				ಮುಂದುವರಿ;
 			/* End of a selection, emit an expanded pattern */
 
 			/* Adjust end index for last selection */
-			sel_end = (i == brace_end - 1) ? brace_end : i;
-			if (emit_expansion(pattern, brace_start, brace_end,
-			    sel_start, sel_end, patternsp, npatternsp) != 0)
-				return -1;
+			sel_ಕೊನೆ = (i == brace_ಕೊನೆ - 1) ? brace_ಕೊನೆ : i;
+			ಆದರೆ (emit_expansion(ನಮೂನೆ, brace_ಆರಂಭ, brace_ಕೊನೆ,
+			    sel_ಆರಂಭ, sel_ಕೊನೆ, patternsp, npatternsp) != 0)
+				ಹಿಂತಿರುಗಿ -1;
 			/* move on to the next selection */
-			sel_start = i + 1;
-			continue;
+			sel_ಆರಂಭ = i + 1;
+			ಮುಂದುವರಿ;
 		}
 	}
-	if (in_bracket || brace_level > 0) {
+	ಆದರೆ (ಒಳ_bracket || brace_level > 0) {
 		*invalid = 1;
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 	/* success */
 	*expanded = 1;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
 /* Expand braces from pattern. Returns 0 on success, -1 on failure */
-static int
-brace_expand(const char *pattern, char ***patternsp, size_t *npatternsp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+brace_expand(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಅಕ್ಷರ ***patternsp, ಗಾತ್ರ_t *npatternsp)
 {
-	char *cp, *cp2, **active = NULL, **done = NULL;
-	size_t i, nactive = 0, ndone = 0;
-	int ret = -1, invalid = 0, expanded = 0;
+	ಅಕ್ಷರ *cp, *cp2, **ಸಕ್ರಿಯ = ಖಾಲಿ, **ಮುಗಿದ = ಖಾಲಿ;
+	ಗಾತ್ರ_t i, nactive = 0, ndone = 0;
+	ಪೂರ್ಣಾಂಕ ret = -1, invalid = 0, expanded = 0;
 
-	*patternsp = NULL;
+	*patternsp = ಖಾಲಿ;
 	*npatternsp = 0;
 
 	/* Start the worklist with the original pattern */
-	if ((cp = strdup(pattern)) == NULL)
-		return -1;
-	if (append(cp, &active, &nactive) != 0) {
-		free(cp);
-		return -1;
+	ಆದರೆ ((cp = strdup(ನಮೂನೆ)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
+	ಆದರೆ (append(cp, &ಸಕ್ರಿಯ, &nactive) != 0) {
+		ಬಿಡುಗಡೆ(cp);
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	while (nactive > 0) {
-		cp = active[nactive - 1];
+	ಆಗ (nactive > 0) {
+		cp = ಸಕ್ರಿಯ[nactive - 1];
 		nactive--;
-		if (brace_expand_one(cp, &active, &nactive,
+		ಆದರೆ (brace_expand_one(cp, &ಸಕ್ರಿಯ, &nactive,
 		    &expanded, &invalid) == -1) {
-			free(cp);
-			goto fail;
+			ಬಿಡುಗಡೆ(cp);
+			ಹೋಗು fail;
 		}
-		if (invalid)
+		ಆದರೆ (invalid)
 			fatal_f("invalid brace pattern \"%s\"", cp);
-		if (expanded) {
+		ಆದರೆ (expanded) {
 			/*
 			 * Current entry expanded to new entries on the
 			 * active list; discard the progenitor pattern.
 			 */
-			free(cp);
-			continue;
+			ಬಿಡುಗಡೆ(cp);
+			ಮುಂದುವರಿ;
 		}
 		/*
 		 * Pattern did not expand; append the filename component to
 		 * the completed list
 		 */
-		if ((cp2 = strrchr(cp, '/')) != NULL)
+		ಆದರೆ ((cp2 = strrchr(cp, '/')) != ಖಾಲಿ)
 			*cp2++ = '\0';
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			cp2 = cp;
-		if (append(xstrdup(cp2), &done, &ndone) != 0) {
-			free(cp);
-			goto fail;
+		ಆದರೆ (append(xstrdup(cp2), &ಮುಗಿದ, &ndone) != 0) {
+			ಬಿಡುಗಡೆ(cp);
+			ಹೋಗು fail;
 		}
-		free(cp);
+		ಬಿಡುಗಡೆ(cp);
 	}
 	/* success */
-	*patternsp = done;
+	*patternsp = ಮುಗಿದ;
 	*npatternsp = ndone;
-	done = NULL;
+	ಮುಗಿದ = ಖಾಲಿ;
 	ndone = 0;
 	ret = 0;
  fail:
-	for (i = 0; i < nactive; i++)
-		free(active[i]);
-	free(active);
-	for (i = 0; i < ndone; i++)
-		free(done[i]);
-	free(done);
-	return ret;
+	ಗಾಗಿ (i = 0; i < nactive; i++)
+		ಬಿಡುಗಡೆ(ಸಕ್ರಿಯ[i]);
+	ಬಿಡುಗಡೆ(ಸಕ್ರಿಯ);
+	ಗಾಗಿ (i = 0; i < ndone; i++)
+		ಬಿಡುಗಡೆ(ಮುಗಿದ[i]);
+	ಬಿಡುಗಡೆ(ಮುಗಿದ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static struct sftp_conn *
-do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
-   int *reminp, int *remoutp, int *pidp)
+ಸ್ಥಿರ ರಚನೆ sftp_conn *
+do_sftp_connect(ಅಕ್ಷರ *host, ಅಕ್ಷರ *user, ಪೂರ್ಣಾಂಕ ಪೋರ್ಟ್, ಅಕ್ಷರ *sftp_ನೇರ,
+   ಪೂರ್ಣಾಂಕ *reminp, ಪೂರ್ಣಾಂಕ *remoutp, ಪೂರ್ಣಾಂಕ *pidp)
 {
-	if (sftp_direct == NULL) {
-		if (do_cmd(ssh_program, host, user, port, 1, "sftp",
+	ಆದರೆ (sftp_ನೇರ == ಖಾಲಿ) {
+		ಆದರೆ (do_cmd(ssh_ಕಾರ್ಯಕ್ರಮ, host, user, ಪೋರ್ಟ್, 1, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
-	} else {
-		freeargs(&args);
-		addargs(&args, "sftp-server");
-		if (do_cmd(sftp_direct, host, NULL, -1, 0, "sftp",
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		freeargs(&ವಾದಗಳು);
+		addargs(&ವಾದಗಳು, "sftp-server");
+		ಆದರೆ (do_cmd(sftp_ನೇರ, host, ಖಾಲಿ, -1, 0, "sftp",
 		    reminp, remoutp, pidp) < 0)
-			return NULL;
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	return sftp_init(*reminp, *remoutp,
-	    sftp_copy_buflen, sftp_nrequests, limit_kbps);
+	ಹಿಂತಿರುಗಿ sftp_init(*reminp, *remoutp,
+	    sftp_copy_buflen, sftp_nrequests, ಎಲ್ಲೆ_kbps);
 }
 
-void
-toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+ಶೂನ್ಯ
+toremote(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv, ಎಣಿಕೆ scp_ಬಹುಲಕ_e ಬಹುಲಕ, ಅಕ್ಷರ *sftp_ನೇರ)
 {
-	char *suser = NULL, *host = NULL, *src = NULL;
-	char *bp, *tuser, *thost, *targ;
-	int sport = -1, tport = -1;
-	struct sftp_conn *conn = NULL, *conn2 = NULL;
+	ಅಕ್ಷರ *suser = ಖಾಲಿ, *host = ಖಾಲಿ, *src = ಖಾಲಿ;
+	ಅಕ್ಷರ *bp, *tuser, *thost, *targ;
+	ಪೂರ್ಣಾಂಕ sport = -1, tport = -1;
+	ರಚನೆ sftp_conn *conn = ಖಾಲಿ, *conn2 = ಖಾಲಿ;
 	arglist alist;
-	int i, r, status;
-	struct stat sb;
+	ಪೂರ್ಣಾಂಕ i, r, ಸ್ಥಿತಿ_2;
+	ರಚನೆ stat sb;
 	u_int j;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', ಗಾತ್ರ(alist));
+	alist.list = ಖಾಲಿ;
 
 	/* Parse target */
 	r = parse_scp_uri(argv[argc - 1], &tuser, &thost, &tport, &targ);
-	if (r == -1) {
+	ಆದರೆ (r == -1) {
 		fmprintf(stderr, "%s: invalid uri\n", argv[argc - 1]);
 		++errs;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if (r != 0) {
-		if (parse_user_host_path(argv[argc - 1], &tuser, &thost,
+	ಆದರೆ (r != 0) {
+		ಆದರೆ (parse_user_host_ಮಾರ್ಗ(argv[argc - 1], &tuser, &thost,
 		    &targ) == -1) {
 			fmprintf(stderr, "%s: invalid target\n", argv[argc - 1]);
 			++errs;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
 	/* Parse source files */
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	ಗಾಗಿ (i = 0; i < argc - 1; i++) {
+		ಬಿಡುಗಡೆ(suser);
+		ಬಿಡುಗಡೆ(host);
+		ಬಿಡುಗಡೆ(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		ಆದರೆ (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (r != 0) {
-			parse_user_host_path(argv[i], &suser, &host, &src);
+		ಆದರೆ (r != 0) {
+			parse_user_host_ಮಾರ್ಗ(argv[i], &suser, &host, &src);
 		}
-		if (suser != NULL && !okname(suser)) {
+		ಆದರೆ (suser != ಖಾಲಿ && !okname(suser)) {
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (host && throughlocal) {	/* extended remote to remote */
-			if (mode == MODE_SFTP) {
-				if (remin == -1 || conn == NULL) {
+		ಆದರೆ (host && throughlocal) {	/* extended remote to remote */
+			ಆದರೆ (ಬಹುಲಕ == ಬಹುಲಕ_SFTP) {
+				ಆದರೆ (remin == -1 || conn == ಖಾಲಿ) {
 					/* Connect to dest now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
-					    tport, sftp_direct,
+					    tport, sftp_ನೇರ,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					ಆದರೆ (conn == ಖಾಲಿ) {
 						fatal("Unable to open "
 						    "destination connection");
 					}
 					debug3_f("origin in %d out %d pid %ld",
-					    remin, remout, (long)do_cmd_pid);
+					    remin, remout, (ದೀರ್ಘ)do_cmd_pid);
 				}
 				/*
 				 * XXX remember suser/host/sport and only
@@ -1089,73 +1089,73 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 				/* Connect to origin now */
 				sftp_free(conn2);
 				conn2 = do_sftp_connect(host, suser,
-				    sport, sftp_direct,
+				    sport, sftp_ನೇರ,
 				    &remin2, &remout2, &do_cmd_pid2);
-				if (conn2 == NULL) {
+				ಆದರೆ (conn2 == ಖಾಲಿ) {
 					fatal("Unable to open "
 					    "source connection");
 				}
 				debug3_f("destination in %d out %d pid %ld",
-				    remin2, remout2, (long)do_cmd_pid2);
+				    remin2, remout2, (ದೀರ್ಘ)do_cmd_pid2);
 				throughlocal_sftp(conn2, conn, src, targ);
-				(void) close(remin2);
-				(void) close(remout2);
+				(ಶೂನ್ಯ) close(remin2);
+				(ಶೂನ್ಯ) close(remout2);
 				remin2 = remout2 = -1;
-				if (waitpid(do_cmd_pid2, &status, 0) == -1)
+				ಆದರೆ (waitpid(do_cmd_pid2, &ಸ್ಥಿತಿ_2, 0) == -1)
 					++errs;
-				else if (!WIFEXITED(status) ||
-				    WEXITSTATUS(status) != 0)
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!WIFEXITED(ಸ್ಥಿತಿ_2) ||
+				    WEXITSTATUS(ಸ್ಥಿತಿ_2) != 0)
 					++errs;
 				do_cmd_pid2 = -1;
-				continue;
-			} else {
+				ಮುಂದುವರಿ;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				xasprintf(&bp, "%s -f %s%s", cmd,
 				    *src == '-' ? "-- " : "", src);
-				if (do_cmd(ssh_program, host, suser, sport, 0,
+				ಆದರೆ (do_cmd(ssh_ಕಾರ್ಯಕ್ರಮ, host, suser, sport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
-					exit(1);
-				free(bp);
+					ನಿರ್ಗಮಿಸು(1);
+				ಬಿಡುಗಡೆ(bp);
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd2(thost, tuser, tport, bp,
+				ಆದರೆ (do_cmd2(thost, tuser, tport, bp,
 				    remin, remout) < 0)
-					exit(1);
-				free(bp);
-				(void) close(remin);
-				(void) close(remout);
+					ನಿರ್ಗಮಿಸು(1);
+				ಬಿಡುಗಡೆ(bp);
+				(ಶೂನ್ಯ) close(remin);
+				(ಶೂನ್ಯ) close(remout);
 				remin = remout = -1;
 			}
-		} else if (host) {	/* standard remote to remote */
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (host) {	/* standard remote to remote */
 			/*
 			 * Second remote user is passed to first remote side
 			 * via scp command-line. Ensure it contains no obvious
 			 * shell characters.
 			 */
-			if (tuser != NULL && !okname(tuser)) {
+			ಆದರೆ (tuser != ಖಾಲಿ && !okname(tuser)) {
 				++errs;
-				continue;
+				ಮುಂದುವರಿ;
 			}
-			if (tport != -1 && tport != SSH_DEFAULT_PORT) {
+			ಆದರೆ (tport != -1 && tport != SSH_DEFAULT_ಪೋರ್ಟ್) {
 				/* This would require the remote support URIs */
 				fatal("target port not supported with two "
 				    "remote hosts and the -R option");
 			}
 
 			freeargs(&alist);
-			addargs(&alist, "%s", ssh_program);
+			addargs(&alist, "%s", ssh_ಕಾರ್ಯಕ್ರಮ);
 			addargs(&alist, "-x");
 			addargs(&alist, "-oClearAllForwardings=yes");
 			addargs(&alist, "-n");
-			for (j = 0; j < remote_remote_args.num; j++) {
+			ಗಾಗಿ (j = 0; j < remote_remote_ವಾದಗಳು.ಅಂಕೆ; j++) {
 				addargs(&alist, "%s",
-				    remote_remote_args.list[j]);
+				    remote_remote_ವಾದಗಳು.list[j]);
 			}
 
-			if (sport != -1) {
+			ಆದರೆ (sport != -1) {
 				addargs(&alist, "-p");
 				addargs(&alist, "%d", sport);
 			}
-			if (suser) {
+			ಆದರೆ (suser) {
 				addargs(&alist, "-l");
 				addargs(&alist, "%s", suser);
 			}
@@ -1166,611 +1166,611 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 			addargs(&alist, "%s%s%s:%s",
 			    tuser ? tuser : "", tuser ? "@" : "",
 			    thost, targ);
-			if (do_local_cmd(&alist) != 0)
+			ಆದರೆ (do_local_cmd(&alist) != 0)
 				errs = 1;
-		} else {	/* local to remote */
-			if (mode == MODE_SFTP) {
+		} ಇಲ್ಲದಿದ್ದರೆ {	/* local to remote */
+			ಆದರೆ (ಬಹುಲಕ == ಬಹುಲಕ_SFTP) {
 				/* no need to glob: already done by shell */
-				if (stat(argv[i], &sb) != 0) {
+				ಆದರೆ (stat(argv[i], &sb) != 0) {
 					fatal("stat local \"%s\": %s", argv[i],
 					    strerror(errno));
 				}
-				if (remin == -1) {
+				ಆದರೆ (remin == -1) {
 					/* Connect to remote now */
 					sftp_free(conn);
 					conn = do_sftp_connect(thost, tuser,
-					    tport, sftp_direct,
+					    tport, sftp_ನೇರ,
 					    &remin, &remout, &do_cmd_pid);
-					if (conn == NULL) {
+					ಆದರೆ (conn == ಖಾಲಿ) {
 						fatal("Unable to open sftp "
 						    "connection");
 					}
 				}
 
 				/* The protocol */
-				source_sftp(1, argv[i], targ, conn);
-				continue;
+				ಮೂಲ_sftp(1, argv[i], targ, conn);
+				ಮುಂದುವರಿ;
 			}
 			/* SCP */
-			if (remin == -1) {
+			ಆದರೆ (remin == -1) {
 				xasprintf(&bp, "%s -t %s%s", cmd,
 				    *targ == '-' ? "-- " : "", targ);
-				if (do_cmd(ssh_program, thost, tuser, tport, 0,
+				ಆದರೆ (do_cmd(ssh_ಕಾರ್ಯಕ್ರಮ, thost, tuser, tport, 0,
 				    bp, &remin, &remout, &do_cmd_pid) < 0)
-					exit(1);
-				if (response() < 0)
-					exit(1);
-				free(bp);
+					ನಿರ್ಗಮಿಸು(1);
+				ಆದರೆ (response() < 0)
+					ನಿರ್ಗಮಿಸು(1);
+				ಬಿಡುಗಡೆ(bp);
 			}
-			source(1, argv + i);
+			ಮೂಲ(1, argv + i);
 		}
 	}
-out:
+ಹೊರಹೋಗು:
 	freeargs(&alist);
-	free(tuser);
-	free(thost);
-	free(targ);
-	free(suser);
-	free(host);
-	free(src);
+	ಬಿಡುಗಡೆ(tuser);
+	ಬಿಡುಗಡೆ(thost);
+	ಬಿಡುಗಡೆ(targ);
+	ಬಿಡುಗಡೆ(suser);
+	ಬಿಡುಗಡೆ(host);
+	ಬಿಡುಗಡೆ(src);
 	sftp_free(conn);
 	sftp_free(conn2);
 }
 
-void
-tolocal(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
+ಶೂನ್ಯ
+tolocal(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv, ಎಣಿಕೆ scp_ಬಹುಲಕ_e ಬಹುಲಕ, ಅಕ್ಷರ *sftp_ನೇರ)
 {
-	char *bp, *host = NULL, *src = NULL, *suser = NULL;
+	ಅಕ್ಷರ *bp, *host = ಖಾಲಿ, *src = ಖಾಲಿ, *suser = ಖಾಲಿ;
 	arglist alist;
-	struct sftp_conn *conn = NULL;
-	int i, r, sport = -1;
+	ರಚನೆ sftp_conn *conn = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ i, r, sport = -1;
 
-	memset(&alist, '\0', sizeof(alist));
-	alist.list = NULL;
+	memset(&alist, '\0', ಗಾತ್ರ(alist));
+	alist.list = ಖಾಲಿ;
 
-	for (i = 0; i < argc - 1; i++) {
-		free(suser);
-		free(host);
-		free(src);
+	ಗಾಗಿ (i = 0; i < argc - 1; i++) {
+		ಬಿಡುಗಡೆ(suser);
+		ಬಿಡುಗಡೆ(host);
+		ಬಿಡುಗಡೆ(src);
 		r = parse_scp_uri(argv[i], &suser, &host, &sport, &src);
-		if (r == -1) {
+		ಆದರೆ (r == -1) {
 			fmprintf(stderr, "%s: invalid uri\n", argv[i]);
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (r != 0)
-			parse_user_host_path(argv[i], &suser, &host, &src);
-		if (suser != NULL && !okname(suser)) {
+		ಆದರೆ (r != 0)
+			parse_user_host_ಮಾರ್ಗ(argv[i], &suser, &host, &src);
+		ಆದರೆ (suser != ಖಾಲಿ && !okname(suser)) {
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (!host) {	/* Local to local. */
+		ಆದರೆ (!host) {	/* Local to local. */
 			freeargs(&alist);
-			addargs(&alist, "%s", _PATH_CP);
-			if (iamrecursive)
+			addargs(&alist, "%s", ಮಾರ್ಗ_CP);
+			ಆದರೆ (iamrecursive)
 				addargs(&alist, "-r");
-			if (pflag)
+			ಆದರೆ (pflag)
 				addargs(&alist, "-p");
 			addargs(&alist, "--");
 			addargs(&alist, "%s", argv[i]);
 			addargs(&alist, "%s", argv[argc-1]);
-			if (do_local_cmd(&alist))
+			ಆದರೆ (do_local_cmd(&alist))
 				++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 		/* Remote to local. */
-		if (mode == MODE_SFTP) {
+		ಆದರೆ (ಬಹುಲಕ == ಬಹುಲಕ_SFTP) {
 			sftp_free(conn);
 			conn = do_sftp_connect(host, suser, sport,
-			    sftp_direct, &remin, &remout, &do_cmd_pid);
-			if (conn == NULL) {
+			    sftp_ನೇರ, &remin, &remout, &do_cmd_pid);
+			ಆದರೆ (conn == ಖಾಲಿ) {
 				error("sftp connection failed");
 				++errs;
-				continue;
+				ಮುಂದುವರಿ;
 			}
 
 			/* The protocol */
 			sink_sftp(1, argv[argc - 1], src, conn);
 
-			(void) close(remin);
-			(void) close(remout);
+			(ಶೂನ್ಯ) close(remin);
+			(ಶೂನ್ಯ) close(remout);
 			remin = remout = -1;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 		/* SCP */
 		xasprintf(&bp, "%s -f %s%s",
 		    cmd, *src == '-' ? "-- " : "", src);
-		if (do_cmd(ssh_program, host, suser, sport, 0, bp,
+		ಆದರೆ (do_cmd(ssh_ಕಾರ್ಯಕ್ರಮ, host, suser, sport, 0, bp,
 		    &remin, &remout, &do_cmd_pid) < 0) {
-			free(bp);
+			ಬಿಡುಗಡೆ(bp);
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		free(bp);
+		ಬಿಡುಗಡೆ(bp);
 		sink(1, argv + argc - 1, src);
-		(void) close(remin);
+		(ಶೂನ್ಯ) close(remin);
 		remin = remout = -1;
 	}
 	freeargs(&alist);
-	free(suser);
-	free(host);
-	free(src);
+	ಬಿಡುಗಡೆ(suser);
+	ಬಿಡುಗಡೆ(host);
+	ಬಿಡುಗಡೆ(src);
 	sftp_free(conn);
 }
 
 /* Prepare remote path, handling ~ by assuming cwd is the homedir */
-static char *
-prepare_remote_path(struct sftp_conn *conn, const char *path)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+prepare_remote_ಮಾರ್ಗ(ರಚನೆ sftp_conn *conn, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ)
 {
-	size_t nslash;
+	ಗಾತ್ರ_t nslash;
 
 	/* Handle ~ prefixed paths */
-	if (*path == '\0' || strcmp(path, "~") == 0)
-		return xstrdup(".");
-	if (*path != '~')
-		return xstrdup(path);
-	if (strncmp(path, "~/", 2) == 0) {
-		if ((nslash = strspn(path + 2, "/")) == strlen(path + 2))
-			return xstrdup(".");
-		return xstrdup(path + 2 + nslash);
+	ಆದರೆ (*ಮಾರ್ಗ == '\0' || strcmp(ಮಾರ್ಗ, "~") == 0)
+		ಹಿಂತಿರುಗಿ xstrdup(".");
+	ಆದರೆ (*ಮಾರ್ಗ != '~')
+		ಹಿಂತಿರುಗಿ xstrdup(ಮಾರ್ಗ);
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ಮಾರ್ಗ, "~/", 2) == 0) {
+		ಆದರೆ ((nslash = strspn(ಮಾರ್ಗ + 2, "/")) == ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮಾರ್ಗ + 2))
+			ಹಿಂತಿರುಗಿ xstrdup(".");
+		ಹಿಂತಿರುಗಿ xstrdup(ಮಾರ್ಗ + 2 + nslash);
 	}
-	if (sftp_can_expand_path(conn))
-		return sftp_expand_path(conn, path);
+	ಆದರೆ (sftp_can_expand_ಮಾರ್ಗ(conn))
+		ಹಿಂತಿರುಗಿ sftp_expand_ಮಾರ್ಗ(conn, ಮಾರ್ಗ);
 	/* No protocol extension */
 	error("server expand-path extension is required "
 	    "for ~user paths in SFTP mode");
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-void
-source_sftp(int argc, char *src, char *targ, struct sftp_conn *conn)
+ಶೂನ್ಯ
+ಮೂಲ_sftp(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *src, ಅಕ್ಷರ *targ, ರಚನೆ sftp_conn *conn)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	int src_is_dir, target_is_dir;
+	ಅಕ್ಷರ *ಗುರಿ = ಖಾಲಿ, *filename = ಖಾಲಿ, *abs_dst = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ src_is_dir, ಗುರಿ_is_dir;
 	Attrib a;
-	struct stat st;
+	ರಚನೆ stat st;
 
-	memset(&a, '\0', sizeof(a));
-	if (stat(src, &st) != 0)
+	memset(&a, '\0', ಗಾತ್ರ(a));
+	ಆದರೆ (stat(src, &st) != 0)
 		fatal("stat local \"%s\": %s", src, strerror(errno));
 	src_is_dir = S_ISDIR(st.st_mode);
-	if ((filename = basename(src)) == NULL)
+	ಆದರೆ ((filename = basename(src)) == ಖಾಲಿ)
 		fatal("basename \"%s\": %s", src, strerror(errno));
 
 	/* Special handling for source of '..' */
-	if (strcmp(filename, "..") == 0)
+	ಆದರೆ (strcmp(filename, "..") == 0)
 		filename = "."; /* Upload to dest, not dest/.. */
 
 	/*
 	 * No need to glob here - the local shell already took care of
 	 * the expansions
 	 */
-	if ((target = prepare_remote_path(conn, targ)) == NULL)
+	ಆದರೆ ((ಗುರಿ = prepare_remote_ಮಾರ್ಗ(conn, targ)) == ಖಾಲಿ)
 		cleanup_exit(255);
-	target_is_dir = sftp_remote_is_dir(conn, target);
-	if (targetshouldbedirectory && !target_is_dir) {
-		debug("target directory \"%s\" does not exist", target);
+	ಗುರಿ_is_dir = sftp_remote_is_dir(conn, ಗುರಿ);
+	ಆದರೆ (targetshouldbedirectory && !ಗುರಿ_is_dir) {
+		debug("target directory \"%s\" does not exist", ಗುರಿ);
 		a.flags = SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = st.st_mode | 0700; /* ensure writable */
-		if (sftp_mkdir(conn, target, &a, 1) != 0)
+		ಆದರೆ (sftp_mkdir(conn, ಗುರಿ, &a, 1) != 0)
 			cleanup_exit(255); /* error already logged */
-		target_is_dir = 1;
+		ಗುರಿ_is_dir = 1;
 	}
-	if (target_is_dir)
-		abs_dst = sftp_path_append(target, filename);
-	else {
-		abs_dst = target;
-		target = NULL;
+	ಆದರೆ (ಗುರಿ_is_dir)
+		abs_dst = sftp_ಮಾರ್ಗ_append(ಗುರಿ, filename);
+	ಇಲ್ಲದಿದ್ದರೆ {
+		abs_dst = ಗುರಿ;
+		ಗುರಿ = ಖಾಲಿ;
 	}
 	debug3_f("copying local %s to remote %s", src, abs_dst);
 
-	if (src_is_dir && iamrecursive) {
-		if (sftp_upload_dir(conn, src, abs_dst, pflag,
-		    SFTP_PROGRESS_ONLY, 0, 0, 1, 1) != 0) {
+	ಆದರೆ (src_is_dir && iamrecursive) {
+		ಆದರೆ (sftp_upload_dir(conn, src, abs_dst, pflag,
+		    SFTP_ಪ್ರಗತಿ_ONLY, 0, 0, 1, 1) != 0) {
 			error("failed to upload directory %s to %s", src, targ);
 			errs = 1;
 		}
-	} else if (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sftp_upload(conn, src, abs_dst, pflag, 0, 0, 1) != 0) {
 		error("failed to upload file %s to %s", src, targ);
 		errs = 1;
 	}
 
-	free(abs_dst);
-	free(target);
+	ಬಿಡುಗಡೆ(abs_dst);
+	ಬಿಡುಗಡೆ(ಗುರಿ);
 }
 
-void
-source(int argc, char **argv)
+ಶೂನ್ಯ
+ಮೂಲ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	struct stat stb;
-	static BUF buffer;
+	ರಚನೆ stat stb;
+	ಸ್ಥಿರ BUF ಬಫರ್;
 	BUF *bp;
 	off_t i, statbytes;
-	size_t amt, nr;
-	int fd = -1, haderr, indx;
-	char *last, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
-	int len;
+	ಗಾತ್ರ_t amt, nr;
+	ಪೂರ್ಣಾಂಕ fd = -1, haderr, indx;
+	ಅಕ್ಷರ *ಕೊನೆಯ, *name, buf[PATH_MAX + 128], encname[PATH_MAX];
+	ಪೂರ್ಣಾಂಕ len;
 
-	for (indx = 0; indx < argc; ++indx) {
+	ಗಾಗಿ (indx = 0; indx < argc; ++indx) {
 		name = argv[indx];
 		statbytes = 0;
-		len = strlen(name);
-		while (len > 1 && name[len-1] == '/')
+		len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name);
+		ಆಗ (len > 1 && name[len-1] == '/')
 			name[--len] = '\0';
-		if ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
-			goto syserr;
-		if (strchr(name, '\n') != NULL) {
-			strnvis(encname, name, sizeof(encname), VIS_NL);
+		ಆದರೆ ((fd = open(name, O_RDONLY|O_NONBLOCK)) == -1)
+			ಹೋಗು syserr;
+		ಆದರೆ (strchr(name, '\n') != ಖಾಲಿ) {
+			strnvis(encname, name, ಗಾತ್ರ(encname), VIS_NL);
 			name = encname;
 		}
-		if (fstat(fd, &stb) == -1) {
-syserr:			run_err("%s: %s", name, strerror(errno));
-			goto next;
+		ಆದರೆ (fstat(fd, &stb) == -1) {
+syserr:			ಸತತ_err("%s: %s", name, strerror(errno));
+			ಹೋಗು ಮುಂದಿನ;
 		}
-		if (stb.st_size < 0) {
-			run_err("%s: %s", name, "Negative file size");
-			goto next;
+		ಆದರೆ (stb.st_size < 0) {
+			ಸತತ_err("%s: %s", name, "Negative file size");
+			ಹೋಗು ಮುಂದಿನ;
 		}
 		unset_nonblock(fd);
-		switch (stb.st_mode & S_IFMT) {
-		case S_IFREG:
-			break;
-		case S_IFDIR:
-			if (iamrecursive) {
+		ಆಯ್ಕೆ (stb.st_mode & S_IFMT) {
+		ಸ್ಥಿತಿ S_IFREG:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ S_IFDIR:
+			ಆದರೆ (iamrecursive) {
 				rsource(name, &stb);
-				goto next;
+				ಹೋಗು ಮುಂದಿನ;
 			}
 			/* FALLTHROUGH */
-		default:
-			run_err("%s: not a regular file", name);
-			goto next;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಸತತ_err("%s: not a regular file", name);
+			ಹೋಗು ಮುಂದಿನ;
 		}
-		if ((last = strrchr(name, '/')) == NULL)
-			last = name;
-		else
-			++last;
-		curfile = last;
-		if (pflag) {
-			if (do_times(remout, verbose_mode, &stb) < 0)
-				goto next;
+		ಆದರೆ ((ಕೊನೆಯ = strrchr(name, '/')) == ಖಾಲಿ)
+			ಕೊನೆಯ = name;
+		ಇಲ್ಲದಿದ್ದರೆ
+			++ಕೊನೆಯ;
+		curfile = ಕೊನೆಯ;
+		ಆದರೆ (pflag) {
+			ಆದರೆ (do_times(remout, verbose_ಬಹುಲಕ, &stb) < 0)
+				ಹೋಗು ಮುಂದಿನ;
 		}
-#define	FILEMODEMASK	(S_ISUID|S_ISGID|S_IRWXU|S_IRWXG|S_IRWXO)
-		snprintf(buf, sizeof buf, "C%04o %lld %s\n",
+#ವ್ಯಾಖ್ಯಾನಿಸು	FILEMODEMASK	(S_ISUID|S_ISGID|S_IRWXU|S_IRWXG|S_IRWXO)
+		snprintf(buf, ಗಾತ್ರ buf, "C%04o %lld %s\n",
 		    (u_int) (stb.st_mode & FILEMODEMASK),
-		    (long long)stb.st_size, last);
-		if (verbose_mode)
+		    (ದೀರ್ಘ ದೀರ್ಘ)stb.st_size, ಕೊನೆಯ);
+		ಆದರೆ (verbose_ಬಹುಲಕ)
 			fmprintf(stderr, "Sending file modes: %s", buf);
-		(void) atomicio(vwrite, remout, buf, strlen(buf));
-		if (response() < 0)
-			goto next;
-		if ((bp = allocbuf(&buffer, fd, COPY_BUFLEN)) == NULL) {
-next:			if (fd != -1) {
-				(void) close(fd);
+		(ಶೂನ್ಯ) atomicio(vwrite, remout, buf, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(buf));
+		ಆದರೆ (response() < 0)
+			ಹೋಗು ಮುಂದಿನ;
+		ಆದರೆ ((bp = allocbuf(&ಬಫರ್, fd, COPY_BUFLEN)) == ಖಾಲಿ) {
+ಮುಂದಿನ:			ಆದರೆ (fd != -1) {
+				(ಶೂನ್ಯ) close(fd);
 				fd = -1;
 			}
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (showprogress)
-			start_progress_meter(curfile, stb.st_size, &statbytes);
-		set_nonblock(remout);
-		for (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
+		ಆದರೆ (showprogress)
+			ಆರಂಭ_ಪ್ರಗತಿ_meter(curfile, stb.st_size, &statbytes);
+		ಗಣ_nonblock(remout);
+		ಗಾಗಿ (haderr = i = 0; i < stb.st_size; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + (off_t)amt > stb.st_size)
+			ಆದರೆ (i + (off_t)amt > stb.st_size)
 				amt = stb.st_size - i;
-			if (!haderr) {
-				if ((nr = atomicio(read, fd,
+			ಆದರೆ (!haderr) {
+				ಆದರೆ ((nr = atomicio(ಪಠ, fd,
 				    bp->buf, amt)) != amt) {
 					haderr = errno;
 					memset(bp->buf + nr, 0, amt - nr);
 				}
 			}
 			/* Keep writing after error to retain sync */
-			if (haderr) {
-				(void)atomicio(vwrite, remout, bp->buf, amt);
+			ಆದರೆ (haderr) {
+				(ಶೂನ್ಯ)atomicio(vwrite, remout, bp->buf, amt);
 				memset(bp->buf, 0, amt);
-				continue;
+				ಮುಂದುವರಿ;
 			}
-			if (atomicio6(vwrite, remout, bp->buf, amt, scpio,
+			ಆದರೆ (atomicio6(vwrite, remout, bp->buf, amt, scpio,
 			    &statbytes) != amt)
 				haderr = errno;
 		}
 		unset_nonblock(remout);
 
-		if (fd != -1) {
-			if (close(fd) == -1 && !haderr)
+		ಆದರೆ (fd != -1) {
+			ಆದರೆ (close(fd) == -1 && !haderr)
 				haderr = errno;
 			fd = -1;
 		}
-		if (!haderr)
-			(void) atomicio(vwrite, remout, "", 1);
-		else
-			run_err("%s: %s", name, strerror(haderr));
-		(void) response();
-		if (showprogress)
-			stop_progress_meter();
+		ಆದರೆ (!haderr)
+			(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
+		ಇಲ್ಲದಿದ್ದರೆ
+			ಸತತ_err("%s: %s", name, strerror(haderr));
+		(ಶೂನ್ಯ) response();
+		ಆದರೆ (showprogress)
+			stop_ಪ್ರಗತಿ_meter();
 	}
 }
 
-void
-rsource(char *name, struct stat *statp)
+ಶೂನ್ಯ
+rsource(ಅಕ್ಷರ *name, ರಚನೆ stat *statp)
 {
 	DIR *dirp;
-	struct dirent *dp;
-	char *last, *vect[1], path[PATH_MAX];
+	ರಚನೆ dirent *dp;
+	ಅಕ್ಷರ *ಕೊನೆಯ, *vect[1], ಮಾರ್ಗ[PATH_MAX];
 
-	if (!(dirp = opendir(name))) {
-		run_err("%s: %s", name, strerror(errno));
-		return;
+	ಆದರೆ (!(dirp = opendir(name))) {
+		ಸತತ_err("%s: %s", name, strerror(errno));
+		ಹಿಂತಿರುಗಿ;
 	}
-	last = strrchr(name, '/');
-	if (last == NULL)
-		last = name;
-	else
-		last++;
-	if (pflag) {
-		if (do_times(remout, verbose_mode, statp) < 0) {
+	ಕೊನೆಯ = strrchr(name, '/');
+	ಆದರೆ (ಕೊನೆಯ == ಖಾಲಿ)
+		ಕೊನೆಯ = name;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಕೊನೆಯ++;
+	ಆದರೆ (pflag) {
+		ಆದರೆ (do_times(remout, verbose_ಬಹುಲಕ, statp) < 0) {
 			closedir(dirp);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 	}
-	(void) snprintf(path, sizeof path, "D%04o %d %.1024s\n",
-	    (u_int) (statp->st_mode & FILEMODEMASK), 0, last);
-	if (verbose_mode)
-		fmprintf(stderr, "Entering directory: %s", path);
-	(void) atomicio(vwrite, remout, path, strlen(path));
-	if (response() < 0) {
+	(ಶೂನ್ಯ) snprintf(ಮಾರ್ಗ, ಗಾತ್ರ ಮಾರ್ಗ, "D%04o %d %.1024s\n",
+	    (u_int) (statp->st_mode & FILEMODEMASK), 0, ಕೊನೆಯ);
+	ಆದರೆ (verbose_ಬಹುಲಕ)
+		fmprintf(stderr, "Entering directory: %s", ಮಾರ್ಗ);
+	(ಶೂನ್ಯ) atomicio(vwrite, remout, ಮಾರ್ಗ, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮಾರ್ಗ));
+	ಆದರೆ (response() < 0) {
 		closedir(dirp);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
-	while ((dp = readdir(dirp)) != NULL) {
-		if (dp->d_ino == 0)
-			continue;
-		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
-			continue;
-		if (strlen(name) + 1 + strlen(dp->d_name) >= sizeof(path) - 1) {
-			run_err("%s/%s: name too long", name, dp->d_name);
-			continue;
+	ಆಗ ((dp = readdir(dirp)) != ಖಾಲಿ) {
+		ಆದರೆ (dp->d_ino == 0)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+			ಮುಂದುವರಿ;
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name) + 1 + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(dp->d_name) >= ಗಾತ್ರ(ಮಾರ್ಗ) - 1) {
+			ಸತತ_err("%s/%s: name too long", name, dp->d_name);
+			ಮುಂದುವರಿ;
 		}
-		(void) snprintf(path, sizeof path, "%s/%s", name, dp->d_name);
-		vect[0] = path;
-		source(1, vect);
+		(ಶೂನ್ಯ) snprintf(ಮಾರ್ಗ, ಗಾತ್ರ ಮಾರ್ಗ, "%s/%s", name, dp->d_name);
+		vect[0] = ಮಾರ್ಗ;
+		ಮೂಲ(1, vect);
 	}
-	(void) closedir(dirp);
-	(void) atomicio(vwrite, remout, "E\n", 2);
-	(void) response();
+	(ಶೂನ್ಯ) closedir(dirp);
+	(ಶೂನ್ಯ) atomicio(vwrite, remout, "E\n", 2);
+	(ಶೂನ್ಯ) response();
 }
 
-void
-sink_sftp(int argc, char *dst, const char *src, struct sftp_conn *conn)
+ಶೂನ್ಯ
+sink_sftp(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ *dst, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ರಚನೆ sftp_conn *conn)
 {
-	char *abs_src = NULL;
-	char *abs_dst = NULL;
+	ಅಕ್ಷರ *abs_src = ಖಾಲಿ;
+	ಅಕ್ಷರ *abs_dst = ಖಾಲಿ;
 	glob_t g;
-	char *filename, *tmp = NULL;
-	int i, r, err = 0, dst_is_dir;
-	struct stat st;
+	ಅಕ್ಷರ *filename, *tmp = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ i, r, err = 0, dst_is_dir;
+	ರಚನೆ stat st;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, ಗಾತ್ರ(g));
 
 	/*
 	 * Here, we need remote glob as SFTP can not depend on remote shell
 	 * expansions
 	 */
-	if ((abs_src = prepare_remote_path(conn, src)) == NULL) {
+	ಆದರೆ ((abs_src = prepare_remote_ಮಾರ್ಗ(conn, src)) == ಖಾಲಿ) {
 		err = -1;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	debug3_f("copying remote %s to local %s", abs_src, dst);
-	if ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	ಆದರೆ ((r = sftp_glob(conn, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ಖಾಲಿ, &g)) != 0) {
+		ಆದರೆ (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	ಆದರೆ (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ಖಾಲಿ) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(conn, g.gl_pathv[0], 1, NULL) != 0) {
+		ಆದರೆ (sftp_stat(conn, g.gl_pathv[0], 1, ಖಾಲಿ) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
-	if ((r = stat(dst, &st)) != 0)
+	ಆದರೆ ((r = stat(dst, &st)) != 0)
 		debug2_f("stat local \"%s\": %s", dst, strerror(errno));
 	dst_is_dir = r == 0 && S_ISDIR(st.st_mode);
 
-	if (g.gl_matchc > 1 && !dst_is_dir) {
-		if (r == 0) {
+	ಆದರೆ (g.gl_matchc > 1 && !dst_is_dir) {
+		ಆದರೆ (r == 0) {
 			error("Multiple files match pattern, but destination "
 			    "\"%s\" is not a directory", dst);
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 		debug2_f("creating destination \"%s\"", dst);
-		if (mkdir(dst, 0777) != 0) {
+		ಆದರೆ (mkdir(dst, 0777) != 0) {
 			error("local mkdir \"%s\": %s", dst, strerror(errno));
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 		dst_is_dir = 1;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	ಗಾಗಿ (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		ಆದರೆ ((filename = basename(tmp)) == ಖಾಲಿ) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
 		/* Special handling for destination of '..' */
-		if (strcmp(filename, "..") == 0)
+		ಆದರೆ (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (dst_is_dir)
-			abs_dst = sftp_path_append(dst, filename);
-		else
+		ಆದರೆ (dst_is_dir)
+			abs_dst = sftp_ಮಾರ್ಗ_append(dst, filename);
+		ಇಲ್ಲದಿದ್ದರೆ
 			abs_dst = xstrdup(dst);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 0, 0, 1, 1) == -1)
+		ಆದರೆ (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			ಆದರೆ (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    ಖಾಲಿ, pflag, SFTP_ಪ್ರಗತಿ_ONLY, 0, 0, 1, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (sftp_download(conn, g.gl_pathv[i], abs_dst, ಖಾಲಿ,
 			    pflag, 0, 0, 1) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		ಬಿಡುಗಡೆ(abs_dst);
+		abs_dst = ಖಾಲಿ;
+		ಬಿಡುಗಡೆ(tmp);
+		tmp = ಖಾಲಿ;
 	}
 
-out:
-	free(abs_src);
-	free(tmp);
+ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(abs_src);
+	ಬಿಡುಗಡೆ(tmp);
 	globfree(&g);
-	if (err == -1)
+	ಆದರೆ (err == -1)
 		errs = 1;
 }
 
 
-#define TYPE_OVERFLOW(type, val) \
-	((sizeof(type) == 4 && (val) > INT32_MAX) || \
-	 (sizeof(type) == 8 && (val) > INT64_MAX) || \
-	 (sizeof(type) != 4 && sizeof(type) != 8))
+#ವ್ಯಾಖ್ಯಾನಿಸು TYPE_ಅತಿಪ್ರವಾಹ(type, val) \
+	((ಗಾತ್ರ(type) == 4 && (val) > INT32_MAX) || \
+	 (ಗಾತ್ರ(type) == 8 && (val) > INT64_MAX) || \
+	 (ಗಾತ್ರ(type) != 4 && ಗಾತ್ರ(type) != 8))
 
-void
-sink(int argc, char **argv, const char *src)
+ಶೂನ್ಯ
+sink(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src)
 {
-	static BUF buffer;
-	struct stat stb;
+	ಸ್ಥಿರ BUF ಬಫರ್;
+	ರಚನೆ stat stb;
 	BUF *bp;
 	off_t i;
-	size_t j, count;
-	int amt, exists, first, ofd;
-	mode_t mode, omode, mask;
-	off_t size, statbytes;
-	unsigned long long ull;
-	int setimes, targisdir, wrerr;
-	char ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
-	char **patterns = NULL;
-	size_t n, npatterns = 0;
-	struct timeval tv[2];
+	ಗಾತ್ರ_t j, ಎಣಿಕೆ_2;
+	ಪೂರ್ಣಾಂಕ amt, exists, ಮೊದಲ, ofd;
+	ಬಹುಲಕ_t ಬಹುಲಕ, omode, ಮುಖವಾಡ;
+	off_t ಗಾತ್ರ_2, statbytes;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ull;
+	ಪೂರ್ಣಾಂಕ setimes, targisdir, wrerr;
+	ಅಕ್ಷರ ch, *cp, *np, *targ, *why, *vect[1], buf[2048], visbuf[2048];
+	ಅಕ್ಷರ **patterns = ಖಾಲಿ;
+	ಗಾತ್ರ_t n, npatterns = 0;
+	ರಚನೆ timeval tv[2];
 
-#define	atime	tv[0]
-#define	mtime	tv[1]
-#define	SCREWUP(str)	{ why = str; goto screwup; }
+#ವ್ಯಾಖ್ಯಾನಿಸು	atime	tv[0]
+#ವ್ಯಾಖ್ಯಾನಿಸು	mtime	tv[1]
+#ವ್ಯಾಖ್ಯಾನಿಸು	SCREWUP(str)	{ why = str; ಹೋಗು screwup; }
 
-	if (TYPE_OVERFLOW(time_t, 0) || TYPE_OVERFLOW(off_t, 0))
+	ಆದರೆ (TYPE_ಅತಿಪ್ರವಾಹ(time_t, 0) || TYPE_ಅತಿಪ್ರವಾಹ(off_t, 0))
 		SCREWUP("Unexpected off_t/time_t size");
 
 	setimes = targisdir = 0;
-	mask = umask(0);
-	if (!pflag) {
-		(void) umask(mask);
-		mask |= 07000;
+	ಮುಖವಾಡ = umask(0);
+	ಆದರೆ (!pflag) {
+		(ಶೂನ್ಯ) umask(ಮುಖವಾಡ);
+		ಮುಖವಾಡ |= 07000;
 	}
-	if (argc != 1) {
-		run_err("ambiguous target");
-		exit(1);
+	ಆದರೆ (argc != 1) {
+		ಸತತ_err("ambiguous target");
+		ನಿರ್ಗಮಿಸು(1);
 	}
 	targ = *argv;
-	if (targetshouldbedirectory)
+	ಆದರೆ (targetshouldbedirectory)
 		verifydir(targ);
 
-	(void) atomicio(vwrite, remout, "", 1);
-	if (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
+	(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
+	ಆದರೆ (stat(targ, &stb) == 0 && S_ISDIR(stb.st_mode))
 		targisdir = 1;
-	if (src != NULL && !iamrecursive && !Tflag) {
+	ಆದರೆ (src != ಖಾಲಿ && !iamrecursive && !Tflag) {
 		/*
 		 * Prepare to try to restrict incoming filenames to match
 		 * the requested destination file glob.
 		 */
-		if (brace_expand(src, &patterns, &npatterns) != 0)
+		ಆದರೆ (brace_expand(src, &patterns, &npatterns) != 0)
 			fatal_f("could not expand pattern");
 	}
-	for (first = 1;; first = 0) {
+	ಗಾಗಿ (ಮೊದಲ = 1;; ಮೊದಲ = 0) {
 		cp = buf;
-		if (atomicio(read, remin, cp, 1) != 1)
-			goto done;
-		if (*cp++ == '\n')
+		ಆದರೆ (atomicio(ಪಠ, remin, cp, 1) != 1)
+			ಹೋಗು ಮುಗಿದ;
+		ಆದರೆ (*cp++ == '\n')
 			SCREWUP("unexpected <newline>");
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+		ಮಾಡು {
+			ಆದರೆ (atomicio(ಪಠ, remin, &ch, ಗಾತ್ರ(ch)) != ಗಾತ್ರ(ch))
 				SCREWUP("lost connection");
-			if (ch == '\0')
+			ಆದರೆ (ch == '\0')
 				SCREWUP("nul byte in filename");
 			*cp++ = ch;
-		} while (cp < &buf[sizeof(buf) - 1] && ch != '\n');
+		} ಆಗ (cp < &buf[ಗಾತ್ರ(buf) - 1] && ch != '\n');
 		*cp = 0;
-		if (verbose_mode)
+		ಆದರೆ (verbose_ಬಹುಲಕ)
 			fmprintf(stderr, "Sink: %s", buf);
 
-		if (buf[0] == '\01' || buf[0] == '\02') {
-			if (iamremote == 0) {
-				(void) snmprintf(visbuf, sizeof(visbuf),
-				    NULL, "%s", buf + 1);
-				(void) atomicio(vwrite, STDERR_FILENO,
-				    visbuf, strlen(visbuf));
+		ಆದರೆ (buf[0] == '\01' || buf[0] == '\02') {
+			ಆದರೆ (iamremote == 0) {
+				(ಶೂನ್ಯ) snmprintf(visbuf, ಗಾತ್ರ(visbuf),
+				    ಖಾಲಿ, "%s", buf + 1);
+				(ಶೂನ್ಯ) atomicio(vwrite, STDERR_FILENO,
+				    visbuf, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(visbuf));
 			}
-			if (buf[0] == '\02')
-				exit(1);
+			ಆದರೆ (buf[0] == '\02')
+				ನಿರ್ಗಮಿಸು(1);
 			++errs;
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (buf[0] == 'E') {
-			(void) atomicio(vwrite, remout, "", 1);
-			goto done;
+		ಆದರೆ (buf[0] == 'E') {
+			(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
+			ಹೋಗು ಮುಗಿದ;
 		}
-		if (ch == '\n')
+		ಆದರೆ (ch == '\n')
 			*--cp = 0;
 
 		cp = buf;
-		if (*cp == 'T') {
+		ಆದರೆ (*cp == 'T') {
 			setimes++;
 			cp++;
-			if (!isdigit((unsigned char)*cp))
+			ಆದರೆ (!ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)*cp))
 				SCREWUP("mtime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			ಆದರೆ (!cp || *cp++ != ' ')
 				SCREWUP("mtime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			ಆದರೆ (TYPE_ಅತಿಪ್ರವಾಹ(time_t, ull))
 				setimes = 0;	/* out of range */
 			mtime.tv_sec = ull;
 			mtime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
+			ಆದರೆ (!cp || *cp++ != ' ' || mtime.tv_usec < 0 ||
 			    mtime.tv_usec > 999999)
 				SCREWUP("mtime.usec not delimited");
-			if (!isdigit((unsigned char)*cp))
+			ಆದರೆ (!ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)*cp))
 				SCREWUP("atime.sec not present");
 			ull = strtoull(cp, &cp, 10);
-			if (!cp || *cp++ != ' ')
+			ಆದರೆ (!cp || *cp++ != ' ')
 				SCREWUP("atime.sec not delimited");
-			if (TYPE_OVERFLOW(time_t, ull))
+			ಆದರೆ (TYPE_ಅತಿಪ್ರವಾಹ(time_t, ull))
 				setimes = 0;	/* out of range */
 			atime.tv_sec = ull;
 			atime.tv_usec = strtol(cp, &cp, 10);
-			if (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
+			ಆದರೆ (!cp || *cp++ != '\0' || atime.tv_usec < 0 ||
 			    atime.tv_usec > 999999)
 				SCREWUP("atime.usec not delimited");
-			(void) atomicio(vwrite, remout, "", 1);
-			continue;
+			(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
+			ಮುಂದುವರಿ;
 		}
-		if (*cp != 'C' && *cp != 'D') {
+		ಆದರೆ (*cp != 'C' && *cp != 'D') {
 			/*
 			 * Check for the case "rcp remote:foo\* local:bar".
 			 * In this case, the line "No match." can be returned
@@ -1778,110 +1778,110 @@ sink(int argc, char **argv, const char *src)
 			 * executed so the ^Aerror_message convention isn't
 			 * followed.
 			 */
-			if (first) {
-				run_err("%s", cp);
-				exit(1);
+			ಆದರೆ (ಮೊದಲ) {
+				ಸತತ_err("%s", cp);
+				ನಿರ್ಗಮಿಸು(1);
 			}
 			SCREWUP("expected control record");
 		}
-		mode = 0;
-		for (++cp; cp < buf + 5; cp++) {
-			if (*cp < '0' || *cp > '7')
+		ಬಹುಲಕ = 0;
+		ಗಾಗಿ (++cp; cp < buf + 5; cp++) {
+			ಆದರೆ (*cp < '0' || *cp > '7')
 				SCREWUP("bad mode");
-			mode = (mode << 3) | (*cp - '0');
+			ಬಹುಲಕ = (ಬಹುಲಕ << 3) | (*cp - '0');
 		}
-		if (!pflag)
-			mode &= ~mask;
-		if (*cp++ != ' ')
+		ಆದರೆ (!pflag)
+			ಬಹುಲಕ &= ~ಮುಖವಾಡ;
+		ಆದರೆ (*cp++ != ' ')
 			SCREWUP("mode not delimited");
 
-		if (!isdigit((unsigned char)*cp))
+		ಆದರೆ (!ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)*cp))
 			SCREWUP("size not present");
 		ull = strtoull(cp, &cp, 10);
-		if (!cp || *cp++ != ' ')
+		ಆದರೆ (!cp || *cp++ != ' ')
 			SCREWUP("size not delimited");
-		if (TYPE_OVERFLOW(off_t, ull))
+		ಆದರೆ (TYPE_ಅತಿಪ್ರವಾಹ(off_t, ull))
 			SCREWUP("size out of range");
-		size = (off_t)ull;
+		ಗಾತ್ರ_2 = (off_t)ull;
 
-		if (*cp == '\0' || strchr(cp, '/') != NULL ||
+		ಆದರೆ (*cp == '\0' || strchr(cp, '/') != ಖಾಲಿ ||
 		    strcmp(cp, ".") == 0 || strcmp(cp, "..") == 0) {
-			run_err("error: unexpected filename: %s", cp);
-			exit(1);
+			ಸತತ_err("error: unexpected filename: %s", cp);
+			ನಿರ್ಗಮಿಸು(1);
 		}
-		if (npatterns > 0) {
-			for (n = 0; n < npatterns; n++) {
-				if (strcmp(patterns[n], cp) == 0 ||
+		ಆದರೆ (npatterns > 0) {
+			ಗಾಗಿ (n = 0; n < npatterns; n++) {
+				ಆದರೆ (strcmp(patterns[n], cp) == 0 ||
 				    fnmatch(patterns[n], cp, 0) == 0)
-					break;
+					ನಿಲ್ಲಿಸು;
 			}
-			if (n >= npatterns) {
+			ಆದರೆ (n >= npatterns) {
 				debug2_f("incoming filename \"%s\" does not "
 				    "match any of %zu expected patterns", cp,
 				    npatterns);
-				for (n = 0; n < npatterns; n++) {
+				ಗಾಗಿ (n = 0; n < npatterns; n++) {
 					debug3_f("expected pattern %zu: \"%s\"",
 					    n, patterns[n]);
 				}
 				SCREWUP("filename does not match request");
 			}
 		}
-		if (targisdir) {
-			static char *namebuf;
-			static size_t cursize;
-			size_t need;
+		ಆದರೆ (targisdir) {
+			ಸ್ಥಿರ ಅಕ್ಷರ *namebuf;
+			ಸ್ಥಿರ ಗಾತ್ರ_t cursize;
+			ಗಾತ್ರ_t need;
 
-			need = strlen(targ) + strlen(cp) + 250;
-			if (need > cursize) {
-				free(namebuf);
+			need = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(targ) + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cp) + 250;
+			ಆದರೆ (need > cursize) {
+				ಬಿಡುಗಡೆ(namebuf);
 				namebuf = xmalloc(need);
 				cursize = need;
 			}
-			(void) snprintf(namebuf, need, "%s%s%s", targ,
+			(ಶೂನ್ಯ) snprintf(namebuf, need, "%s%s%s", targ,
 			    strcmp(targ, "/") ? "/" : "", cp);
 			np = namebuf;
-		} else
+		} ಇಲ್ಲದಿದ್ದರೆ
 			np = targ;
 		curfile = cp;
 		exists = stat(np, &stb) == 0;
-		if (buf[0] == 'D') {
-			int mod_flag = pflag;
-			if (!iamrecursive)
+		ಆದರೆ (buf[0] == 'D') {
+			ಪೂರ್ಣಾಂಕ mod_flag = pflag;
+			ಆದರೆ (!iamrecursive)
 				SCREWUP("received directory without -r");
-			if (exists) {
-				if (!S_ISDIR(stb.st_mode)) {
+			ಆದರೆ (exists) {
+				ಆದರೆ (!S_ISDIR(stb.st_mode)) {
 					errno = ENOTDIR;
-					goto bad;
+					ಹೋಗು bad;
 				}
-				if (pflag)
-					(void) chmod(np, mode);
-			} else {
+				ಆದರೆ (pflag)
+					(ಶೂನ್ಯ) chmod(np, ಬಹುಲಕ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				/* Handle copying from a read-only directory */
 				mod_flag = 1;
-				if (mkdir(np, mode | S_IRWXU) == -1)
-					goto bad;
+				ಆದರೆ (mkdir(np, ಬಹುಲಕ | S_IRWXU) == -1)
+					ಹೋಗು bad;
 			}
 			vect[0] = xstrdup(np);
 			sink(1, vect, src);
-			if (setimes) {
+			ಆದರೆ (setimes) {
 				setimes = 0;
-				(void) utimes(vect[0], tv);
+				(ಶೂನ್ಯ) utimes(vect[0], tv);
 			}
-			if (mod_flag)
-				(void) chmod(vect[0], mode);
-			free(vect[0]);
-			continue;
+			ಆದರೆ (mod_flag)
+				(ಶೂನ್ಯ) chmod(vect[0], ಬಹುಲಕ);
+			ಬಿಡುಗಡೆ(vect[0]);
+			ಮುಂದುವರಿ;
 		}
-		omode = mode;
-		mode |= S_IWUSR;
-		if ((ofd = open(np, O_WRONLY|O_CREAT, mode)) == -1) {
-bad:			run_err("%s: %s", np, strerror(errno));
-			continue;
+		omode = ಬಹುಲಕ;
+		ಬಹುಲಕ |= S_IWUSR;
+		ಆದರೆ ((ofd = open(np, O_WRONLY|O_CREAT, ಬಹುಲಕ)) == -1) {
+bad:			ಸತತ_err("%s: %s", np, strerror(errno));
+			ಮುಂದುವರಿ;
 		}
-		(void) atomicio(vwrite, remout, "", 1);
-		if ((bp = allocbuf(&buffer, ofd, COPY_BUFLEN)) == NULL) {
-			(void) close(ofd);
-			continue;
+		(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
+		ಆದರೆ ((bp = allocbuf(&ಬಫರ್, ofd, COPY_BUFLEN)) == ಖಾಲಿ) {
+			(ಶೂನ್ಯ) close(ofd);
+			ಮುಂದುವರಿ;
 		}
 		cp = bp->buf;
 		wrerr = 0;
@@ -1892,258 +1892,258 @@ bad:			run_err("%s: %s", np, strerror(errno));
 		 * desynchronise us from the peer. Use note_err() instead.
 		 */
 		statbytes = 0;
-		if (showprogress)
-			start_progress_meter(curfile, size, &statbytes);
-		set_nonblock(remin);
-		for (count = i = 0; i < size; i += bp->cnt) {
+		ಆದರೆ (showprogress)
+			ಆರಂಭ_ಪ್ರಗತಿ_meter(curfile, ಗಾತ್ರ_2, &statbytes);
+		ಗಣ_nonblock(remin);
+		ಗಾಗಿ (ಎಣಿಕೆ_2 = i = 0; i < ಗಾತ್ರ_2; i += bp->cnt) {
 			amt = bp->cnt;
-			if (i + amt > size)
-				amt = size - i;
-			count += amt;
-			do {
-				j = atomicio6(read, remin, cp, amt,
+			ಆದರೆ (i + amt > ಗಾತ್ರ_2)
+				amt = ಗಾತ್ರ_2 - i;
+			ಎಣಿಕೆ_2 += amt;
+			ಮಾಡು {
+				j = atomicio6(ಪಠ, remin, cp, amt,
 				    scpio, &statbytes);
-				if (j == 0) {
-					run_err("%s", j != EPIPE ?
+				ಆದರೆ (j == 0) {
+					ಸತತ_err("%s", j != EPIPE ?
 					    strerror(errno) :
 					    "dropped connection");
-					exit(1);
+					ನಿರ್ಗಮಿಸು(1);
 				}
 				amt -= j;
 				cp += j;
-			} while (amt > 0);
+			} ಆಗ (amt > 0);
 
-			if (count == bp->cnt) {
+			ಆದರೆ (ಎಣಿಕೆ_2 == bp->cnt) {
 				/* Keep reading so we stay sync'd up. */
-				if (!wrerr) {
-					if (atomicio(vwrite, ofd, bp->buf,
-					    count) != count) {
+				ಆದರೆ (!wrerr) {
+					ಆದರೆ (atomicio(vwrite, ofd, bp->buf,
+					    ಎಣಿಕೆ_2) != ಎಣಿಕೆ_2) {
 						note_err("%s: %s", np,
 						    strerror(errno));
 						wrerr = 1;
 					}
 				}
-				count = 0;
+				ಎಣಿಕೆ_2 = 0;
 				cp = bp->buf;
 			}
 		}
 		unset_nonblock(remin);
-		if (count != 0 && !wrerr &&
-		    atomicio(vwrite, ofd, bp->buf, count) != count) {
+		ಆದರೆ (ಎಣಿಕೆ_2 != 0 && !wrerr &&
+		    atomicio(vwrite, ofd, bp->buf, ಎಣಿಕೆ_2) != ಎಣಿಕೆ_2) {
 			note_err("%s: %s", np, strerror(errno));
 			wrerr = 1;
 		}
-		if (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
-		    ftruncate(ofd, size) != 0)
+		ಆದರೆ (!wrerr && (!exists || S_ISREG(stb.st_mode)) &&
+		    ftruncate(ofd, ಗಾತ್ರ_2) != 0)
 			note_err("%s: truncate: %s", np, strerror(errno));
-		if (pflag) {
-			if (exists || omode != mode)
-#ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode)) {
-#endif /* HAVE_FCHMOD */
+		ಆದರೆ (pflag) {
+			ಆದರೆ (exists || omode != ಬಹುಲಕ)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FCHMOD
+				ಆದರೆ (fchmod(ofd, omode)) {
+#ಇಲ್ಲದಿದ್ದರೆ /* HAVE_FCHMOD */
+				ಆದರೆ (chmod(np, omode)) {
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
-		} else {
-			if (!exists && omode != mode)
-#ifdef HAVE_FCHMOD
-				if (fchmod(ofd, omode & ~mask)) {
-#else /* HAVE_FCHMOD */
-				if (chmod(np, omode & ~mask)) {
-#endif /* HAVE_FCHMOD */
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (!exists && omode != ಬಹುಲಕ)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FCHMOD
+				ಆದರೆ (fchmod(ofd, omode & ~ಮುಖವಾಡ)) {
+#ಇಲ್ಲದಿದ್ದರೆ /* HAVE_FCHMOD */
+				ಆದರೆ (chmod(np, omode & ~ಮುಖವಾಡ)) {
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_FCHMOD */
 					note_err("%s: set mode: %s",
 					    np, strerror(errno));
 				}
 		}
-		if (close(ofd) == -1)
+		ಆದರೆ (close(ofd) == -1)
 			note_err("%s: close: %s", np, strerror(errno));
-		(void) response();
-		if (showprogress)
-			stop_progress_meter();
-		if (setimes && !wrerr) {
+		(ಶೂನ್ಯ) response();
+		ಆದರೆ (showprogress)
+			stop_ಪ್ರಗತಿ_meter();
+		ಆದರೆ (setimes && !wrerr) {
 			setimes = 0;
-			if (utimes(np, tv) == -1) {
+			ಆದರೆ (utimes(np, tv) == -1) {
 				note_err("%s: set times: %s",
 				    np, strerror(errno));
 			}
 		}
 		/* If no error was noted then signal success for this file */
-		if (note_err(NULL) == 0)
-			(void) atomicio(vwrite, remout, "", 1);
+		ಆದರೆ (note_err(ಖಾಲಿ) == 0)
+			(ಶೂನ್ಯ) atomicio(vwrite, remout, "", 1);
 	}
-done:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
-	return;
+ಮುಗಿದ:
+	ಗಾಗಿ (n = 0; n < npatterns; n++)
+		ಬಿಡುಗಡೆ(patterns[n]);
+	ಬಿಡುಗಡೆ(patterns);
+	ಹಿಂತಿರುಗಿ;
 screwup:
-	for (n = 0; n < npatterns; n++)
-		free(patterns[n]);
-	free(patterns);
-	run_err("protocol error: %s", why);
-	exit(1);
+	ಗಾಗಿ (n = 0; n < npatterns; n++)
+		ಬಿಡುಗಡೆ(patterns[n]);
+	ಬಿಡುಗಡೆ(patterns);
+	ಸತತ_err("protocol error: %s", why);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-void
-throughlocal_sftp(struct sftp_conn *from, struct sftp_conn *to,
-    char *src, char *targ)
+ಶೂನ್ಯ
+throughlocal_sftp(ರಚನೆ sftp_conn *from, ರಚನೆ sftp_conn *ಗಮ್ಯ,
+    ಅಕ್ಷರ *src, ಅಕ್ಷರ *targ)
 {
-	char *target = NULL, *filename = NULL, *abs_dst = NULL;
-	char *abs_src = NULL, *tmp = NULL;
+	ಅಕ್ಷರ *ಗುರಿ = ಖಾಲಿ, *filename = ಖಾಲಿ, *abs_dst = ಖಾಲಿ;
+	ಅಕ್ಷರ *abs_src = ಖಾಲಿ, *tmp = ಖಾಲಿ;
 	glob_t g;
-	int i, r, targetisdir, err = 0;
+	ಪೂರ್ಣಾಂಕ i, r, targetisdir, err = 0;
 
-	if ((filename = basename(src)) == NULL)
+	ಆದರೆ ((filename = basename(src)) == ಖಾಲಿ)
 		fatal("basename %s: %s", src, strerror(errno));
 
-	if ((abs_src = prepare_remote_path(from, src)) == NULL ||
-	    (target = prepare_remote_path(to, targ)) == NULL)
+	ಆದರೆ ((abs_src = prepare_remote_ಮಾರ್ಗ(from, src)) == ಖಾಲಿ ||
+	    (ಗುರಿ = prepare_remote_ಮಾರ್ಗ(ಗಮ್ಯ, targ)) == ಖಾಲಿ)
 		cleanup_exit(255);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, ಗಾತ್ರ(g));
 
-	targetisdir = sftp_remote_is_dir(to, target);
-	if (!targetisdir && targetshouldbedirectory) {
+	targetisdir = sftp_remote_is_dir(ಗಮ್ಯ, ಗುರಿ);
+	ಆದರೆ (!targetisdir && targetshouldbedirectory) {
 		error("%s: destination is not a directory", targ);
 		err = -1;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
-	debug3_f("copying remote %s to remote %s", abs_src, target);
-	if ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
-	    NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE)
+	debug3_f("copying remote %s to remote %s", abs_src, ಗುರಿ);
+	ಆದರೆ ((r = sftp_glob(from, abs_src, GLOB_NOCHECK|GLOB_MARK,
+	    ಖಾಲಿ, &g)) != 0) {
+		ಆದರೆ (r == GLOB_NOSPACE)
 			error("%s: too many glob matches", src);
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			error("%s: %s", src, strerror(ENOENT));
 		err = -1;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Did we actually get any matches back from the glob? */
-	if (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != NULL) {
+	ಆದರೆ (g.gl_matchc == 0 && g.gl_pathc == 1 && g.gl_pathv[0] != ಖಾಲಿ) {
 		/*
 		 * If nothing matched but a path returned, then it's probably
 		 * a GLOB_NOCHECK result. Check whether the unglobbed path
 		 * exists so we can give a nice error message early.
 		 */
-		if (sftp_stat(from, g.gl_pathv[0], 1, NULL) != 0) {
+		ಆದರೆ (sftp_stat(from, g.gl_pathv[0], 1, ಖಾಲಿ) != 0) {
 			error("%s: %s", src, strerror(ENOENT));
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	ಗಾಗಿ (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		ಆದರೆ ((filename = basename(tmp)) == ಖಾಲಿ) {
 			error("basename %s: %s", tmp, strerror(errno));
 			err = -1;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		ಆದರೆ (strcmp(filename, "..") == 0)
 			filename = "."; /* Download to dest, not dest/.. */
 
-		if (targetisdir)
-			abs_dst = sftp_path_append(target, filename);
-		else
-			abs_dst = xstrdup(target);
+		ಆದರೆ (targetisdir)
+			abs_dst = sftp_ಮಾರ್ಗ_append(ಗುರಿ, filename);
+		ಇಲ್ಲದಿದ್ದರೆ
+			abs_dst = xstrdup(ಗುರಿ);
 
 		debug("Fetching %s to %s\n", g.gl_pathv[i], abs_dst);
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
-			if (sftp_crossload_dir(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag, SFTP_PROGRESS_ONLY, 1) == -1)
+		ಆದರೆ (sftp_globpath_is_dir(g.gl_pathv[i]) && iamrecursive) {
+			ಆದರೆ (sftp_crossload_dir(from, ಗಮ್ಯ, g.gl_pathv[i], abs_dst,
+			    ಖಾಲಿ, pflag, SFTP_ಪ್ರಗತಿ_ONLY, 1) == -1)
 				err = -1;
-		} else {
-			if (sftp_crossload(from, to, g.gl_pathv[i], abs_dst,
-			    NULL, pflag) == -1)
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (sftp_crossload(from, ಗಮ್ಯ, g.gl_pathv[i], abs_dst,
+			    ಖಾಲಿ, pflag) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
-		free(tmp);
-		tmp = NULL;
+		ಬಿಡುಗಡೆ(abs_dst);
+		abs_dst = ಖಾಲಿ;
+		ಬಿಡುಗಡೆ(tmp);
+		tmp = ಖಾಲಿ;
 	}
 
-out:
-	free(abs_src);
-	free(abs_dst);
-	free(target);
-	free(tmp);
+ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(abs_src);
+	ಬಿಡುಗಡೆ(abs_dst);
+	ಬಿಡುಗಡೆ(ಗುರಿ);
+	ಬಿಡುಗಡೆ(tmp);
 	globfree(&g);
-	if (err == -1)
+	ಆದರೆ (err == -1)
 		errs = 1;
 }
 
-int
-response(void)
+ಪೂರ್ಣಾಂಕ
+response(ಶೂನ್ಯ)
 {
-	char ch, *cp, resp, rbuf[2048], visbuf[2048];
+	ಅಕ್ಷರ ch, *cp, resp, rbuf[2048], visbuf[2048];
 
-	if (atomicio(read, remin, &resp, sizeof(resp)) != sizeof(resp))
+	ಆದರೆ (atomicio(ಪಠ, remin, &resp, ಗಾತ್ರ(resp)) != ಗಾತ್ರ(resp))
 		lostconn(0);
 
 	cp = rbuf;
-	switch (resp) {
-	case 0:		/* ok */
-		return (0);
-	default:
+	ಆಯ್ಕೆ (resp) {
+	ಸ್ಥಿತಿ 0:		/* ok */
+		ಹಿಂತಿರುಗಿ (0);
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		*cp++ = resp;
 		/* FALLTHROUGH */
-	case 1:		/* error, followed by error msg */
-	case 2:		/* fatal error, "" */
-		do {
-			if (atomicio(read, remin, &ch, sizeof(ch)) != sizeof(ch))
+	ಸ್ಥಿತಿ 1:		/* error, followed by error msg */
+	ಸ್ಥಿತಿ 2:		/* fatal error, "" */
+		ಮಾಡು {
+			ಆದರೆ (atomicio(ಪಠ, remin, &ch, ಗಾತ್ರ(ch)) != ಗಾತ್ರ(ch))
 				lostconn(0);
 			*cp++ = ch;
-		} while (cp < &rbuf[sizeof(rbuf) - 1] && ch != '\n');
+		} ಆಗ (cp < &rbuf[ಗಾತ್ರ(rbuf) - 1] && ch != '\n');
 
-		if (!iamremote) {
+		ಆದರೆ (!iamremote) {
 			cp[-1] = '\0';
-			(void) snmprintf(visbuf, sizeof(visbuf),
-			    NULL, "%s\n", rbuf);
-			(void) atomicio(vwrite, STDERR_FILENO,
-			    visbuf, strlen(visbuf));
+			(ಶೂನ್ಯ) snmprintf(visbuf, ಗಾತ್ರ(visbuf),
+			    ಖಾಲಿ, "%s\n", rbuf);
+			(ಶೂನ್ಯ) atomicio(vwrite, STDERR_FILENO,
+			    visbuf, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(visbuf));
 		}
 		++errs;
-		if (resp == 1)
-			return (-1);
-		exit(1);
+		ಆದರೆ (resp == 1)
+			ಹಿಂತಿರುಗಿ (-1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 	/* NOTREACHED */
 }
 
-void
-usage(void)
+ಶೂನ್ಯ
+usage(ಶೂನ್ಯ)
 {
-	(void) fprintf(stderr,
+	(ಶೂನ್ಯ) fprintf(stderr,
 	    "usage: scp [-346ABCOpqRrTv] [-c cipher] [-D sftp_server_path] [-F ssh_config]\n"
 	    "           [-i identity_file] [-J destination] [-l limit] [-o ssh_option]\n"
 	    "           [-P port] [-S program] [-X sftp_option] source ... target\n");
-	exit(1);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-void
-run_err(const char *fmt,...)
+ಶೂನ್ಯ
+ಸತತ_err(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt,...)
 {
-	static FILE *fp;
+	ಸ್ಥಿರ FILE *fp;
 	va_list ap;
 
 	++errs;
-	if (fp != NULL || (remout != -1 && (fp = fdopen(remout, "w")))) {
-		(void) fprintf(fp, "%c", 0x01);
-		(void) fprintf(fp, "scp: ");
+	ಆದರೆ (fp != ಖಾಲಿ || (remout != -1 && (fp = fdopen(remout, "w")))) {
+		(ಶೂನ್ಯ) fprintf(fp, "%c", 0x01);
+		(ಶೂನ್ಯ) fprintf(fp, "scp: ");
 		va_start(ap, fmt);
-		(void) vfprintf(fp, fmt, ap);
+		(ಶೂನ್ಯ) vfprintf(fp, fmt, ap);
 		va_end(ap);
-		(void) fprintf(fp, "\n");
-		(void) fflush(fp);
+		(ಶೂನ್ಯ) fprintf(fp, "\n");
+		(ಶೂನ್ಯ) fflush(fp);
 	}
 
-	if (!iamremote) {
+	ಆದರೆ (!iamremote) {
 		va_start(ap, fmt);
 		vfmprintf(stderr, fmt, ap);
 		va_end(ap);
@@ -2156,126 +2156,126 @@ run_err(const char *fmt,...)
  * no error has been noted or -1 otherwise. Use note_err(NULL) to flush
  * any active error at the end of the transfer.
  */
-int
-note_err(const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ
+note_err(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	static char *emsg;
+	ಸ್ಥಿರ ಅಕ್ಷರ *emsg;
 	va_list ap;
 
 	/* Replay any previously-noted error */
-	if (fmt == NULL) {
-		if (emsg == NULL)
-			return 0;
-		run_err("%s", emsg);
-		free(emsg);
-		emsg = NULL;
-		return -1;
+	ಆದರೆ (fmt == ಖಾಲಿ) {
+		ಆದರೆ (emsg == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ 0;
+		ಸತತ_err("%s", emsg);
+		ಬಿಡುಗಡೆ(emsg);
+		emsg = ಖಾಲಿ;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 
 	errs++;
 	/* Prefer first-noted error */
-	if (emsg != NULL)
-		return -1;
+	ಆದರೆ (emsg != ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
 
 	va_start(ap, fmt);
-	vasnmprintf(&emsg, INT_MAX, NULL, fmt, ap);
+	vasnmprintf(&emsg, ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ, ಖಾಲಿ, fmt, ap);
 	va_end(ap);
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-void
-verifydir(char *cp)
+ಶೂನ್ಯ
+verifydir(ಅಕ್ಷರ *cp)
 {
-	struct stat stb;
+	ರಚನೆ stat stb;
 
-	if (!stat(cp, &stb)) {
-		if (S_ISDIR(stb.st_mode))
-			return;
+	ಆದರೆ (!stat(cp, &stb)) {
+		ಆದರೆ (S_ISDIR(stb.st_mode))
+			ಹಿಂತಿರುಗಿ;
 		errno = ENOTDIR;
 	}
-	run_err("%s: %s", cp, strerror(errno));
+	ಸತತ_err("%s: %s", cp, strerror(errno));
 	killchild(0);
 }
 
-int
-okname(char *cp0)
+ಪೂರ್ಣಾಂಕ
+okname(ಅಕ್ಷರ *cp0)
 {
-	int c;
-	char *cp;
+	ಪೂರ್ಣಾಂಕ c;
+	ಅಕ್ಷರ *cp;
 
 	cp = cp0;
-	do {
-		c = (int)*cp;
-		if (c & 0200)
-			goto bad;
-		if (!isalpha(c) && !isdigit((unsigned char)c)) {
-			switch (c) {
-			case '\'':
-			case '"':
-			case '`':
-			case ' ':
-			case '#':
-				goto bad;
-			default:
-				break;
+	ಮಾಡು {
+		c = (ಪೂರ್ಣಾಂಕ)*cp;
+		ಆದರೆ (c & 0200)
+			ಹೋಗು bad;
+		ಆದರೆ (!ಅಕ್ಷರವೇ(c) && !ಅಂಕಿಯೇ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)c)) {
+			ಆಯ್ಕೆ (c) {
+			ಸ್ಥಿತಿ '\'':
+			ಸ್ಥಿತಿ '"':
+			ಸ್ಥಿತಿ '`':
+			ಸ್ಥಿತಿ ' ':
+			ಸ್ಥಿತಿ '#':
+				ಹೋಗು bad;
+			ಪೂರ್ವನಿಯೋಜಿತ:
+				ನಿಲ್ಲಿಸು;
 			}
 		}
-	} while (*++cp);
-	return (1);
+	} ಆಗ (*++cp);
+	ಹಿಂತಿರುಗಿ (1);
 
 bad:	fmprintf(stderr, "%s: invalid user name\n", cp0);
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
 
 BUF *
-allocbuf(BUF *bp, int fd, int blksize)
+allocbuf(BUF *bp, ಪೂರ್ಣಾಂಕ fd, ಪೂರ್ಣಾಂಕ blksize)
 {
-	size_t size;
-#ifdef HAVE_STRUCT_STAT_ST_BLKSIZE
-	struct stat stb;
+	ಗಾತ್ರ_t ಗಾತ್ರ_2;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_STRUCT_STAT_ST_BLKSIZE
+	ರಚನೆ stat stb;
 
-	if (fstat(fd, &stb) == -1) {
-		run_err("fstat: %s", strerror(errno));
-		return (NULL);
+	ಆದರೆ (fstat(fd, &stb) == -1) {
+		ಸತತ_err("fstat: %s", strerror(errno));
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	}
-	size = ROUNDUP(stb.st_blksize, blksize);
-	if (size == 0)
-		size = blksize;
-#else /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	size = blksize;
-#endif /* HAVE_STRUCT_STAT_ST_BLKSIZE */
-	if (bp->cnt >= size)
-		return (bp);
-	bp->buf = xrecallocarray(bp->buf, bp->cnt, size, 1);
-	bp->cnt = size;
-	return (bp);
+	ಗಾತ್ರ_2 = ROUNDUP(stb.st_blksize, blksize);
+	ಆದರೆ (ಗಾತ್ರ_2 == 0)
+		ಗಾತ್ರ_2 = blksize;
+#ಇಲ್ಲದಿದ್ದರೆ /* HAVE_STRUCT_STAT_ST_BLKSIZE */
+	ಗಾತ್ರ_2 = blksize;
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_STRUCT_STAT_ST_BLKSIZE */
+	ಆದರೆ (bp->cnt >= ಗಾತ್ರ_2)
+		ಹಿಂತಿರುಗಿ (bp);
+	bp->buf = xrecallocarray(bp->buf, bp->cnt, ಗಾತ್ರ_2, 1);
+	bp->cnt = ಗಾತ್ರ_2;
+	ಹಿಂತಿರುಗಿ (bp);
 }
 
-void
-lostconn(int signo)
+ಶೂನ್ಯ
+lostconn(ಪೂರ್ಣಾಂಕ signo)
 {
-	if (!iamremote)
-		(void)write(STDERR_FILENO, "lost connection\n", 16);
-	if (signo)
+	ಆದರೆ (!iamremote)
+		(ಶೂನ್ಯ)ಲಿಖ(STDERR_FILENO, "lost connection\n", 16);
+	ಆದರೆ (signo)
 		_exit(1);
-	else
-		exit(1);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ನಿರ್ಗಮಿಸು(1);
 }
 
-void
-cleanup_exit(int i)
+ಶೂನ್ಯ
+cleanup_exit(ಪೂರ್ಣಾಂಕ i)
 {
-	if (remin > 0)
+	ಆದರೆ (remin > 0)
 		close(remin);
-	if (remout > 0)
+	ಆದರೆ (remout > 0)
 		close(remout);
-	if (remin2 > 0)
+	ಆದರೆ (remin2 > 0)
 		close(remin2);
-	if (remout2 > 0)
+	ಆದರೆ (remout2 > 0)
 		close(remout2);
-	if (do_cmd_pid > 0)
-		(void)waitpid(do_cmd_pid, NULL, 0);
-	if (do_cmd_pid2 > 0)
-		(void)waitpid(do_cmd_pid2, NULL, 0);
-	exit(i);
+	ಆದರೆ (do_cmd_pid > 0)
+		(ಶೂನ್ಯ)waitpid(do_cmd_pid, ಖಾಲಿ, 0);
+	ಆದರೆ (do_cmd_pid2 > 0)
+		(ಶೂನ್ಯ)waitpid(do_cmd_pid2, ಖಾಲಿ, 0);
+	ನಿರ್ಗಮಿಸು(i);
 }

@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
-#ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ	SYS_ವೃಕ್ಷ_H
+#ವ್ಯಾಖ್ಯಾನಿಸು	SYS_ವೃಕ್ಷ_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -61,695 +61,695 @@
  * The maximum height of a red-black tree is 2lg (n+1).
  */
 
-#define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ತಲೆ(name, type)						\
+ರಚನೆ name {								\
+	ರಚನೆ type *sph_ಬೇರು; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_INITIALIZER(ಬೇರು)						\
+	{ ಖಾಲಿ }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_INIT(ಬೇರು) ಮಾಡು {						\
+	(ಬೇರು)->sph_ಬೇರು = ಖಾಲಿ;					\
+} ಆಗ (0)
 
-#define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ನಮೂದು(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *spe_ಎಡ; /* left element */			\
+	ರಚನೆ type *spe_ಬಲ; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.spe_ಎಡ
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.spe_ಬಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಬೇರು(ತಲೆ)		(ತಲೆ)->sph_ಬೇರು
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಖಾಲಿಗಳು(ತಲೆ)		(SPLAY_ಬೇರು(ತಲೆ) == ಖಾಲಿ)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ROTATE_ಬಲ(ತಲೆ, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ(tmp, ಕ್ಷೇತ್ರ);	\
+	SPLAY_ಬಲ(tmp, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;			\
+	(ತಲೆ)->sph_ಬೇರು = tmp;						\
+} ಆಗ (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ROTATE_ಎಡ(ತಲೆ, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = SPLAY_ಎಡ(tmp, ಕ್ಷೇತ್ರ);	\
+	SPLAY_ಎಡ(tmp, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;			\
+	(ತಲೆ)->sph_ಬೇರು = tmp;						\
+} ಆಗ (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_LINKLEFT(ತಲೆ, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	SPLAY_ಎಡ(tmp, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;			\
+	tmp = (ತಲೆ)->sph_ಬೇರು;						\
+	(ತಲೆ)->sph_ಬೇರು = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);		\
+} ಆಗ (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_LINKRIGHT(ತಲೆ, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	SPLAY_ಬಲ(tmp, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;			\
+	tmp = (ತಲೆ)->sph_ಬೇರು;						\
+	(ತಲೆ)->sph_ಬೇರು = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+} ಆಗ (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ASSEMBLE(ತಲೆ, ಗಂಟು, ಎಡ, ಬಲ, ಕ್ಷೇತ್ರ) ಮಾಡು {		\
+	SPLAY_ಬಲ(ಎಡ, ಕ್ಷೇತ್ರ) = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+	SPLAY_ಎಡ(ಬಲ, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);\
+	SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ(ಗಂಟು, ಕ್ಷೇತ್ರ);	\
+	SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = SPLAY_ಎಡ(ಗಂಟು, ಕ್ಷೇತ್ರ);	\
+} ಆಗ (0)
 
 /* Generates prototypes and inline functions */
 
-#define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_PROTOTYPE(name, type, ಕ್ಷೇತ್ರ, cmp)				\
+ಶೂನ್ಯ name##_SPLAY(ರಚನೆ name *, ರಚನೆ type *);			\
+ಶೂನ್ಯ name##_SPLAY_MINMAX(ರಚನೆ name *, ಪೂರ್ಣಾಂಕ);				\
+ರಚನೆ type *name##_SPLAY_INSERT(ರಚನೆ name *, ರಚನೆ type *);		\
+ರಚನೆ type *name##_SPLAY_REMOVE(ರಚನೆ name *, ರಚನೆ type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+ಸ್ಥಿರ __inline ರಚನೆ type *						\
+name##_SPLAY_FIND(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	ಆದರೆ (SPLAY_ಖಾಲಿಗಳು(ತಲೆ))						\
+		ಹಿಂತಿರುಗಿ(ಖಾಲಿ);						\
+	name##_SPLAY(ತಲೆ, elm);					\
+	ಆದರೆ ((cmp)(elm, (ತಲೆ)->sph_ಬೇರು) == 0)				\
+		ಹಿಂತಿರುಗಿ (ತಲೆ->sph_ಬೇರು);				\
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+ಸ್ಥಿರ __inline ರಚನೆ type *						\
+name##_SPLAY_NEXT(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	name##_SPLAY(ತಲೆ, elm);					\
+	ಆದರೆ (SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ) != ಖಾಲಿ) {				\
+		elm = SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ);				\
+		ಆಗ (SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ) != ಖಾಲಿ) {		\
+			elm = SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} ಇಲ್ಲದಿದ್ದರೆ								\
+		elm = ಖಾಲಿ;						\
+	ಹಿಂತಿರುಗಿ (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+ಸ್ಥಿರ __inline ರಚನೆ type *						\
+name##_SPLAY_MIN_MAX(ರಚನೆ name *ತಲೆ, ಪೂರ್ಣಾಂಕ val)			\
 {									\
-	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+	name##_SPLAY_MINMAX(ತಲೆ, val);					\
+        ಹಿಂತಿರುಗಿ (SPLAY_ಬೇರು(ತಲೆ));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
-#define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_GENERATE(name, type, ಕ್ಷೇತ್ರ, cmp)				\
+ರಚನೆ type *								\
+name##_SPLAY_INSERT(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
-	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+    ಆದರೆ (SPLAY_ಖಾಲಿಗಳು(ತಲೆ)) {						\
+	    SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;	\
+    } ಇಲ್ಲದಿದ್ದರೆ {								\
+	    ಪೂರ್ಣಾಂಕ __comp;							\
+	    name##_SPLAY(ತಲೆ, elm);					\
+	    __comp = (cmp)(elm, (ತಲೆ)->sph_ಬೇರು);			\
+	    ಆದರೆ(__comp < 0) {						\
+		    SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ) = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);\
+		    SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;		\
+		    SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;		\
+	    } ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (__comp > 0) {					\
+		    SPLAY_ಬಲ(elm, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);\
+		    SPLAY_ಎಡ(elm, ಕ್ಷೇತ್ರ) = (ತಲೆ)->sph_ಬೇರು;		\
+		    SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;	\
+	    } ಇಲ್ಲದಿದ್ದರೆ							\
+		    ಹಿಂತಿರುಗಿ ((ತಲೆ)->sph_ಬೇರು);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (ತಲೆ)->sph_ಬೇರು = (elm);						\
+    ಹಿಂತಿರುಗಿ (ಖಾಲಿ);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+ರಚನೆ type *								\
+name##_SPLAY_REMOVE(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
-			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+	ರಚನೆ type *__tmp;						\
+	ಆದರೆ (SPLAY_ಖಾಲಿಗಳು(ತಲೆ))						\
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);						\
+	name##_SPLAY(ತಲೆ, elm);					\
+	ಆದರೆ ((cmp)(elm, (ತಲೆ)->sph_ಬೇರು) == 0) {			\
+		ಆದರೆ (SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) == ಖಾಲಿ) {	\
+			(ತಲೆ)->sph_ಬೇರು = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);\
+		} ಇಲ್ಲದಿದ್ದರೆ {						\
+			__tmp = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+			(ತಲೆ)->sph_ಬೇರು = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);\
+			name##_SPLAY(ತಲೆ, elm);			\
+			SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) = __tmp;	\
 		}							\
-		return (elm);						\
+		ಹಿಂತಿರುಗಿ (elm);						\
 	}								\
-	return (NULL);							\
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+ಶೂನ್ಯ									\
+name##_SPLAY(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	ರಚನೆ type __node, *__left, *__right, *__tmp;			\
+	ಪೂರ್ಣಾಂಕ __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ಎಡ(&__node, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ(&__node, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ಆಗ ((__comp = (cmp)(elm, (ತಲೆ)->sph_ಬೇರು))) {		\
+		ಆದರೆ (__comp < 0) {					\
+			__tmp = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+			ಆದರೆ (__tmp == ಖಾಲಿ)				\
+				ನಿಲ್ಲಿಸು;					\
+			ಆದರೆ ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_ಬಲ(ತಲೆ, __tmp, ಕ್ಷೇತ್ರ);	\
+				ಆದರೆ (SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)\
+					ನಿಲ್ಲಿಸು;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(ತಲೆ, __right, ಕ್ಷೇತ್ರ);		\
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (__comp > 0) {				\
+			__tmp = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+			ಆದರೆ (__tmp == ಖಾಲಿ)				\
+				ನಿಲ್ಲಿಸು;					\
+			ಆದರೆ ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_ಎಡ(ತಲೆ, __tmp, ಕ್ಷೇತ್ರ);	\
+				ಆದರೆ (SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)\
+					ನಿಲ್ಲಿಸು;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(ತಲೆ, __left, ಕ್ಷೇತ್ರ);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(ತಲೆ, &__node, __left, __right, ಕ್ಷೇತ್ರ);		\
 }									\
 									\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+ಶೂನ್ಯ name##_SPLAY_MINMAX(ರಚನೆ name *ತಲೆ, ಪೂರ್ಣಾಂಕ __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	ರಚನೆ type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ಎಡ(&__node, ಕ್ಷೇತ್ರ) = SPLAY_ಬಲ(&__node, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ಆಗ (1) {							\
+		ಆದರೆ (__comp < 0) {					\
+			__tmp = SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+			ಆದರೆ (__tmp == ಖಾಲಿ)				\
+				ನಿಲ್ಲಿಸು;					\
+			ಆದರೆ (__comp < 0){				\
+				SPLAY_ROTATE_ಬಲ(ತಲೆ, __tmp, ಕ್ಷೇತ್ರ);	\
+				ಆದರೆ (SPLAY_ಎಡ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)\
+					ನಿಲ್ಲಿಸು;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(ತಲೆ, __right, ಕ್ಷೇತ್ರ);		\
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (__comp > 0) {				\
+			__tmp = SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ);	\
+			ಆದರೆ (__tmp == ಖಾಲಿ)				\
+				ನಿಲ್ಲಿಸು;					\
+			ಆದರೆ (__comp > 0) {				\
+				SPLAY_ROTATE_ಎಡ(ತಲೆ, __tmp, ಕ್ಷೇತ್ರ);	\
+				ಆದರೆ (SPLAY_ಬಲ((ತಲೆ)->sph_ಬೇರು, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)\
+					ನಿಲ್ಲಿಸು;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(ತಲೆ, __left, ಕ್ಷೇತ್ರ);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(ತಲೆ, &__node, __left, __right, ಕ್ಷೇತ್ರ);		\
 }
 
-#define SPLAY_NEGINF	-1
-#define SPLAY_INF	1
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_NEGINF	-1
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
-#define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
-#define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
-#define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಸೇರಿಸು(name, x, y)	name##_SPLAY_INSERT(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಕಂಡುಹಿಡಿ(name, x, y)		name##_SPLAY_FIND(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_ಮುಂದಿನ(name, x, y)		name##_SPLAY_NEXT(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_MIN(name, x)		(SPLAY_ಖಾಲಿಗಳು(x) ? ಖಾಲಿ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_MAX(name, x)		(SPLAY_ಖಾಲಿಗಳು(x) ? ಖಾಲಿ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
-#define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
-	     (x) = SPLAY_NEXT(name, head, x))
+#ವ್ಯಾಖ್ಯಾನಿಸು SPLAY_FOREACH(x, name, ತಲೆ)					\
+	ಗಾಗಿ ((x) = SPLAY_MIN(name, ತಲೆ);				\
+	     (x) != ಖಾಲಿ;						\
+	     (x) = SPLAY_ಮುಂದಿನ(name, ತಲೆ, x))
 
 /* Macros that define a red-black tree */
-#define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ತಲೆ(name, type)						\
+ರಚನೆ name {								\
+	ರಚನೆ type *rbh_ಬೇರು; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_INITIALIZER(ಬೇರು)						\
+	{ ಖಾಲಿ }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_INIT(ಬೇರು) ಮಾಡು {						\
+	(ಬೇರು)->rbh_ಬೇರು = ಖಾಲಿ;					\
+} ಆಗ (0)
 
-#define RB_BLACK	0
-#define RB_RED		1
-#define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_BLACK	0
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_RED		1
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ನಮೂದು(type)							\
+ರಚನೆ {								\
+	ರಚನೆ type *rbe_ಎಡ;		/* left element */		\
+	ರಚನೆ type *rbe_ಬಲ;		/* right element */		\
+	ರಚನೆ type *rbe_ಪೋಷಕ;	/* parent element */		\
+	ಪೂರ್ಣಾಂಕ rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
-#define RB_PARENT(elm, field)		(elm)->field.rbe_parent
-#define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಎಡ(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.rbe_ಎಡ
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಬಲ(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.rbe_ಬಲ
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.rbe_ಪೋಷಕ
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_COLOR(elm, ಕ್ಷೇತ್ರ)		(elm)->ಕ್ಷೇತ್ರ.rbe_color
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಬೇರು(ತಲೆ)			(ತಲೆ)->rbh_ಬೇರು
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಖಾಲಿಗಳು(ತಲೆ)			(RB_ಬೇರು(ತಲೆ) == ಖಾಲಿ)
 
-#define RB_SET(elm, parent, field) do {					\
-	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
-	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಗಣ(elm, ಪೋಷಕ, ಕ್ಷೇತ್ರ) ಮಾಡು {					\
+	RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) = ಪೋಷಕ;					\
+	RB_ಎಡ(elm, ಕ್ಷೇತ್ರ) = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ) = ಖಾಲಿ;		\
+	RB_COLOR(elm, ಕ್ಷೇತ್ರ) = RB_RED;					\
+} ಆಗ (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
-	RB_COLOR(black, field) = RB_BLACK;				\
-	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಗಣ_BLACKRED(black, red, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	RB_COLOR(black, ಕ್ಷೇತ್ರ) = RB_BLACK;				\
+	RB_COLOR(red, ಕ್ಷೇತ್ರ) = RB_RED;					\
+} ಆಗ (0)
 
-#ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ RB_AUGMENT
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_AUGMENT(x)	ಮಾಡು {} ಆಗ (0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ROTATE_ಎಡ(ತಲೆ, elm, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(tmp) = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);					\
+	ಆದರೆ ((RB_ಬಲ(elm, ಕ್ಷೇತ್ರ) = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ))) {		\
+		RB_ಪೋಷಕ(RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ಆದರೆ ((RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ) = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ))) {		\
+		ಆದರೆ ((elm) == RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ))	\
+			RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (tmp);	\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬಲ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (tmp);	\
+	} ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->rbh_ಬೇರು = (tmp);				\
+	RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ) = (elm);					\
+	RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ಆದರೆ ((RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ)))					\
+		RB_AUGMENT(RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ));			\
+} ಆಗ (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ROTATE_ಬಲ(ತಲೆ, elm, tmp, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(tmp) = RB_ಎಡ(elm, ಕ್ಷೇತ್ರ);					\
+	ಆದರೆ ((RB_ಎಡ(elm, ಕ್ಷೇತ್ರ) = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ))) {		\
+		RB_ಪೋಷಕ(RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ಆದರೆ ((RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ) = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ))) {		\
+		ಆದರೆ ((elm) == RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ))	\
+			RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (tmp);	\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬಲ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = (tmp);	\
+	} ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->rbh_ಬೇರು = (tmp);				\
+	RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ) = (elm);					\
+	RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ಆದರೆ ((RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ)))					\
+		RB_AUGMENT(RB_ಪೋಷಕ(tmp, ಕ್ಷೇತ್ರ));			\
+} ಆಗ (0)
 
 /* Generates prototypes and inline functions */
-#define	RB_PROTOTYPE(name, type, field, cmp)				\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
-#define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_PROTOTYPE(name, type, ಕ್ಷೇತ್ರ, cmp)				\
+	RB_PROTOTYPE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp,)
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_PROTOTYPE_STATIC(name, type, ಕ್ಷೇತ್ರ, cmp)			\
+	RB_PROTOTYPE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp, __attribute__((__unused__)) ಸ್ಥಿರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_PROTOTYPE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp, attr)		\
+attr ಶೂನ್ಯ name##_RB_INSERT_COLOR(ರಚನೆ name *, ರಚನೆ type *);		\
+attr ಶೂನ್ಯ name##_RB_REMOVE_COLOR(ರಚನೆ name *, ರಚನೆ type *, ರಚನೆ type *);\
+attr ರಚನೆ type *name##_RB_REMOVE(ರಚನೆ name *, ರಚನೆ type *);	\
+attr ರಚನೆ type *name##_RB_INSERT(ರಚನೆ name *, ರಚನೆ type *);	\
+attr ರಚನೆ type *name##_RB_FIND(ರಚನೆ name *, ರಚನೆ type *);		\
+attr ರಚನೆ type *name##_RB_NFIND(ರಚನೆ name *, ರಚನೆ type *);	\
+attr ರಚನೆ type *name##_RB_NEXT(ರಚನೆ type *);			\
+attr ರಚನೆ type *name##_RB_PREV(ರಚನೆ type *);			\
+attr ರಚನೆ type *name##_RB_MINMAX(ರಚನೆ name *, ಪೂರ್ಣಾಂಕ);			\
 									\
 
 /* Main rb operation.
  * Moves node close to the key of elm to top
  */
-#define	RB_GENERATE(name, type, field, cmp)				\
-	RB_GENERATE_INTERNAL(name, type, field, cmp,)
-#define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_GENERATE(name, type, ಕ್ಷೇತ್ರ, cmp)				\
+	RB_GENERATE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp,)
+#ವ್ಯಾಖ್ಯಾನಿಸು	RB_GENERATE_STATIC(name, type, ಕ್ಷೇತ್ರ, cmp)			\
+	RB_GENERATE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp, __attribute__((__unused__)) ಸ್ಥಿರ)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_GENERATE_ಆಂತರಿಕ(name, type, ಕ್ಷೇತ್ರ, cmp, attr)		\
+attr ಶೂನ್ಯ								\
+name##_RB_INSERT_COLOR(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
-	    RB_COLOR(parent, field) == RB_RED) {			\
-		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+	ರಚನೆ type *ಪೋಷಕ, *gparent, *tmp;				\
+	ಆಗ ((ಪೋಷಕ = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ)) &&			\
+	    RB_COLOR(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == RB_RED) {			\
+		gparent = RB_ಪೋಷಕ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);			\
+		ಆದರೆ (ಪೋಷಕ == RB_ಎಡ(gparent, ಕ್ಷೇತ್ರ)) {		\
+			tmp = RB_ಬಲ(gparent, ಕ್ಷೇತ್ರ);			\
+			ಆದರೆ (tmp && RB_COLOR(tmp, ಕ್ಷೇತ್ರ) == RB_RED) {	\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_BLACK;	\
+				RB_ಗಣ_BLACKRED(ಪೋಷಕ, gparent, ಕ್ಷೇತ್ರ);\
 				elm = gparent;				\
-				continue;				\
+				ಮುಂದುವರಿ;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ಆದರೆ (RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == elm) {		\
+				RB_ROTATE_ಎಡ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				tmp = ಪೋಷಕ;				\
+				ಪೋಷಕ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+			RB_ಗಣ_BLACKRED(ಪೋಷಕ, gparent, ಕ್ಷೇತ್ರ);	\
+			RB_ROTATE_ಬಲ(ತಲೆ, gparent, tmp, ಕ್ಷೇತ್ರ);	\
+		} ಇಲ್ಲದಿದ್ದರೆ {						\
+			tmp = RB_ಎಡ(gparent, ಕ್ಷೇತ್ರ);			\
+			ಆದರೆ (tmp && RB_COLOR(tmp, ಕ್ಷೇತ್ರ) == RB_RED) {	\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_BLACK;	\
+				RB_ಗಣ_BLACKRED(ಪೋಷಕ, gparent, ಕ್ಷೇತ್ರ);\
 				elm = gparent;				\
-				continue;				\
+				ಮುಂದುವರಿ;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ಆದರೆ (RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == elm) {		\
+				RB_ROTATE_ಬಲ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				tmp = ಪೋಷಕ;				\
+				ಪೋಷಕ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ಗಣ_BLACKRED(ಪೋಷಕ, gparent, ಕ್ಷೇತ್ರ);	\
+			RB_ROTATE_ಎಡ(ತಲೆ, gparent, tmp, ಕ್ಷೇತ್ರ);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(ತಲೆ->rbh_ಬೇರು, ಕ್ಷೇತ್ರ) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr ಶೂನ್ಯ								\
+name##_RB_REMOVE_COLOR(ರಚನೆ name *ತಲೆ, ರಚನೆ type *ಪೋಷಕ, ರಚನೆ type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+	ರಚನೆ type *tmp;						\
+	ಆಗ ((elm == ಖಾಲಿ || RB_COLOR(elm, ಕ್ಷೇತ್ರ) == RB_BLACK) &&	\
+	    elm != RB_ಬೇರು(ತಲೆ)) {					\
+		ಆದರೆ (RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == elm) {			\
+			tmp = RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);			\
+			ಆದರೆ (RB_COLOR(tmp, ಕ್ಷೇತ್ರ) == RB_RED) {		\
+				RB_ಗಣ_BLACKRED(tmp, ಪೋಷಕ, ಕ್ಷೇತ್ರ);	\
+				RB_ROTATE_ಎಡ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				tmp = RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
-						RB_COLOR(oleft, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+			ಆದರೆ ((RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||		\
+			    RB_COLOR(RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK) &&\
+			    (RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||		\
+			    RB_COLOR(RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK)) {\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_RED;		\
+				elm = ಪೋಷಕ;				\
+				ಪೋಷಕ = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);		\
+			} ಇಲ್ಲದಿದ್ದರೆ {					\
+				ಆದರೆ (RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||	\
+				    RB_COLOR(RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK) {\
+					ರಚನೆ type *oleft;		\
+					ಆದರೆ ((oleft = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ)))\
+						RB_COLOR(oleft, ಕ್ಷೇತ್ರ) = RB_BLACK;\
+					RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_RED;	\
+					RB_ROTATE_ಬಲ(ತಲೆ, tmp, oleft, ಕ್ಷೇತ್ರ);\
+					tmp = RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_COLOR(ಪೋಷಕ, ಕ್ಷೇತ್ರ);\
+				RB_COLOR(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = RB_BLACK;	\
+				ಆದರೆ (RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ))		\
+					RB_COLOR(RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = RB_BLACK;\
+				RB_ROTATE_ಎಡ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				elm = RB_ಬೇರು(ತಲೆ);			\
+				ನಿಲ್ಲಿಸು;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+		} ಇಲ್ಲದಿದ್ದರೆ {						\
+			tmp = RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);			\
+			ಆದರೆ (RB_COLOR(tmp, ಕ್ಷೇತ್ರ) == RB_RED) {		\
+				RB_ಗಣ_BLACKRED(tmp, ಪೋಷಕ, ಕ್ಷೇತ್ರ);	\
+				RB_ROTATE_ಬಲ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				tmp = RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
-						RB_COLOR(oright, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+			ಆದರೆ ((RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||		\
+			    RB_COLOR(RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK) &&\
+			    (RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||		\
+			    RB_COLOR(RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK)) {\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_RED;		\
+				elm = ಪೋಷಕ;				\
+				ಪೋಷಕ = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);		\
+			} ಇಲ್ಲದಿದ್ದರೆ {					\
+				ಆದರೆ (RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ) == ಖಾಲಿ ||	\
+				    RB_COLOR(RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == RB_BLACK) {\
+					ರಚನೆ type *oright;		\
+					ಆದರೆ ((oright = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ)))\
+						RB_COLOR(oright, ಕ್ಷೇತ್ರ) = RB_BLACK;\
+					RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_RED;	\
+					RB_ROTATE_ಎಡ(ತಲೆ, tmp, oright, ಕ್ಷೇತ್ರ);\
+					tmp = RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, ಕ್ಷೇತ್ರ) = RB_COLOR(ಪೋಷಕ, ಕ್ಷೇತ್ರ);\
+				RB_COLOR(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = RB_BLACK;	\
+				ಆದರೆ (RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ))		\
+					RB_COLOR(RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = RB_BLACK;\
+				RB_ROTATE_ಬಲ(ತಲೆ, ಪೋಷಕ, tmp, ಕ್ಷೇತ್ರ);\
+				elm = RB_ಬೇರು(ತಲೆ);			\
+				ನಿಲ್ಲಿಸು;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
-		RB_COLOR(elm, field) = RB_BLACK;			\
+	ಆದರೆ (elm)							\
+		RB_COLOR(elm, ಕ್ಷೇತ್ರ) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr ರಚನೆ type *							\
+name##_RB_REMOVE(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
-		parent = RB_PARENT(elm, field);				\
-		color = RB_COLOR(elm, field);				\
-		if (child)						\
-			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
-			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
-			parent = elm;					\
-		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
-			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+	ರಚನೆ type *ಮಗು, *ಪೋಷಕ, *old = elm;			\
+	ಪೂರ್ಣಾಂಕ color;							\
+	ಆದರೆ (RB_ಎಡ(elm, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)				\
+		ಮಗು = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);				\
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (RB_ಬಲ(elm, ಕ್ಷೇತ್ರ) == ಖಾಲಿ)				\
+		ಮಗು = RB_ಎಡ(elm, ಕ್ಷೇತ್ರ);				\
+	ಇಲ್ಲದಿದ್ದರೆ {								\
+		ರಚನೆ type *ಎಡ;					\
+		elm = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);				\
+		ಆಗ ((ಎಡ = RB_ಎಡ(elm, ಕ್ಷೇತ್ರ)))			\
+			elm = ಎಡ;					\
+		ಮಗು = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);				\
+		ಪೋಷಕ = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);				\
+		color = RB_COLOR(elm, ಕ್ಷೇತ್ರ);				\
+		ಆದರೆ (ಮಗು)						\
+			RB_ಪೋಷಕ(ಮಗು, ಕ್ಷೇತ್ರ) = ಪೋಷಕ;		\
+		ಆದರೆ (ಪೋಷಕ) {						\
+			ಆದರೆ (RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == elm)		\
+				RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = ಮಗು;		\
+			ಇಲ್ಲದಿದ್ದರೆ						\
+				RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = ಮಗು;	\
+			RB_AUGMENT(ಪೋಷಕ);				\
+		} ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬೇರು(ತಲೆ) = ಮಗು;				\
+		ಆದರೆ (RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) == old)			\
+			ಪೋಷಕ = elm;					\
+		(elm)->ಕ್ಷೇತ್ರ = (old)->ಕ್ಷೇತ್ರ;				\
+		ಆದರೆ (RB_ಪೋಷಕ(old, ಕ್ಷೇತ್ರ)) {				\
+			ಆದರೆ (RB_ಎಡ(RB_ಪೋಷಕ(old, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) == old)\
+				RB_ಎಡ(RB_ಪೋಷಕ(old, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = elm;\
+			ಇಲ್ಲದಿದ್ದರೆ						\
+				RB_ಬಲ(RB_ಪೋಷಕ(old, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = elm;\
+			RB_AUGMENT(RB_ಪೋಷಕ(old, ಕ್ಷೇತ್ರ));		\
+		} ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬೇರು(ತಲೆ) = elm;				\
+		RB_ಪೋಷಕ(RB_ಎಡ(old, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = elm;		\
+		ಆದರೆ (RB_ಬಲ(old, ಕ್ಷೇತ್ರ))				\
+			RB_ಪೋಷಕ(RB_ಬಲ(old, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ) = elm;	\
+		ಆದರೆ (ಪೋಷಕ) {						\
+			ಎಡ = ಪೋಷಕ;					\
+			ಮಾಡು {						\
+				RB_AUGMENT(ಎಡ);			\
+			} ಆಗ ((ಎಡ = RB_ಪೋಷಕ(ಎಡ, ಕ್ಷೇತ್ರ)));	\
 		}							\
-		goto color;						\
+		ಹೋಗು color;						\
 	}								\
-	parent = RB_PARENT(elm, field);					\
-	color = RB_COLOR(elm, field);					\
-	if (child)							\
-		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	ಪೋಷಕ = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);					\
+	color = RB_COLOR(elm, ಕ್ಷೇತ್ರ);					\
+	ಆದರೆ (ಮಗು)							\
+		RB_ಪೋಷಕ(ಮಗು, ಕ್ಷೇತ್ರ) = ಪೋಷಕ;			\
+	ಆದರೆ (ಪೋಷಕ) {							\
+		ಆದರೆ (RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) == elm)			\
+			RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = ಮಗು;			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = ಮಗು;		\
+		RB_AUGMENT(ಪೋಷಕ);					\
+	} ಇಲ್ಲದಿದ್ದರೆ								\
+		RB_ಬೇರು(ತಲೆ) = ಮಗು;					\
 color:									\
-	if (color == RB_BLACK)						\
-		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	ಆದರೆ (color == RB_BLACK)						\
+		name##_RB_REMOVE_COLOR(ತಲೆ, ಪೋಷಕ, ಮಗು);		\
+	ಹಿಂತಿರುಗಿ (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr ರಚನೆ type *							\
+name##_RB_INSERT(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
-		parent = tmp;						\
-		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+	ರಚನೆ type *tmp;						\
+	ರಚನೆ type *ಪೋಷಕ = ಖಾಲಿ;					\
+	ಪೂರ್ಣಾಂಕ comp = 0;							\
+	tmp = RB_ಬೇರು(ತಲೆ);						\
+	ಆಗ (tmp) {							\
+		ಪೋಷಕ = tmp;						\
+		comp = (cmp)(elm, ಪೋಷಕ);				\
+		ಆದರೆ (comp < 0)						\
+			tmp = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (comp > 0)					\
+			tmp = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			ಹಿಂತಿರುಗಿ (tmp);					\
 	}								\
-	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
-	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	RB_ಗಣ(elm, ಪೋಷಕ, ಕ್ಷೇತ್ರ);					\
+	ಆದರೆ (ಪೋಷಕ != ಖಾಲಿ) {						\
+		ಆದರೆ (comp < 0)						\
+			RB_ಎಡ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = elm;			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			RB_ಬಲ(ಪೋಷಕ, ಕ್ಷೇತ್ರ) = elm;			\
+		RB_AUGMENT(ಪೋಷಕ);					\
+	} ಇಲ್ಲದಿದ್ದರೆ								\
+		RB_ಬೇರು(ತಲೆ) = elm;					\
+	name##_RB_INSERT_COLOR(ತಲೆ, elm);				\
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr ರಚನೆ type *							\
+name##_RB_FIND(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	ರಚನೆ type *tmp = RB_ಬೇರು(ತಲೆ);				\
+	ಪೂರ್ಣಾಂಕ comp;							\
+	ಆಗ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ಆದರೆ (comp < 0)						\
+			tmp = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (comp > 0)					\
+			tmp = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			ಹಿಂತಿರುಗಿ (tmp);					\
 	}								\
-	return (NULL);							\
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr ರಚನೆ type *							\
+name##_RB_NFIND(ರಚನೆ name *ತಲೆ, ರಚನೆ type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	ರಚನೆ type *tmp = RB_ಬೇರು(ತಲೆ);				\
+	ರಚನೆ type *res = ಖಾಲಿ;					\
+	ಪೂರ್ಣಾಂಕ comp;							\
+	ಆಗ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		ಆದರೆ (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (comp > 0)					\
+			tmp = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			ಹಿಂತಿರುಗಿ (tmp);					\
 	}								\
-	return (res);							\
+	ಹಿಂತಿರುಗಿ (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr ರಚನೆ type *							\
+name##_RB_NEXT(ರಚನೆ type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ಆದರೆ (RB_ಬಲ(elm, ಕ್ಷೇತ್ರ)) {					\
+		elm = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);				\
+		ಆಗ (RB_ಎಡ(elm, ಕ್ಷೇತ್ರ))				\
+			elm = RB_ಎಡ(elm, ಕ್ಷೇತ್ರ);			\
+	} ಇಲ್ಲದಿದ್ದರೆ {							\
+		ಆದರೆ (RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) &&				\
+		    (elm == RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ)))	\
+			elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ {							\
+			ಆಗ (RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) &&			\
+			    (elm == RB_ಬಲ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ)))\
+				elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);		\
+			elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);			\
 		}							\
 	}								\
-	return (elm);							\
+	ಹಿಂತಿರುಗಿ (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr ರಚನೆ type *							\
+name##_RB_PREV(ರಚನೆ type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ಆದರೆ (RB_ಎಡ(elm, ಕ್ಷೇತ್ರ)) {					\
+		elm = RB_ಎಡ(elm, ಕ್ಷೇತ್ರ);				\
+		ಆಗ (RB_ಬಲ(elm, ಕ್ಷೇತ್ರ))				\
+			elm = RB_ಬಲ(elm, ಕ್ಷೇತ್ರ);			\
+	} ಇಲ್ಲದಿದ್ದರೆ {							\
+		ಆದರೆ (RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) &&				\
+		    (elm == RB_ಬಲ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ)))	\
+			elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ {							\
+			ಆಗ (RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ) &&			\
+			    (elm == RB_ಎಡ(RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ), ಕ್ಷೇತ್ರ)))\
+				elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);		\
+			elm = RB_ಪೋಷಕ(elm, ಕ್ಷೇತ್ರ);			\
 		}							\
 	}								\
-	return (elm);							\
+	ಹಿಂತಿರುಗಿ (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr ರಚನೆ type *							\
+name##_RB_MINMAX(ರಚನೆ name *ತಲೆ, ಪೂರ್ಣಾಂಕ val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
-		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+	ರಚನೆ type *tmp = RB_ಬೇರು(ತಲೆ);				\
+	ರಚನೆ type *ಪೋಷಕ = ಖಾಲಿ;					\
+	ಆಗ (tmp) {							\
+		ಪೋಷಕ = tmp;						\
+		ಆದರೆ (val < 0)						\
+			tmp = RB_ಎಡ(tmp, ಕ್ಷೇತ್ರ);			\
+		ಇಲ್ಲದಿದ್ದರೆ							\
+			tmp = RB_ಬಲ(tmp, ಕ್ಷೇತ್ರ);			\
 	}								\
-	return (parent);						\
+	ಹಿಂತಿರುಗಿ (ಪೋಷಕ);						\
 }
 
-#define RB_NEGINF	-1
-#define RB_INF	1
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_NEGINF	-1
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
-#define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
-#define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
-#define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
-#define RB_NEXT(name, x, y)	name##_RB_NEXT(y)
-#define RB_PREV(name, x, y)	name##_RB_PREV(y)
-#define RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
-#define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಸೇರಿಸು(name, x, y)	name##_RB_INSERT(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಕಂಡುಹಿಡಿ(name, x, y)	name##_RB_FIND(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_ಮುಂದಿನ(name, x, y)	name##_RB_NEXT(y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_PREV(name, x, y)	name##_RB_PREV(y)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
-#define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_FOREACH(x, name, ತಲೆ)					\
+	ಗಾಗಿ ((x) = RB_MIN(name, ತಲೆ);					\
+	     (x) != ಖಾಲಿ;						\
 	     (x) = name##_RB_NEXT(x))
 
-#define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_FOREACH_ಸುರಕ್ಷಿತ(x, name, ತಲೆ, y)				\
+	ಗಾಗಿ ((x) = RB_MIN(name, ತಲೆ);					\
+	    ((x) != ಖಾಲಿ) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
-#define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_FOREACH_ಹಿಮ್ಮುಖ(x, name, ತಲೆ)				\
+	ಗಾಗಿ ((x) = RB_MAX(name, ತಲೆ);					\
+	     (x) != ಖಾಲಿ;						\
 	     (x) = name##_RB_PREV(x))
 
-#define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು RB_FOREACH_ಹಿಮ್ಮುಖ_ಸುರಕ್ಷಿತ(x, name, ತಲೆ, y)			\
+	ಗಾಗಿ ((x) = RB_MAX(name, ತಲೆ);					\
+	    ((x) != ಖಾಲಿ) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
-#endif	/* _SYS_TREE_H_ */
+#ಆದರೆ_ಅಂತ್ಯ	/* _SYS_TREE_H_ */

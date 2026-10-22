@@ -34,52 +34,52 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <syslog.h>
-#include <unistd.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <syslog.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಆದರೆ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "log.h"
-#include "match.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
 
-static LogLevel log_level = SYSLOG_LEVEL_INFO;
-static int log_on_stderr = 1;
-static int log_stderr_fd = STDERR_FILENO;
-static int log_facility = LOG_AUTH;
-static const char *argv0;
-static log_handler_fn *log_handler;
-static void *log_handler_ctx;
-static char **log_verbose;
-static size_t nlog_verbose;
-extern char *__progname;
+ಸ್ಥಿರ LogLevel log_level = SYSLOG_LEVEL_INFO;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_on_stderr = 1;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_stderr_fd = STDERR_FILENO;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_facility = LOG_AUTH;
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *argv0;
+ಸ್ಥಿರ log_handler_fn *log_handler;
+ಸ್ಥಿರ ಶೂನ್ಯ *log_handler_ctx;
+ಸ್ಥಿರ ಅಕ್ಷರ **log_verbose;
+ಸ್ಥಿರ ಗಾತ್ರ_t nlog_verbose;
+ಬಾಹ್ಯ ಅಕ್ಷರ *__progname;
 
-#define LOG_SYSLOG_VIS	(VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL)
-#define LOG_STDERR_VIS	(VIS_SAFE|VIS_OCTAL)
+#ವ್ಯಾಖ್ಯಾನಿಸು LOG_SYSLOG_VIS	(VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL)
+#ವ್ಯಾಖ್ಯಾನಿಸು LOG_STDERR_VIS	(VIS_ಸುರಕ್ಷಿತ|VIS_OCTAL)
 
 /* textual representation of log-facilities/levels */
 
-static struct {
-	const char *name;
+ಸ್ಥಿರ ರಚನೆ {
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
 	SyslogFacility val;
 } log_facilities[] = {
 	{ "DAEMON",	SYSLOG_FACILITY_DAEMON },
 	{ "USER",	SYSLOG_FACILITY_USER },
 	{ "AUTH",	SYSLOG_FACILITY_AUTH },
-#ifdef LOG_AUTHPRIV
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ LOG_AUTHPRIV
 	{ "AUTHPRIV",	SYSLOG_FACILITY_AUTHPRIV },
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	{ "LOCAL0",	SYSLOG_FACILITY_LOCAL0 },
 	{ "LOCAL1",	SYSLOG_FACILITY_LOCAL1 },
 	{ "LOCAL2",	SYSLOG_FACILITY_LOCAL2 },
@@ -88,13 +88,13 @@ static struct {
 	{ "LOCAL5",	SYSLOG_FACILITY_LOCAL5 },
 	{ "LOCAL6",	SYSLOG_FACILITY_LOCAL6 },
 	{ "LOCAL7",	SYSLOG_FACILITY_LOCAL7 },
-	{ NULL,		SYSLOG_FACILITY_NOT_SET }
+	{ ಖಾಲಿ,		SYSLOG_FACILITY_NOT_ಗಣ }
 };
 
-static struct {
-	const char *name;
+ಸ್ಥಿರ ರಚನೆ {
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
 	LogLevel val;
-} log_levels[] =
+} log_ಮಟ್ಟಗಳು[] =
 {
 	{ "QUIET",	SYSLOG_LEVEL_QUIET },
 	{ "FATAL",	SYSLOG_LEVEL_FATAL },
@@ -105,84 +105,84 @@ static struct {
 	{ "DEBUG1",	SYSLOG_LEVEL_DEBUG1 },
 	{ "DEBUG2",	SYSLOG_LEVEL_DEBUG2 },
 	{ "DEBUG3",	SYSLOG_LEVEL_DEBUG3 },
-	{ NULL,		SYSLOG_LEVEL_NOT_SET }
+	{ ಖಾಲಿ,		SYSLOG_LEVEL_NOT_ಗಣ }
 };
 
 LogLevel
-log_level_get(void)
+log_level_get(ಶೂನ್ಯ)
 {
-	return log_level;
+	ಹಿಂತಿರುಗಿ log_level;
 }
 
 SyslogFacility
-log_facility_number(char *name)
+log_facility_ಸಂಖ್ಯೆ(ಅಕ್ಷರ *name)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (name != NULL)
-		for (i = 0; log_facilities[i].name; i++)
-			if (strcasecmp(log_facilities[i].name, name) == 0)
-				return log_facilities[i].val;
-	return SYSLOG_FACILITY_NOT_SET;
+	ಆದರೆ (name != ಖಾಲಿ)
+		ಗಾಗಿ (i = 0; log_facilities[i].name; i++)
+			ಆದರೆ (strcasecmp(log_facilities[i].name, name) == 0)
+				ಹಿಂತಿರುಗಿ log_facilities[i].val;
+	ಹಿಂತಿರುಗಿ SYSLOG_FACILITY_NOT_ಗಣ;
 }
 
-const char *
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
 log_facility_name(SyslogFacility facility)
 {
 	u_int i;
 
-	for (i = 0;  log_facilities[i].name; i++)
-		if (log_facilities[i].val == facility)
-			return log_facilities[i].name;
-	return NULL;
+	ಗಾಗಿ (i = 0;  log_facilities[i].name; i++)
+		ಆದರೆ (log_facilities[i].val == facility)
+			ಹಿಂತಿರುಗಿ log_facilities[i].name;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 LogLevel
-log_level_number(char *name)
+log_level_ಸಂಖ್ಯೆ(ಅಕ್ಷರ *name)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (name != NULL)
-		for (i = 0; log_levels[i].name; i++)
-			if (strcasecmp(log_levels[i].name, name) == 0)
-				return log_levels[i].val;
-	return SYSLOG_LEVEL_NOT_SET;
+	ಆದರೆ (name != ಖಾಲಿ)
+		ಗಾಗಿ (i = 0; log_ಮಟ್ಟಗಳು[i].name; i++)
+			ಆದರೆ (strcasecmp(log_ಮಟ್ಟಗಳು[i].name, name) == 0)
+				ಹಿಂತಿರುಗಿ log_ಮಟ್ಟಗಳು[i].val;
+	ಹಿಂತಿರುಗಿ SYSLOG_LEVEL_NOT_ಗಣ;
 }
 
-const char *
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
 log_level_name(LogLevel level)
 {
 	u_int i;
 
-	for (i = 0; log_levels[i].name != NULL; i++)
-		if (log_levels[i].val == level)
-			return log_levels[i].name;
-	return NULL;
+	ಗಾಗಿ (i = 0; log_ಮಟ್ಟಗಳು[i].name != ಖಾಲಿ; i++)
+		ಆದರೆ (log_ಮಟ್ಟಗಳು[i].val == level)
+			ಹಿಂತಿರುಗಿ log_ಮಟ್ಟಗಳು[i].name;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-void
-log_verbose_add(const char *s)
+ಶೂನ್ಯ
+log_verbose_ಕೂಡಿಸು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-	char **tmp;
+	ಅಕ್ಷರ **tmp;
 
 	/* Ignore failures here */
-	if ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
-	    sizeof(*log_verbose))) != NULL) {
+	ಆದರೆ ((tmp = recallocarray(log_verbose, nlog_verbose, nlog_verbose + 1,
+	    ಗಾತ್ರ(*log_verbose))) != ಖಾಲಿ) {
 		log_verbose = tmp;
-		if ((log_verbose[nlog_verbose] = strdup(s)) != NULL)
+		ಆದರೆ ((log_verbose[nlog_verbose] = strdup(s)) != ಖಾಲಿ)
 			nlog_verbose++;
 	}
 }
 
-void
-log_verbose_reset(void)
+ಶೂನ್ಯ
+log_verbose_reset(ಶೂನ್ಯ)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
-	for (i = 0; i < nlog_verbose; i++)
-		free(log_verbose[i]);
-	free(log_verbose);
-	log_verbose = NULL;
+	ಗಾಗಿ (i = 0; i < nlog_verbose; i++)
+		ಬಿಡುಗಡೆ(log_verbose[i]);
+	ಬಿಡುಗಡೆ(log_verbose);
+	log_verbose = ಖಾಲಿ;
 	nlog_verbose = 0;
 }
 
@@ -190,73 +190,73 @@ log_verbose_reset(void)
  * Initialize the log.
  */
 
-void
-log_init(const char *av0, LogLevel level, SyslogFacility facility,
-    int on_stderr)
+ಶೂನ್ಯ
+log_init(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *av0, LogLevel level, SyslogFacility facility,
+    ಪೂರ್ಣಾಂಕ on_stderr)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
-	struct syslog_data sdata = SYSLOG_DATA_INIT;
-#endif
+#ಆದರೆ defined(HAVE_OPENLOG_R) && defined(SYSLOG_ದತ್ತಾಂಶ_INIT)
+	ರಚನೆ syslog_ದತ್ತಾಂಶ sdata = SYSLOG_ದತ್ತಾಂಶ_INIT;
+#ಆದರೆ_ಅಂತ್ಯ
 
 	argv0 = av0;
 
-	if (log_change_level(level) != 0) {
+	ಆದರೆ (log_change_level(level) != 0) {
 		fprintf(stderr, "Unrecognized internal syslog level code %d\n",
-		    (int) level);
-		exit(1);
+		    (ಪೂರ್ಣಾಂಕ) level);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
-	log_handler = NULL;
-	log_handler_ctx = NULL;
+	log_handler = ಖಾಲಿ;
+	log_handler_ctx = ಖಾಲಿ;
 
 	log_on_stderr = on_stderr;
-	if (on_stderr)
-		return;
+	ಆದರೆ (on_stderr)
+		ಹಿಂತಿರುಗಿ;
 
-	switch (facility) {
-	case SYSLOG_FACILITY_DAEMON:
+	ಆಯ್ಕೆ (facility) {
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_DAEMON:
 		log_facility = LOG_DAEMON;
-		break;
-	case SYSLOG_FACILITY_USER:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_USER:
 		log_facility = LOG_USER;
-		break;
-	case SYSLOG_FACILITY_AUTH:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_AUTH:
 		log_facility = LOG_AUTH;
-		break;
-#ifdef LOG_AUTHPRIV
-	case SYSLOG_FACILITY_AUTHPRIV:
+		ನಿಲ್ಲಿಸು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ LOG_AUTHPRIV
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_AUTHPRIV:
 		log_facility = LOG_AUTHPRIV;
-		break;
-#endif
-	case SYSLOG_FACILITY_LOCAL0:
+		ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL0:
 		log_facility = LOG_LOCAL0;
-		break;
-	case SYSLOG_FACILITY_LOCAL1:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL1:
 		log_facility = LOG_LOCAL1;
-		break;
-	case SYSLOG_FACILITY_LOCAL2:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL2:
 		log_facility = LOG_LOCAL2;
-		break;
-	case SYSLOG_FACILITY_LOCAL3:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL3:
 		log_facility = LOG_LOCAL3;
-		break;
-	case SYSLOG_FACILITY_LOCAL4:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL4:
 		log_facility = LOG_LOCAL4;
-		break;
-	case SYSLOG_FACILITY_LOCAL5:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL5:
 		log_facility = LOG_LOCAL5;
-		break;
-	case SYSLOG_FACILITY_LOCAL6:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL6:
 		log_facility = LOG_LOCAL6;
-		break;
-	case SYSLOG_FACILITY_LOCAL7:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_FACILITY_LOCAL7:
 		log_facility = LOG_LOCAL7;
-		break;
-	default:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		fprintf(stderr,
 		    "Unrecognized internal syslog facility code %d\n",
-		    (int) facility);
-		exit(1);
+		    (ಪೂರ್ಣಾಂಕ) facility);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 
 	/*
@@ -264,231 +264,231 @@ log_init(const char *av0, LogLevel level, SyslogFacility facility,
 	 * immediately after reexec, syslog may be pointing to the wrong
 	 * facility, so we force an open/close of syslog here.
 	 */
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+#ಆದರೆ defined(HAVE_OPENLOG_R) && defined(SYSLOG_ದತ್ತಾಂಶ_INIT)
 	openlog_r(argv0 ? argv0 : __progname, LOG_PID, log_facility, &sdata);
 	closelog_r(&sdata);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	openlog(argv0 ? argv0 : __progname, LOG_PID, log_facility);
 	closelog();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-int
+ಪೂರ್ಣಾಂಕ
 log_change_level(LogLevel new_log_level)
 {
 	/* no-op if log_init has not been called */
-	if (argv0 == NULL)
-		return 0;
+	ಆದರೆ (argv0 == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
 
-	switch (new_log_level) {
-	case SYSLOG_LEVEL_QUIET:
-	case SYSLOG_LEVEL_FATAL:
-	case SYSLOG_LEVEL_ERROR:
-	case SYSLOG_LEVEL_INFO:
-	case SYSLOG_LEVEL_VERBOSE:
-	case SYSLOG_LEVEL_DEBUG1:
-	case SYSLOG_LEVEL_DEBUG2:
-	case SYSLOG_LEVEL_DEBUG3:
+	ಆಯ್ಕೆ (new_log_level) {
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_QUIET:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_FATAL:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_ERROR:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_INFO:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_VERBOSE:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG1:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG2:
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG3:
 		log_level = new_log_level;
-		return 0;
-	default:
-		return -1;
+		ಹಿಂತಿರುಗಿ 0;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ಹಿಂತಿರುಗಿ -1;
 	}
 }
 
-int
-log_is_on_stderr(void)
+ಪೂರ್ಣಾಂಕ
+log_is_on_stderr(ಶೂನ್ಯ)
 {
-	return log_on_stderr && log_stderr_fd == STDERR_FILENO;
+	ಹಿಂತಿರುಗಿ log_on_stderr && log_stderr_fd == STDERR_FILENO;
 }
 
 /* redirect what would usually get written to stderr to specified file */
-void
-log_redirect_stderr_to(const char *logfile)
+ಶೂನ್ಯ
+log_redirect_stderr_ಗಮ್ಯ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *logfile)
 {
-	int fd;
+	ಪೂರ್ಣಾಂಕ fd;
 
-	if (logfile == NULL) {
-		if (log_stderr_fd != STDERR_FILENO) {
+	ಆದರೆ (logfile == ಖಾಲಿ) {
+		ಆದರೆ (log_stderr_fd != STDERR_FILENO) {
 			close(log_stderr_fd);
 			log_stderr_fd = STDERR_FILENO;
 		}
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	if ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
+	ಆದರೆ ((fd = open(logfile, O_WRONLY|O_CREAT|O_APPEND, 0600)) == -1) {
 		fprintf(stderr, "Couldn't open logfile %s: %s\n", logfile,
 		    strerror(errno));
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
 	log_stderr_fd = fd;
 }
 
-#define MSGBUFSIZ 1024
+#ವ್ಯಾಖ್ಯಾನಿಸು MSGBUFSIZ 1024
 
-void
-set_log_handler(log_handler_fn *handler, void *ctx)
+ಶೂನ್ಯ
+ಗಣ_log_handler(log_handler_fn *handler, ಶೂನ್ಯ *ctx)
 {
 	log_handler = handler;
 	log_handler_ctx = ctx;
 }
 
-static void
-do_log(LogLevel level, int force, const char *suffix, const char *fmt,
-    va_list args)
+ಸ್ಥಿರ ಶೂನ್ಯ
+do_log(LogLevel level, ಪೂರ್ಣಾಂಕ force, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *suffix, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt,
+    va_list ವಾದಗಳು)
 {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
-	struct syslog_data sdata = SYSLOG_DATA_INIT;
-#endif
-	char msgbuf[MSGBUFSIZ];
-	char fmtbuf[MSGBUFSIZ];
-	char *txt = NULL;
-	int pri = LOG_INFO;
-	int saved_errno = errno;
+#ಆದರೆ defined(HAVE_OPENLOG_R) && defined(SYSLOG_ದತ್ತಾಂಶ_INIT)
+	ರಚನೆ syslog_ದತ್ತಾಂಶ sdata = SYSLOG_ದತ್ತಾಂಶ_INIT;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಅಕ್ಷರ msgbuf[MSGBUFSIZ];
+	ಅಕ್ಷರ fmtbuf[MSGBUFSIZ];
+	ಅಕ್ಷರ *txt = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ pri = LOG_INFO;
+	ಪೂರ್ಣಾಂಕ saved_errno = errno;
 	log_handler_fn *tmp_handler;
-	const char *progname = argv0 != NULL ? argv0 : __progname;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *progname = argv0 != ಖಾಲಿ ? argv0 : __progname;
 
-	if (!force && level > log_level)
-		return;
+	ಆದರೆ (!force && level > log_level)
+		ಹಿಂತಿರುಗಿ;
 
-	switch (level) {
-	case SYSLOG_LEVEL_FATAL:
-		if (!log_on_stderr)
+	ಆಯ್ಕೆ (level) {
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_FATAL:
+		ಆದರೆ (!log_on_stderr)
 			txt = "fatal";
 		pri = LOG_CRIT;
-		break;
-	case SYSLOG_LEVEL_ERROR:
-		if (!log_on_stderr)
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_ERROR:
+		ಆದರೆ (!log_on_stderr)
 			txt = "error";
 		pri = LOG_ERR;
-		break;
-	case SYSLOG_LEVEL_INFO:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_INFO:
 		pri = LOG_INFO;
-		break;
-	case SYSLOG_LEVEL_VERBOSE:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_VERBOSE:
 		pri = LOG_INFO;
-		break;
-	case SYSLOG_LEVEL_DEBUG1:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG1:
 		txt = "debug1";
 		pri = LOG_DEBUG;
-		break;
-	case SYSLOG_LEVEL_DEBUG2:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG2:
 		txt = "debug2";
 		pri = LOG_DEBUG;
-		break;
-	case SYSLOG_LEVEL_DEBUG3:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SYSLOG_LEVEL_DEBUG3:
 		txt = "debug3";
 		pri = LOG_DEBUG;
-		break;
-	default:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		txt = "internal error";
 		pri = LOG_ERR;
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
-	if (txt != NULL && log_handler == NULL) {
-		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", txt, fmt);
-		vsnprintf(msgbuf, sizeof(msgbuf), fmtbuf, args);
-	} else {
-		vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
+	ಆದರೆ (txt != ಖಾಲಿ && log_handler == ಖಾಲಿ) {
+		snprintf(fmtbuf, ಗಾತ್ರ(fmtbuf), "%s: %s", txt, fmt);
+		vsnprintf(msgbuf, ಗಾತ್ರ(msgbuf), fmtbuf, ವಾದಗಳು);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		vsnprintf(msgbuf, ಗಾತ್ರ(msgbuf), fmt, ವಾದಗಳು);
 	}
-	if (suffix != NULL) {
-		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", msgbuf, suffix);
-		strlcpy(msgbuf, fmtbuf, sizeof(msgbuf));
+	ಆದರೆ (suffix != ಖಾಲಿ) {
+		snprintf(fmtbuf, ಗಾತ್ರ(fmtbuf), "%s: %s", msgbuf, suffix);
+		strlcpy(msgbuf, fmtbuf, ಗಾತ್ರ(msgbuf));
 	}
-	strnvis(fmtbuf, msgbuf, sizeof(fmtbuf),
+	strnvis(fmtbuf, msgbuf, ಗಾತ್ರ(fmtbuf),
 	    log_on_stderr ? LOG_STDERR_VIS : LOG_SYSLOG_VIS);
-	if (log_handler != NULL) {
+	ಆದರೆ (log_handler != ಖಾಲಿ) {
 		/* Avoid recursion */
 		tmp_handler = log_handler;
-		log_handler = NULL;
+		log_handler = ಖಾಲಿ;
 		/* Note: this sends the raw (i.e. no strnvis) log message */
 		tmp_handler(level, force, msgbuf, log_handler_ctx);
 		log_handler = tmp_handler;
-	} else if (log_on_stderr) {
-		snprintf(msgbuf, sizeof msgbuf, "%s%s%.*s\r\n",
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (log_on_stderr) {
+		snprintf(msgbuf, ಗಾತ್ರ msgbuf, "%s%s%.*s\r\n",
 		    (log_on_stderr > 1) ? progname : "",
 		    (log_on_stderr > 1) ? ": " : "",
-		    (int)sizeof msgbuf - 3, fmtbuf);
-		(void)write(log_stderr_fd, msgbuf, strlen(msgbuf));
-	} else {
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
+		    (ಪೂರ್ಣಾಂಕ)ಗಾತ್ರ msgbuf - 3, fmtbuf);
+		(ಶೂನ್ಯ)ಲಿಖ(log_stderr_fd, msgbuf, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(msgbuf));
+	} ಇಲ್ಲದಿದ್ದರೆ {
+#ಆದರೆ defined(HAVE_OPENLOG_R) && defined(SYSLOG_ದತ್ತಾಂಶ_INIT)
 		openlog_r(progname, LOG_PID, log_facility, &sdata);
 		syslog_r(pri, &sdata, "%.500s", fmtbuf);
 		closelog_r(&sdata);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 		openlog(progname, LOG_PID, log_facility);
 		syslog(pri, "%.500s", fmtbuf);
 		closelog();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	}
 	errno = saved_errno;
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+ಶೂನ್ಯ
+sshlog(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *func, ಪೂರ್ಣಾಂಕ ಸಾಲು, ಪೂರ್ಣಾಂಕ showfunc,
+    LogLevel level, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *suffix, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(ವಾದಗಳು, fmt);
+	sshlogv(file, func, ಸಾಲು, showfunc, level, suffix, fmt, ವಾದಗಳು);
+	va_end(ವಾದಗಳು);
 }
 
-void
-sshlogdie(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+ಶೂನ್ಯ
+sshlogdie(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *func, ಪೂರ್ಣಾಂಕ ಸಾಲು, ಪೂರ್ಣಾಂಕ showfunc,
+    LogLevel level, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *suffix, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_INFO,
-	    suffix, fmt, args);
-	va_end(args);
+	va_start(ವಾದಗಳು, fmt);
+	sshlogv(file, func, ಸಾಲು, showfunc, SYSLOG_LEVEL_INFO,
+	    suffix, fmt, ವಾದಗಳು);
+	va_end(ವಾದಗಳು);
 	cleanup_exit(255);
 }
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+ಶೂನ್ಯ
+sshlogv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *file, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *func, ಪೂರ್ಣಾಂಕ ಸಾಲು, ಪೂರ್ಣಾಂಕ showfunc,
+    LogLevel level, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *suffix, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, va_list ವಾದಗಳು)
 {
-	char tag[128], fmt2[MSGBUFSIZ + 128];
-	int forced = 0;
-	const char *cp;
-	size_t i;
+	ಅಕ್ಷರ ಟ್ಯಾಗ್[128], fmt2[MSGBUFSIZ + 128];
+	ಪೂರ್ಣಾಂಕ forced = 0;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *cp;
+	ಗಾತ್ರ_t i;
 
 	/* short circuit processing early if we're not going to log anything */
-	if (nlog_verbose == 0 && level > log_level)
-		return;
+	ಆದರೆ (nlog_verbose == 0 && level > log_level)
+		ಹಿಂತಿರುಗಿ;
 
-	snprintf(tag, sizeof(tag), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
-	    (cp = strrchr(file, '/')) == NULL ? file : cp + 1, func, line,
-	    argv0 == NULL ? "UNKNOWN" : argv0, (long)getpid());
-	for (i = 0; i < nlog_verbose; i++) {
-		if (match_pattern_list(tag, log_verbose[i], 0) == 1) {
+	snprintf(ಟ್ಯಾಗ್, ಗಾತ್ರ(ಟ್ಯಾಗ್), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
+	    (cp = strrchr(file, '/')) == ಖಾಲಿ ? file : cp + 1, func, ಸಾಲು,
+	    argv0 == ಖಾಲಿ ? "UNKNOWN" : argv0, (ದೀರ್ಘ)getpid());
+	ಗಾಗಿ (i = 0; i < nlog_verbose; i++) {
+		ಆದರೆ (ಹೊಂದಿಕೆ_ನಮೂನೆ_list(ಟ್ಯಾಗ್, log_verbose[i], 0) == 1) {
 			forced = 1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 
-	if (forced)
-		snprintf(fmt2, sizeof(fmt2), "%s: %s", tag, fmt);
-	else if (showfunc)
-		snprintf(fmt2, sizeof(fmt2), "%s: %s", func, fmt);
-	else
-		strlcpy(fmt2, fmt, sizeof(fmt2));
+	ಆದರೆ (forced)
+		snprintf(fmt2, ಗಾತ್ರ(fmt2), "%s: %s", ಟ್ಯಾಗ್, fmt);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (showfunc)
+		snprintf(fmt2, ಗಾತ್ರ(fmt2), "%s: %s", func, fmt);
+	ಇಲ್ಲದಿದ್ದರೆ
+		strlcpy(fmt2, fmt, ಗಾತ್ರ(fmt2));
 
-	do_log(level, forced, suffix, fmt2, args);
+	do_log(level, forced, suffix, fmt2, ವಾದಗಳು);
 }
 
-void
-sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
+ಶೂನ್ಯ
+sshlogdirect(LogLevel level, ಪೂರ್ಣಾಂಕ forced, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
-	do_log(level, forced, NULL, fmt, args);
-	va_end(args);
+	va_start(ವಾದಗಳು, fmt);
+	do_log(level, forced, ಖಾಲಿ, fmt, ವಾದಗಳು);
+	va_end(ವಾದಗಳು);
 }
 
 
@@ -511,29 +511,29 @@ sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
 
 /* #define RATELIMIT_DEBUG 1 */
 
-#ifdef RATELIMIT_DEBUG
-# define RLDBG(x) do { \
-		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
-		printf x; \
-		printf("\n"); \
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ RATELIMIT_DEBUG
+# define RLDBG(x) ಮಾಡು { \
+		ಬರೆ("%s:%d %s: ", __FILE__, __LINE__, __func__); \
+		ಬರೆ x; \
+		ಬರೆ("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} ಆಗ (0)
+#ಇಲ್ಲದಿದ್ದರೆ
 # define RLDBG(x)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* set up a ratelimit */
-void
-log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+ಶೂನ್ಯ
+log_ratelimit_init(ರಚನೆ log_ratelimit_ctx *rl, u_int ಮಿತಿ,
     u_int max_accum, u_int hysteresis, u_int log_every)
 {
-	memset(rl, 0, sizeof(*rl));
-	rl->threshold = threshold;
+	memset(rl, 0, ಗಾತ್ರ(*rl));
+	rl->ಮಿತಿ = ಮಿತಿ;
 	rl->max_accum = max_accum;
 	rl->hysteresis = hysteresis;
 	rl->log_every = log_every;
 	RLDBG(("called: rl=%p thresh=%u max=%u hys=%u log_every=%u",
-	    rl, rl->threshold, rl->max_accum, rl->hysteresis, rl->log_every));
+	    rl, rl->ಮಿತಿ, rl->max_accum, rl->hysteresis, rl->log_every));
 }
 
 /*
@@ -542,115 +542,115 @@ log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
  * is supplied then, for periodic logs, it will be set to the number of
  * dropped events since the last message.
  */
-int
-log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+ಪೂರ್ಣಾಂಕ
+log_ratelimit(ರಚನೆ log_ratelimit_ctx *rl, time_t now, ಪೂರ್ಣಾಂಕ *ಸಕ್ರಿಯ,
     u_int *events_dropped)
 {
 	time_t olast_event;
 
 	RLDBG(("called: rl=%p thresh=%u max=%u hys=%u log_every=%u "
-	    "accum=%u since=%ld since_last=%u", rl, rl->threshold,
+	    "accum=%u since=%ld since_last=%u", rl, rl->ಮಿತಿ,
 	    rl->max_accum, rl->hysteresis,
 	    rl->log_every, rl->accumulated_events,
-	    rl->last_event == 0 ? -1 : (long)(now - rl->last_event),
+	    rl->ಕೊನೆಯ_event == 0 ? -1 : (ದೀರ್ಘ)(now - rl->ಕೊನೆಯ_event),
 	    rl->ratelimited_events));
 
-	if (now < 0)
-		return 0;
-	if (events_dropped != NULL)
+	ಆದರೆ (now < 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (events_dropped != ಖಾಲಿ)
 		*events_dropped = 0;
-	if (active != NULL)
-		*active = rl->ratelimit_active;
+	ಆದರೆ (ಸಕ್ರಿಯ != ಖಾಲಿ)
+		*ಸಕ್ರಿಯ = rl->ratelimit_ಸಕ್ರಿಯ;
 
 	/* First, decay accumulated events */
-	if (rl->last_event <= 0)
-		rl->last_event = now;
-	if (now > rl->last_event) {
-		uint64_t n = now - rl->last_event;
+	ಆದರೆ (rl->ಕೊನೆಯ_event <= 0)
+		rl->ಕೊನೆಯ_event = now;
+	ಆದರೆ (now > rl->ಕೊನೆಯ_event) {
+		uint64_t n = now - rl->ಕೊನೆಯ_event;
 
-		if (n > UINT_MAX)
+		ಆದರೆ (n > UINT_MAX)
 			n = UINT_MAX;
-		if (rl->accumulated_events < (u_int)n)
+		ಆದರೆ (rl->accumulated_events < (u_int)n)
 			rl->accumulated_events = 0;
-		else
+		ಇಲ್ಲದಿದ್ದರೆ
 			rl->accumulated_events -= (u_int)n;
 		RLDBG(("decay: accum=%u", rl->accumulated_events));
 	}
 	rl->accumulated_events++; /* add this event */
-	if (rl->accumulated_events > rl->max_accum)
+	ಆದರೆ (rl->accumulated_events > rl->max_accum)
 		rl->accumulated_events = rl->max_accum;
-	olast_event = rl->last_event;
-	rl->last_event = now;
+	olast_event = rl->ಕೊನೆಯ_event;
+	rl->ಕೊನೆಯ_event = now;
 	RLDBG(("check threshold: accum=%u vs thresh=%u",
-	    rl->accumulated_events, rl->threshold));
+	    rl->accumulated_events, rl->ಮಿತಿ));
 
 	/* Are we under threshold? */
-	if (rl->accumulated_events < rl->threshold) {
-		if (!rl->ratelimit_active)
-			return 0;
+	ಆದರೆ (rl->accumulated_events < rl->ಮಿತಿ) {
+		ಆದರೆ (!rl->ratelimit_ಸಕ್ರಿಯ)
+			ಹಿಂತಿರುಗಿ 0;
 		RLDBG(("under threshold: hys=%u since_hys=%ld since_last=%ld",
-		    rl->hysteresis, rl->hysteresis_start == 0 ? -1 :
-		    (long)(now - rl->hysteresis_start),
-		    olast_event == 0 ? -1 : (long)(now - olast_event)));
-		if (rl->hysteresis_start == 0) {
+		    rl->hysteresis, rl->hysteresis_ಆರಂಭ == 0 ? -1 :
+		    (ದೀರ್ಘ)(now - rl->hysteresis_ಆರಂಭ),
+		    olast_event == 0 ? -1 : (ದೀರ್ಘ)(now - olast_event)));
+		ಆದರೆ (rl->hysteresis_ಆರಂಭ == 0) {
 			/* active, but under threshold; hysteresis */
-			if (olast_event + rl->hysteresis < now) {
+			ಆದರೆ (olast_event + rl->hysteresis < now) {
 				/* hysteresis expired before this event */
 				RLDBG(("hysteresis preexpired"));
-				goto inactive;
+				ಹೋಗು inactive;
 			}
 			RLDBG(("start hysteresis"));
-			rl->hysteresis_start = now;
-		} else if (rl->hysteresis_start + rl->hysteresis < now) {
+			rl->hysteresis_ಆರಂಭ = now;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (rl->hysteresis_ಆರಂಭ + rl->hysteresis < now) {
 			/* Hysteresis period expired, transition to inactive */
 			RLDBG(("complete hysteresis"));
  inactive:
-			if (events_dropped != NULL)
+			ಆದರೆ (events_dropped != ಖಾಲಿ)
 				*events_dropped = rl->ratelimited_events;
-			if (active != NULL)
-				*active = 0;
-			rl->ratelimit_active = 0;
-			rl->ratelimit_start = 0;
-			rl->last_log = 0;
-			rl->hysteresis_start = 0;
+			ಆದರೆ (ಸಕ್ರಿಯ != ಖಾಲಿ)
+				*ಸಕ್ರಿಯ = 0;
+			rl->ratelimit_ಸಕ್ರಿಯ = 0;
+			rl->ratelimit_ಆರಂಭ = 0;
+			rl->ಕೊನೆಯ_log = 0;
+			rl->hysteresis_ಆರಂಭ = 0;
 			rl->ratelimited_events = 0;
-			return 0;
+			ಹಿಂತಿರುಗಿ 0;
 		}
 		/* ratelimiting active, but in hysteresis period */
-	} else if (!rl->ratelimit_active) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!rl->ratelimit_ಸಕ್ರಿಯ) {
 		/* Transition to rate-limiting */
 		RLDBG(("start ratelimit"));
-		rl->ratelimit_active = 1;
-		rl->ratelimit_start = now;
-		rl->last_log = now;
-		rl->hysteresis_start = 0;
+		rl->ratelimit_ಸಕ್ರಿಯ = 1;
+		rl->ratelimit_ಆರಂಭ = now;
+		rl->ಕೊನೆಯ_log = now;
+		rl->hysteresis_ಆರಂಭ = 0;
 		rl->ratelimited_events = 1;
-		if (active != NULL)
-			*active = 1;
-		return 1;
-	} else if (rl->hysteresis_start != 0) {
+		ಆದರೆ (ಸಕ್ರಿಯ != ಖಾಲಿ)
+			*ಸಕ್ರಿಯ = 1;
+		ಹಿಂತಿರುಗಿ 1;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (rl->hysteresis_ಆರಂಭ != 0) {
 		/* active and over threshold; reset hysteresis timer */
 		RLDBG(("clear hysteresis"));
-		rl->hysteresis_start = 0;
+		rl->hysteresis_ಆರಂಭ = 0;
 	}
 
 	/* over threshold or in hysteresis period; log periodically */
-	if (active != NULL)
-		*active = 1;
+	ಆದರೆ (ಸಕ್ರಿಯ != ಖಾಲಿ)
+		*ಸಕ್ರಿಯ = 1;
 	RLDBG(("log_every=%u since_log=%ld", rl->log_every,
-	    (long)(now - rl->last_log)));
-	if (rl->log_every > 0 && now >= rl->last_log + rl->log_every) {
+	    (ದೀರ್ಘ)(now - rl->ಕೊನೆಯ_log)));
+	ಆದರೆ (rl->log_every > 0 && now >= rl->ಕೊನೆಯ_log + rl->log_every) {
 		RLDBG(("periodic: since_last=%u", rl->ratelimited_events));
-		rl->last_log = now;
-		if (events_dropped != NULL) {
+		rl->ಕೊನೆಯ_log = now;
+		ಆದರೆ (events_dropped != ಖಾಲಿ) {
 			*events_dropped = rl->ratelimited_events;
 			rl->ratelimited_events = 0;
 		}
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
 	/* drop event */
 	rl->ratelimited_events++;
 	RLDBG(("drop: ratelimited_events=%u", rl->ratelimited_events));
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }

@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#undef malloc
-#undef calloc
-#undef realloc
+#ಅನ್ತರ್ಭಾವ "config.h"
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ಸ್ಮರಣೆ_ಕೊಡು
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#ಆದರೆ defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+ಶೂನ್ಯ *
+rpl_malloc(ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	ಆದರೆ (ಗಾತ್ರ_2 == 0)
+		ಗಾತ್ರ_2 = 1;
+	ಹಿಂತಿರುಗಿ ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#ಆದರೆ defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+ಶೂನ್ಯ *
+rpl_calloc(ಗಾತ್ರ_t nmemb, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (nmemb == 0)
+	ಆದರೆ (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	ಆದರೆ (ಗಾತ್ರ_2 == 0)
+		ಗಾತ್ರ_2 = 1;
+	ಹಿಂತಿರುಗಿ ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(nmemb, ಗಾತ್ರ_2);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#ಆದರೆ defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+ಶೂನ್ಯ *
+rpl_realloc(ಶೂನ್ಯ *ptr, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	ಆದರೆ (ಗಾತ್ರ_2 == 0)
+		ಗಾತ್ರ_2 = 1;
+	ಆದರೆ (ptr == 0)
+		ಹಿಂತಿರುಗಿ ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ_2);
+	ಹಿಂತಿರುಗಿ realloc(ptr, ಗಾತ್ರ_2);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

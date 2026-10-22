@@ -15,35 +15,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/tree.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/tree.h>
 
-#include <limits.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "addr.h"
-#include "canohost.h"
-#include "log.h"
-#include "misc.h"
-#include "srclimit.h"
-#include "xmalloc.h"
-#include "servconf.h"
-#include "match.h"
+#ಅನ್ತರ್ಭಾವ "addr.h"
+#ಅನ್ತರ್ಭಾವ "canohost.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "srclimit.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
 
-static int max_children, max_persource, ipv4_masklen, ipv6_masklen;
-static struct per_source_penalty penalty_cfg;
-static char *penalty_exempt;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ max_children, max_persource, ipv4_masklen, ipv6_masklen;
+ಸ್ಥಿರ ರಚನೆ ಪ್ರತಿ_ಮೂಲ_penalty penalty_cfg;
+ಸ್ಥಿರ ಅಕ್ಷರ *penalty_exempt;
 
 /* Per connection state, used to enforce unauthenticated connection limit. */
-static struct child_info {
-	int id;
-	struct xaddr addr;
+ಸ್ಥಿರ ರಚನೆ ಮಗು_info {
+	ಪೂರ್ಣಾಂಕ id;
+	ರಚನೆ xaddr addr;
 } *children;
 
 /*
@@ -51,230 +51,230 @@ static struct child_info {
  * Entries become active when more than penalty_min seconds of penalty are
  * outstanding.
  */
-struct penalty {
-	struct xaddr addr;
-	double expiry;
-	int active;
-	const char *reason;
-	RB_ENTRY(penalty) by_addr;
-	RB_ENTRY(penalty) by_expiry;
+ರಚನೆ penalty {
+	ರಚನೆ xaddr addr;
+	ದ್ವಿಗುಣ expiry;
+	ಪೂರ್ಣಾಂಕ ಸಕ್ರಿಯ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *reason;
+	RB_ನಮೂದು(penalty) by_addr;
+	RB_ನಮೂದು(penalty) by_expiry;
 };
-static int penalty_addr_cmp(struct penalty *a, struct penalty *b);
-static int penalty_expiry_cmp(struct penalty *a, struct penalty *b);
-RB_HEAD(penalties_by_addr, penalty) penalties_by_addr4, penalties_by_addr6;
-RB_HEAD(penalties_by_expiry, penalty) penalties_by_expiry4, penalties_by_expiry6;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ penalty_addr_cmp(ರಚನೆ penalty *a, ರಚನೆ penalty *b);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ penalty_expiry_cmp(ರಚನೆ penalty *a, ರಚನೆ penalty *b);
+RB_ತಲೆ(penalties_by_addr, penalty) penalties_by_addr4, penalties_by_addr6;
+RB_ತಲೆ(penalties_by_expiry, penalty) penalties_by_expiry4, penalties_by_expiry6;
 RB_GENERATE_STATIC(penalties_by_addr, penalty, by_addr, penalty_addr_cmp)
 RB_GENERATE_STATIC(penalties_by_expiry, penalty, by_expiry, penalty_expiry_cmp)
-static size_t npenalties4, npenalties6;
+ಸ್ಥಿರ ಗಾತ್ರ_t npenalties4, npenalties6;
 
-static int
-srclimit_mask_addr(const struct xaddr *addr, int bits, struct xaddr *masked)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+srclimit_ಮುಖವಾಡ_addr(ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *addr, ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು, ರಚನೆ xaddr *masked)
 {
-	struct xaddr xmask;
+	ರಚನೆ xaddr xmask;
 
 	/* Mask address off address to desired size. */
-	if (addr_netmask(addr->af, bits, &xmask) != 0 ||
+	ಆದರೆ (addr_netmask(addr->af, ಬಿಟ್ಟುಗಳು, &xmask) != 0 ||
 	    addr_and(masked, addr, &xmask) != 0) {
-		debug3_f("%s: invalid mask %d bits", __func__, bits);
-		return -1;
+		debug3_f("%s: invalid mask %d bits", __func__, ಬಿಟ್ಟುಗಳು);
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-srclimit_peer_addr(int sock, struct xaddr *addr)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+srclimit_peer_addr(ಪೂರ್ಣಾಂಕ sock, ರಚನೆ xaddr *addr)
 {
-	struct sockaddr_storage storage;
-	socklen_t addrlen = sizeof(storage);
-	struct sockaddr *sa = (struct sockaddr *)&storage;
+	ರಚನೆ sockaddr_storage storage;
+	socklen_t addrlen = ಗಾತ್ರ(storage);
+	ರಚನೆ sockaddr *sa = (ರಚನೆ sockaddr *)&storage;
 
-	if (getpeername(sock, sa, &addrlen) != 0)
-		return 1;	/* not remote socket? */
-	if (addr_sa_to_xaddr(sa, addrlen, addr) != 0)
-		return 1;	/* unknown address family? */
-	return 0;
+	ಆದರೆ (getpeername(sock, sa, &addrlen) != 0)
+		ಹಿಂತಿರುಗಿ 1;	/* not remote socket? */
+	ಆದರೆ (addr_sa_ಗಮ್ಯ_xaddr(sa, addrlen, addr) != 0)
+		ಹಿಂತಿರುಗಿ 1;	/* unknown address family? */
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-srclimit_init(int max, int persource, int ipv4len, int ipv6len,
-    struct per_source_penalty *penalty_conf, const char *penalty_exempt_conf)
+ಶೂನ್ಯ
+srclimit_init(ಪೂರ್ಣಾಂಕ max, ಪೂರ್ಣಾಂಕ persource, ಪೂರ್ಣಾಂಕ ipv4len, ಪೂರ್ಣಾಂಕ ipv6len,
+    ರಚನೆ ಪ್ರತಿ_ಮೂಲ_penalty *penalty_conf, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *penalty_exempt_conf)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
 	max_children = max;
 	ipv4_masklen = ipv4len;
 	ipv6_masklen = ipv6len;
 	max_persource = persource;
 	penalty_cfg = *penalty_conf;
-	if (penalty_cfg.max_sources4 < 0 || penalty_cfg.max_sources6 < 0)
+	ಆದರೆ (penalty_cfg.max_sources4 < 0 || penalty_cfg.max_sources6 < 0)
 		fatal_f("invalid max_sources"); /* shouldn't happen */
-	penalty_exempt = penalty_exempt_conf == NULL ?
-	    NULL : xstrdup(penalty_exempt_conf);
+	penalty_exempt = penalty_exempt_conf == ಖಾಲಿ ?
+	    ಖಾಲಿ : xstrdup(penalty_exempt_conf);
 	RB_INIT(&penalties_by_addr4);
 	RB_INIT(&penalties_by_expiry4);
 	RB_INIT(&penalties_by_addr6);
 	RB_INIT(&penalties_by_expiry6);
-	if (max_persource == INT_MAX)	/* no limit */
-		return;
+	ಆದರೆ (max_persource == ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)	/* no limit */
+		ಹಿಂತಿರುಗಿ;
 	debug("%s: max connections %d, per source %d, masks %d,%d", __func__,
 	    max, persource, ipv4len, ipv6len);
-	if (max <= 0)
+	ಆದರೆ (max <= 0)
 		fatal_f("invalid number of sockets: %d", max);
-	children = xcalloc(max_children, sizeof(*children));
-	for (i = 0; i < max_children; i++)
+	children = xcalloc(max_children, ಗಾತ್ರ(*children));
+	ಗಾಗಿ (i = 0; i < max_children; i++)
 		children[i].id = -1;
 }
 
 /* returns 1 if connection allowed, 0 if not allowed. */
-int
-srclimit_check_allow(int sock, int id)
+ಪೂರ್ಣಾಂಕ
+srclimit_check_allow(ಪೂರ್ಣಾಂಕ sock, ಪೂರ್ಣಾಂಕ id)
 {
-	struct xaddr xa, xb;
-	int i, bits, first_unused, count = 0;
-	char xas[NI_MAXHOST];
+	ರಚನೆ xaddr xa, xb;
+	ಪೂರ್ಣಾಂಕ i, ಬಿಟ್ಟುಗಳು, ಮೊದಲ_ಬಳಸದ, ಎಣಿಕೆ_2 = 0;
+	ಅಕ್ಷರ xas[NI_MAXHOST];
 
-	if (max_persource == INT_MAX)	/* no limit */
-		return 1;
+	ಆದರೆ (max_persource == ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)	/* no limit */
+		ಹಿಂತಿರುಗಿ 1;
 
 	debug_f("sock %d id %d limit %d", sock, id, max_persource);
-	if (srclimit_peer_addr(sock, &xa) != 0)
-		return 1;
-	bits = xa.af == AF_INET ? ipv4_masklen : ipv6_masklen;
-	if (srclimit_mask_addr(&xa, bits, &xb) != 0)
-		return 1;
+	ಆದರೆ (srclimit_peer_addr(sock, &xa) != 0)
+		ಹಿಂತಿರುಗಿ 1;
+	ಬಿಟ್ಟುಗಳು = xa.af == AF_INET ? ipv4_masklen : ipv6_masklen;
+	ಆದರೆ (srclimit_ಮುಖವಾಡ_addr(&xa, ಬಿಟ್ಟುಗಳು, &xb) != 0)
+		ಹಿಂತಿರುಗಿ 1;
 
-	first_unused = max_children;
+	ಮೊದಲ_ಬಳಸದ = max_children;
 	/* Count matching entries and find first unused one. */
-	for (i = 0; i < max_children; i++) {
-		if (children[i].id == -1) {
-			if (i < first_unused)
-				first_unused = i;
-		} else if (addr_cmp(&children[i].addr, &xb) == 0) {
-			count++;
+	ಗಾಗಿ (i = 0; i < max_children; i++) {
+		ಆದರೆ (children[i].id == -1) {
+			ಆದರೆ (i < ಮೊದಲ_ಬಳಸದ)
+				ಮೊದಲ_ಬಳಸದ = i;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (addr_cmp(&children[i].addr, &xb) == 0) {
+			ಎಣಿಕೆ_2++;
 		}
 	}
-	if (addr_ntop(&xa, xas, sizeof(xas)) != 0) {
+	ಆದರೆ (addr_ntop(&xa, xas, ಗಾತ್ರ(xas)) != 0) {
 		debug3_f("addr ntop failed");
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 	debug3("%s: new unauthenticated connection from %s/%d, at %d of %d",
-	    __func__, xas, bits, count, max_persource);
+	    __func__, xas, ಬಿಟ್ಟುಗಳು, ಎಣಿಕೆ_2, max_persource);
 
-	if (first_unused == max_children) { /* no free slot found */
+	ಆದರೆ (ಮೊದಲ_ಬಳಸದ == max_children) { /* no free slot found */
 		debug3_f("no free slot");
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (first_unused < 0 || first_unused >= max_children)
+	ಆದರೆ (ಮೊದಲ_ಬಳಸದ < 0 || ಮೊದಲ_ಬಳಸದ >= max_children)
 		fatal("%s: internal error: first_unused out of range",
 		    __func__);
 
-	if (count >= max_persource)
-		return 0;
+	ಆದರೆ (ಎಣಿಕೆ_2 >= max_persource)
+		ಹಿಂತಿರುಗಿ 0;
 
 	/* Connection allowed, store masked address. */
-	children[first_unused].id = id;
-	memcpy(&children[first_unused].addr, &xb, sizeof(xb));
-	return 1;
+	children[ಮೊದಲ_ಬಳಸದ].id = id;
+	ಸ್ಮರಣೆ_ನಕಲು(&children[ಮೊದಲ_ಬಳಸದ].addr, &xb, ಗಾತ್ರ(xb));
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-void
-srclimit_done(int id)
+ಶೂನ್ಯ
+srclimit_ಮುಗಿದ(ಪೂರ್ಣಾಂಕ id)
 {
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
-	if (max_persource == INT_MAX)	/* no limit */
-		return;
+	ಆದರೆ (max_persource == ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)	/* no limit */
+		ಹಿಂತಿರುಗಿ;
 
 	debug_f("id %d", id);
 	/* Clear corresponding state entry. */
-	for (i = 0; i < max_children; i++) {
-		if (children[i].id == id) {
+	ಗಾಗಿ (i = 0; i < max_children; i++) {
+		ಆದರೆ (children[i].id == id) {
 			children[i].id = -1;
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 	}
 }
 
-static int
-penalty_addr_cmp(struct penalty *a, struct penalty *b)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+penalty_addr_cmp(ರಚನೆ penalty *a, ರಚನೆ penalty *b)
 {
-	return addr_cmp(&a->addr, &b->addr);
+	ಹಿಂತಿರುಗಿ addr_cmp(&a->addr, &b->addr);
 	/* Addresses must be unique in by_addr, so no need to tiebreak */
 }
 
-static int
-penalty_expiry_cmp(struct penalty *a, struct penalty *b)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+penalty_expiry_cmp(ರಚನೆ penalty *a, ರಚನೆ penalty *b)
 {
-	if (a->expiry != b->expiry)
-		return a->expiry < b->expiry ? -1 : 1;
+	ಆದರೆ (a->expiry != b->expiry)
+		ಹಿಂತಿರುಗಿ a->expiry < b->expiry ? -1 : 1;
 	/* Tiebreak on addresses */
-	return addr_cmp(&a->addr, &b->addr);
+	ಹಿಂತಿರುಗಿ addr_cmp(&a->addr, &b->addr);
 }
 
-static void
-expire_penalties_from_tree(double now, const char *t,
-    struct penalties_by_expiry *by_expiry,
-    struct penalties_by_addr *by_addr, size_t *npenaltiesp)
+ಸ್ಥಿರ ಶೂನ್ಯ
+expire_penalties_from_ವೃಕ್ಷ(ದ್ವಿಗುಣ now, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *t,
+    ರಚನೆ penalties_by_expiry *by_expiry,
+    ರಚನೆ penalties_by_addr *by_addr, ಗಾತ್ರ_t *npenaltiesp)
 {
-	struct penalty *penalty, *tmp;
+	ರಚನೆ penalty *penalty, *tmp;
 
 	/* XXX avoid full scan of tree, e.g. min-heap */
-	RB_FOREACH_SAFE(penalty, penalties_by_expiry, by_expiry, tmp) {
-		if (penalty->expiry >= now)
-			break;
-		if (RB_REMOVE(penalties_by_expiry, by_expiry,
+	RB_FOREACH_ಸುರಕ್ಷಿತ(penalty, penalties_by_expiry, by_expiry, tmp) {
+		ಆದರೆ (penalty->expiry >= now)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (RB_REMOVE(penalties_by_expiry, by_expiry,
 		    penalty) != penalty ||
 		    RB_REMOVE(penalties_by_addr, by_addr,
 		    penalty) != penalty)
 			fatal_f("internal error: %s penalty table corrupt", t);
-		free(penalty);
-		if ((*npenaltiesp)-- == 0)
+		ಬಿಡುಗಡೆ(penalty);
+		ಆದರೆ ((*npenaltiesp)-- == 0)
 			fatal_f("internal error: %s npenalties underflow", t);
 	}
 }
 
-static void
-expire_penalties(double now)
+ಸ್ಥಿರ ಶೂನ್ಯ
+expire_penalties(ದ್ವಿಗುಣ now)
 {
-	expire_penalties_from_tree(now, "ipv4",
+	expire_penalties_from_ವೃಕ್ಷ(now, "ipv4",
 	    &penalties_by_expiry4, &penalties_by_addr4, &npenalties4);
-	expire_penalties_from_tree(now, "ipv6",
+	expire_penalties_from_ವೃಕ್ಷ(now, "ipv6",
 	    &penalties_by_expiry6, &penalties_by_addr6, &npenalties6);
 }
 
-static void
-addr_masklen_ntop(struct xaddr *addr, int masklen, char *s, size_t slen)
+ಸ್ಥಿರ ಶೂನ್ಯ
+addr_masklen_ntop(ರಚನೆ xaddr *addr, ಪೂರ್ಣಾಂಕ masklen, ಅಕ್ಷರ *s, ಗಾತ್ರ_t slen)
 {
-	size_t o;
+	ಗಾತ್ರ_t o;
 
-	if (addr_ntop(addr, s, slen) != 0) {
+	ಆದರೆ (addr_ntop(addr, s, slen) != 0) {
 		strlcpy(s, "UNKNOWN", slen);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
-	if ((o = strlen(s)) < slen)
+	ಆದರೆ ((o = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s)) < slen)
 		snprintf(s + o, slen - o, "/%d", masklen);
 }
 
-int
-srclimit_penalty_check_allow(int sock, const char **reason)
+ಪೂರ್ಣಾಂಕ
+srclimit_penalty_check_allow(ಪೂರ್ಣಾಂಕ sock, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **reason)
 {
-	struct xaddr addr;
-	struct penalty find, *penalty;
-	double now;
-	int bits, max_sources, overflow_mode;
-	char addr_s[NI_MAXHOST];
-	struct penalties_by_addr *by_addr;
-	size_t npenalties;
+	ರಚನೆ xaddr addr;
+	ರಚನೆ penalty ಕಂಡುಹಿಡಿ, *penalty;
+	ದ್ವಿಗುಣ now;
+	ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು, max_sources, ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ;
+	ಅಕ್ಷರ addr_s[NI_MAXHOST];
+	ರಚನೆ penalties_by_addr *by_addr;
+	ಗಾತ್ರ_t npenalties;
 
-	if (!penalty_cfg.enabled)
-		return 1;
-	if (srclimit_peer_addr(sock, &addr) != 0)
-		return 1;
-	if (penalty_exempt != NULL) {
-		if (addr_ntop(&addr, addr_s, sizeof(addr_s)) != 0)
-			return 1; /* shouldn't happen */
-		if (addr_match_list(addr_s, penalty_exempt) == 1) {
-			return 1;
+	ಆದರೆ (!penalty_cfg.enabled)
+		ಹಿಂತಿರುಗಿ 1;
+	ಆದರೆ (srclimit_peer_addr(sock, &addr) != 0)
+		ಹಿಂತಿರುಗಿ 1;
+	ಆದರೆ (penalty_exempt != ಖಾಲಿ) {
+		ಆದರೆ (addr_ntop(&addr, addr_s, ಗಾತ್ರ(addr_s)) != 0)
+			ಹಿಂತಿರುಗಿ 1; /* shouldn't happen */
+		ಆದರೆ (addr_ಹೊಂದಿಕೆ_list(addr_s, penalty_exempt) == 1) {
+			ಹಿಂತಿರುಗಿ 1;
 		}
 	}
 	now = monotime_double();
@@ -283,128 +283,128 @@ srclimit_penalty_check_allow(int sock, const char **reason)
 	    &penalties_by_addr4 : &penalties_by_addr6;
 	max_sources = addr.af == AF_INET ?
 	    penalty_cfg.max_sources4 : penalty_cfg.max_sources6;
-	overflow_mode = addr.af == AF_INET ?
-	    penalty_cfg.overflow_mode : penalty_cfg.overflow_mode6;
+	ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ = addr.af == AF_INET ?
+	    penalty_cfg.ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ : penalty_cfg.ಅತಿಪ್ರವಾಹ_mode6;
 	npenalties = addr.af == AF_INET ?  npenalties4 : npenalties6;
-	if (npenalties >= (size_t)max_sources &&
-	    overflow_mode == PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL) {
+	ಆದರೆ (npenalties >= (ಗಾತ್ರ_t)max_sources &&
+	    ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ == ಪ್ರತಿ_ಮೂಲ_PENALTY_ಅತಿಪ್ರವಾಹ_DENY_ALL) {
 		*reason = "too many penalised addresses";
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	bits = addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
-	memset(&find, 0, sizeof(find));
-	if (srclimit_mask_addr(&addr, bits, &find.addr) != 0)
-		return 1;
-	if ((penalty = RB_FIND(penalties_by_addr, by_addr, &find)) == NULL)
-		return 1; /* no penalty */
-	if (penalty->expiry < now) {
+	ಬಿಟ್ಟುಗಳು = addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
+	memset(&ಕಂಡುಹಿಡಿ, 0, ಗಾತ್ರ(ಕಂಡುಹಿಡಿ));
+	ಆದರೆ (srclimit_ಮುಖವಾಡ_addr(&addr, ಬಿಟ್ಟುಗಳು, &ಕಂಡುಹಿಡಿ.addr) != 0)
+		ಹಿಂತಿರುಗಿ 1;
+	ಆದರೆ ((penalty = RB_ಕಂಡುಹಿಡಿ(penalties_by_addr, by_addr, &ಕಂಡುಹಿಡಿ)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 1; /* no penalty */
+	ಆದರೆ (penalty->expiry < now) {
 		expire_penalties(now);
-		return 1; /* expired penalty */
+		ಹಿಂತಿರುಗಿ 1; /* expired penalty */
 	}
-	if (!penalty->active)
-		return 1; /* Penalty hasn't hit activation threshold yet */
+	ಆದರೆ (!penalty->ಸಕ್ರಿಯ)
+		ಹಿಂತಿರುಗಿ 1; /* Penalty hasn't hit activation threshold yet */
 	*reason = penalty->reason;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void
-srclimit_early_expire_penalties_from_tree(const char *t,
-    struct penalties_by_expiry *by_expiry,
-    struct penalties_by_addr *by_addr, size_t *npenaltiesp, size_t max_sources)
+ಸ್ಥಿರ ಶೂನ್ಯ
+srclimit_early_expire_penalties_from_ವೃಕ್ಷ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *t,
+    ರಚನೆ penalties_by_expiry *by_expiry,
+    ರಚನೆ penalties_by_addr *by_addr, ಗಾತ್ರ_t *npenaltiesp, ಗಾತ್ರ_t max_sources)
 {
-	struct penalty *p = NULL;
-	int bits;
-	char s[NI_MAXHOST + 4];
+	ರಚನೆ penalty *p = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು;
+	ಅಕ್ಷರ s[NI_MAXHOST + 4];
 
 	/* Delete the soonest-to-expire penalties. */
-	while (*npenaltiesp > max_sources) {
-		if ((p = RB_MIN(penalties_by_expiry, by_expiry)) == NULL)
+	ಆಗ (*npenaltiesp > max_sources) {
+		ಆದರೆ ((p = RB_MIN(penalties_by_expiry, by_expiry)) == ಖಾಲಿ)
 			fatal_f("internal error: %s table corrupt (find)", t);
-		bits = p->addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
-		addr_masklen_ntop(&p->addr, bits, s, sizeof(s));
+		ಬಿಟ್ಟುಗಳು = p->addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
+		addr_masklen_ntop(&p->addr, ಬಿಟ್ಟುಗಳು, s, ಗಾತ್ರ(s));
 		debug3_f("%s overflow, remove %s", t, s);
-		if (RB_REMOVE(penalties_by_expiry, by_expiry, p) != p ||
+		ಆದರೆ (RB_REMOVE(penalties_by_expiry, by_expiry, p) != p ||
 		    RB_REMOVE(penalties_by_addr, by_addr, p) != p)
 			fatal_f("internal error: %s table corrupt (remove)", t);
-		free(p);
+		ಬಿಡುಗಡೆ(p);
 		(*npenaltiesp)--;
 	}
 }
 
-static void
-srclimit_early_expire_penalties(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+srclimit_early_expire_penalties(ಶೂನ್ಯ)
 {
-	srclimit_early_expire_penalties_from_tree("ipv4",
+	srclimit_early_expire_penalties_from_ವೃಕ್ಷ("ipv4",
 	    &penalties_by_expiry4, &penalties_by_addr4, &npenalties4,
-	    (size_t)penalty_cfg.max_sources4);
-	srclimit_early_expire_penalties_from_tree("ipv6",
+	    (ಗಾತ್ರ_t)penalty_cfg.max_sources4);
+	srclimit_early_expire_penalties_from_ವೃಕ್ಷ("ipv6",
 	    &penalties_by_expiry6, &penalties_by_addr6, &npenalties6,
-	    (size_t)penalty_cfg.max_sources6);
+	    (ಗಾತ್ರ_t)penalty_cfg.max_sources6);
 }
 
-void
-srclimit_penalise(struct xaddr *addr, int penalty_type)
+ಶೂನ್ಯ
+srclimit_penalise(ರಚನೆ xaddr *addr, ಪೂರ್ಣಾಂಕ penalty_type)
 {
-	struct xaddr masked;
-	struct penalty *penalty = NULL, *existing = NULL;
-	double now;
-	int bits, max_sources = 0, overflow_mode;
-	double penalty_secs;
-	char addrnetmask[NI_MAXHOST + 4];
-	const char *reason = NULL, *t;
-	size_t *npenaltiesp = NULL;
-	struct penalties_by_addr *by_addr = NULL;
-	struct penalties_by_expiry *by_expiry = NULL;
+	ರಚನೆ xaddr masked;
+	ರಚನೆ penalty *penalty = ಖಾಲಿ, *existing = ಖಾಲಿ;
+	ದ್ವಿಗುಣ now;
+	ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು, max_sources = 0, ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ;
+	ದ್ವಿಗುಣ penalty_secs;
+	ಅಕ್ಷರ addrnetmask[NI_MAXHOST + 4];
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *reason = ಖಾಲಿ, *t;
+	ಗಾತ್ರ_t *npenaltiesp = ಖಾಲಿ;
+	ರಚನೆ penalties_by_addr *by_addr = ಖಾಲಿ;
+	ರಚನೆ penalties_by_expiry *by_expiry = ಖಾಲಿ;
 
-	if (!penalty_cfg.enabled)
-		return;
-	if (penalty_exempt != NULL) {
-		if (addr_ntop(addr, addrnetmask, sizeof(addrnetmask)) != 0)
-			return; /* shouldn't happen */
-		if (addr_match_list(addrnetmask, penalty_exempt) == 1) {
+	ಆದರೆ (!penalty_cfg.enabled)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (penalty_exempt != ಖಾಲಿ) {
+		ಆದರೆ (addr_ntop(addr, addrnetmask, ಗಾತ್ರ(addrnetmask)) != 0)
+			ಹಿಂತಿರುಗಿ; /* shouldn't happen */
+		ಆದರೆ (addr_ಹೊಂದಿಕೆ_list(addrnetmask, penalty_exempt) == 1) {
 			debug3_f("address %s is exempt", addrnetmask);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 	}
 
-	switch (penalty_type) {
-	case SRCLIMIT_PENALTY_NONE:
-		return;
-	case SRCLIMIT_PENALTY_CRASH:
+	ಆಯ್ಕೆ (penalty_type) {
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_NONE:
+		ಹಿಂತಿರುಗಿ;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_CRASH:
 		penalty_secs = penalty_cfg.penalty_crash;
 		reason = "penalty: caused crash";
-		break;
-	case SRCLIMIT_PENALTY_AUTHFAIL:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_AUTHFAIL:
 		penalty_secs = penalty_cfg.penalty_authfail;
 		reason = "penalty: failed authentication";
-		break;
-	case SRCLIMIT_PENALTY_NOAUTH:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_NOAUTH:
 		penalty_secs = penalty_cfg.penalty_noauth;
 		reason = "penalty: connections without attempting authentication";
-		break;
-	case SRCLIMIT_PENALTY_INVALIDUSER:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_INVALIDUSER:
 		penalty_secs = penalty_cfg.penalty_invaliduser;
 		reason = "penalty: attempted authentication by invalid user";
-		break;
-	case SRCLIMIT_PENALTY_REFUSECONNECTION:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_REFUSECONNECTION:
 		penalty_secs = penalty_cfg.penalty_refuseconnection;
 		reason = "penalty: connection prohibited by RefuseConnection";
-		break;
-	case SRCLIMIT_PENALTY_GRACE_EXCEEDED:
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ SRCLIMIT_PENALTY_GRACE_EXCEEDED:
 		penalty_secs = penalty_cfg.penalty_grace;
 		reason = "penalty: exceeded LoginGraceTime";
-		break;
-	default:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		fatal_f("internal error: unknown penalty %d", penalty_type);
 	}
 
-	if (penalty_secs <= 0)
-		return;
+	ಆದರೆ (penalty_secs <= 0)
+		ಹಿಂತಿರುಗಿ;
 
-	bits = addr->af == AF_INET ? ipv4_masklen : ipv6_masklen;
-	if (srclimit_mask_addr(addr, bits, &masked) != 0)
-		return;
-	addr_masklen_ntop(addr, bits, addrnetmask, sizeof(addrnetmask));
+	ಬಿಟ್ಟುಗಳು = addr->af == AF_INET ? ipv4_masklen : ipv6_masklen;
+	ಆದರೆ (srclimit_ಮುಖವಾಡ_addr(addr, ಬಿಟ್ಟುಗಳು, &masked) != 0)
+		ಹಿಂತಿರುಗಿ;
+	addr_masklen_ntop(addr, ಬಿಟ್ಟುಗಳು, addrnetmask, ಗಾತ್ರ(addrnetmask));
 
 	now = monotime_double();
 	expire_penalties(now);
@@ -414,89 +414,89 @@ srclimit_penalise(struct xaddr *addr, int penalty_type)
 	    &penalties_by_addr4 : &penalties_by_addr6;
 	max_sources = addr->af == AF_INET ?
 	    penalty_cfg.max_sources4 : penalty_cfg.max_sources6;
-	overflow_mode = addr->af == AF_INET ?
-	    penalty_cfg.overflow_mode : penalty_cfg.overflow_mode6;
+	ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ = addr->af == AF_INET ?
+	    penalty_cfg.ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ : penalty_cfg.ಅತಿಪ್ರವಾಹ_mode6;
 	npenaltiesp = addr->af == AF_INET ?  &npenalties4 : &npenalties6;
 	t = addr->af == AF_INET ? "ipv4" : "ipv6";
-	if (*npenaltiesp >= (size_t)max_sources &&
-	    overflow_mode == PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL) {
+	ಆದರೆ (*npenaltiesp >= (ಗಾತ್ರ_t)max_sources &&
+	    ಅತಿಪ್ರವಾಹ_ಬಹುಲಕ == ಪ್ರತಿ_ಮೂಲ_PENALTY_ಅತಿಪ್ರವಾಹ_DENY_ALL) {
 		verbose_f("%s penalty table full, cannot penalise %s for %s", t,
 		    addrnetmask, reason);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	penalty = xcalloc(1, sizeof(*penalty));
+	penalty = xcalloc(1, ಗಾತ್ರ(*penalty));
 	penalty->addr = masked;
 	penalty->expiry = now + penalty_secs;
 	penalty->reason = reason;
-	if ((existing = RB_INSERT(penalties_by_addr, by_addr,
-	    penalty)) == NULL) {
+	ಆದರೆ ((existing = RB_ಸೇರಿಸು(penalties_by_addr, by_addr,
+	    penalty)) == ಖಾಲಿ) {
 		/* penalty didn't previously exist */
-		if (penalty_secs > penalty_cfg.penalty_min)
-			penalty->active = 1;
-		if (RB_INSERT(penalties_by_expiry, by_expiry, penalty) != NULL)
+		ಆದರೆ (penalty_secs > penalty_cfg.penalty_min)
+			penalty->ಸಕ್ರಿಯ = 1;
+		ಆದರೆ (RB_ಸೇರಿಸು(penalties_by_expiry, by_expiry, penalty) != ಖಾಲಿ)
 			fatal_f("internal error: %s penalty tables corrupt", t);
-		do_log2_f(penalty->active ?
+		do_log2_f(penalty->ಸಕ್ರಿಯ ?
 		    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_VERBOSE,
 		    "%s: new %s %s penalty of %.3f seconds for %s", t,
-		    addrnetmask, penalty->active ? "active" : "deferred",
+		    addrnetmask, penalty->ಸಕ್ರಿಯ ? "active" : "deferred",
 		    penalty_secs, reason);
-		if (++(*npenaltiesp) > (size_t)max_sources)
+		ಆದರೆ (++(*npenaltiesp) > (ಗಾತ್ರ_t)max_sources)
 			srclimit_early_expire_penalties(); /* permissive */
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	debug_f("%s penalty for %s %s already exists, %lld seconds remaining",
-	    existing->active ? "active" : "inactive", t,
-	    addrnetmask, (long long)(existing->expiry - now));
+	    existing->ಸಕ್ರಿಯ ? "active" : "inactive", t,
+	    addrnetmask, (ದೀರ್ಘ ದೀರ್ಘ)(existing->expiry - now));
 	/* Expiry information is about to change, remove from tree */
-	if (RB_REMOVE(penalties_by_expiry, by_expiry, existing) != existing)
+	ಆದರೆ (RB_REMOVE(penalties_by_expiry, by_expiry, existing) != existing)
 		fatal_f("internal error: %s penalty table corrupt (remove)", t);
 	/* An entry already existed. Accumulate penalty up to maximum */
 	existing->expiry += penalty_secs;
-	if (existing->expiry - now > penalty_cfg.penalty_max)
+	ಆದರೆ (existing->expiry - now > penalty_cfg.penalty_max)
 		existing->expiry = now + penalty_cfg.penalty_max;
-	if (existing->expiry - now > penalty_cfg.penalty_min &&
-	    !existing->active) {
+	ಆದರೆ (existing->expiry - now > penalty_cfg.penalty_min &&
+	    !existing->ಸಕ್ರಿಯ) {
 		logit_f("%s: activating %s penalty of %.3f seconds for %s",
 		    addrnetmask, t, existing->expiry - now, reason);
-		existing->active = 1;
+		existing->ಸಕ್ರಿಯ = 1;
 	}
 	existing->reason = penalty->reason;
-	free(penalty);
-	penalty = NULL;
+	ಬಿಡುಗಡೆ(penalty);
+	penalty = ಖಾಲಿ;
 	/* Re-insert into expiry tree */
-	if (RB_INSERT(penalties_by_expiry, by_expiry, existing) != NULL)
+	ಆದರೆ (RB_ಸೇರಿಸು(penalties_by_expiry, by_expiry, existing) != ಖಾಲಿ)
 		fatal_f("internal error: %s penalty table corrupt (insert)", t);
 }
 
-static void
-srclimit_penalty_info_for_tree(const char *t,
-    struct penalties_by_expiry *by_expiry, size_t npenalties)
+ಸ್ಥಿರ ಶೂನ್ಯ
+srclimit_penalty_info_for_ವೃಕ್ಷ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *t,
+    ರಚನೆ penalties_by_expiry *by_expiry, ಗಾತ್ರ_t npenalties)
 {
-	struct penalty *p = NULL;
-	int bits;
-	char s[NI_MAXHOST + 4];
-	double now;
+	ರಚನೆ penalty *p = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ ಬಿಟ್ಟುಗಳು;
+	ಅಕ್ಷರ s[NI_MAXHOST + 4];
+	ದ್ವಿಗುಣ now;
 
 	now = monotime_double();
 	logit("%zu active %s penalties", npenalties, t);
 	RB_FOREACH(p, penalties_by_expiry, by_expiry) {
-		bits = p->addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
-		addr_masklen_ntop(&p->addr, bits, s, sizeof(s));
-		if (p->expiry < now)
+		ಬಿಟ್ಟುಗಳು = p->addr.af == AF_INET ? ipv4_masklen : ipv6_masklen;
+		addr_masklen_ntop(&p->addr, ಬಿಟ್ಟುಗಳು, s, ಗಾತ್ರ(s));
+		ಆದರೆ (p->expiry < now)
 			logit("client %s %s (expired)", s, p->reason);
-		else {
+		ಇಲ್ಲದಿದ್ದರೆ {
 			logit("client %s %s (%.3f secs left)", s, p->reason,
 			   p->expiry - now);
 		}
 	}
 }
 
-void
-srclimit_penalty_info(void)
+ಶೂನ್ಯ
+srclimit_penalty_info(ಶೂನ್ಯ)
 {
-	srclimit_penalty_info_for_tree("ipv4",
+	srclimit_penalty_info_for_ವೃಕ್ಷ("ipv4",
 	    &penalties_by_expiry4, npenalties4);
-	srclimit_penalty_info_for_tree("ipv6",
+	srclimit_penalty_info_for_ವೃಕ್ಷ("ipv6",
 	    &penalties_by_expiry6, npenalties6);
 }

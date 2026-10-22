@@ -16,38 +16,38 @@
 
 /* Address handling routines */
 
-#ifndef _ADDR_H
-#define _ADDR_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _ADDR_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
 
-struct xaddr {
+ರಚನೆ xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	ಒಕ್ಕೂಟ {
+		ರಚನೆ in_addr		v4;
+		ರಚನೆ in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
 	} xa;		    /* 128-bit address */
 	uint32_t	scope_id;	/* iface scope id for v6 */
-#define v4	xa.v4
-#define v6	xa.v6
-#define addr8	xa.addr8
-#define addr16	xa.addr16
-#define addr32	xa.addr32
+#ವ್ಯಾಖ್ಯಾನಿಸು v4	xa.v4
+#ವ್ಯಾಖ್ಯಾನಿಸು v6	xa.v6
+#ವ್ಯಾಖ್ಯಾನಿಸು addr8	xa.addr8
+#ವ್ಯಾಖ್ಯಾನಿಸು addr16	xa.addr16
+#ವ್ಯಾಖ್ಯಾನಿಸು addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+ಪೂರ್ಣಾಂಕ addr_sa_ಗಮ್ಯ_xaddr(ರಚನೆ sockaddr *sa, socklen_t slen, ರಚನೆ xaddr *xa);
+ಪೂರ್ಣಾಂಕ addr_netmask(ಪೂರ್ಣಾಂಕ af, u_int l, ರಚನೆ xaddr *n);
+ಪೂರ್ಣಾಂಕ addr_pton(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p, ರಚನೆ xaddr *n);
+ಪೂರ್ಣಾಂಕ addr_pton_cidr(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p, ರಚನೆ xaddr *n, u_int *l);
+ಪೂರ್ಣಾಂಕ addr_ntop(ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *n, ಅಕ್ಷರ *p, ಗಾತ್ರ_t len);
+ಪೂರ್ಣಾಂಕ addr_and(ರಚನೆ xaddr *dst, ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *a, ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *b);
+ಪೂರ್ಣಾಂಕ addr_cmp(ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *a, ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *b);
+ಪೂರ್ಣಾಂಕ addr_host_ಗಮ್ಯ_all1s(ರಚನೆ xaddr *a, u_int masklen);
+ಪೂರ್ಣಾಂಕ addr_netmatch(ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *host, ಸ್ಥಿರಾಂಕ ರಚನೆ xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
-#endif /* _ADDR_H */
+ಶೂನ್ಯ addr_increment(ರಚನೆ xaddr *a);
+#ಆದರೆ_ಅಂತ್ಯ /* _ADDR_H */

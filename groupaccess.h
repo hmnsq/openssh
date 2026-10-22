@@ -24,12 +24,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GROUPACCESS_H
-#define GROUPACCESS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ GROUPACCESS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+ಪೂರ್ಣಾಂಕ	 ga_init(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, gid_t);
+ಪೂರ್ಣಾಂಕ	 ga_ಹೊಂದಿಕೆ(ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 ga_ಹೊಂದಿಕೆ_ನಮೂನೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ	 ga_free(ಶೂನ್ಯ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

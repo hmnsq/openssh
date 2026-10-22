@@ -14,85 +14,85 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdarg.h>
-#include <unistd.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#if !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
-int
+#ಆದರೆ !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
+ಪೂರ್ಣಾಂಕ
 setresgid(gid_t rgid, gid_t egid, gid_t sgid)
 {
-	int ret = 0, saved_errno;
+	ಪೂರ್ಣಾಂಕ ret = 0, saved_errno;
 
-	if (rgid != sgid) {
+	ಆದರೆ (rgid != sgid) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-#if defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
-	if (setregid(rgid, egid) < 0) {
+#ಆದರೆ defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
+	ಆದರೆ (setregid(rgid, egid) < 0) {
 		saved_errno = errno;
 		error("setregid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
-	if (setegid(egid) < 0) {
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (setegid(egid) < 0) {
 		saved_errno = errno;
 		error("setegid %lu: %.100s", (u_long)egid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-	if (setgid(rgid) < 0) {
+	ಆದರೆ (setgid(rgid) < 0) {
 		saved_errno = errno;
 		error("setgid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#endif
-	return ret;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
-int
+#ಆದರೆ !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
+ಪೂರ್ಣಾಂಕ
 setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
-	int ret = 0, saved_errno;
+	ಪೂರ್ಣಾಂಕ ret = 0, saved_errno;
 
-	if (ruid != suid) {
+	ಆದರೆ (ruid != suid) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-#if defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
-	if (setreuid(ruid, euid) < 0) {
+#ಆದರೆ defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
+	ಆದರೆ (setreuid(ruid, euid) < 0) {
 		saved_errno = errno;
 		error("setreuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 
 # ifndef SETEUID_BREAKS_SETUID
-	if (seteuid(euid) < 0) {
+	ಆದರೆ (seteuid(euid) < 0) {
 		saved_errno = errno;
 		error("seteuid %lu: %.100s", (u_long)euid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 # endif
-	if (setuid(ruid) < 0) {
+	ಆದರೆ (setuid(ruid) < 0) {
 		saved_errno = errno;
 		error("setuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#endif
-	return ret;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

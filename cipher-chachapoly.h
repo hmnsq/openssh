@@ -15,26 +15,26 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef CHACHA_POLY_AEAD_H
-#define CHACHA_POLY_AEAD_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CHACHA_POLY_AEAD_H
+#ವ್ಯಾಖ್ಯಾನಿಸು CHACHA_POLY_AEAD_H
 
-#include <sys/types.h>
-#include "chacha.h"
-#include "poly1305.h"
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ "chacha.h"
+#ಅನ್ತರ್ಭಾವ "poly1305.h"
 
-#define CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
+#ವ್ಯಾಖ್ಯಾನಿಸು CHACHA_KEYLEN	32 /* Only 256 bit keys used here */
 
-struct chachapoly_ctx;
+ರಚನೆ chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+ರಚನೆ chachapoly_ctx *chachapoly_new(ಸ್ಥಿರಾಂಕ u_char *ಕೀಲಿ, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
-void chachapoly_free(struct chachapoly_ctx *cpctx);
+ಶೂನ್ಯ chachapoly_free(ರಚನೆ chachapoly_ctx *cpctx);
 
-int	chachapoly_crypt(struct chachapoly_ctx *cpctx, u_int seqnr,
-    u_char *dest, const u_char *src, u_int len, u_int aadlen, u_int authlen,
-    int do_encrypt);
-int	chachapoly_get_length(struct chachapoly_ctx *cpctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+ಪೂರ್ಣಾಂಕ	chachapoly_crypt(ರಚನೆ chachapoly_ctx *cpctx, u_int seqnr,
+    u_char *dest, ಸ್ಥಿರಾಂಕ u_char *src, u_int len, u_int aadlen, u_int authlen,
+    ಪೂರ್ಣಾಂಕ do_encrypt);
+ಪೂರ್ಣಾಂಕ	chachapoly_get_ಉದ್ದಳತೆ(ರಚನೆ chachapoly_ctx *cpctx,
+    u_int *plenp, u_int seqnr, ಸ್ಥಿರಾಂಕ u_char *cp, u_int len)
     __attribute__((__bounded__(__buffer__, 4, 5)));
 
-#endif /* CHACHA_POLY_AEAD_H */
+#ಆದರೆ_ಅಂತ್ಯ /* CHACHA_POLY_AEAD_H */

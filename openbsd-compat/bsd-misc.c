@@ -15,121 +15,121 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#ifdef HAVE_SYS_SELECT_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/ioctl.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_SELECT_H
 # include <sys/select.h>
-#endif
-#include <sys/time.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
 
-#include <fcntl.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#ifndef HAVE___PROGNAME
-char *__progname;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE___PROGNAME
+ಅಕ್ಷರ *__progname;
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+ಅಕ್ಷರ *ssh_get_progname(ಅಕ್ಷರ *argv0)
 {
-	char *p, *q;
-#ifdef HAVE___PROGNAME
-	extern char *__progname;
+	ಅಕ್ಷರ *p, *q;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE___PROGNAME
+	ಬಾಹ್ಯ ಅಕ್ಷರ *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (argv0 == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	ಆದರೆ (p == ಖಾಲಿ)
 		p = argv0;
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		p++;
-#endif
-	if ((q = strdup(p)) == NULL) {
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ ((q = strdup(p)) == ಖಾಲಿ) {
 		perror("strdup");
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
-	return q;
+	ಹಿಂತಿರುಗಿ q;
 }
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETLOGIN
+ಪೂರ್ಣಾಂಕ setlogin(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
-#endif /* !HAVE_SETLOGIN */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_INNETGR
+ಪೂರ್ಣಾಂಕ innetgr(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *netgroup, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host,
+	    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *domain)
 {
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
-#endif /* HAVE_INNETGR */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#ಆದರೆ !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+ಪೂರ್ಣಾಂಕ seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	ಹಿಂತಿರುಗಿ (setreuid(-1, euid));
 }
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#ಆದರೆ !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+ಪೂರ್ಣಾಂಕ setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	ಹಿಂತಿರುಗಿ(setresgid(-1, egid, -1));
 }
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#ಆದರೆ !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *strerror(ಪೂರ್ಣಾಂಕ e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ sys_nerr;
+	ಬಾಹ್ಯ ಅಕ್ಷರ *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	ಆದರೆ ((e >= 0) && (e < sys_nerr))
+		ಹಿಂತಿರುಗಿ (sys_errlist[e]);
 
-	return ("unlisted error");
+	ಹಿಂತಿರುಗಿ ("unlisted error");
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UTIMES
+ಪೂರ್ಣಾಂಕ utimes(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename, ರಚನೆ timeval *tvp)
 {
-	struct utimbuf ub;
+	ರಚನೆ utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	ಹಿಂತಿರುಗಿ (utime(filename, &ub));
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UTIMENSAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UTIMENSAT
 /*
  * A limited implementation of utimensat() that only implements the
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+ಪೂರ್ಣಾಂಕ
+utimensat(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ರಚನೆ timespec times[2],
+    ಪೂರ್ಣಾಂಕ flag)
 {
-	struct timeval tv[2];
+	ರಚನೆ timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಂಕ ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,169 +137,169 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	ಆದರೆ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	ಹಿಂತಿರುಗಿ utimes(ಮಾರ್ಗ, tv);
+# ಇಲ್ಲದಿದ್ದರೆ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಆದರೆ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ಆದರೆ ((fd = open(ಮಾರ್ಗ, oflags)) == -1)
+		ಹಿಂತಿರುಗಿ -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 # endif
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_DIRFD
-int
-dirfd(void *dir)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_DIRFD
+ಪೂರ್ಣಾಂಕ
+dirfd(ಶೂನ್ಯ *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FCHOWNAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FCHOWNAT
 /*
  * A limited implementation of fchownat() that only implements the
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+ಪೂರ್ಣಾಂಕ
+fchownat(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, uid_t owner, gid_t ಗುಂಪು, ಪೂರ್ಣಾಂಕ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಂಕ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ಆದರೆ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	ಹಿಂತಿರುಗಿ chown(ಮಾರ್ಗ, owner, ಗುಂಪು);
+# ಇಲ್ಲದಿದ್ದರೆ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಆದರೆ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
-	ret = fchown(fd, owner, group);
+	ಆದರೆ ((fd = open(ಮಾರ್ಗ, oflags)) == -1)
+		ಹಿಂತಿರುಗಿ -1;
+	ret = fchown(fd, owner, ಗುಂಪು);
 	close(fd);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 # endif
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FCHMODAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FCHMODAT
 /*
  * A limited implementation of fchmodat() that only implements the
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+ಪೂರ್ಣಾಂಕ
+fchmodat(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಬಹುಲಕ_t ಬಹುಲಕ, ಪೂರ್ಣಾಂಕ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ಪೂರ್ಣಾಂಕ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ಆದರೆ (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	ಹಿಂತಿರುಗಿ chmod(ಮಾರ್ಗ, ಬಹುಲಕ);
+# ಇಲ್ಲದಿದ್ದರೆ
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ಆದರೆ (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
-	ret = fchmod(fd, mode);
+	ಆದರೆ ((fd = open(ಮಾರ್ಗ, oflags)) == -1)
+		ಹಿಂತಿರುಗಿ -1;
+	ret = fchmod(fd, ಬಹುಲಕ);
 	close(fd);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 # endif
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FSTATAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FSTATAT
 /*
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+ಪೂರ್ಣಾಂಕ
+fstatat(ಪೂರ್ಣಾಂಕ dirfd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ರಚನೆ stat *sb, ಪೂರ್ಣಾಂಕ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ಆದರೆ (dirfd != AT_FDCWD && ಮಾರ್ಗ && ಮಾರ್ಗ[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	ಆದರೆ (flag == 0)
+		ಹಿಂತಿರುಗಿ stat(ಮಾರ್ಗ, sb);
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (flag == AT_SYMLINK_NOFOLLOW)
+		ಹಿಂತಿರುಗಿ lstat(ಮಾರ್ಗ, sb);
 	errno = ENOSYS;
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UNLINKAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNLINKAT
 /*
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+ಪೂರ್ಣಾಂಕ
+unlinkat(ಪೂರ್ಣಾಂಕ dirfd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಪೂರ್ಣಾಂಕ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ಆದರೆ (dirfd != AT_FDCWD && ಮಾರ್ಗ && ಮಾರ್ಗ[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	ಆದರೆ (flag == 0)
+		ಹಿಂತಿರುಗಿ unlink(ಮಾರ್ಗ);
 	errno = ENOSYS;
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TRUNCATE
+ಪೂರ್ಣಾಂಕ truncate(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, off_t ಉದ್ದಳತೆ)
 {
-	int fd, ret, saverrno;
+	ಪೂರ್ಣಾಂಕ fd, ret, saverrno;
 
-	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	fd = open(ಮಾರ್ಗ, O_WRONLY);
+	ಆದರೆ (fd < 0)
+		ಹಿಂತಿರುಗಿ (-1);
 
-	ret = ftruncate(fd, length);
+	ret = ftruncate(fd, ಉದ್ದಳತೆ);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	ಆದರೆ (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	ಹಿಂತಿರುಗಿ(ret);
 }
-#endif /* HAVE_TRUNCATE */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#ಆದರೆ !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+ಪೂರ್ಣಾಂಕ nanosleep(ಸ್ಥಿರಾಂಕ ರಚನೆ timespec *req, ರಚನೆ timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	ಪೂರ್ಣಾಂಕ rc, saverrno;
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ errno;
+	ರಚನೆ timeval tstart, tstop, tremain, time2wait;
 
-	TIMESPEC_TO_TIMEVAL(&time2wait, req)
-	(void) gettimeofday(&tstart, NULL);
-	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	TIMESPEC_ಗಮ್ಯ_TIMEVAL(&time2wait, req)
+	(ಶೂನ್ಯ) gettimeofday(&tstart, ಖಾಲಿ);
+	rc = select(0, ಖಾಲಿ, ಖಾಲಿ, ಖಾಲಿ, &time2wait);
+	ಆದರೆ (rc == -1) {
 		saverrno = errno;
-		(void) gettimeofday (&tstop, NULL);
+		(ಶೂನ್ಯ) gettimeofday (&tstop, ಖಾಲಿ);
 		errno = saverrno;
 		tremain.tv_sec = time2wait.tv_sec -
 			(tstop.tv_sec - tstart.tv_sec);
@@ -307,234 +307,234 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
-		TIMEVAL_TO_TIMESPEC(&tremain, rem)
+	ಆದರೆ (rem != ಖಾಲಿ)
+		TIMEVAL_ಗಮ್ಯ_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	ಹಿಂತಿರುಗಿ(rc);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#ಆದರೆ !defined(HAVE_USLEEP)
+ಪೂರ್ಣಾಂಕ usleep(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ useconds)
 {
-	struct timespec ts;
+	ರಚನೆ timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	ಹಿಂತಿರುಗಿ nanosleep(&ts, ಖಾಲಿ);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_TCGETPGRP
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(ಪೂರ್ಣಾಂಕ fd)
 {
-	int ctty_pgrp;
+	ಪೂರ್ಣಾಂಕ ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	ಆದರೆ (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		ಹಿಂತಿರುಗಿ(-1);
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ(ctty_pgrp);
 }
-#endif /* HAVE_TCGETPGRP */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_TCGETPGRP */
 
-#ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TCSENDBREAK
+ಪೂರ್ಣಾಂಕ
+tcsendbreak(ಪೂರ್ಣಾಂಕ fd, ಪೂರ್ಣಾಂಕ duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# ಆದರೆ defined(TIOCSBRK) && defined(TIOCCBRK)
+	ರಚನೆ timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
-	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	ಆದರೆ (ioctl(fd, TIOCSBRK, 0) == -1)
+		ಹಿಂತಿರುಗಿ (-1);
+	(ಶೂನ್ಯ)select(0, 0, 0, 0, &sleepytime);
+	ಆದರೆ (ioctl(fd, TIOCCBRK, 0) == -1)
+		ಹಿಂತಿರುಗಿ (-1);
+	ಹಿಂತಿರುಗಿ (0);
+# ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ -1;
 # endif
 }
-#endif /* HAVE_TCSENDBREAK */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_TCSENDBREAK */
 
-#ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRDUP
+ಅಕ್ಷರ *
+strdup(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	size_t len;
-	char *cp;
+	ಗಾತ್ರ_t len;
+	ಅಕ್ಷರ *cp;
 
-	len = strlen(str) + 1;
-	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(str) + 1;
+	cp = ಸ್ಮರಣೆ_ಕೊಡು(len);
+	ಆದರೆ (cp != ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ(ಸ್ಮರಣೆ_ನಕಲು(cp, str, len));
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_ISBLANK
-int
-isblank(int c)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ISBLANK
+ಪೂರ್ಣಾಂಕ
+isblank(ಪೂರ್ಣಾಂಕ c)
 {
-	return (c == ' ' || c == '\t');
+	ಹಿಂತಿರುಗಿ (c == ' ' || c == '\t');
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_GETPGID
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_GETPGID
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
-#elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
-#endif
+#ಆದರೆ defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	ಹಿಂತಿರುಗಿ getpgrp(pid);
+#ಅಥವಾಆದರೆ defined(HAVE_GETPGRP)
+	ಆದರೆ (pid == 0)
+		ಹಿಂತಿರುಗಿ getpgrp();
+#ಆದರೆ_ಅಂತ್ಯ
 
 	errno = ESRCH;
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PLEDGE
+ಪೂರ್ಣಾಂಕ
+pledge(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *promises, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *execpromises)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNVEIL
+ಪೂರ್ಣಾಂಕ
+unveil(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *permissions)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_MBTOWC
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+ಪೂರ್ಣಾಂಕ
+mbtowc(wchar_t *pwc, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಗಾತ್ರ_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	ಆದರೆ (s == ಖಾಲಿ || *s == '\0')
+		ಹಿಂತಿರುಗಿ 0;	/* ASCII is not state-dependent */
+	ಆದರೆ (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (pwc != NULL)
+	ಆದರೆ (pwc != ಖಾಲಿ)
 		*pwc = *s;
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_LLABS
-long long
-llabs(long long j)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_LLABS
+ದೀರ್ಘ ದೀರ್ಘ
+llabs(ದೀರ್ಘ ದೀರ್ಘ j)
 {
-	return (j < 0 ? -j : j);
+	ಹಿಂತಿರುಗಿ (j < 0 ? -j : j);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_BZERO
-void
-bzero(void *b, size_t n)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_BZERO
+ಶೂನ್ಯ
+bzero(ಶೂನ್ಯ *b, ಗಾತ್ರ_t n)
 {
-	(void)memset(b, 0, n);
+	(ಶೂನ್ಯ)memset(b, 0, n);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_RAISE
-int
-raise(int sig)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_RAISE
+ಪೂರ್ಣಾಂಕ
+ಎತ್ತು(ಪೂರ್ಣಾಂಕ sig)
 {
-	return kill(getpid(), sig);
+	ಹಿಂತಿರುಗಿ kill(getpid(), sig);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_GETSID
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_GETSID
 pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_KILLPG
+ಪೂರ್ಣಾಂಕ
+killpg(pid_t pgrp, ಪೂರ್ಣಾಂಕ sig)
 {
-	return kill(pgrp, sig);
+	ಹಿಂತಿರುಗಿ kill(pgrp, sig);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef FFLUSH_NULL_BUG
-#undef fflush
-int _ssh_compat_fflush(FILE *f)
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ FFLUSH_NULL_BUG
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು fflush
+ಪೂರ್ಣಾಂಕ _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	ಪೂರ್ಣಾಂಕ r1, r2;
 
-	if (f == NULL) {
+	ಆದರೆ (f == ಖಾಲಿ) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		ಆದರೆ (r1 == -1 || r2 == -1)
+			ಹಿಂತಿರುಗಿ -1;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	return fflush(f);
+	ಹಿಂತಿರುಗಿ fflush(f);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_LOCALTIME_R
+ರಚನೆ tm *
+localtime_r(ಸ್ಥಿರಾಂಕ time_t *timep, ರಚನೆ tm *ಫಲಿತಾಂಶ)
 {
-	struct tm *tm = localtime(timep);
-	*result = *tm;
-	return result;
+	ರಚನೆ tm *tm = localtime(timep);
+	*ಫಲಿತಾಂಶ = *tm;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_CLOCK_GETTIME
+ಪೂರ್ಣಾಂಕ
+clock_gettime(clockid_t clockid, ರಚನೆ timespec *ts)
 {
-	struct timeval tv;
+	ರಚನೆ timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	ಆದರೆ (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (ts == NULL) {
+	ಆದರೆ (ts == ಖಾಲಿ) {
 		errno = EFAULT;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	ಆದರೆ (gettimeofday(&tv, ಖಾಲಿ) == -1)
+		ಹಿಂತಿರುಗಿ -1;
 
 	ts->tv_sec = tv.tv_sec;
-	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	ts->tv_nsec = (ದೀರ್ಘ)tv.tv_usec * 1000;
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ ASAN_OPTIONS
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *__asan_default_options(ಶೂನ್ಯ) {
+	ಹಿಂತಿರುಗಿ ASAN_OPTIONS;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ MSAN_OPTIONS
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *__msan_default_options(ಶೂನ್ಯ) {
+	ಹಿಂತಿರುಗಿ MSAN_OPTIONS;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

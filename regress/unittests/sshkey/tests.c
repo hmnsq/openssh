@@ -5,28 +5,28 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-void sshkey_tests(void);
-void sshkey_file_tests(void);
-void sshkey_fuzz_tests(void);
-void sshkey_benchmarks(void);
+ಶೂನ್ಯ sshkey_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshkey_file_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshkey_fuzz_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshkey_benchmarks(ಶೂನ್ಯ);
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
 	sshkey_tests();
 	sshkey_file_tests();
 	sshkey_fuzz_tests();
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
-	printf("\n");
+	ಬರೆ("\n");
 	sshkey_benchmarks();
 }

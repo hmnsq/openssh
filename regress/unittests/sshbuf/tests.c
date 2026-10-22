@@ -5,36 +5,36 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-void sshbuf_tests(void);
-void sshbuf_getput_basic_tests(void);
-void sshbuf_getput_crypto_tests(void);
-void sshbuf_misc_tests(void);
-void sshbuf_fuzz_tests(void);
-void sshbuf_getput_fuzz_tests(void);
-void sshbuf_fixed(void);
+ಶೂನ್ಯ sshbuf_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_getput_basic_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_getput_crypto_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_misc_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_fuzz_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_getput_fuzz_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ sshbuf_fixed(ಶೂನ್ಯ);
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
 	sshbuf_tests();
 	sshbuf_getput_basic_tests();
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 	sshbuf_getput_crypto_tests();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	sshbuf_misc_tests();
 	sshbuf_fuzz_tests();
 	sshbuf_getput_fuzz_tests();
 	sshbuf_fixed();
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
-	printf("no benchmarks\n");
+	ಬರೆ("no benchmarks\n");
 }

@@ -14,9 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef HAVE_SETRESGID
-int	setresgid(gid_t, gid_t, gid_t);
-#endif
-#ifndef HAVE_SETRESUID
-int	setresuid(uid_t, uid_t, uid_t);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETRESGID
+ಪೂರ್ಣಾಂಕ	setresgid(gid_t, gid_t, gid_t);
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETRESUID
+ಪೂರ್ಣಾಂಕ	setresuid(uid_t, uid_t, uid_t);
+#ಆದರೆ_ಅಂತ್ಯ

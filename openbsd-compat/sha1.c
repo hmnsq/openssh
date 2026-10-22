@@ -14,38 +14,38 @@
  *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+#ವ್ಯಾಖ್ಯಾನಿಸು rol(ಮೌಲ್ಯ, ಬಿಟ್ಟುಗಳು) (((ಮೌಲ್ಯ) << (ಬಿಟ್ಟುಗಳು)) | ((ಮೌಲ್ಯ) >> (32 - (ಬಿಟ್ಟುಗಳು))))
 
 /*
  * blk0() and blk() perform the initial expand.
  * I got the idea of expanding during the round function from SSLeay
  */
-#if BYTE_ORDER == LITTLE_ENDIAN
-# define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
-    |(rol(block->l[i],8)&0x00FF00FF))
-#else
-# define blk0(i) block->l[i]
-#endif
-#define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15]^block->l[(i+8)&15] \
-    ^block->l[(i+2)&15]^block->l[i&15],1))
+#ಆದರೆ BYTE_ORDER == LITTLE_ENDIAN
+# define blk0(i) (ಖಂಡ->l[i] = (rol(ಖಂಡ->l[i],24)&0xFF00FF00) \
+    |(rol(ಖಂಡ->l[i],8)&0x00FF00FF))
+#ಇಲ್ಲದಿದ್ದರೆ
+# define blk0(i) ಖಂಡ->l[i]
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು blk(i) (ಖಂಡ->l[i&15] = rol(ಖಂಡ->l[(i+13)&15]^ಖಂಡ->l[(i+8)&15] \
+    ^ಖಂಡ->l[(i+2)&15]^ಖಂಡ->l[i&15],1))
 
 /*
  * (R0+R1), R2, R3, R4 are the different operations (rounds) used in SHA1
  */
-#define R0(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk0(i)+0x5A827999+rol(v,5);w=rol(w,30);
-#define R1(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk(i)+0x5A827999+rol(v,5);w=rol(w,30);
-#define R2(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0x6ED9EBA1+rol(v,5);w=rol(w,30);
-#define R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
-#define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
+#ವ್ಯಾಖ್ಯಾನಿಸು R0(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk0(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#ವ್ಯಾಖ್ಯಾನಿಸು R1(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#ವ್ಯಾಖ್ಯಾನಿಸು R2(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0x6ED9EBA1+rol(v,5);w=rol(w,30);
+#ವ್ಯಾಖ್ಯಾನಿಸು R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
+#ವ್ಯಾಖ್ಯಾನಿಸು R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
 
-typedef union {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಒಕ್ಕೂಟ {
 	u_int8_t c[64];
 	u_int32_t l[16];
 } CHAR64LONG16;
@@ -53,14 +53,14 @@ typedef union {
 /*
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
-void
-SHA1Transform(u_int32_t state[5], const u_int8_t buffer[SHA1_BLOCK_LENGTH])
+ಶೂನ್ಯ
+SHA1Transform(u_int32_t state[5], ಸ್ಥಿರಾಂಕ u_int8_t ಬಫರ್[SHA1_ಖಂಡ_ಉದ್ದಳತೆ])
 {
 	u_int32_t a, b, c, d, e;
-	u_int8_t workspace[SHA1_BLOCK_LENGTH];
-	CHAR64LONG16 *block = (CHAR64LONG16 *)workspace;
+	u_int8_t workspace[SHA1_ಖಂಡ_ಉದ್ದಳತೆ];
+	CHAR64LONG16 *ಖಂಡ = (CHAR64LONG16 *)workspace;
 
-	(void)memcpy(block, buffer, SHA1_BLOCK_LENGTH);
+	(ಶೂನ್ಯ)ಸ್ಮರಣೆ_ನಕಲು(ಖಂಡ, ಬಫರ್, SHA1_ಖಂಡ_ಉದ್ದಳತೆ);
 
 	/* Copy context->state[] to working vars */
 	a = state[0];
@@ -107,12 +107,12 @@ DEF_WEAK(SHA1Transform);
 /*
  * SHA1Init - Initialize new context
  */
-void
+ಶೂನ್ಯ
 SHA1Init(SHA1_CTX *context)
 {
 
 	/* SHA1 initialization constants */
-	context->count = 0;
+	context->ಎಣಿಕೆ_2 = 0;
 	context->state[0] = 0x67452301;
 	context->state[1] = 0xEFCDAB89;
 	context->state[2] = 0x98BADCFE;
@@ -125,23 +125,23 @@ DEF_WEAK(SHA1Init);
 /*
  * Run your data through this.
  */
-void
-SHA1Update(SHA1_CTX *context, const u_int8_t *data, size_t len)
+ಶೂನ್ಯ
+SHA1Update(SHA1_CTX *context, ಸ್ಥಿರಾಂಕ u_int8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t len)
 {
-	size_t i, j;
+	ಗಾತ್ರ_t i, j;
 
-	j = (size_t)((context->count >> 3) & 63);
-	context->count += ((u_int64_t)len << 3);
-	if ((j + len) > 63) {
-		(void)memcpy(&context->buffer[j], data, (i = 64-j));
-		SHA1Transform(context->state, context->buffer);
-		for ( ; i + 63 < len; i += 64)
-			SHA1Transform(context->state, (u_int8_t *)&data[i]);
+	j = (ಗಾತ್ರ_t)((context->ಎಣಿಕೆ_2 >> 3) & 63);
+	context->ಎಣಿಕೆ_2 += ((u_int64_t)len << 3);
+	ಆದರೆ ((j + len) > 63) {
+		(ಶೂನ್ಯ)ಸ್ಮರಣೆ_ನಕಲು(&context->ಬಫರ್[j], ದತ್ತಾಂಶ, (i = 64-j));
+		SHA1Transform(context->state, context->ಬಫರ್);
+		ಗಾಗಿ ( ; i + 63 < len; i += 64)
+			SHA1Transform(context->state, (u_int8_t *)&ದತ್ತಾಂಶ[i]);
 		j = 0;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		i = 0;
 	}
-	(void)memcpy(&context->buffer[j], &data[i], len - i);
+	(ಶೂನ್ಯ)ಸ್ಮರಣೆ_ನಕಲು(&context->ಬಫರ್[j], &ದತ್ತಾಂಶ[i], len - i);
 }
 DEF_WEAK(SHA1Update);
 
@@ -149,34 +149,34 @@ DEF_WEAK(SHA1Update);
 /*
  * Add padding and return the message digest.
  */
-void
+ಶೂನ್ಯ
 SHA1Pad(SHA1_CTX *context)
 {
 	u_int8_t finalcount[8];
 	u_int i;
 
-	for (i = 0; i < 8; i++) {
-		finalcount[i] = (u_int8_t)((context->count >>
+	ಗಾಗಿ (i = 0; i < 8; i++) {
+		finalcount[i] = (u_int8_t)((context->ಎಣಿಕೆ_2 >>
 		    ((7 - (i & 7)) * 8)) & 255);	/* Endian independent */
 	}
 	SHA1Update(context, (u_int8_t *)"\200", 1);
-	while ((context->count & 504) != 448)
+	ಆಗ ((context->ಎಣಿಕೆ_2 & 504) != 448)
 		SHA1Update(context, (u_int8_t *)"\0", 1);
 	SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
 }
 DEF_WEAK(SHA1Pad);
 
-void
-SHA1Final(u_int8_t digest[SHA1_DIGEST_LENGTH], SHA1_CTX *context)
+ಶೂನ್ಯ
+SHA1Final(u_int8_t digest[SHA1_DIGEST_ಉದ್ದಳತೆ], SHA1_CTX *context)
 {
 	u_int i;
 
 	SHA1Pad(context);
-	for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+	ಗಾಗಿ (i = 0; i < SHA1_DIGEST_ಉದ್ದಳತೆ; i++) {
 		digest[i] = (u_int8_t)
 		   ((context->state[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
 	}
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, ಗಾತ್ರ(*context));
 }
 DEF_WEAK(SHA1Final);
-#endif /* !WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* !WITH_OPENSSL */

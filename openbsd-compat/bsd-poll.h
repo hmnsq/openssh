@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ	_COMPAT_POLL_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRUCT_POLLFD_FD
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ pollfd {
+	ಪೂರ್ಣಾಂಕ	fd;
+	ಗಿಡ್ಡ	events;
+	ಗಿಡ್ಡ	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if 0
+#ಆದರೆ 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು	POLLRDNORM	0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು POLLNORM	POLLRDNORM
+#ವ್ಯಾಖ್ಯಾನಿಸು POLLWRNORM      POLLOUT
+#ವ್ಯಾಖ್ಯಾನಿಸು	POLLRDBAND	0x0080
+#ವ್ಯಾಖ್ಯಾನಿಸು	POLLWRBAND	0x0100
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#ವ್ಯಾಖ್ಯಾನಿಸು INFTIM		(-1)	/* not standard */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ	nfds_t;
+# ಇಲ್ಲದಿದ್ದರೆ
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ	nfds_t;
 # endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_POLL
+ಪೂರ್ಣಾಂಕ   poll(ರಚನೆ pollfd *, nfds_t, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PPOLL
+ಪೂರ್ಣಾಂಕ   ppoll(ರಚನೆ pollfd *, nfds_t, ಸ್ಥಿರಾಂಕ ರಚನೆ timespec *, ಸ್ಥಿರಾಂಕ sigset_t *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* !_COMPAT_POLL_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* !_COMPAT_POLL_H_ */

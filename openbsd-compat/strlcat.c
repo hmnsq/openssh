@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcat.c */
 
-#include "includes.h"
-#ifndef HAVE_STRLCAT
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRLCAT
 
-#include <sys/types.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
@@ -31,24 +31,24 @@
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
  */
-size_t
-strlcat(char *dst, const char *src, size_t siz)
+ಗಾತ್ರ_t
+strlcat(ಅಕ್ಷರ *dst, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ಗಾತ್ರ_t siz)
 {
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
-	size_t dlen;
+	ಅಕ್ಷರ *d = dst;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s = src;
+	ಗಾತ್ರ_t n = siz;
+	ಗಾತ್ರ_t dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	ಆಗ (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	ಆದರೆ (n == 0)
+		ಹಿಂತಿರುಗಿ(dlen + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s));
+	ಆಗ (*s != '\0') {
+		ಆದರೆ (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	ಹಿಂತಿರುಗಿ(dlen + (s - src));	/* count does not include NUL */
 }
 
-#endif /* !HAVE_STRLCAT */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_STRLCAT */

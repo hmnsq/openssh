@@ -14,27 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <pwd.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
 
-void platform_pre_listen(void);
-void platform_pre_fork(void);
-void platform_pre_restart(void);
-void platform_post_listen(void);
-void platform_post_fork_parent(pid_t child_pid);
-void platform_post_fork_child(void);
-void platform_pre_session_start(void);
-int  platform_privileged_uidswap(void);
-void platform_setusercontext(struct passwd *);
-void platform_setusercontext_post_groups(struct passwd *);
-char *platform_get_krb5_client(const char *);
-char *platform_krb5_get_principal_name(const char *);
-int platform_locked_account(struct passwd *);
-int platform_sys_dir_uid(uid_t);
-void platform_disable_tracing(int);
+ಶೂನ್ಯ platform_pre_listen(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_pre_fork(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_pre_restart(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_post_listen(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_post_fork_ಪೋಷಕ(pid_t ಮಗು_pid);
+ಶೂನ್ಯ platform_post_fork_ಮಗು(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_pre_session_ಆರಂಭ(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಂಕ  platform_privileged_uidswap(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_setusercontext(ರಚನೆ passwd *);
+ಶೂನ್ಯ platform_setusercontext_post_groups(ರಚನೆ passwd *);
+ಅಕ್ಷರ *platform_get_krb5_client(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ *platform_krb5_get_principal_name(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ platform_locked_account(ರಚನೆ passwd *);
+ಪೂರ್ಣಾಂಕ platform_sys_dir_uid(uid_t);
+ಶೂನ್ಯ platform_disable_tracing(ಪೂರ್ಣಾಂಕ);
 
 /* in platform-pledge.c */
-void platform_pledge_agent(void);
-void platform_pledge_sftp_server(void);
-void platform_pledge_mux(void);
+ಶೂನ್ಯ platform_pledge_agent(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_pledge_sftp_server(ಶೂನ್ಯ);
+ಶೂನ್ಯ platform_pledge_mux(ಶೂನ್ಯ);

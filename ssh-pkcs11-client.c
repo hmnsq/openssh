@@ -16,29 +16,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#include "pathnames.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "atomicio.h"
-#include "ssh-pkcs11.h"
-#include "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "authfd.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "ssh-pkcs11.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
 
 /* borrows code from sftp-server and ssh-agent */
 
@@ -46,88 +46,88 @@
  * Maintain a list of ssh-pkcs11-helper subprocesses. These may be looked up
  * by provider path or their unique keyblobs.
  */
-struct helper {
-	char *path;
+ರಚನೆ helper {
+	ಅಕ್ಷರ *ಮಾರ್ಗ;
 	pid_t pid;
-	int fd;
-	size_t nkeyblobs;
-	struct sshbuf **keyblobs; /* XXX use a tree or something faster */
+	ಪೂರ್ಣಾಂಕ fd;
+	ಗಾತ್ರ_t nkeyblobs;
+	ರಚನೆ sshbuf **keyblobs; /* XXX use a tree or something faster */
 };
-static struct helper **helpers;
-static size_t nhelpers;
+ಸ್ಥಿರ ರಚನೆ helper **helpers;
+ಸ್ಥಿರ ಗಾತ್ರ_t nhelpers;
 
-static struct helper *
-helper_by_provider(const char *path)
+ಸ್ಥಿರ ರಚನೆ helper *
+helper_by_provider(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
-	for (i = 0; i < nhelpers; i++) {
-		if (helpers[i] == NULL || helpers[i]->path == NULL ||
+	ಗಾಗಿ (i = 0; i < nhelpers; i++) {
+		ಆದರೆ (helpers[i] == ಖಾಲಿ || helpers[i]->ಮಾರ್ಗ == ಖಾಲಿ ||
 		    helpers[i]->fd == -1)
-			continue;
-		if (strcmp(helpers[i]->path, path) == 0)
-			return helpers[i];
+			ಮುಂದುವರಿ;
+		ಆದರೆ (strcmp(helpers[i]->ಮಾರ್ಗ, ಮಾರ್ಗ) == 0)
+			ಹಿಂತಿರುಗಿ helpers[i];
 	}
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-static struct helper *
-helper_by_key(const struct sshkey *key)
+ಸ್ಥಿರ ರಚನೆ helper *
+helper_by_ಕೀಲಿ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	size_t i, j;
-	struct sshbuf *keyblob = NULL;
-	int r;
+	ಗಾತ್ರ_t i, j;
+	ರಚನೆ sshbuf *keyblob = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
+	ಆದರೆ ((keyblob = sshbuf_new()) == ಖಾಲಿ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	ಆದರೆ ((r = sshkey_putb(ಕೀಲಿ, keyblob)) != 0)
 		fatal_fr(r, "serialise key");
 
-	for (i = 0; i < nhelpers; i++) {
-		if (helpers[i] == NULL)
-			continue;
-		for (j = 0; j < helpers[i]->nkeyblobs; j++) {
-			if (sshbuf_equals(keyblob,
+	ಗಾಗಿ (i = 0; i < nhelpers; i++) {
+		ಆದರೆ (helpers[i] == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಗಾಗಿ (j = 0; j < helpers[i]->nkeyblobs; j++) {
+			ಆದರೆ (sshbuf_equals(keyblob,
 			    helpers[i]->keyblobs[j]) == 0) {
 				sshbuf_free(keyblob);
-				return helpers[i];
+				ಹಿಂತಿರುಗಿ helpers[i];
 			}
 		}
 	}
 	sshbuf_free(keyblob);
-	return NULL;
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 
 }
 
-static void
-helper_add_key(struct helper *helper, struct sshkey *key)
+ಸ್ಥಿರ ಶೂನ್ಯ
+helper_ಕೂಡಿಸು_ಕೀಲಿ(ರಚನೆ helper *helper, ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
 	helper->keyblobs = xrecallocarray(helper->keyblobs, helper->nkeyblobs,
-	    helper->nkeyblobs + 1, sizeof(*helper->keyblobs));
-	if ((helper->keyblobs[helper->nkeyblobs] = sshbuf_new()) == NULL)
+	    helper->nkeyblobs + 1, ಗಾತ್ರ(*helper->keyblobs));
+	ಆದರೆ ((helper->keyblobs[helper->nkeyblobs] = sshbuf_new()) == ಖಾಲಿ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, helper->keyblobs[helper->nkeyblobs])) != 0)
+	ಆದರೆ ((r = sshkey_putb(ಕೀಲಿ, helper->keyblobs[helper->nkeyblobs])) != 0)
 		fatal_fr(r, "shkey_putb failed");
 	helper->nkeyblobs++;
 	debug3_f("added %s key for provider %s, now has %zu keys",
-	    sshkey_type(key), helper->path, helper->nkeyblobs);
+	    sshkey_type(ಕೀಲಿ), helper->ಮಾರ್ಗ, helper->nkeyblobs);
 }
 
-static void
-helper_terminate(struct helper *helper)
+ಸ್ಥಿರ ಶೂನ್ಯ
+helper_terminate(ರಚನೆ helper *helper)
 {
-	size_t i;
-	int found = 0;
+	ಗಾತ್ರ_t i;
+	ಪೂರ್ಣಾಂಕ ಸಿಕ್ಕಿತು = 0;
 
-	if (helper == NULL)
-		return;
-	if (helper->path == NULL)
+	ಆದರೆ (helper == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (helper->ಮಾರ್ಗ == ಖಾಲಿ)
 		fatal_f("inconsistent helper");
 
 	debug3_f("terminating helper for %s; remaining %zu keys",
-	    helper->path, helper->nkeyblobs);
+	    helper->ಮಾರ್ಗ, helper->nkeyblobs);
 
 	close(helper->fd);
 	/* XXX waitpid() */
@@ -135,220 +135,220 @@ helper_terminate(struct helper *helper)
 	helper->pid = -1;
 
 	/* repack helpers */
-	for (i = 0; i < nhelpers; i++) {
-		if (helpers[i] == helper) {
-			if (found)
+	ಗಾಗಿ (i = 0; i < nhelpers; i++) {
+		ಆದರೆ (helpers[i] == helper) {
+			ಆದರೆ (ಸಿಕ್ಕಿತು)
 				fatal_f("helper recorded more than once");
-			found = 1;
-		} else if (found)
+			ಸಿಕ್ಕಿತು = 1;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಸಿಕ್ಕಿತು)
 			helpers[i - 1] = helpers[i];
 	}
-	if (found) {
+	ಆದರೆ (ಸಿಕ್ಕಿತು) {
 		helpers = xrecallocarray(helpers, nhelpers,
-		    nhelpers - 1, sizeof(*helpers));
+		    nhelpers - 1, ಗಾತ್ರ(*helpers));
 		nhelpers--;
 	}
-	for (i = 0; i < helper->nkeyblobs; i++)
+	ಗಾಗಿ (i = 0; i < helper->nkeyblobs; i++)
 		sshbuf_free(helper->keyblobs[i]);
-	free(helper->path);
-	free(helper);
+	ಬಿಡುಗಡೆ(helper->ಮಾರ್ಗ);
+	ಬಿಡುಗಡೆ(helper);
 }
 
-static void
-send_msg(int fd, struct sshbuf *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+send_ಸಂದೇಶ(ಪೂರ್ಣಾಂಕ fd, ರಚನೆ sshbuf *m)
 {
 	u_char buf[4];
-	size_t mlen = sshbuf_len(m);
-	int r;
+	ಗಾತ್ರ_t mlen = sshbuf_len(m);
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (fd == -1)
-		return;
+	ಆದರೆ (fd == -1)
+		ಹಿಂತಿರುಗಿ;
 	POKE_U32(buf, mlen);
-	if (atomicio(vwrite, fd, buf, 4) != 4 ||
+	ಆದರೆ (atomicio(vwrite, fd, buf, 4) != 4 ||
 	    atomicio(vwrite, fd, sshbuf_mutable_ptr(m),
 	    sshbuf_len(m)) != sshbuf_len(m))
 		error("write to helper failed");
-	if ((r = sshbuf_consume(m, mlen)) != 0)
+	ಆದರೆ ((r = sshbuf_consume(m, mlen)) != 0)
 		fatal_fr(r, "consume");
 }
 
-static int
-recv_msg(int fd, struct sshbuf *m)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+recv_ಸಂದೇಶ(ಪೂರ್ಣಾಂಕ fd, ರಚನೆ sshbuf *m)
 {
 	u_int l, len;
 	u_char c, buf[1024];
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
 	sshbuf_reset(m);
-	if (fd == -1)
-		return 0; /* XXX */
-	if ((len = atomicio(read, fd, buf, 4)) != 4) {
+	ಆದರೆ (fd == -1)
+		ಹಿಂತಿರುಗಿ 0; /* XXX */
+	ಆದರೆ ((len = atomicio(ಪಠ, fd, buf, 4)) != 4) {
 		error("read from helper failed: %u", len);
-		return (0); /* XXX */
+		ಹಿಂತಿರುಗಿ (0); /* XXX */
 	}
 	len = PEEK_U32(buf);
-	if (len > 256 * 1024)
+	ಆದರೆ (len > 256 * 1024)
 		fatal("response too long: %u", len);
 	/* read len bytes into m */
-	while (len > 0) {
+	ಆಗ (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
-			l = sizeof(buf);
-		if (atomicio(read, fd, buf, l) != l) {
+		ಆದರೆ (l > ಗಾತ್ರ(buf))
+			l = ಗಾತ್ರ(buf);
+		ಆದರೆ (atomicio(ಪಠ, fd, buf, l) != l) {
 			error("response from helper failed.");
-			return (0); /* XXX */
+			ಹಿಂತಿರುಗಿ (0); /* XXX */
 		}
-		if ((r = sshbuf_put(m, buf, l)) != 0)
+		ಆದರೆ ((r = sshbuf_put(m, buf, l)) != 0)
 			fatal_fr(r, "sshbuf_put");
 		len -= l;
 	}
-	if ((r = sshbuf_get_u8(m, &c)) != 0)
+	ಆದರೆ ((r = sshbuf_get_u8(m, &c)) != 0)
 		fatal_fr(r, "parse type");
-	return c;
+	ಹಿಂತಿರುಗಿ c;
 }
 
-int
-pkcs11_init(int interactive)
+ಪೂರ್ಣಾಂಕ
+pkcs11_init(ಪೂರ್ಣಾಂಕ interactive)
 {
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-pkcs11_terminate(void)
+ಶೂನ್ಯ
+pkcs11_terminate(ಶೂನ್ಯ)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
 	debug3_f("terminating %zu helpers", nhelpers);
-	for (i = 0; i < nhelpers; i++)
+	ಗಾಗಿ (i = 0; i < nhelpers; i++)
 		helper_terminate(helpers[i]);
 }
 
-int
-pkcs11_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+ಪೂರ್ಣಾಂಕ
+pkcs11_sign(ರಚನೆ sshkey *ಕೀಲಿ,
+    u_char **sigp, ಗಾತ್ರ_t *lenp,
+    ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t datalen,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alg, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sk_provider,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sk_pin, u_int compat)
 {
-	struct sshbuf *msg = NULL;
-	struct helper *helper;
-	int status, r;
-	u_char *signature = NULL;
-	size_t signature_len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ರಚನೆ sshbuf *ಸಂದೇಶ = ಖಾಲಿ;
+	ರಚನೆ helper *helper;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2, r;
+	u_char *signature = ಖಾಲಿ;
+	ಗಾತ್ರ_t signature_len = 0;
+	ಪೂರ್ಣಾಂಕ ret = SSH_ERR_ಆಂತರಿಕ_ERROR;
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	ಆದರೆ (sigp != ಖಾಲಿ)
+		*sigp = ಖಾಲಿ;
+	ಆದರೆ (lenp != ಖಾಲಿ)
 		*lenp = 0;
 
-	if ((helper = helper_by_key(key)) == NULL || helper->fd == -1)
-		fatal_f("no helper for %s key", sshkey_type(key));
+	ಆದರೆ ((helper = helper_by_ಕೀಲಿ(ಕೀಲಿ)) == ಖಾಲಿ || helper->fd == -1)
+		fatal_f("no helper for %s key", sshkey_type(ಕೀಲಿ));
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts_plain(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, alg == NULL ? "" : alg)) != 0 ||
-	    (r = sshbuf_put_u32(msg, compat)) != 0)
+	ಆದರೆ ((ಸಂದೇಶ = sshbuf_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts_plain(ಕೀಲಿ, ಸಂದೇಶ)) != 0 ||
+	    (r = sshbuf_put_string(ಸಂದೇಶ, ದತ್ತಾಂಶ, datalen)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, alg == ಖಾಲಿ ? "" : alg)) != 0 ||
+	    (r = sshbuf_put_u32(ಸಂದೇಶ, compat)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(helper->fd, msg);
-	sshbuf_reset(msg);
+	send_ಸಂದೇಶ(helper->fd, ಸಂದೇಶ);
+	sshbuf_reset(ಸಂದೇಶ);
 
-	if ((status = recv_msg(helper->fd, msg)) != SSH2_AGENT_SIGN_RESPONSE) {
+	ಆದರೆ ((ಸ್ಥಿತಿ_2 = recv_ಸಂದೇಶ(helper->fd, ಸಂದೇಶ)) != SSH2_AGENT_SIGN_RESPONSE) {
 		/* XXX translate status to something useful */
 		debug_fr(r, "recv_msg");
 		ret = SSH_ERR_AGENT_FAILURE;
-		goto fail;
+		ಹೋಗು fail;
 	}
 
-	if ((r = sshbuf_get_string(msg, &signature, &signature_len)) != 0)
+	ಆದರೆ ((r = sshbuf_get_string(ಸಂದೇಶ, &signature, &signature_len)) != 0)
 		fatal_fr(r, "parse");
 
 	/* success */
-	if (sigp != NULL) {
+	ಆದರೆ (sigp != ಖಾಲಿ) {
 		*sigp = signature;
-		signature = NULL;
+		signature = ಖಾಲಿ;
 	}
-	if (lenp != NULL)
+	ಆದರೆ (lenp != ಖಾಲಿ)
 		*lenp = signature_len;
 	ret = 0;
 
  fail:
-	free(signature);
-	sshbuf_free(msg);
-	return ret;
+	ಬಿಡುಗಡೆ(signature);
+	sshbuf_free(ಸಂದೇಶ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
  * Make a private PKCS#11-backed certificate by grafting a previously-loaded
  * PKCS#11 private key and a public certificate key.
  */
-int
-pkcs11_make_cert(const struct sshkey *priv,
-    const struct sshkey *certpub, struct sshkey **certprivp)
+ಪೂರ್ಣಾಂಕ
+pkcs11_make_cert(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *priv,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *certpub, ರಚನೆ sshkey **certprivp)
 {
-	struct helper *helper = NULL;
-	struct sshkey *ret;
-	int r;
+	ರಚನೆ helper *helper = ಖಾಲಿ;
+	ರಚನೆ sshkey *ret;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((helper = helper_by_key(priv)) == NULL || helper->fd == -1)
+	ಆದರೆ ((helper = helper_by_ಕೀಲಿ(priv)) == ಖಾಲಿ || helper->fd == -1)
 		fatal_f("no helper for %s key", sshkey_type(priv));
 
 	debug3_f("private key type %s cert type %s on provider %s",
-	    sshkey_type(priv), sshkey_type(certpub), helper->path);
+	    sshkey_type(priv), sshkey_type(certpub), helper->ಮಾರ್ಗ);
 
-	*certprivp = NULL;
-	if (!sshkey_is_cert(certpub) || sshkey_is_cert(priv) ||
-	    !sshkey_equal_public(priv, certpub)) {
+	*certprivp = ಖಾಲಿ;
+	ಆದರೆ (!sshkey_is_cert(certpub) || sshkey_is_cert(priv) ||
+	    !sshkey_equal_ಬಹಿರಂಗ(priv, certpub)) {
 		error_f("private key %s doesn't match cert %s",
 		    sshkey_type(priv), sshkey_type(certpub));
-		return SSH_ERR_INVALID_ARGUMENT;
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
 	}
-	*certprivp = NULL;
-	if ((r = sshkey_from_private(priv, &ret)) != 0)
+	*certprivp = ಖಾಲಿ;
+	ಆದರೆ ((r = sshkey_from_ಖಾಸಗಿ(priv, &ret)) != 0)
 		fatal_fr(r, "copy key");
 
 	ret->flags |= SSHKEY_FLAG_EXT;
-	if ((r = sshkey_to_certified(ret)) != 0 ||
+	ಆದರೆ ((r = sshkey_ಗಮ್ಯ_certified(ret)) != 0 ||
 	    (r = sshkey_cert_copy(certpub, ret)) != 0)
 		fatal_fr(r, "graft certificate");
 
-	helper_add_key(helper, ret);
+	helper_ಕೂಡಿಸು_ಕೀಲಿ(helper, ret);
 
 	debug3_f("provider %s: %zu remaining keys",
-	    helper->path, helper->nkeyblobs);
+	    helper->ಮಾರ್ಗ, helper->nkeyblobs);
 
 	/* success */
 	*certprivp = ret;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static struct helper *
-pkcs11_start_helper(const char *path)
+ಸ್ಥಿರ ರಚನೆ helper *
+pkcs11_ಆರಂಭ_helper(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ)
 {
-	int pair[2];
-	char *prog, *verbosity = NULL;
-	struct helper *helper;
+	ಪೂರ್ಣಾಂಕ pair[2];
+	ಅಕ್ಷರ *prog, *verbosity = ಖಾಲಿ;
+	ರಚನೆ helper *helper;
 	pid_t pid;
 
-	if (nhelpers >= INT_MAX)
+	ಆದರೆ (nhelpers >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)
 		fatal_f("too many helpers");
-	debug3_f("start helper for %s", path);
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	debug3_f("start helper for %s", ಮಾರ್ಗ);
+	ಆದರೆ (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error_f("socketpair: %s", strerror(errno));
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	helper = xcalloc(1, sizeof(*helper));
-	if ((pid = fork()) == -1) {
+	helper = xcalloc(1, ಗಾತ್ರ(*helper));
+	ಆದರೆ ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
 		close(pair[0]);
 		close(pair[1]);
-		free(helper);
-		return NULL;
-	} else if (pid == 0) {
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		ಬಿಡುಗಡೆ(helper);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (pid == 0) {
+		ಆದರೆ ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
 			fprintf(stderr, "dup2: %s\n", strerror(errno));
 			_exit(1);
@@ -357,137 +357,137 @@ pkcs11_start_helper(const char *path)
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		prog = getenv("SSH_PKCS11_HELPER");
-		if (prog == NULL || strlen(prog) == 0)
-			prog = _PATH_SSH_PKCS11_HELPER;
-		if (log_level_get() >= SYSLOG_LEVEL_DEBUG1)
+		ಆದರೆ (prog == ಖಾಲಿ || ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(prog) == 0)
+			prog = ಮಾರ್ಗ_SSH_PKCS11_HELPER;
+		ಆದರೆ (log_level_get() >= SYSLOG_LEVEL_DEBUG1)
 			verbosity = "-vvv";
 		debug_f("starting %s %s", prog,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(prog, prog, verbosity, (char *)NULL);
+		    verbosity == ಖಾಲಿ ? "" : verbosity);
+		execlp(prog, prog, verbosity, (ಅಕ್ಷರ *)ಖಾಲಿ);
 		fprintf(stderr, "exec: %s: %s\n", prog, strerror(errno));
 		_exit(1);
 	}
 	close(pair[1]);
 	helper->fd = pair[0];
-	helper->path = xstrdup(path);
+	helper->ಮಾರ್ಗ = xstrdup(ಮಾರ್ಗ);
 	helper->pid = pid;
 	debug3_f("helper %zu for \"%s\" on fd %d pid %ld", nhelpers,
-	    helper->path, helper->fd, (long)helper->pid);
+	    helper->ಮಾರ್ಗ, helper->fd, (ದೀರ್ಘ)helper->pid);
 	helpers = xrecallocarray(helpers, nhelpers,
-	    nhelpers + 1, sizeof(*helpers));
+	    nhelpers + 1, ಗಾತ್ರ(*helpers));
 	helpers[nhelpers++] = helper;
-	return helper;
+	ಹಿಂತಿರುಗಿ helper;
 }
 
-int
-pkcs11_add_provider(char *name, char *pin, struct sshkey ***keysp,
-    char ***labelsp)
+ಪೂರ್ಣಾಂಕ
+pkcs11_ಕೂಡಿಸು_provider(ಅಕ್ಷರ *name, ಅಕ್ಷರ *pin, ರಚನೆ sshkey ***keysp,
+    ಅಕ್ಷರ ***labelsp)
 {
-	struct sshkey *k;
-	int r, type;
-	char *label;
+	ರಚನೆ sshkey *k;
+	ಪೂರ್ಣಾಂಕ r, type;
+	ಅಕ್ಷರ *label;
 	u_int ret = -1, nkeys, i;
-	struct sshbuf *msg;
-	struct helper *helper;
+	ರಚನೆ sshbuf *ಸಂದೇಶ;
+	ರಚನೆ helper *helper;
 
-	if ((helper = helper_by_provider(name)) == NULL &&
-	    (helper = pkcs11_start_helper(name)) == NULL)
-		return -1;
+	ಆದರೆ ((helper = helper_by_provider(name)) == ಖಾಲಿ &&
+	    (helper = pkcs11_ಆರಂಭ_helper(name)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
 
-	debug3_f("add %s", helper->path);
+	debug3_f("add %s", helper->ಮಾರ್ಗ);
 
-	if ((msg = sshbuf_new()) == NULL)
+	ಆದರೆ ((ಸಂದೇಶ = sshbuf_new()) == ಖಾಲಿ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_ADD_SMARTCARD_KEY)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, name)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
+	ಆದರೆ ((r = sshbuf_put_u8(ಸಂದೇಶ, SSH_AGENTC_ಕೂಡಿಸು_SMARTCARD_ಕೀಲಿ)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, name)) != 0 ||
+	    (r = sshbuf_put_cstring(ಸಂದೇಶ, pin)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(helper->fd, msg);
-	sshbuf_reset(msg);
+	send_ಸಂದೇಶ(helper->fd, ಸಂದೇಶ);
+	sshbuf_reset(ಸಂದೇಶ);
 
-	type = recv_msg(helper->fd, msg);
+	type = recv_ಸಂದೇಶ(helper->fd, ಸಂದೇಶ);
 	debug3_f("response %d", type);
-	if (type == SSH2_AGENT_IDENTITIES_ANSWER) {
-		if ((r = sshbuf_get_u32(msg, &nkeys)) != 0)
+	ಆದರೆ (type == SSH2_AGENT_IDENTITIES_ANSWER) {
+		ಆದರೆ ((r = sshbuf_get_u32(ಸಂದೇಶ, &nkeys)) != 0)
 			fatal_fr(r, "parse nkeys");
 		debug3_f("helper return %u keys", nkeys);
-		*keysp = xcalloc(nkeys, sizeof(struct sshkey *));
-		if (labelsp)
-			*labelsp = xcalloc(nkeys, sizeof(char *));
-		for (i = 0; i < nkeys; i++) {
+		*keysp = xcalloc(nkeys, ಗಾತ್ರ(ರಚನೆ sshkey *));
+		ಆದರೆ (labelsp)
+			*labelsp = xcalloc(nkeys, ಗಾತ್ರ(ಅಕ್ಷರ *));
+		ಗಾಗಿ (i = 0; i < nkeys; i++) {
 			/* XXX clean up properly instead of fatal() */
-			if ((r = sshkey_froms(msg, &k)) != 0 ||
-			    (r = sshbuf_get_cstring(msg, &label, NULL)) != 0)
+			ಆದರೆ ((r = sshkey_froms(ಸಂದೇಶ, &k)) != 0 ||
+			    (r = sshbuf_get_cstring(ಸಂದೇಶ, &label, ಖಾಲಿ)) != 0)
 				fatal_fr(r, "parse key");
 			k->flags |= SSHKEY_FLAG_EXT;
-			helper_add_key(helper, k);
+			helper_ಕೂಡಿಸು_ಕೀಲಿ(helper, k);
 			(*keysp)[i] = k;
-			if (labelsp)
+			ಆದರೆ (labelsp)
 				(*labelsp)[i] = label;
-			else
-				free(label);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಬಿಡುಗಡೆ(label);
 		}
 		/* success */
 		ret = 0;
-	} else if (type == SSH2_AGENT_FAILURE) {
-		if ((r = sshbuf_get_u32(msg, &nkeys)) != 0)
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (type == SSH2_AGENT_FAILURE) {
+		ಆದರೆ ((r = sshbuf_get_u32(ಸಂದೇಶ, &nkeys)) != 0)
 			error_fr(r, "failed to parse failure response");
 	}
-	if (ret != 0) {
+	ಆದರೆ (ret != 0) {
 		debug_f("no keys; terminate helper");
 		helper_terminate(helper);
 	}
-	sshbuf_free(msg);
-	return ret == 0 ? (int)nkeys : -1;
+	sshbuf_free(ಸಂದೇಶ);
+	ಹಿಂತಿರುಗಿ ret == 0 ? (ಪೂರ್ಣಾಂಕ)nkeys : -1;
 }
 
-int
-pkcs11_del_provider(char *name)
+ಪೂರ್ಣಾಂಕ
+pkcs11_del_provider(ಅಕ್ಷರ *name)
 {
-	struct helper *helper;
+	ರಚನೆ helper *helper;
 
 	/*
 	 * ssh-agent deletes keys before calling this, so the helper entry
 	 * should be gone before we get here.
 	 */
 	debug3_f("delete %s", name ? name : "(null)");
-	if ((helper = helper_by_provider(name)) != NULL)
+	ಆದರೆ ((helper = helper_by_provider(name)) != ಖಾಲಿ)
 		helper_terminate(helper);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+ಶೂನ್ಯ
+pkcs11_ಕೀಲಿ_free(ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	struct helper *helper;
-	struct sshbuf *keyblob = NULL;
-	size_t i;
-	int r, found = 0;
+	ರಚನೆ helper *helper;
+	ರಚನೆ sshbuf *keyblob = ಖಾಲಿ;
+	ಗಾತ್ರ_t i;
+	ಪೂರ್ಣಾಂಕ r, ಸಿಕ್ಕಿತು = 0;
 
-	debug3_f("free %s key", sshkey_type(key));
+	debug3_f("free %s key", sshkey_type(ಕೀಲಿ));
 
-	if ((helper = helper_by_key(key)) == NULL || helper->fd == -1)
-		fatal_f("no helper for %s key", sshkey_type(key));
-	if ((keyblob = sshbuf_new()) == NULL)
+	ಆದರೆ ((helper = helper_by_ಕೀಲಿ(ಕೀಲಿ)) == ಖಾಲಿ || helper->fd == -1)
+		fatal_f("no helper for %s key", sshkey_type(ಕೀಲಿ));
+	ಆದರೆ ((keyblob = sshbuf_new()) == ಖಾಲಿ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	ಆದರೆ ((r = sshkey_putb(ಕೀಲಿ, keyblob)) != 0)
 		fatal_fr(r, "serialise key");
 
 	/* repack keys */
-	for (i = 0; i < helper->nkeyblobs; i++) {
-		if (sshbuf_equals(keyblob, helper->keyblobs[i]) == 0) {
-			if (found)
+	ಗಾಗಿ (i = 0; i < helper->nkeyblobs; i++) {
+		ಆದರೆ (sshbuf_equals(keyblob, helper->keyblobs[i]) == 0) {
+			ಆದರೆ (ಸಿಕ್ಕಿತು)
 				fatal_f("key recorded more than once");
-			found = 1;
-		} else if (found)
+			ಸಿಕ್ಕಿತು = 1;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಸಿಕ್ಕಿತು)
 			helper->keyblobs[i - 1] = helper->keyblobs[i];
 	}
-	if (found) {
+	ಆದರೆ (ಸಿಕ್ಕಿತು) {
 		helper->keyblobs = xrecallocarray(helper->keyblobs,
 		    helper->nkeyblobs, helper->nkeyblobs - 1,
-		    sizeof(*helper->keyblobs));
+		    ಗಾತ್ರ(*helper->keyblobs));
 		helper->nkeyblobs--;
 	}
-	if (helper->nkeyblobs == 0)
+	ಆದರೆ (helper->nkeyblobs == 0)
 		helper_terminate(helper);
 }

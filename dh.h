@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DH_H
-#define DH_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ DH_H
+#ವ್ಯಾಖ್ಯಾನಿಸು DH_H
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+ರಚನೆ dhgroup {
+	ಪೂರ್ಣಾಂಕ ಗಾತ್ರ_2;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
-DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*ಆರಿಸು_dh(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+DH	*dh_new_ಗುಂಪು_asc(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+DH	*dh_new_ಗುಂಪು(BIGNUM *, BIGNUM *);
+DH	*dh_new_group1(ಶೂನ್ಯ);
+DH	*dh_new_group14(ಶೂನ್ಯ);
+DH	*dh_new_group16(ಶೂನ್ಯ);
+DH	*dh_new_group18(ಶೂನ್ಯ);
+DH	*dh_new_ಗುಂಪು_fallback(ಪೂರ್ಣಾಂಕ);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+ಪೂರ್ಣಾಂಕ	 dh_gen_ಕೀಲಿ(DH *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 dh_pub_is_valid(ಸ್ಥಿರಾಂಕ DH *, ಸ್ಥಿರಾಂಕ BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	 dh_ಗಣ_moduli_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /*
  * Max value from RFC4419.
  * Min value from RFC8270.
  */
-#define DH_GRP_MIN	2048
-#define DH_GRP_MAX	8192
+#ವ್ಯಾಖ್ಯಾನಿಸು DH_GRP_MIN	2048
+#ವ್ಯಾಖ್ಯಾನಿಸು DH_GRP_MAX	8192
 
 /*
  * Values for "type" field of moduli(5)
  * Specifies the internal structure of the prime modulus.
  */
-#define MODULI_TYPE_UNKNOWN		(0)
-#define MODULI_TYPE_UNSTRUCTURED	(1)
-#define MODULI_TYPE_SAFE		(2)
-#define MODULI_TYPE_SCHNORR		(3)
-#define MODULI_TYPE_SOPHIE_GERMAIN	(4)
-#define MODULI_TYPE_STRONG		(5)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_UNKNOWN		(0)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_UNSTRUCTURED	(1)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_ಸುರಕ್ಷಿತ		(2)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_SCHNORR		(3)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_SOPHIE_GERMAIN	(4)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TYPE_STRONG		(5)
 
 /*
  * Values for "tests" field of moduli(5)
  * Specifies the methods used in checking for primality.
  * Usually, more than one test is used.
  */
-#define MODULI_TESTS_UNTESTED		(0x00)
-#define MODULI_TESTS_COMPOSITE		(0x01)
-#define MODULI_TESTS_SIEVE		(0x02)
-#define MODULI_TESTS_MILLER_RABIN	(0x04)
-#define MODULI_TESTS_JACOBI		(0x08)
-#define MODULI_TESTS_ELLIPTIC		(0x10)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_UNTESTED		(0x00)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_ಸಂಯುಕ್ತ		(0x01)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_SIEVE		(0x02)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_MILLER_RABIN	(0x04)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_JACOBI		(0x08)
+#ವ್ಯಾಖ್ಯಾನಿಸು MODULI_TESTS_ELLIPTIC		(0x10)
 
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */
 
-#endif /* DH_H */
+#ಆದರೆ_ಅಂತ್ಯ /* DH_H */

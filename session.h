@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SESSION_H
-#define SESSION_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SESSION_H
+#ವ್ಯಾಖ್ಯಾನಿಸು SESSION_H
 
-#define TTYSZ 64
-typedef struct Session Session;
-struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
-	struct passwd *pw;
+#ವ್ಯಾಖ್ಯಾನಿಸು TTYSZ 64
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ Session Session;
+ರಚನೆ Session {
+	ಪೂರ್ಣಾಂಕ	ಬಳಸಿದ;
+	ಪೂರ್ಣಾಂಕ	self;
+	ಪೂರ್ಣಾಂಕ	ಮುಂದಿನ_ಬಳಸದ;
+	ರಚನೆ passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	ಪೂರ್ಣಾಂಕ	forced;
 
 	/* tty */
-	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
-	u_int	row, col, xpixel, ypixel;
-	char	tty[TTYSZ];
+	ಅಕ್ಷರ	*ಪದ;
+	ಪೂರ್ಣಾಂಕ	ptyfd, ttyfd, ptymaster;
+	u_int	ಅಡ್ಡಸಾಲು, ಲಂಬಸಾಲು, xpixel, ypixel;
+	ಅಕ್ಷರ	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
-	char	*display;
+	u_int	display_ಸಂಖ್ಯೆ;
+	ಅಕ್ಷರ	*display;
 	u_int	screen;
-	char	*auth_display;
-	char	*auth_proto;
-	char	*auth_data;
-	int	single_connection;
+	ಅಕ್ಷರ	*auth_display;
+	ಅಕ್ಷರ	*auth_proto;
+	ಅಕ್ಷರ	*auth_ದತ್ತಾಂಶ;
+	ಪೂರ್ಣಾಂಕ	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
-	char	*subsys;
-	u_int	num_env;
-	struct {
-		char	*name;
-		char	*val;
+	ಪೂರ್ಣಾಂಕ	chanid;
+	ಪೂರ್ಣಾಂಕ	*x11_chanids;
+	ಪೂರ್ಣಾಂಕ	is_subsystem;
+	ಅಕ್ಷರ	*subsys;
+	u_int	ಅಂಕೆ_env;
+	ರಚನೆ {
+		ಅಕ್ಷರ	*name;
+		ಅಕ್ಷರ	*val;
 	} *env;
 };
 
-void	 do_authenticated(struct ssh *, Authctxt *);
-void	 do_cleanup(struct ssh *, Authctxt *);
+ಶೂನ್ಯ	 do_authenticated(ರಚನೆ ssh *, Authctxt *);
+ಶೂನ್ಯ	 do_cleanup(ರಚನೆ ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
-void	 session_destroy_all(struct ssh *, void (*)(Session *));
-void	 session_pty_cleanup2(Session *);
+ಪೂರ್ಣಾಂಕ	 session_open(Authctxt *, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	 session_ಬಳಸದ(ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 session_ಒಳಹರಿವು_channel_req(ರಚನೆ ssh *, Channel *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ	 session_close_by_pid(ರಚನೆ ssh *ssh, pid_t, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	 session_close_by_channel(ರಚನೆ ssh *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *);
+ಶೂನ್ಯ	 session_destroy_all(ರಚನೆ ssh *, ಶೂನ್ಯ (*)(Session *));
+ಶೂನ್ಯ	 session_pty_cleanup2(Session *);
 
-Session	*session_new(void);
-Session	*session_by_tty(char *);
-void	 session_close(struct ssh *, Session *);
-void	 do_setusercontext(struct passwd *);
+Session	*session_new(ಶೂನ್ಯ);
+Session	*session_by_tty(ಅಕ್ಷರ *);
+ಶೂನ್ಯ	 session_close(ರಚನೆ ssh *, Session *);
+ಶೂನ್ಯ	 do_setusercontext(ರಚನೆ passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ	*session_get_remote_name_or_ip(ರಚನೆ ssh *, u_int, ಪೂರ್ಣಾಂಕ);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

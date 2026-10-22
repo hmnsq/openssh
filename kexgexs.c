@@ -24,192 +24,192 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/dh.h>
 
-#include "sshkey.h"
-#include "cipher.h"
-#include "digest.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "dh.h"
-#include "ssh2.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "cipher.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "dh.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "monitor_wrap.h"
+#ಅನ್ತರ್ಭಾವ "dispatch.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
-static int input_kex_dh_gex_request(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_init(int, uint32_t, struct ssh *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಒಳಹರಿವು_kex_dh_gex_request(ಪೂರ್ಣಾಂಕ, uint32_t, ರಚನೆ ssh *);
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಒಳಹರಿವು_kex_dh_gex_init(ಪೂರ್ಣಾಂಕ, uint32_t, ರಚನೆ ssh *);
 
-int
-kexgex_server(struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+kexgex_server(ರಚನೆ ssh *ssh)
 {
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST,
-	    &input_kex_dh_gex_request);
+	ssh_dispatch_ಗಣ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_REQUEST,
+	    &ಒಳಹರಿವು_kex_dh_gex_request);
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REQUEST");
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಒಳಹರಿವು_kex_dh_gex_request(ಪೂರ್ಣಾಂಕ type, uint32_t seq, ರಚನೆ ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	ರಚನೆ kex *kex = ssh->kex;
+	ಪೂರ್ಣಾಂಕ r;
 	u_int min = 0, max = 0, nbits = 0;
-	const BIGNUM *dh_p, *dh_g;
+	ಸ್ಥಿರಾಂಕ BIGNUM *dh_p, *dh_g;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST, &kex_protocol_error);
+	ssh_dispatch_ಗಣ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_REQUEST, &kex_protocol_error);
 
-	if ((r = sshpkt_get_u32(ssh, &min)) != 0 ||
+	ಆದರೆ ((r = sshpkt_get_u32(ssh, &min)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &nbits)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &max)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	    (r = sshpkt_get_ಕೊನೆ(ssh)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 	kex->nbits = nbits;
 	kex->min = min;
 	kex->max = max;
-	min = MAXIMUM(DH_GRP_MIN, min);
+	min = ಗರಿಷ್ಠ(DH_GRP_MIN, min);
 	max = MINIMUM(DH_GRP_MAX, max);
-	nbits = MAXIMUM(DH_GRP_MIN, nbits);
+	nbits = ಗರಿಷ್ಠ(DH_GRP_MIN, nbits);
 	nbits = MINIMUM(DH_GRP_MAX, nbits);
 
-	if (kex->max < kex->min || kex->nbits < kex->min ||
+	ಆದರೆ (kex->max < kex->min || kex->nbits < kex->min ||
 	    kex->max < kex->nbits || kex->max < DH_GRP_MIN) {
-		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
-		goto out;
+		r = SSH_ERR_DH_GEX_ಹೊರಹೋಗು_ದ_RANGE;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* Contact privileged parent */
-	kex->dh = mm_choose_dh(min, nbits, max);
-	if (kex->dh == NULL) {
-		(void)sshpkt_disconnect(ssh, "no matching DH grp found");
+	kex->dh = mm_ಆರಿಸು_dh(min, nbits, max);
+	ಆದರೆ (kex->dh == ಖಾಲಿ) {
+		(ಶೂನ್ಯ)sshpkt_disconnect(ssh, "no matching DH grp found");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP sent");
-	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_GROUP)) != 0 ||
+	DH_get0_pqg(kex->dh, &dh_p, ಖಾಲಿ, &dh_g);
+	ಆದರೆ ((r = sshpkt_ಆರಂಭ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_ಗುಂಪು)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_p)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_g)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* Compute our exchange value in parallel with the client */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
-		goto out;
+	ಆದರೆ ((r = dh_gen_ಕೀಲಿ(kex->dh, kex->we_need * 8)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	debug("expecting SSH2_MSG_KEX_DH_GEX_INIT");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &input_kex_dh_gex_init);
+	ssh_dispatch_ಗಣ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_INIT, &ಒಳಹರಿವು_kex_dh_gex_init);
 	r = 0;
- out:
-	return r;
+ ಹೊರಹೋಗು:
+	ಹಿಂತಿರುಗಿ r;
 }
 
-static int
-input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಒಳಹರಿವು_kex_dh_gex_init(ಪೂರ್ಣಾಂಕ type, uint32_t seq, ರಚನೆ ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *dh_client_pub = NULL;
-	const BIGNUM *pub_key, *dh_p, *dh_g;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
-	struct sshkey *server_host_public, *server_host_private;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	ರಚನೆ kex *kex = ssh->kex;
+	BIGNUM *dh_client_pub = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ BIGNUM *pub_ಕೀಲಿ, *dh_p, *dh_g;
+	ರಚನೆ sshbuf *shared_secret = ಖಾಲಿ;
+	ರಚನೆ sshbuf *server_host_ಕೀಲಿ_blob = ಖಾಲಿ;
+	ರಚನೆ sshkey *server_host_ಬಹಿರಂಗ, *server_host_ಖಾಸಗಿ;
+	u_char *signature = ಖಾಲಿ;
+	u_char hash[SSH_DIGEST_MAX_ಉದ್ದಳತೆ];
+	ಗಾತ್ರ_t slen, hashlen;
+	ಪೂರ್ಣಾಂಕ r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_INIT received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &kex_protocol_error);
+	ssh_dispatch_ಗಣ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
-	    &server_host_public)) != 0)
-		goto out;
+	ಆದರೆ ((r = kex_ತುಂಬು_hostkey(ssh, &server_host_ಖಾಸಗಿ,
+	    &server_host_ಬಹಿರಂಗ)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* key, cert */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_client_pub)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+	ಆದರೆ ((r = sshpkt_get_bignum2(ssh, &dh_client_pub)) != 0 ||
+	    (r = sshpkt_get_ಕೊನೆ(ssh)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
+	ಆದರೆ ((shared_secret = sshbuf_new()) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_client_pub, shared_secret)) != 0)
-		goto out;
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	ಆದರೆ ((r = kex_dh_compute_ಕೀಲಿ(kex, dh_client_pub, shared_secret)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
+	ಆದರೆ ((server_host_ಕೀಲಿ_blob = sshbuf_new()) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
-		goto out;
+	ಆದರೆ ((r = sshkey_putb(server_host_ಬಹಿರಂಗ, server_host_ಕೀಲಿ_blob)) != 0)
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* calc H */
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	DH_get0_ಕೀಲಿ(kex->dh, &pub_ಕೀಲಿ, ಖಾಲಿ);
+	DH_get0_pqg(kex->dh, &dh_p, ಖಾಲಿ, &dh_g);
+	hashlen = ಗಾತ್ರ(hash);
+	ಆದರೆ ((r = kexgex_hash(
 	    kex->hash_alg,
-	    kex->client_version,
-	    kex->server_version,
+	    kex->client_ಆವೃತ್ತಿ,
+	    kex->server_ಆವೃತ್ತಿ,
 	    kex->peer,
 	    kex->my,
-	    server_host_key_blob,
+	    server_host_ಕೀಲಿ_blob,
 	    kex->min, kex->nbits, kex->max,
 	    dh_p, dh_g,
 	    dh_client_pub,
-	    pub_key,
+	    pub_ಕೀಲಿ,
 	    sshbuf_ptr(shared_secret), sshbuf_len(shared_secret),
 	    hash, &hashlen)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	ಆದರೆ ((r = kex->sign(ssh, server_host_ಖಾಸಗಿ, server_host_ಬಹಿರಂಗ,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) < 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* send server hostkey, DH pubkey 'f' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REPLY)) != 0 ||
-	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
-	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||     /* f */
+	ಆದರೆ ((r = sshpkt_ಆರಂಭ(ssh, SSH2_ಸಂದೇಶ_KEX_DH_GEX_ಉತ್ತರ)) != 0 ||
+	    (r = sshpkt_put_stringb(ssh, server_host_ಕೀಲಿ_blob)) != 0 ||
+	    (r = sshpkt_put_bignum2(ssh, pub_ಕೀಲಿ)) != 0 ||     /* f */
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	ಆದರೆ ((r = kex_derive_ಕೀಲಿಗಳು(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
-	    (r = sshkey_from_private(server_host_public,
+	ಆದರೆ (kex->initial_hostkey == ಖಾಲಿ &&
+	    (r = sshkey_from_ಖಾಸಗಿ(server_host_ಬಹಿರಂಗ,
 	    &kex->initial_hostkey)) != 0)
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	/* success */
- out:
-	explicit_bzero(hash, sizeof(hash));
+ ಹೊರಹೋಗು:
+	explicit_bzero(hash, ಗಾತ್ರ(hash));
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ಖಾಲಿ;
 	BN_clear_free(dh_client_pub);
 	sshbuf_free(shared_secret);
-	sshbuf_free(server_host_key_blob);
-	free(signature);
-	return r;
+	sshbuf_free(server_host_ಕೀಲಿ_blob);
+	ಬಿಡುಗಡೆ(signature);
+	ಹಿಂತಿರುಗಿ r;
 }
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

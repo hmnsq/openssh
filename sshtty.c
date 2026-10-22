@@ -35,62 +35,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <termios.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
 
-#include "sshpty.h"
+#ಅನ್ತರ್ಭಾವ "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+ಸ್ಥಿರ ರಚನೆ termios _saved_tio;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಒಳ_raw_ಬಹುಲಕ = 0;
 
-struct termios *
-get_saved_tio(void)
+ರಚನೆ termios *
+get_saved_tio(ಶೂನ್ಯ)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	ಹಿಂತಿರುಗಿ ಒಳ_raw_ಬಹುಲಕ ? &_saved_tio : ಖಾಲಿ;
 }
 
-void
-leave_raw_mode(int quiet)
+ಶೂನ್ಯ
+leave_raw_ಬಹುಲಕ(ಪೂರ್ಣಾಂಕ quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	ಆದರೆ (!ಒಳ_raw_ಬಹುಲಕ)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		ಆದರೆ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 0;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ಒಳ_raw_ಬಹುಲಕ = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+ಶೂನ್ಯ
+enter_raw_ಬಹುಲಕ(ಪೂರ್ಣಾಂಕ quiet)
 {
-	struct termios tio;
+	ರಚನೆ termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	ಆದರೆ (tcgetattr(fileno(stdin), &tio) == -1) {
+		ಆದರೆ (!quiet)
 			perror("tcgetattr");
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
 	tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
-#ifdef IUCLC
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IUCLC
 	tio.c_iflag &= ~IUCLC;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
-#ifdef IEXTEN
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ IEXTEN
 	tio.c_lflag &= ~IEXTEN;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	ಆದರೆ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		ಆದರೆ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 1;
+	} ಇಲ್ಲದಿದ್ದರೆ
+		ಒಳ_raw_ಬಹುಲಕ = 1;
 }

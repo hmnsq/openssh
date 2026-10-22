@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOUL
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -44,65 +44,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ
+strtoul(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *nptr, ಅಕ್ಷರ **endptr, ಪೂರ್ಣಾಂಕ ತಳ)
 {
-	const char *s;
-	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ acc, cutoff;
+	ಪೂರ್ಣಾಂಕ c;
+	ಪೂರ್ಣಾಂಕ neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ಮಾಡು {
+		c = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) *s++;
+	} ಆಗ (ಖಾಲಿಯೇ(c));
+	ಆದರೆ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		neg = 0;
-		if (c == '+')
+		ಆದರೆ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ಆದರೆ ((ತಳ == 0 || ತಳ == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		ತಳ = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	ಆದರೆ (ತಳ == 0)
+		ತಳ = c == '0' ? 8 : 10;
 
-	cutoff = ULONG_MAX / (unsigned long)base;
-	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULONG_MAX / (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)ತಳ;
+	cutlim = ULONG_MAX % (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)ತಳ;
+	ಗಾಗಿ (acc = 0, any = 0;; c = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ) *s++) {
+		ಆದರೆ (ಅಂಕಿಯೇ(c))
 			c -= '0';
-		else if (isalpha(c))
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರವೇ(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (c >= ತಳ)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (any < 0)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			any = 1;
-			acc *= (unsigned long)base;
+			acc *= (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)ತಳ;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	ಆದರೆ (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ಆದರೆ (endptr != 0)
+		*endptr = (ಅಕ್ಷರ *) (any ? s - 1 : nptr);
+	ಹಿಂತಿರುಗಿ (acc);
 }
-#endif /* !HAVE_STRTOUL */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_STRTOUL */

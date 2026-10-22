@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef SANDBOX_RLIMIT
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SANDBOX_RLIMIT
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/resource.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sandbox.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 /* Minimal sandbox that sets zero nfiles, nprocs and filesize rlimits */
 
-struct ssh_sandbox {
-	int junk;
+ರಚನೆ ssh_sandbox {
+	ಪೂರ್ಣಾಂಕ junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ರಚನೆ ssh_sandbox *
+ssh_sandbox_init(ರಚನೆ monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ರಚನೆ ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing rlimit sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, ಗಾತ್ರ(*box));
+	ಹಿಂತಿರುಗಿ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ಶೂನ್ಯ
+ssh_sandbox_ಮಗು(ರಚನೆ ssh_sandbox *box)
 {
-	struct rlimit rl_zero;
+	ರಚನೆ rlimit rl_zero;
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
-#ifndef SANDBOX_SKIP_RLIMIT_FSIZE
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SANDBOX_SKIP_RLIMIT_FSIZE
+	ಆದರೆ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			strerror(errno));
-#endif
-#ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SANDBOX_SKIP_RLIMIT_NOFILE
+	ಆದರೆ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			strerror(errno));
-#endif
-#ifdef HAVE_RLIMIT_NPROC
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_RLIMIT_NPROC
+	ಆದರೆ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			strerror(errno));
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-#endif /* SANDBOX_RLIMIT */
+#ಆದರೆ_ಅಂತ್ಯ /* SANDBOX_RLIMIT */

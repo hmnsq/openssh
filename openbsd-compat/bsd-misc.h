@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _BSD_MISC_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _BSD_MISC_H
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+ಅಕ್ಷರ *ssh_get_progname(ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ ಬೀಜ_from_prngd(ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *, ಗಾತ್ರ_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETSID
+#ವ್ಯಾಖ್ಯಾನಿಸು setsid() setpgrp(0, getpid())
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETENV
+ಪೂರ್ಣಾಂಕ setenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETLOGIN
+ಪೂರ್ಣಾಂಕ setlogin(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_INNETGR
+ಪೂರ್ಣಾಂಕ innetgr(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#ಆದರೆ !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+ಪೂರ್ಣಾಂಕ seteuid(uid_t);
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#ಆದರೆ !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+ಪೂರ್ಣಾಂಕ setegid(uid_t);
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#ಆದರೆ !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *strerror(ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#ಆದರೆ !defined(HAVE_SETLINEBUF)
+#ವ್ಯಾಖ್ಯಾನಿಸು setlinebuf(a)	(setvbuf((a), ಖಾಲಿ, _IOLBF, 0))
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UTIMES
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRUCT_TIMEVAL
+ರಚನೆ timeval {
+	ದೀರ್ಘ tv_sec;
+	ದೀರ್ಘ tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+ಪೂರ್ಣಾಂಕ utimes(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ timeval *);
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_DIRFD
+ಪೂರ್ಣಾಂಕ dirfd(ಶೂನ್ಯ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef AT_FDCWD
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FCHMODAT
+ಪೂರ್ಣಾಂಕ fchmodat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಬಹುಲಕ_t, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FCHOWNAT
+ಪೂರ್ಣಾಂಕ fchownat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, uid_t, gid_t, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_FSTATAT
+ಪೂರ್ಣಾಂಕ fstatat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ stat *, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_UNLINKAT
+ಪೂರ್ಣಾಂಕ unlinkat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TRUNCATE
+ಪೂರ್ಣಾಂಕ truncate (ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, off_t);
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRUCT_TIMESPEC
+ರಚನೆ timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	ದೀರ್ಘ	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#ಆದರೆ !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+ಪೂರ್ಣಾಂಕ nanosleep(ಸ್ಥಿರಾಂಕ ರಚನೆ timespec *, ರಚನೆ timespec *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UTIMENSAT
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+ಪೂರ್ಣಾಂಕ utimensat(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ timespec[2], ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_USLEEP
+ಪೂರ್ಣಾಂಕ usleep(ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ useconds);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TCGETPGRP
+pid_t tcgetpgrp(ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_TCSENDBREAK
+ಪೂರ್ಣಾಂಕ tcsendbreak(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNSETENV
+ಪೂರ್ಣಾಂಕ unsetenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ISBLANK
+ಪೂರ್ಣಾಂಕ	isblank(ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_GETPGID
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PSELECT
+ಪೂರ್ಣಾಂಕ pselect(ಪೂರ್ಣಾಂಕ, fd_set *, fd_set *, fd_set *, ಸ್ಥಿರಾಂಕ ರಚನೆ timespec *,
+    ಸ್ಥಿರಾಂಕ sigset_t *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ENDGRENT
+# define endgrent() ಮಾಡು { } ಆಗ(0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_KRB5_GET_ERROR_ಸಂದೇಶ
+# define krb5_get_error_ಸಂದೇಶ krb5_get_err_ಪಠ್ಯ
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_KRB5_FREE_ERROR_ಸಂದೇಶ
+# define krb5_free_error_ಸಂದೇಶ(a,b) ಮಾಡು { } ಆಗ(0)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PLEDGE
+ಪೂರ್ಣಾಂಕ pledge(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *promises, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *execpromises);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNVEIL
+ಪೂರ್ಣಾಂಕ unveil(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ERR
+ಶೂನ್ಯ err(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ...) __attribute__((format(ಬರೆ, 2, 3)));
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ERRX
+ಶೂನ್ಯ errx(ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ...) __attribute__((format(ಬರೆ, 2, 3)));
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_WARN
+ಶೂನ್ಯ warn(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ...) __attribute__((format(ಬರೆ, 1, 2)));
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_LLABS
+ದೀರ್ಘ ದೀರ್ಘ llabs(ದೀರ್ಘ ದೀರ್ಘ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#ಆದರೆ defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+ಶೂನ್ಯ bzero(ಶೂನ್ಯ *, ಗಾತ್ರ_t);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_RAISE
+ಪೂರ್ಣಾಂಕ ಎತ್ತು(ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_GETSID
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FLOCK
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+ಪೂರ್ಣಾಂಕ flock(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef FFLUSH_NULL_BUG
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_LOCALTIME_R
+ರಚನೆ tm *localtime_r(ಸ್ಥಿರಾಂಕ time_t *, ರಚನೆ tm *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_CLOCK_GETTIME
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಪೂರ್ಣಾಂಕ clockid_t;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
+ಪೂರ್ಣಾಂಕ clock_gettime(clockid_t, ರಚನೆ timespec *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_REALPATH
+#ವ್ಯಾಖ್ಯಾನಿಸು realpath(x, y)	(sftp_realpath((x), (y)))
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* _BSD_MISC_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _BSD_MISC_H */

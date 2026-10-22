@@ -34,33 +34,33 @@
 
 /* OPENBSD ORIGINAL: include/fnmatch.h */
 
-#ifndef HAVE_FNMATCH_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FNMATCH_H
 /* Ensure we define FNM_CASEFOLD */
-#define __BSD_VISIBLE 1
+#ವ್ಯಾಖ್ಯಾನಿಸು __BSD_VISIBLE 1
 
-#ifndef	_FNMATCH_H_
-#define	_FNMATCH_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ	_FNMATCH_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು	_FNMATCH_H_
 
-#ifdef HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_CDEFS_H
+#ಅನ್ತರ್ಭಾವ <sys/cdefs.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define	FNM_NOMATCH	1	/* Match failed. */
-#define	FNM_NOSYS	2	/* Function not supported (unused). */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_NOMATCH	1	/* Match failed. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_NOSYS	2	/* Function not supported (unused). */
 
-#define	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
-#define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
-#define	FNM_PERIOD	0x04	/* Period must be matched by period. */
-#if __BSD_VISIBLE
-#define	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
-#define	FNM_CASEFOLD	0x10	/* Case insensitive search. */
-#define	FNM_IGNORECASE	FNM_CASEFOLD
-#define	FNM_FILE_NAME	FNM_PATHNAME
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_PERIOD	0x04	/* Period must be matched by period. */
+#ಆದರೆ __BSD_VISIBLE
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_CASEFOLD	0x10	/* Case insensitive search. */
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_IGNORECASE	FNM_CASEFOLD
+#ವ್ಯಾಖ್ಯಾನಿಸು	FNM_FILE_NAME	FNM_PATHNAME
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* __BEGIN_DECLS */
-int	 fnmatch(const char *, const char *, int);
+ಪೂರ್ಣಾಂಕ	 fnmatch(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
 /* __END_DECLS */
 
-#endif /* !_FNMATCH_H_ */
-#endif /* ! HAVE_FNMATCH_H */
+#ಆದರೆ_ಅಂತ್ಯ /* !_FNMATCH_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* ! HAVE_FNMATCH_H */

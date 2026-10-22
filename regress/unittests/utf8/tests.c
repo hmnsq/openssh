@@ -6,62 +6,62 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <locale.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#ಅನ್ತರ್ಭಾವ "utf8.h"
 
-static void
-badarg(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+badarg(ಶೂನ್ಯ)
 {
-	char	 buf[16];
-	int	 len, width;
+	ಅಕ್ಷರ	 buf[16];
+	ಪೂರ್ಣಾಂಕ	 len, ಅಗಲ;
 
-	width = 1;
-	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	ಅಗಲ = 1;
+	TEST_ಆರಂಭ("utf8_badarg");
+	len = snmprintf(buf, ಗಾತ್ರ(buf), &ಅಗಲ, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
-	ASSERT_INT_EQ(width, 0);
-	TEST_DONE();
+	ASSERT_INT_EQ(ಅಗಲ, 0);
+	TEST_ಮುಗಿದ();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+ಸ್ಥಿರ ಶೂನ್ಯ
+one(ಪೂರ್ಣಾಂಕ utf8, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mbs, ಪೂರ್ಣಾಂಕ ಅಗಲ,
+    ಪೂರ್ಣಾಂಕ wantwidth, ಪೂರ್ಣಾಂಕ wantlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಯಸುತ್ತದೆ)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	ಅಕ್ಷರ	 buf[16];
+	ಪೂರ್ಣಾಂಕ	*wp;
+	ಪೂರ್ಣಾಂಕ	 len;
 
-	if (wantlen == -2)
-		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
-	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	ಆದರೆ (wantlen == -2)
+		wantlen = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಬಯಸುತ್ತದೆ);
+	(ಶೂನ್ಯ)strlcpy(buf, utf8 ? "utf8_" : "c_", ಗಾತ್ರ(buf));
+	(ಶೂನ್ಯ)strlcat(buf, name, ಗಾತ್ರ(buf));
+	TEST_ಆರಂಭ(buf);
+	wp = wantwidth == -2 ? ಖಾಲಿ : &ಅಗಲ;
+	len = snmprintf(buf, ಗಾತ್ರ(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
-	ASSERT_STRING_EQ(buf, wants);
-	ASSERT_INT_EQ(width, wantwidth);
-	TEST_DONE();
+	ASSERT_STRING_EQ(buf, ಬಯಸುತ್ತದೆ);
+	ASSERT_INT_EQ(ಅಗಲ, wantwidth);
+	TEST_ಮುಗಿದ();
 }
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
-	char	*loc;
+	ಅಕ್ಷರ	*loc;
 
-	TEST_START("utf8_setlocale");
+	TEST_ಆರಂಭ("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ಖಾಲಿ);
+	TEST_ಮುಗಿದ();
 
 	badarg();
 	one(1, "empty", "", 2, 0, 0, "");
@@ -80,10 +80,10 @@ tests(void)
 	one(1, "double_fit", "a\343\201\201", 3, 3, 4, "a\343\201\201");
 	one(1, "double_spc", "a\343\201\201", 4, 3, 4, "a\343\201\201");
 
-	TEST_START("C_setlocale");
+	TEST_ಆರಂಭ("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ಖಾಲಿ);
+	TEST_ಮುಗಿದ();
 
 	badarg();
 	one(0, "empty", "", 2, 0, 0, "");
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
-	printf("no benchmarks\n");
+	ಬರೆ("no benchmarks\n");
 }

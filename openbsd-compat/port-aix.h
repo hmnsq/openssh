@@ -24,104 +24,104 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef _AIX
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ _AIX
 
-#ifdef HAVE_SYS_SOCKET_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-struct ssh;
-struct sshbuf;
+ರಚನೆ ssh;
+ರಚನೆ sshbuf;
 
 /* These should be in the system headers but are not. */
-int usrinfo(int, char *, int);
-#if defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
-int setauthdb(const char *, char *);
-#endif
+ಪೂರ್ಣಾಂಕ usrinfo(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
+ಪೂರ್ಣಾಂಕ setauthdb(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
 /* these may or may not be in the headers depending on the version */
-#if defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
-int authenticate(char *, char *, int *, char **);
-#endif
-#if defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
-int loginfailed(char *, char *, char *);
-#endif
-#if defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
-int loginrestrictions(char *, int, char *, char **);
-#endif
-#if defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
-int loginsuccess(char *, char *, char *, char **);
-#endif
-#if defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
-int passwdexpired(char *, char **);
-#endif
+#ಆದರೆ defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
+ಪೂರ್ಣಾಂಕ authenticate(ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ *, ಅಕ್ಷರ **);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
+ಪೂರ್ಣಾಂಕ loginfailed(ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
+ಪೂರ್ಣಾಂಕ loginrestrictions(ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ *, ಅಕ್ಷರ **);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
+ಪೂರ್ಣಾಂಕ loginsuccess(ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಅಕ್ಷರ *, ಅಕ್ಷರ **);
+#ಆದರೆ_ಅಂತ್ಯ
+#ಆದರೆ defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
+ಪೂರ್ಣಾಂಕ passwdexpired(ಅಕ್ಷರ *, ಅಕ್ಷರ **);
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Some versions define r_type in the above headers, which causes a conflict */
-#ifdef r_type
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ r_type
 # undef r_type
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* AIX 4.2.x doesn't have nanosleep but does have nsleep which is equivalent */
-#if !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
+#ಆದರೆ !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
 # define nanosleep(a,b) nsleep(a,b)
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* For struct timespec on AIX 4.2.x */
-#ifdef HAVE_SYS_TIMERS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_TIMERS_H
 # include <sys/timers.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* for setpcred and friends */
-#ifdef HAVE_USERSEC_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_USERSEC_H
 # include <usersec.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * According to the setauthdb man page, AIX password registries must be 15
  * chars or less plus terminating NUL.
  */
-#ifdef HAVE_SETAUTHDB
-# define REGISTRY_SIZE	16
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SETAUTHDB
+# define REGISTRY_ಗಾತ್ರ	16
+#ಆದರೆ_ಅಂತ್ಯ
 
-void aix_usrinfo(struct passwd *);
+ಶೂನ್ಯ aix_usrinfo(ರಚನೆ passwd *);
 
-#ifdef WITH_AIXAUTHENTICATE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_AIXAUTHENTICATE
 # define CUSTOM_SYS_AUTH_PASSWD 1
 # define CUSTOM_SYS_AUTH_ALLOWED_USER 1
-int sys_auth_allowed_user(struct passwd *, struct sshbuf *);
-# define CUSTOM_SYS_AUTH_RECORD_LOGIN 1
-int sys_auth_record_login(const char *, const char *, const char *,
-    struct sshbuf *);
-# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-char *sys_auth_get_lastlogin_msg(const char *, uid_t);
+ಪೂರ್ಣಾಂಕ sys_auth_allowed_user(ರಚನೆ passwd *, ರಚನೆ sshbuf *);
+# define CUSTOM_SYS_AUTH_ದಾಖಲೆ_LOGIN 1
+ಪೂರ್ಣಾಂಕ sys_auth_ದಾಖಲೆ_login(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ರಚನೆ sshbuf *);
+# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_ಸಂದೇಶ
+ಅಕ್ಷರ *sys_auth_get_lastlogin_ಸಂದೇಶ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, uid_t);
 # define CUSTOM_FAILED_LOGIN 1
-# if defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
+# ಆದರೆ defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
 # define USE_AIX_KRB_NAME
-char *aix_krb5_get_principal_name(const char *);
+ಅಕ್ಷರ *aix_krb5_get_principal_name(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 # endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-void aix_setauthdb(const char *);
-void aix_restoreauthdb(void);
-void aix_remove_embedded_newlines(char *);
+ಶೂನ್ಯ aix_setauthdb(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ aix_restoreauthdb(ಶೂನ್ಯ);
+ಶೂನ್ಯ aix_remove_embedded_newlines(ಅಕ್ಷರ *);
 
-#if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
+#ಆದರೆ defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
 # ifdef getnameinfo
 #  undef getnameinfo
 # endif
-int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+ಪೂರ್ಣಾಂಕ sshaix_getnameinfo(ಸ್ಥಿರಾಂಕ ರಚನೆ sockaddr *, ಗಾತ್ರ_t, ಅಕ್ಷರ *, ಗಾತ್ರ_t,
+    ಅಕ್ಷರ *, ಗಾತ್ರ_t, ಪೂರ್ಣಾಂಕ);
 # define getnameinfo(a,b,c,d,e,f,g) (sshaix_getnameinfo(a,b,c,d,e,f,g))
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * We use getgrset in preference to multiple getgrent calls for efficiency
  * plus it supports NIS and LDAP groups.
  */
-#if !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
+#ಆದರೆ !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
 # define HAVE_GETGROUPLIST
 # define USE_GETGRSET
-int getgrouplist(const char *, gid_t, gid_t *, int *);
-#endif
+ಪೂರ್ಣಾಂಕ getgrouplist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, gid_t, gid_t *, ಪೂರ್ಣಾಂಕ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* _AIX */
+#ಆದರೆ_ಅಂತ್ಯ /* _AIX */

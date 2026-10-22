@@ -14,35 +14,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_TUN_H
-#define _PORT_TUN_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಪೋರ್ಟ್_TUN_H
+#ವ್ಯಾಖ್ಯಾನಿಸು ಪೋರ್ಟ್_TUN_H
 
-struct Channel;
-struct ssh;
+ರಚನೆ Channel;
+ರಚನೆ ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#ಆದರೆ defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
-#endif
+ಪೂರ್ಣಾಂಕ	  sys_tun_open(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ **);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#ಆದರೆ defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
-#endif
+ಪೂರ್ಣಾಂಕ	 sys_tun_infilter(ರಚನೆ ssh *, ರಚನೆ Channel *, ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+u_char	*sys_tun_outfilter(ರಚನೆ ssh *, ರಚನೆ Channel *, u_char **, ಗಾತ್ರ_t *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(SYS_RDOMAIN_LINUX)
+#ಆದರೆ defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
-# define HAVE_SYS_SET_RDOMAIN
+# define HAVE_SYS_ಗಣ_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
-#endif
+ಅಕ್ಷರ *sys_get_rdomain(ಪೂರ್ಣಾಂಕ fd);
+ಪೂರ್ಣಾಂಕ sys_ಗಣ_rdomain(ಪೂರ್ಣಾಂಕ fd, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name);
+ಪೂರ್ಣಾಂಕ sys_valid_rdomain(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if defined(SYS_RDOMAIN_XXX)
-# define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
-#endif
+#ಆದರೆ defined(SYS_RDOMAIN_XXX)
+# define HAVE_SYS_ಗಣ_PROCESS_RDOMAIN
+ಶೂನ್ಯ sys_ಗಣ_process_rdomain(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

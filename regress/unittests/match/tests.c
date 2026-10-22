@@ -5,126 +5,126 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
 
-#include "match.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
 
 /* Original match_pattern() implementation; has bad worst-case behaviour */
-static int
-match_pattern_original(const char *s, const char *pattern)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_ನಮೂನೆ_original(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ)
 {
-	for (;;) {
+	ಗಾಗಿ (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		ಆದರೆ (!*ನಮೂನೆ)
+			ಹಿಂತಿರುಗಿ !*s;
 
-		if (*pattern == '*') {
+		ಆದರೆ (*ನಮೂನೆ == '*') {
 			/* Skip this and any consecutive asterisks. */
-			while (*pattern == '*')
-				pattern++;
+			ಆಗ (*ನಮೂನೆ == '*')
+				ನಮೂನೆ++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			ಆದರೆ (!*ನಮೂನೆ)
+				ಹಿಂತಿರುಗಿ 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			ಆದರೆ (*ನಮೂನೆ != '?' && *ನಮೂನೆ != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
-					    match_pattern_original(s + 1,
-					    pattern + 1))
-						return 1;
+				ಗಾಗಿ (; *s; s++)
+					ಆದರೆ (*s == *ನಮೂನೆ &&
+					    ಹೊಂದಿಕೆ_ನಮೂನೆ_original(s + 1,
+					    ನಮೂನೆ + 1))
+						ಹಿಂತಿರುಗಿ 1;
 				/* Failed. */
-				return 0;
+				ಹಿಂತಿರುಗಿ 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (match_pattern_original(s, pattern))
-					return 1;
+			ಗಾಗಿ (; *s; s++)
+				ಆದರೆ (ಹೊಂದಿಕೆ_ನಮೂನೆ_original(s, ನಮೂನೆ))
+					ಹಿಂತಿರುಗಿ 1;
 			/* Failed. */
-			return 0;
+			ಹಿಂತಿರುಗಿ 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		ಆದರೆ (!*s)
+			ಹಿಂತಿರುಗಿ 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && *pattern != *s)
-			return 0;
+		ಆದರೆ (*ನಮೂನೆ != '?' && *ನಮೂನೆ != *s)
+			ಹಿಂತಿರುಗಿ 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
-		pattern++;
+		ನಮೂನೆ++;
 	}
 	/* NOTREACHED */
 }
 
 /* n^x for size_t */
-static size_t
-pow_size(size_t base, size_t exp)
+ಸ್ಥಿರ ಗಾತ್ರ_t
+pow_ಗಾತ್ರ(ಗಾತ್ರ_t ತಳ, ಗಾತ್ರ_t ಘಾತಾಂಕ)
 {
-	size_t r = 1;
+	ಗಾತ್ರ_t r = 1;
 
-	ASSERT_SIZE_T_NE(base, 0);
-	while (exp-- != 0) {
-		ASSERT_SIZE_T_LE(r, SIZE_MAX / base);
-		r *= base;
+	ASSERT_ಗಾತ್ರ_T_NE(ತಳ, 0);
+	ಆಗ (ಘಾತಾಂಕ-- != 0) {
+		ASSERT_ಗಾತ್ರ_T_LE(r, SIZE_MAX / ತಳ);
+		r *= ತಳ;
 	}
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
-static void
-make_word(size_t v, const char *alphabet, size_t alphabet_len,
-    char *word, size_t wordlen)
+ಸ್ಥಿರ ಶೂನ್ಯ
+make_ಶಬ್ದ(ಗಾತ್ರ_t v, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alphabet, ಗಾತ್ರ_t alphabet_len,
+    ಅಕ್ಷರ *ಶಬ್ದ, ಗಾತ್ರ_t wordlen)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
-	for (i = 0; i < wordlen; i++) {
-		word[i] = alphabet[v % alphabet_len];
+	ಗಾಗಿ (i = 0; i < wordlen; i++) {
+		ಶಬ್ದ[i] = alphabet[v % alphabet_len];
 		v /= alphabet_len;
 	}
-	word[wordlen] = '\0';
+	ಶಬ್ದ[wordlen] = '\0';
 }
 
-#define PATTERN_LEN	8
-#define INPUT_LEN	7
+#ವ್ಯಾಖ್ಯಾನಿಸು ನಮೂನೆ_LEN	8
+#ವ್ಯಾಖ್ಯಾನಿಸು ಒಳಹರಿವು_LEN	7
 
-static void
-match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಹೊಂದಿಕೆ_ನಮೂನೆ_check_one_ಒಳಹರಿವು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಒಳಹರಿವು, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ_alphabet)
 {
-	char pattern[PATTERN_LEN];
-	size_t len, i, npatterns;
-	int actual, expected;
+	ಅಕ್ಷರ ನಮೂನೆ[ನಮೂನೆ_LEN];
+	ಗಾತ್ರ_t len, i, npatterns;
+	ಪೂರ್ಣಾಂಕ actual, expected;
 
-	for (len = 0; len < sizeof(pattern); len++) {
+	ಗಾಗಿ (len = 0; len < ಗಾತ್ರ(ನಮೂನೆ); len++) {
 		/* Check with all patterns of this size using alphabet */
-		npatterns = pow_size(strlen(pattern_alphabet), len);
-		for (i = 0; i < npatterns; i++) {
-			make_word(i, pattern_alphabet,
-			    strlen(pattern_alphabet), pattern, len);
-			actual = match_pattern(input, pattern);
-			expected = match_pattern_original(input, pattern);
+		npatterns = pow_ಗಾತ್ರ(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ_alphabet), len);
+		ಗಾಗಿ (i = 0; i < npatterns; i++) {
+			make_ಶಬ್ದ(i, ನಮೂನೆ_alphabet,
+			    ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ_alphabet), ನಮೂನೆ, len);
+			actual = ಹೊಂದಿಕೆ_ನಮೂನೆ(ಒಳಹರಿವು, ನಮೂನೆ);
+			expected = ಹೊಂದಿಕೆ_ನಮೂನೆ_original(ಒಳಹರಿವು, ನಮೂನೆ);
 			test_subtest_info("input=\"%s\" pattern=\"%s\"",
-			    input, pattern);
+			    ಒಳಹರಿವು, ನಮೂನೆ);
 			ASSERT_INT_EQ(actual, expected);
 		}
 	}
@@ -134,178 +134,178 @@ match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
  * Check current match_pattern against original one with an exhaustive
  * combination of patterns and inputs.
  */
-static void
-match_pattern_exhaustive_original(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಹೊಂದಿಕೆ_ನಮೂನೆ_exhaustive_original(ಶೂನ್ಯ)
 {
-	const char *pattern_alphabet = "abx?*";
-	const char *input_alphabet = "abc";
-	char input[INPUT_LEN];
-	size_t len, i, ninputs;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ_alphabet = "abx?*";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಒಳಹರಿವು_alphabet = "abc";
+	ಅಕ್ಷರ ಒಳಹರಿವು[ಒಳಹರಿವು_LEN];
+	ಗಾತ್ರ_t len, i, ninputs;
 
-	for (len = 0; len < sizeof(input); len++) {
+	ಗಾಗಿ (len = 0; len < ಗಾತ್ರ(ಒಳಹರಿವು); len++) {
 		/* Check every possible input from alphabet of this size */
-		ninputs = pow_size(strlen(input_alphabet), len);
-		for (i = 0; i < ninputs; i++) {
-			make_word(i, input_alphabet,
-			    strlen(input_alphabet), input, len);
-			match_pattern_check_one_input(input, pattern_alphabet);
+		ninputs = pow_ಗಾತ್ರ(ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಒಳಹರಿವು_alphabet), len);
+		ಗಾಗಿ (i = 0; i < ninputs; i++) {
+			make_ಶಬ್ದ(i, ಒಳಹರಿವು_alphabet,
+			    ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಒಳಹರಿವು_alphabet), ಒಳಹರಿವು, len);
+			ಹೊಂದಿಕೆ_ನಮೂನೆ_check_one_ಒಳಹರಿವು(ಒಳಹರಿವು, ನಮೂನೆ_alphabet);
 		}
 	}
 }
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
-	TEST_START("match_pattern");
-	ASSERT_INT_EQ(match_pattern("", ""), 1);
-	ASSERT_INT_EQ(match_pattern("", "aaa"), 0);
-	ASSERT_INT_EQ(match_pattern("aaa", ""), 0);
-	ASSERT_INT_EQ(match_pattern("aaa", "aaaa"), 0);
-	ASSERT_INT_EQ(match_pattern("aaaa", "aaa"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "abc"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "abd"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "abcd"), 0);
-	ASSERT_INT_EQ(match_pattern("abcd", "abc"), 0);
-	TEST_DONE();
+	TEST_ಆರಂಭ("match_pattern");
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", ""), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "aaa"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aaa", ""), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aaa", "aaaa"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aaaa", "aaa"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "abc"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "abd"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "abcd"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abcd", "abc"), 0);
+	TEST_ಮುಗಿದ();
 
-	TEST_START("match_pattern wildcard");
-	ASSERT_INT_EQ(match_pattern("", "*"), 1);
-	ASSERT_INT_EQ(match_pattern("", "**"), 1);
-	ASSERT_INT_EQ(match_pattern("", "***"), 1);
-	ASSERT_INT_EQ(match_pattern("", "?"), 0);
-	ASSERT_INT_EQ(match_pattern("", "*?"), 0);
-	ASSERT_INT_EQ(match_pattern("", "?*"), 0);
-	ASSERT_INT_EQ(match_pattern("", "**a*"), 0);
-	ASSERT_INT_EQ(match_pattern("a", "?"), 1);
-	ASSERT_INT_EQ(match_pattern("aa", "a?"), 1);
-	ASSERT_INT_EQ(match_pattern("a", "*"), 1);
-	ASSERT_INT_EQ(match_pattern("aa", "a*"), 1);
-	ASSERT_INT_EQ(match_pattern("aa", "?*"), 1);
-	ASSERT_INT_EQ(match_pattern("aa", "?a"), 1);
-	ASSERT_INT_EQ(match_pattern("aa", "*a"), 1);
-	ASSERT_INT_EQ(match_pattern("ba", "a?"), 0);
-	ASSERT_INT_EQ(match_pattern("ba", "a*"), 0);
-	ASSERT_INT_EQ(match_pattern("ab", "?a"), 0);
-	ASSERT_INT_EQ(match_pattern("ab", "*a"), 0);
-	ASSERT_INT_EQ(match_pattern("aa", "**"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "a***b"), 1);
-	ASSERT_INT_EQ(match_pattern("axb", "a***b"), 1);
-	ASSERT_INT_EQ(match_pattern("axxb", "a***b"), 1);
-	ASSERT_INT_EQ(match_pattern("ax", "a***b"), 0);
-	ASSERT_INT_EQ(match_pattern("abbb", "a*b*b"), 1);
-	ASSERT_INT_EQ(match_pattern("abbb", "a*b*c"), 0);
-	ASSERT_INT_EQ(match_pattern("aaaaaaaaac", "a*a*a*a*b"), 0);
-	ASSERT_INT_EQ(match_pattern("aaaaaaaaab", "a*a*a*a*b"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "*b"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "*a*"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "*a*b"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "*a*c"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "a?c"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "??c"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "???"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "a?d"), 0);
-	ASSERT_INT_EQ(match_pattern("ab", "???"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "ab*"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "ab*"), 1);
-	ASSERT_INT_EQ(match_pattern("a", "ab*"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "ab?"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "ab?"), 0);
-	ASSERT_INT_EQ(match_pattern("abcd", "ab?"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "?bc"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "?b*"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "?c"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "a*?c"), 1);
-	ASSERT_INT_EQ(match_pattern("ac", "a*?c"), 0);
-	ASSERT_INT_EQ(match_pattern("abbc", "a*?c"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "a?*c"), 1);
-	ASSERT_INT_EQ(match_pattern("ac", "a?*c"), 0);
-	ASSERT_INT_EQ(match_pattern("abbc", "a?*c"), 1);
-	ASSERT_INT_EQ(match_pattern("abc", "a*?*c"), 1);
-	ASSERT_INT_EQ(match_pattern("ac", "a*?*c"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "?*c"), 1);
-	ASSERT_INT_EQ(match_pattern("ac", "?*c"), 1);
-	ASSERT_INT_EQ(match_pattern("c", "?*c"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "*?c"), 1);
-	ASSERT_INT_EQ(match_pattern("ac", "*?c"), 1);
-	ASSERT_INT_EQ(match_pattern("c", "*?c"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "a?*"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "a?*"), 1);
-	ASSERT_INT_EQ(match_pattern("a", "a?*"), 0);
-	ASSERT_INT_EQ(match_pattern("abc", "a*?"), 1);
-	ASSERT_INT_EQ(match_pattern("ab", "a*?"), 1);
-	ASSERT_INT_EQ(match_pattern("a", "a*?"), 0);
-	ASSERT_INT_EQ(match_pattern("abb", "a*b"), 1);
-	ASSERT_INT_EQ(match_pattern("abbc", "a*b"), 0);
-	TEST_DONE();
+	TEST_ಆರಂಭ("match_pattern wildcard");
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "**"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "***"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "*?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "?*"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("", "**a*"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("a", "?"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "a?"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("a", "*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "a*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "?*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "?a"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "*a"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ba", "a?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ba", "a*"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "?a"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "*a"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aa", "**"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "a***b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("axb", "a***b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("axxb", "a***b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ax", "a***b"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abbb", "a*b*b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abbb", "a*b*c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aaaaaaaaac", "a*a*a*a*b"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("aaaaaaaaab", "a*a*a*a*b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "*b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "*a*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "*a*b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "*a*c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a?c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "??c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "???"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a?d"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "???"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "ab*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "ab*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("a", "ab*"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "ab?"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "ab?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abcd", "ab?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "?bc"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "?b*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "?c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a*?c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ac", "a*?c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abbc", "a*?c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a?*c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ac", "a?*c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abbc", "a?*c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a*?*c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ac", "a*?*c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "?*c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ac", "?*c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("c", "?*c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "*?c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ac", "*?c"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("c", "*?c"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a?*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "a?*"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("a", "a?*"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abc", "a*?"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("ab", "a*?"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("a", "a*?"), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abb", "a*b"), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ("abbc", "a*b"), 0);
+	TEST_ಮುಗಿದ();
 
-	TEST_START("match_pattern exhaustive original");
-	match_pattern_exhaustive_original();
-	TEST_DONE();
+	TEST_ಆರಂಭ("match_pattern exhaustive original");
+	ಹೊಂದಿಕೆ_ನಮೂನೆ_exhaustive_original();
+	TEST_ಮುಗಿದ();
 
-	TEST_START("match_pattern_list");
-	ASSERT_INT_EQ(match_pattern_list("", "", 0), 0); /* no patterns */
-	ASSERT_INT_EQ(match_pattern_list("", "*", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("", "!*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("", "!a,*", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("", "*,!a", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("", "a,!*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("", "!*,a", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("a", "", 0), 0);
-	ASSERT_INT_EQ(match_pattern_list("a", "*", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("a", "!*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("a", "!a", 0), -1);
+	TEST_ಆರಂಭ("match_pattern_list");
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "", 0), 0); /* no patterns */
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "*", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "!*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "!a,*", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "*,!a", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "a,!*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("", "!*,a", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "", 0), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "*", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "!*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "!a", 0), -1);
 	/* XXX negated ASSERT_INT_EQ(match_pattern_list("a", "!b", 0), 1); */
-	ASSERT_INT_EQ(match_pattern_list("a", "!a,*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("b", "!a,*", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("a", "*,!a", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("b", "*,!a", 0), 1);
-	ASSERT_INT_EQ(match_pattern_list("a", "a,!*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("b", "a,!*", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("a", "a,!a", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "!a,*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("b", "!a,*", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "*,!a", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("b", "*,!a", 0), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "a,!*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("b", "a,!*", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "a,!a", 0), -1);
 	/* XXX negated ASSERT_INT_EQ(match_pattern_list("b", "a,!a", 0), 1); */
-	ASSERT_INT_EQ(match_pattern_list("a", "!*,a", 0), -1);
-	ASSERT_INT_EQ(match_pattern_list("b", "!*,a", 0), -1);
-	TEST_DONE();
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("a", "!*,a", 0), -1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("b", "!*,a", 0), -1);
+	TEST_ಮುಗಿದ();
 
-	TEST_START("match_pattern_list lowercase");
-	ASSERT_INT_EQ(match_pattern_list("abc", "ABC", 0), 0);
-	ASSERT_INT_EQ(match_pattern_list("ABC", "abc", 0), 0);
-	ASSERT_INT_EQ(match_pattern_list("abc", "ABC", 1), 1);
-	ASSERT_INT_EQ(match_pattern_list("ABC", "abc", 1), 0);
-	TEST_DONE();
+	TEST_ಆರಂಭ("match_pattern_list lowercase");
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("abc", "ABC", 0), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("ABC", "abc", 0), 0);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("abc", "ABC", 1), 1);
+	ASSERT_INT_EQ(ಹೊಂದಿಕೆ_ನಮೂನೆ_list("ABC", "abc", 1), 0);
+	TEST_ಮುಗಿದ();
 
-	TEST_START("addr_match_list");
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.1/44"), -2);
-	ASSERT_INT_EQ(addr_match_list(NULL, "127.0.0.1/44"), -2);
-	ASSERT_INT_EQ(addr_match_list("a", "*"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "*"), 1);
-	ASSERT_INT_EQ(addr_match_list(NULL, "*"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.1"), 1);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.2"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.1"), -1);
+	TEST_ಆರಂಭ("addr_match_list");
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.0.1/44"), -2);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list(ಖಾಲಿ, "127.0.0.1/44"), -2);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("a", "*"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "*"), 1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list(ಖಾಲಿ, "*"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.0.1"), 1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.0.2"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "!127.0.0.1"), -1);
 	/* XXX negated ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.2"), 1); */
-	ASSERT_INT_EQ(addr_match_list("127.0.0.255", "127.0.0.0/24"), 1);
-	ASSERT_INT_EQ(addr_match_list("127.0.1.1", "127.0.0.0/24"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.0/24"), 1);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.1.0/24"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.0/24"), -1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.255", "127.0.0.0/24"), 1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.1.1", "127.0.0.0/24"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.0.0/24"), 1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.1.0/24"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "!127.0.0.0/24"), -1);
 	/* XXX negated ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.1.0/24"), 1); */
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "10.0.0.1,!127.0.0.1"), -1);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.1,10.0.0.1"), -1);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "10.0.0.1,127.0.0.2"), 0);
-	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.2,10.0.0.1"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "10.0.0.1,!127.0.0.1"), -1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "!127.0.0.1,10.0.0.1"), -1);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "10.0.0.1,127.0.0.2"), 0);
+	ASSERT_INT_EQ(addr_ಹೊಂದಿಕೆ_list("127.0.0.1", "127.0.0.2,10.0.0.1"), 0);
 	/* XXX negated ASSERT_INT_EQ(addr_match_list("127.0.0.1", "10.0.0.1,!127.0.0.2"), 1); */
 	/* XXX negated ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.2,10.0.0.1"), 1); */
-	TEST_DONE();
+	TEST_ಮುಗಿದ();
 
-#define CHECK_FILTER(string,filter,expected) \
-	do { \
-		char *result = match_filter_denylist((string), (filter)); \
-		ASSERT_STRING_EQ(result, expected); \
-		free(result); \
-	} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು CHECK_FILTER(string,filter,expected) \
+	ಮಾಡು { \
+		ಅಕ್ಷರ *ಫಲಿತಾಂಶ = ಹೊಂದಿಕೆ_filter_denylist((string), (filter)); \
+		ASSERT_STRING_EQ(ಫಲಿತಾಂಶ, expected); \
+		ಬಿಡುಗಡೆ(ಫಲಿತಾಂಶ); \
+	} ಆಗ (0)
 
-	TEST_START("match_filter_list");
+	TEST_ಆರಂಭ("match_filter_list");
 	CHECK_FILTER("a,b,c", "", "a,b,c");
 	CHECK_FILTER("a,b,c", "a", "b,c");
 	CHECK_FILTER("a,b,c", "b", "a,c");
@@ -316,7 +316,7 @@ tests(void)
 	CHECK_FILTER("a,b,c", "a,b,c", "");
 	CHECK_FILTER("a,b,c", "b,c", "a");
 	CHECK_FILTER("", "a,b,c", "");
-	TEST_DONE();
+	TEST_ಮುಗಿದ();
 /*
  * XXX TODO
  * int      match_host_and_ip(const char *, const char *, const char *);
@@ -326,8 +326,8 @@ tests(void)
  */
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
-	printf("no benchmarks\n");
+	ಬರೆ("no benchmarks\n");
 }

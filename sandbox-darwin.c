@@ -14,54 +14,54 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef SANDBOX_DARWIN
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SANDBOX_DARWIN
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <sandbox.h>
+#ಅನ್ತರ್ಭಾವ <sandbox.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "monitor.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sandbox.h"
+#ಅನ್ತರ್ಭಾವ "monitor.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 /* Darwin/OS X sandbox */
 
-struct ssh_sandbox {
-	int junk;
+ರಚನೆ ssh_sandbox {
+	ಪೂರ್ಣಾಂಕ junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ರಚನೆ ssh_sandbox *
+ssh_sandbox_init(ರಚನೆ monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ರಚನೆ ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing Darwin sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, ಗಾತ್ರ(*box));
+	ಹಿಂತಿರುಗಿ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ಶೂನ್ಯ
+ssh_sandbox_ಮಗು(ರಚನೆ ssh_sandbox *box)
 {
-	char *errmsg;
-	struct rlimit rl_zero;
+	ಅಕ್ಷರ *errmsg;
+	ರಚನೆ rlimit rl_zero;
 
 	debug3_f("starting Darwin sandbox");
-	if (sandbox_init(kSBXProfilePureComputation, SANDBOX_NAMED,
+	ಆದರೆ (sandbox_init(k_SBXProfile_ಶುದ್ಧ_Computation, SANDBOX_NAMED,
 	    &errmsg) == -1)
 		fatal_f("sandbox_init: %s", errmsg);
 
@@ -70,15 +70,15 @@ ssh_sandbox_child(struct ssh_sandbox *box)
 	 * we must disable these using rlimit.
 	 */
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	ಆದರೆ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+	ಆದರೆ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	ಆದರೆ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			__func__, strerror(errno));
 }
 
-#endif /* SANDBOX_DARWIN */
+#ಆದರೆ_ಅಂತ್ಯ /* SANDBOX_DARWIN */

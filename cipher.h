@@ -34,44 +34,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CIPHER_H
-#define CIPHER_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ CIPHER_H
+#ವ್ಯಾಖ್ಯಾನಿಸು CIPHER_H
 
-#include <sys/types.h>
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "cipher-chachapoly.h"
+#ಅನ್ತರ್ಭಾವ "cipher-aesctr.h"
 
-#define CIPHER_ENCRYPT		1
-#define CIPHER_DECRYPT		0
+#ವ್ಯಾಖ್ಯಾನಿಸು CIPHER_ENCRYPT		1
+#ವ್ಯಾಖ್ಯಾನಿಸು CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+ರಚನೆ sshcipher;
+ರಚನೆ sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *cipher_by_name(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *cipher_warning_ಸಂದೇಶ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher_ctx *);
+ಪೂರ್ಣಾಂಕ	 ciphers_valid(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ	*cipher_alg_list(ಅಕ್ಷರ, ಪೂರ್ಣಾಂಕ);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *compression_alg_list(ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 cipher_init(ರಚನೆ sshcipher_ctx **, ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *,
+    ಸ್ಥಿರಾಂಕ u_char *, u_int, ಸ್ಥಿರಾಂಕ u_char *, u_int, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 cipher_crypt(ರಚನೆ sshcipher_ctx *, u_int, u_char *, ಸ್ಥಿರಾಂಕ u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+ಪೂರ್ಣಾಂಕ	 cipher_get_ಉದ್ದಳತೆ(ರಚನೆ sshcipher_ctx *, u_int *, u_int,
+    ಸ್ಥಿರಾಂಕ u_char *, u_int);
+ಶೂನ್ಯ	 cipher_free(ರಚನೆ sshcipher_ctx *);
+u_int	 cipher_blocksize(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_keylen(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_seclen(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_authlen(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_ivlen(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_is_cbc(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
+u_int	 cipher_is_ಆಂತರಿಕ(ಸ್ಥಿರಾಂಕ ರಚನೆ sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(ರಚನೆ sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+ಪೂರ್ಣಾಂಕ	 cipher_get_keyiv(ರಚನೆ sshcipher_ctx *, u_char *, ಗಾತ್ರ_t);
 
-#endif				/* CIPHER_H */
+#ಆದರೆ_ಅಂತ್ಯ				/* CIPHER_H */

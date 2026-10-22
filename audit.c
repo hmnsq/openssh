@@ -22,73 +22,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#ifdef SSH_AUDIT_EVENTS
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SSH_AUDIT_EVENTS
 
-#include "audit.h"
-#include "log.h"
-#include "hostfile.h"
-#include "auth.h"
+#ಅನ್ತರ್ಭಾವ "audit.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
 
 /*
  * Care must be taken when using this since it WILL NOT be initialized when
  * audit_connection_from() is called and MAY NOT be initialized when
  * audit_event(CONNECTION_ABANDON) is called.  Test for NULL before using.
  */
-extern Authctxt *the_authctxt;
+ಬಾಹ್ಯ Authctxt *the_authctxt;
 
 /* Maybe add the audit class to struct Authmethod? */
 ssh_audit_event_t
-audit_classify_auth(const char *method)
+audit_classify_auth(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ವಿಧಾನ)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
-	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
-	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
-	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+	ಆದರೆ (strcmp(ವಿಧಾನ, "none") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_NONE;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ವಿಧಾನ, "password") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_PASSWD;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ವಿಧಾನ, "publickey") == 0 ||
+	    strcmp(ವಿಧಾನ, "rsa") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_PUBKEY;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(ವಿಧಾನ, "keyboard-interactive", 20) == 0 ||
+	    strcmp(ವಿಧಾನ, "challenge-response") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_KBDINT;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ವಿಧಾನ, "hostbased") == 0 ||
+	    strcmp(ವಿಧಾನ, "rhosts-rsa") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_HOSTBASED;
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ವಿಧಾನ, "gssapi-with-mic") == 0)
+		ಹಿಂತಿರುಗಿ SSH_AUTH_FAIL_GSSAPI;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಹಿಂತಿರುಗಿ SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
-const char *
-audit_username(void)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+audit_username(ಶೂನ್ಯ)
 {
-	static const char unknownuser[] = "(unknown user)";
-	static const char invaliduser[] = "(invalid user)";
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ unknownuser[] = "(unknown user)";
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	ಆದರೆ (the_authctxt == ಖಾಲಿ || the_authctxt->user == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ (unknownuser);
+	ಆದರೆ (!the_authctxt->valid)
+		ಹಿಂತಿರುಗಿ (invaliduser);
+	ಹಿಂತಿರುಗಿ (the_authctxt->user);
 }
 
-const char *
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
-	static struct event_lookup_struct {
+	ಪೂರ್ಣಾಂಕ i;
+	ಸ್ಥಿರ ರಚನೆ event_lookup_struct {
 		ssh_audit_event_t event;
-		const char *name;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
-		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
+		{SSH_LOGIN_ಬೇರು_DENIED,		"LOGIN_ROOT_DENIED"},
 		{SSH_AUTH_SUCCESS,		"AUTH_SUCCESS"},
 		{SSH_AUTH_FAIL_NONE,		"AUTH_FAIL_NONE"},
 		{SSH_AUTH_FAIL_PASSWD,		"AUTH_FAIL_PASSWD"},
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
-			break;
-	return(event_lookup[i].name);
+	ಗಾಗಿ (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		ಆದರೆ (event_lookup[i].event == ev)
+			ನಿಲ್ಲಿಸು;
+	ಹಿಂತಿರುಗಿ(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -119,19 +119,19 @@ audit_event_lookup(ssh_audit_event_t ev)
  * Called after a connection has been accepted but before any authentication
  * has been attempted.
  */
-void
-audit_connection_from(const char *host, int port)
+ಶೂನ್ಯ
+audit_connection_from(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ಪೂರ್ಣಾಂಕ ಪೋರ್ಟ್)
 {
-	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	debug("audit connection from %s port %d euid %d", host, ಪೋರ್ಟ್,
+	    (ಪೂರ್ಣಾಂಕ)geteuid());
 }
 
 /*
  * Called when various events occur (see audit.h for a list of possible
  * events and what they mean).
  */
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+ಶೂನ್ಯ
+audit_event(ರಚನೆ ssh *ssh, ssh_audit_event_t event)
 {
 	debug("audit event euid %d user %s event %d (%s)", geteuid(),
 	    audit_username(), event, audit_event_lookup(event));
@@ -144,10 +144,10 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_open(struct logininfo *li)
+ಶೂನ್ಯ
+audit_session_open(ರಚನೆ logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *t = li->ಸಾಲು ? li->ಸಾಲು : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -160,10 +160,10 @@ audit_session_open(struct logininfo *li)
  * Note that this may be called multiple times if multiple sessions are used
  * within a single connection.
  */
-void
-audit_session_close(struct logininfo *li)
+ಶೂನ್ಯ
+audit_session_close(ರಚನೆ logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *t = li->ಸಾಲು ? li->ಸಾಲು : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -174,11 +174,11 @@ audit_session_close(struct logininfo *li)
  * it may be called multiple times for a single connection since SSH2 allows
  * multiple sessions within a single connection.
  */
-void
-audit_run_command(const char *command)
+ಶೂನ್ಯ
+audit_ಸತತ_command(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *command)
 {
 	debug("audit run command euid %d user %s command '%.200s'", geteuid(),
 	    audit_username(), command);
 }
 # endif  /* !defined CUSTOM_SSH_AUDIT_EVENTS */
-#endif /* SSH_AUDIT_EVENTS */
+#ಆದರೆ_ಅಂತ್ಯ /* SSH_AUDIT_EVENTS */

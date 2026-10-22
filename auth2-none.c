@@ -23,47 +23,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+ಬಾಹ್ಯ ServerOptions options;
+ಬಾಹ್ಯ ರಚನೆ authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+userauth_none(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ವಿಧಾನ)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ಆದರೆ ((r = sshpkt_get_ಕೊನೆ(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	ಆದರೆ (options.permit_ಖಾಲಿಗಳು_passwd && options.password_authentication)
+		ಹಿಂತಿರುಗಿ mm_auth_password(ssh, "");
+	ಹಿಂತಿರುಗಿ (0);
 }
 
-Authmethod method_none = {
+Authmethod ವಿಧಾನ_none = {
 	&methodcfg_none,
 	userauth_none,
 };

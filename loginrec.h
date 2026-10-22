@@ -1,5 +1,5 @@
-#ifndef _HAVE_LOGINREC_H_
-#define _HAVE_LOGINREC_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _HAVE_LOGINREC_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _HAVE_LOGINREC_H_
 
 /*
  * Copyright (c) 2000 Andre Lucas.  All rights reserved.
@@ -29,9 +29,9 @@
  ** loginrec.h:  platform-independent login recording and lastlog retrieval
  **/
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-struct ssh;
+ರಚನೆ ssh;
 
 /**
  ** you should use the login_* calls to work around platform dependencies
@@ -41,10 +41,10 @@ struct ssh;
  * login_netinfo structure
  */
 
-union login_netinfo {
-	struct sockaddr sa;
-	struct sockaddr_in sa_in;
-	struct sockaddr_storage sa_storage;
+ಒಕ್ಕೂಟ login_netinfo {
+	ರಚನೆ sockaddr sa;
+	ರಚನೆ sockaddr_in sa_ಒಳ;
+	ರಚನೆ sockaddr_storage sa_storage;
 };
 
 /*
@@ -52,37 +52,37 @@ union login_netinfo {
  */
 /* types - different to utmp.h 'type' macros */
 /* (though set to the same value as linux, openbsd and others...) */
-#define LTYPE_FAILED   6
-#define LTYPE_LOGIN    7
-#define LTYPE_LOGOUT   8
+#ವ್ಯಾಖ್ಯಾನಿಸು LTYPE_FAILED   6
+#ವ್ಯಾಖ್ಯಾನಿಸು LTYPE_LOGIN    7
+#ವ್ಯಾಖ್ಯಾನಿಸು LTYPE_LOGOUT   8
 
 /* string lengths - set very long */
-#define LINFO_PROGSIZE 64
-#define LINFO_LINESIZE 64
-#define LINFO_NAMESIZE 512
-#define LINFO_HOSTSIZE 256
+#ವ್ಯಾಖ್ಯಾನಿಸು LINFO_PROGSIZE 64
+#ವ್ಯಾಖ್ಯಾನಿಸು LINFO_LINESIZE 64
+#ವ್ಯಾಖ್ಯಾನಿಸು LINFO_NAMESIZE 512
+#ವ್ಯಾಖ್ಯಾನಿಸು LINFO_HOSTSIZE 256
 
-struct logininfo {
-	char       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
-	int        progname_null;
-	short int  type;                         /* type of login (LTYPE_*) */
+ರಚನೆ logininfo {
+	ಅಕ್ಷರ       progname[LINFO_PROGSIZE];     /* name of program (for PAM) */
+	ಪೂರ್ಣಾಂಕ        progname_null;
+	ಗಿಡ್ಡ ಪೂರ್ಣಾಂಕ  type;                         /* type of login (LTYPE_*) */
 	pid_t      pid;                          /* PID of login process */
 	uid_t      uid;                          /* UID of this user */
-	char       line[LINFO_LINESIZE];         /* tty/pty name */
-	char       username[LINFO_NAMESIZE];     /* login username */
-	char       hostname[LINFO_HOSTSIZE];     /* remote hostname */
+	ಅಕ್ಷರ       ಸಾಲು[LINFO_LINESIZE];         /* tty/pty name */
+	ಅಕ್ಷರ       username[LINFO_NAMESIZE];     /* login username */
+	ಅಕ್ಷರ       hostname[LINFO_HOSTSIZE];     /* remote hostname */
 	/* 'exit_status' structure components */
-	int        exit;                        /* process exit status */
-	int        termination;                 /* process termination status */
+	ಪೂರ್ಣಾಂಕ        ನಿರ್ಗಮಿಸು;                        /* process exit status */
+	ಪೂರ್ಣಾಂಕ        termination;                 /* process termination status */
 	/* struct timeval (sys/time.h) isn't always available, if it isn't we'll
 	 * use time_t's value as tv_sec and set tv_usec to 0
 	 */
-	unsigned int tv_sec;
-	unsigned int tv_usec;
-	union login_netinfo hostaddr;       /* caller's host address(es) */
-#ifdef USE_WTMPDB
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ tv_sec;
+	ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ tv_usec;
+	ಒಕ್ಕೂಟ login_netinfo hostaddr;       /* caller's host address(es) */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_WTMPDB
 	int64_t wtmpdb_id;                  /* ID for wtmpdb_logout */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }; /* struct logininfo */
 
 /*
@@ -92,47 +92,47 @@ struct logininfo {
 /** 'public' functions */
 
 /* construct a new login entry */
-struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-				    const char *hostname, const char *line);
+ರಚನೆ logininfo *login_alloc_ನಮೂದು(pid_t pid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username,
+				    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hostname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು);
 /* free a structure */
-void login_free_entry(struct logininfo *li);
+ಶೂನ್ಯ login_free_ನಮೂದು(ರಚನೆ logininfo *li);
 /* fill out a pre-allocated structure with useful information */
-int login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line);
+ಪೂರ್ಣಾಂಕ login_init_ನಮೂದು(ರಚನೆ logininfo *li, pid_t pid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *hostname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು);
 /* place the current time in a logininfo struct */
-void login_set_current_time(struct logininfo *li);
+ಶೂನ್ಯ login_ಗಣ_current_ಸಮಯ(ರಚನೆ logininfo *li);
 
 /* record the entry */
-int login_login (struct logininfo *li);
-int login_logout(struct logininfo *li);
-#ifdef LOGIN_NEEDS_UTMPX
-int login_utmp_only(struct logininfo *li);
-#endif
+ಪೂರ್ಣಾಂಕ login_login (ರಚನೆ logininfo *li);
+ಪೂರ್ಣಾಂಕ login_logout(ರಚನೆ logininfo *li);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ LOGIN_NEEDS_UTMPX
+ಪೂರ್ಣಾಂಕ login_utmp_only(ರಚನೆ logininfo *li);
+#ಆದರೆ_ಅಂತ್ಯ
 
 /** End of public functions */
 
 /* record the entry */
-int login_write (struct logininfo *li);
-int login_log_entry(struct logininfo *li);
+ಪೂರ್ಣಾಂಕ login_write (ರಚನೆ logininfo *li);
+ಪೂರ್ಣಾಂಕ login_log_ನಮೂದು(ರಚನೆ logininfo *li);
 
 /* set the network address based on network address type */
-void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-		    const unsigned int sa_size);
+ಶೂನ್ಯ login_ಗಣ_addr(ರಚನೆ logininfo *li, ಸ್ಥಿರಾಂಕ ರಚನೆ sockaddr *sa,
+		    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ sa_ಗಾತ್ರ);
 
 /*
  * lastlog retrieval functions
  */
 /* lastlog *entry* functions fill out a logininfo */
-struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid);
+ರಚನೆ logininfo *login_get_lastlog(ರಚನೆ logininfo *li, ಸ್ಥಿರಾಂಕ uid_t uid);
 /* lastlog *time* functions return time_t equivalent (uint) */
-unsigned int login_get_lastlog_time(const uid_t uid);
+ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ login_get_lastlog_ಸಮಯ(ಸ್ಥಿರಾಂಕ uid_t uid);
 
 /* produce various forms of the line filename */
-char *line_fullname(char *dst, const char *src, u_int dstsize);
-char *line_stripname(char *dst, const char *src, int dstsize);
-char *line_abbrevname(char *dst, const char *src, int dstsize);
+ಅಕ್ಷರ *ಸಾಲು_fullname(ಅಕ್ಷರ *dst, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, u_int dstsize);
+ಅಕ್ಷರ *ಸಾಲು_stripname(ಅಕ್ಷರ *dst, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ಪೂರ್ಣಾಂಕ dstsize);
+ಅಕ್ಷರ *ಸಾಲು_abbrevname(ಅಕ್ಷರ *dst, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *src, ಪೂರ್ಣಾಂಕ dstsize);
 
-void record_failed_login(struct ssh *, const char *, const char *,
-    const char *);
+ಶೂನ್ಯ ದಾಖಲೆ_failed_login(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-#endif /* _HAVE_LOGINREC_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* _HAVE_LOGINREC_H_ */

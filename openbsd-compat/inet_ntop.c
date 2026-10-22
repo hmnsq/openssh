@@ -18,34 +18,34 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntop.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef HAVE_INET_NTOP
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_INET_NTOP
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <arpa/inet.h>
+#ಅನ್ತರ್ಭಾವ <arpa/nameser.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#ifndef IN6ADDRSZ
-#define IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ IN6ADDRSZ
+#ವ್ಯಾಖ್ಯಾನಿಸು IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef INT16SZ
-#define INT16SZ     2    /* for systems without 16-bit ints */
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ INT16SZ
+#ವ್ಯಾಖ್ಯಾನಿಸು INT16SZ     2    /* for systems without 16-bit ints */
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * WARNING: Don't even consider trying to compile this on a system where
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4(const u_char *src, char *dst, size_t size);
-static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *inet_ntop4(ಸ್ಥಿರಾಂಕ u_char *src, ಅಕ್ಷರ *dst, ಗಾತ್ರ_t ಗಾತ್ರ_2);
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *inet_ntop6(ಸ್ಥಿರಾಂಕ u_char *src, ಅಕ್ಷರ *dst, ಗಾತ್ರ_t ಗಾತ್ರ_2);
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -55,17 +55,17 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+inet_ntop(ಪೂರ್ಣಾಂಕ af, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *src, ಅಕ್ಷರ *dst, socklen_t ಗಾತ್ರ_2)
 {
-	switch (af) {
-	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
-	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
-	default:
+	ಆಯ್ಕೆ (af) {
+	ಸ್ಥಿತಿ AF_INET:
+		ಹಿಂತಿರುಗಿ (inet_ntop4(src, dst, (ಗಾತ್ರ_t)ಗಾತ್ರ_2));
+	ಸ್ಥಿತಿ AF_INET6:
+		ಹಿಂತಿರುಗಿ (inet_ntop6(src, dst, (ಗಾತ್ರ_t)ಗಾತ್ರ_2));
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	}
 	/* NOTREACHED */
 }
@@ -81,20 +81,20 @@ inet_ntop(int af, const void *src, char *dst, socklen_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, size_t size)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+inet_ntop4(ಸ್ಥಿರಾಂಕ u_char *src, ಅಕ್ಷರ *dst, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	static const char fmt[] = "%u.%u.%u.%u";
-	char tmp[sizeof "255.255.255.255"];
-	int l;
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ fmt[] = "%u.%u.%u.%u";
+	ಅಕ್ಷರ tmp[ಗಾತ್ರ "255.255.255.255"];
+	ಪೂರ್ಣಾಂಕ l;
 
-	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	l = snprintf(tmp, ಗಾತ್ರ_2, fmt, src[0], src[1], src[2], src[3]);
+	ಆದರೆ (l <= 0 || l >= ಗಾತ್ರ_2) {
 		errno = ENOSPC;
-		return (NULL);
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	}
-	strlcpy(dst, tmp, size);
-	return (dst);
+	strlcpy(dst, tmp, ಗಾತ್ರ_2);
+	ಹಿಂತಿರುಗಿ (dst);
 }
 
 /* const char *
@@ -103,8 +103,8 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, size_t size)
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+inet_ntop6(ಸ್ಥಿರಾಂಕ u_char *src, ಅಕ್ಷರ *dst, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -113,98 +113,98 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 * Keep this in mind if you think this function should have been coded
 	 * to use pointer overlays.  All the world's not a VAX.
 	 */
-	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
-	char *tp, *ep;
-	struct { int base, len; } best, cur;
-	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	ಅಕ್ಷರ tmp[ಗಾತ್ರ "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
+	ಅಕ್ಷರ *tp, *ep;
+	ರಚನೆ { ಪೂರ್ಣಾಂಕ ತಳ, len; } ಉತ್ತಮ, cur;
+	u_int ಪದಗಳು[IN6ADDRSZ / INT16SZ];
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ advance;
 
 	/*
 	 * Preprocess:
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
-	for (i = 0; i < IN6ADDRSZ; i++)
-		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
-	best.base = -1;
-	cur.base = -1;
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
-				cur.base = i, cur.len = 1;
-			else
+	memset(ಪದಗಳು, '\0', ಗಾತ್ರ ಪದಗಳು);
+	ಗಾಗಿ (i = 0; i < IN6ADDRSZ; i++)
+		ಪದಗಳು[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
+	ಉತ್ತಮ.ತಳ = -1;
+	cur.ತಳ = -1;
+	ಗಾಗಿ (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
+		ಆದರೆ (ಪದಗಳು[i] == 0) {
+			ಆದರೆ (cur.ತಳ == -1)
+				cur.ತಳ = i, cur.len = 1;
+			ಇಲ್ಲದಿದ್ದರೆ
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
-					best = cur;
-				cur.base = -1;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (cur.ತಳ != -1) {
+				ಆದರೆ (ಉತ್ತಮ.ತಳ == -1 || cur.len > ಉತ್ತಮ.len)
+					ಉತ್ತಮ = cur;
+				cur.ತಳ = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
-			best = cur;
+	ಆದರೆ (cur.ತಳ != -1) {
+		ಆದರೆ (ಉತ್ತಮ.ತಳ == -1 || cur.len > ಉತ್ತಮ.len)
+			ಉತ್ತಮ = cur;
 	}
-	if (best.base != -1 && best.len < 2)
-		best.base = -1;
+	ಆದರೆ (ಉತ್ತಮ.ತಳ != -1 && ಉತ್ತಮ.len < 2)
+		ಉತ್ತಮ.ತಳ = -1;
 
 	/*
 	 * Format the result.
 	 */
 	tp = tmp;
-	ep = tmp + sizeof(tmp);
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
+	ep = tmp + ಗಾತ್ರ(tmp);
+	ಗಾಗಿ (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
-		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+		ಆದರೆ (ಉತ್ತಮ.ತಳ != -1 && i >= ಉತ್ತಮ.ತಳ &&
+		    i < (ಉತ್ತಮ.ತಳ + ಉತ್ತಮ.len)) {
+			ಆದರೆ (i == ಉತ್ತಮ.ತಳ) {
+				ಆದರೆ (tp + 1 >= ep)
+					ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 				*tp++ = ':';
 			}
-			continue;
+			ಮುಂದುವರಿ;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		ಆದರೆ (i != 0) {
+			ಆದರೆ (tp + 1 >= ep)
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
-		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
-			tp += strlen(tp);
-			break;
+		ಆದರೆ (i == 6 && ಉತ್ತಮ.ತಳ == 0 &&
+		    (ಉತ್ತಮ.len == 6 || (ಉತ್ತಮ.len == 5 && ಪದಗಳು[5] == 0xffff))) {
+			ಆದರೆ (!inet_ntop4(src+12, tp, (ಗಾತ್ರ_t)(ep - tp)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			tp += ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(tp);
+			ನಿಲ್ಲಿಸು;
 		}
-		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		advance = snprintf(tp, ep - tp, "%x", ಪದಗಳು[i]);
+		ಆದರೆ (advance <= 0 || advance >= ep - tp)
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	ಆದರೆ (ಉತ್ತಮ.ತಳ != -1 && (ಉತ್ತಮ.ತಳ + ಉತ್ತಮ.len) == (IN6ADDRSZ / INT16SZ)) {
+		ಆದರೆ (tp + 1 >= ep)
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	ಆದರೆ (tp + 1 >= ep)
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	ಆದರೆ ((ಗಾತ್ರ_t)(tp - tmp) > ಗಾತ್ರ_2) {
 		errno = ENOSPC;
-		return (NULL);
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	}
-	strlcpy(dst, tmp, size);
-	return (dst);
+	strlcpy(dst, tmp, ಗಾತ್ರ_2);
+	ಹಿಂತಿರುಗಿ (dst);
 }
 
-#endif /* !HAVE_INET_NTOP */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_INET_NTOP */

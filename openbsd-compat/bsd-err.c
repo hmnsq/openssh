@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ERR
+ಶೂನ್ಯ
+err(ಪೂರ್ಣಾಂಕ r, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
+	va_start(ವಾದಗಳು, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, ವಾದಗಳು);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(ವಾದಗಳು);
+	ನಿರ್ಗಮಿಸು(r);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_ERRX
+ಶೂನ್ಯ
+errx(ಪೂರ್ಣಾಂಕ r, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(ವಾದಗಳು, fmt);
+	vfprintf(stderr, fmt, ವಾದಗಳು);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(ವಾದಗಳು);
+	ನಿರ್ಗಮಿಸು(r);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_WARN
+ಶೂನ್ಯ
+warn(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	va_list args;
+	va_list ವಾದಗಳು;
 
-	va_start(args, fmt);
+	va_start(ವಾದಗಳು, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, ವಾದಗಳು);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(ವಾದಗಳು);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

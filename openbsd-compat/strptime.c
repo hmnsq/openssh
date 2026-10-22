@@ -31,16 +31,16 @@
 
 /* OPENBSD ORIGINAL: lib/libc/time/strptime.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef HAVE_STRPTIME
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STRPTIME
 
-#define TM_YEAR_BASE 1900	/* from tzfile.h */
+#ವ್ಯಾಖ್ಯಾನಿಸು TM_YEAR_ತಳ 1900	/* from tzfile.h */
 
-#include <ctype.h>
-#include <locale.h>
-#include <string.h>
-#include <time.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <locale.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
 
 /* #define	_ctloc(x)		(_CurrentTimeLocale->x) */
 
@@ -48,263 +48,263 @@
  * We do not implement alternate representations. However, we always
  * check whether a given modifier is allowed for a certain conversion.
  */
-#define _ALT_E			0x01
-#define _ALT_O			0x02
-#define	_LEGAL_ALT(x)		{ if (alt_format & ~(x)) return (0); }
+#ವ್ಯಾಖ್ಯಾನಿಸು _ALT_E			0x01
+#ವ್ಯಾಖ್ಯಾನಿಸು _ALT_O			0x02
+#ವ್ಯಾಖ್ಯಾನಿಸು	_LEGAL_ALT(x)		{ ಆದರೆ (alt_format & ~(x)) ಹಿಂತಿರುಗಿ (0); }
 
 
-static	int _conv_num(const unsigned char **, int *, int, int);
-static	char *_strptime(const char *, const char *, struct tm *, int);
+ಸ್ಥಿರ	ಪೂರ್ಣಾಂಕ conv_ಅಂಕೆ(ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ **, ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಸ್ಥಿರ	ಅಕ್ಷರ *_strptime(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ tm *, ಪೂರ್ಣಾಂಕ);
 
 
-char *
-strptime(const char *buf, const char *fmt, struct tm *tm)
+ಅಕ್ಷರ *
+strptime(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *buf, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ರಚನೆ tm *tm)
 {
-	return(_strptime(buf, fmt, tm, 1));
+	ಹಿಂತಿರುಗಿ(_strptime(buf, fmt, tm, 1));
 }
 
-static char *
-_strptime(const char *buf, const char *fmt, struct tm *tm, int initialize)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+_strptime(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *buf, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ರಚನೆ tm *tm, ಪೂರ್ಣಾಂಕ initialize)
 {
-	unsigned char c;
-	const unsigned char *bp;
-	size_t len;
-	int alt_format, i;
-	static int century, relyear;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c;
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *bp;
+	ಗಾತ್ರ_t len;
+	ಪೂರ್ಣಾಂಕ alt_format, i;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ century, relyear;
 
-	if (initialize) {
-		century = TM_YEAR_BASE;
+	ಆದರೆ (initialize) {
+		century = TM_YEAR_ತಳ;
 		relyear = -1;
 	}
 
-	bp = (unsigned char *)buf;
-	while ((c = *fmt) != '\0') {
+	bp = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *)buf;
+	ಆಗ ((c = *fmt) != '\0') {
 		/* Clear `alternate' modifier prior to new conversion. */
 		alt_format = 0;
 
 		/* Eat up white-space. */
-		if (isspace(c)) {
-			while (isspace(*bp))
+		ಆದರೆ (ಖಾಲಿಯೇ(c)) {
+			ಆಗ (ಖಾಲಿಯೇ(*bp))
 				bp++;
 
 			fmt++;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 				
-		if ((c = *fmt++) != '%')
-			goto literal;
+		ಆದರೆ ((c = *fmt++) != '%')
+			ಹೋಗು literal;
 
 
-again:		switch (c = *fmt++) {
-		case '%':	/* "%%" is converted to "%". */
+again:		ಆಯ್ಕೆ (c = *fmt++) {
+		ಸ್ಥಿತಿ '%':	/* "%%" is converted to "%". */
 literal:
-		if (c != *bp++)
-			return (NULL);
+		ಆದರೆ (c != *bp++)
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
-		break;
+		ನಿಲ್ಲಿಸು;
 
 		/*
 		 * "Alternative" modifiers. Just set the appropriate flag
 		 * and start over again.
 		 */
-		case 'E':	/* "%E?" alternative conversion modifier. */
+		ಸ್ಥಿತಿ 'E':	/* "%E?" alternative conversion modifier. */
 			_LEGAL_ALT(0);
 			alt_format |= _ALT_E;
-			goto again;
+			ಹೋಗು again;
 
-		case 'O':	/* "%O?" alternative conversion modifier. */
+		ಸ್ಥಿತಿ 'O':	/* "%O?" alternative conversion modifier. */
 			_LEGAL_ALT(0);
 			alt_format |= _ALT_O;
-			goto again;
+			ಹೋಗು again;
 			
 		/*
 		 * "Complex" conversion rules, implemented through recursion.
 		 */
-#if 0
-		case 'c':	/* Date and time, using the locale's format. */
+#ಆದರೆ 0
+		ಸ್ಥಿತಿ 'c':	/* Date and time, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(d_t_fmt), tm, 0)))
-				return (NULL);
-			break;
-#endif
-		case 'D':	/* The date as "%m/%d/%y". */
+			ಆದರೆ (!(bp = _strptime(bp, _ctloc(d_t_fmt), tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
+		ಸ್ಥಿತಿ 'D':	/* The date as "%m/%d/%y". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%m/%d/%y", tm, 0)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(bp = _strptime(bp, "%m/%d/%y", tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 	
-		case 'R':	/* The time as "%H:%M". */
+		ಸ್ಥಿತಿ 'R':	/* The time as "%H:%M". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%H:%M", tm, 0)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(bp = _strptime(bp, "%H:%M", tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'r':	/* The time as "%I:%M:%S %p". */
+		ಸ್ಥಿತಿ 'r':	/* The time as "%I:%M:%S %p". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%I:%M:%S %p", tm, 0)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(bp = _strptime(bp, "%I:%M:%S %p", tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'T':	/* The time as "%H:%M:%S". */
+		ಸ್ಥಿತಿ 'T':	/* The time as "%H:%M:%S". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%H:%M:%S", tm, 0)))
-				return (NULL);
-			break;
-#if 0
-		case 'X':	/* The time, using the locale's format. */
+			ಆದರೆ (!(bp = _strptime(bp, "%H:%M:%S", tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ 0
+		ಸ್ಥಿತಿ 'X':	/* The time, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(t_fmt), tm, 0)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(bp = _strptime(bp, _ctloc(t_fmt), tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'x':	/* The date, using the locale's format. */
+		ಸ್ಥಿತಿ 'x':	/* The date, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(d_fmt), tm, 0)))
-				return (NULL);
-			break;
-#endif
+			ಆದರೆ (!(bp = _strptime(bp, _ctloc(d_fmt), tm, 0)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
 		/*
 		 * "Elementary" conversion rules.
 		 */
-#if 0
-		case 'A':	/* The day of week, using the locale's form. */
-		case 'a':
+#ಆದರೆ 0
+		ಸ್ಥಿತಿ 'A':	/* The day of week, using the locale's form. */
+		ಸ್ಥಿತಿ 'a':
 			_LEGAL_ALT(0);
-			for (i = 0; i < 7; i++) {
+			ಗಾಗಿ (i = 0; i < 7; i++) {
 				/* Full name. */
-				len = strlen(_ctloc(day[i]));
-				if (strncasecmp(_ctloc(day[i]), bp, len) == 0)
-					break;
+				len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(day[i]));
+				ಆದರೆ (strncasecmp(_ctloc(day[i]), bp, len) == 0)
+					ನಿಲ್ಲಿಸು;
 
 				/* Abbreviated name. */
-				len = strlen(_ctloc(abday[i]));
-				if (strncasecmp(_ctloc(abday[i]), bp, len) == 0)
-					break;
+				len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(abday[i]));
+				ಆದರೆ (strncasecmp(_ctloc(abday[i]), bp, len) == 0)
+					ನಿಲ್ಲಿಸು;
 			}
 
 			/* Nothing matched. */
-			if (i == 7)
-				return (NULL);
+			ಆದರೆ (i == 7)
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
 			tm->tm_wday = i;
 			bp += len;
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'B':	/* The month, using the locale's form. */
-		case 'b':
-		case 'h':
+		ಸ್ಥಿತಿ 'B':	/* The month, using the locale's form. */
+		ಸ್ಥಿತಿ 'b':
+		ಸ್ಥಿತಿ 'h':
 			_LEGAL_ALT(0);
-			for (i = 0; i < 12; i++) {
+			ಗಾಗಿ (i = 0; i < 12; i++) {
 				/* Full name. */
-				len = strlen(_ctloc(mon[i]));
-				if (strncasecmp(_ctloc(mon[i]), bp, len) == 0)
-					break;
+				len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(mon[i]));
+				ಆದರೆ (strncasecmp(_ctloc(mon[i]), bp, len) == 0)
+					ನಿಲ್ಲಿಸು;
 
 				/* Abbreviated name. */
-				len = strlen(_ctloc(abmon[i]));
-				if (strncasecmp(_ctloc(abmon[i]), bp, len) == 0)
-					break;
+				len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(abmon[i]));
+				ಆದರೆ (strncasecmp(_ctloc(abmon[i]), bp, len) == 0)
+					ನಿಲ್ಲಿಸು;
 			}
 
 			/* Nothing matched. */
-			if (i == 12)
-				return (NULL);
+			ಆದರೆ (i == 12)
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
 			tm->tm_mon = i;
 			bp += len;
-			break;
-#endif
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
 
-		case 'C':	/* The century number. */
+		ಸ್ಥಿತಿ 'C':	/* The century number. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 99)))
-				return (NULL);
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &i, 0, 99)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
 			century = i * 100;
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'd':	/* The day of month. */
-		case 'e':
+		ಸ್ಥಿತಿ 'd':	/* The day of month. */
+		ಸ್ಥಿತಿ 'e':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mday, 1, 31)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_mday, 1, 31)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'k':	/* The hour (24-hour clock representation). */
+		ಸ್ಥಿತಿ 'k':	/* The hour (24-hour clock representation). */
 			_LEGAL_ALT(0);
 			/* FALLTHROUGH */
-		case 'H':
+		ಸ್ಥಿತಿ 'H':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 0, 23)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_hour, 0, 23)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'l':	/* The hour (12-hour clock representation). */
+		ಸ್ಥಿತಿ 'l':	/* The hour (12-hour clock representation). */
 			_LEGAL_ALT(0);
 			/* FALLTHROUGH */
-		case 'I':
+		ಸ್ಥಿತಿ 'I':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 1, 12)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_hour, 1, 12)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'j':	/* The day of year. */
+		ಸ್ಥಿತಿ 'j':	/* The day of year. */
 			_LEGAL_ALT(0);
-			if (!(_conv_num(&bp, &tm->tm_yday, 1, 366)))
-				return (NULL);
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_yday, 1, 366)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 			tm->tm_yday--;
-			break;
+			ನಿಲ್ಲಿಸು;
 
-		case 'M':	/* The minute. */
+		ಸ್ಥಿತಿ 'M':	/* The minute. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_min, 0, 59)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_min, 0, 59)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'm':	/* The month. */
+		ಸ್ಥಿತಿ 'm':	/* The month. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mon, 1, 12)))
-				return (NULL);
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_mon, 1, 12)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 			tm->tm_mon--;
-			break;
+			ನಿಲ್ಲಿಸು;
 
-#if 0
-		case 'p':	/* The locale's equivalent of AM/PM. */
+#ಆದರೆ 0
+		ಸ್ಥಿತಿ 'p':	/* The locale's equivalent of AM/PM. */
 			_LEGAL_ALT(0);
 			/* AM? */
-			len = strlen(_ctloc(am_pm[0]));
-			if (strncasecmp(_ctloc(am_pm[0]), bp, len) == 0) {
-				if (tm->tm_hour > 12)	/* i.e., 13:00 AM ?! */
-					return (NULL);
-				else if (tm->tm_hour == 12)
+			len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(am_pm[0]));
+			ಆದರೆ (strncasecmp(_ctloc(am_pm[0]), bp, len) == 0) {
+				ಆದರೆ (tm->tm_hour > 12)	/* i.e., 13:00 AM ?! */
+					ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (tm->tm_hour == 12)
 					tm->tm_hour = 0;
 
 				bp += len;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 			/* PM? */
-			len = strlen(_ctloc(am_pm[1]));
-			if (strncasecmp(_ctloc(am_pm[1]), bp, len) == 0) {
-				if (tm->tm_hour > 12)	/* i.e., 13:00 PM ?! */
-					return (NULL);
-				else if (tm->tm_hour < 12)
+			len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(_ctloc(am_pm[1]));
+			ಆದರೆ (strncasecmp(_ctloc(am_pm[1]), bp, len) == 0) {
+				ಆದರೆ (tm->tm_hour > 12)	/* i.e., 13:00 PM ?! */
+					ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+				ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (tm->tm_hour < 12)
 					tm->tm_hour += 12;
 
 				bp += len;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 
 			/* Nothing matched. */
-			return (NULL);
-#endif
-		case 'S':	/* The seconds. */
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+#ಆದರೆ_ಅಂತ್ಯ
+		ಸ್ಥಿತಿ 'S':	/* The seconds. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_sec, 0, 61)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_sec, 0, 61)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'U':	/* The week of year, beginning on sunday. */
-		case 'W':	/* The week of year, beginning on monday. */
+		ಸ್ಥಿತಿ 'U':	/* The week of year, beginning on sunday. */
+		ಸ್ಥಿತಿ 'W':	/* The week of year, beginning on monday. */
 			_LEGAL_ALT(_ALT_O);
 			/*
 			 * XXX This is bogus, as we can not assume any valid
@@ -312,44 +312,44 @@ literal:
 			 * point to calculate a real value, so just check the
 			 * range for now.
 			 */
-			 if (!(_conv_num(&bp, &i, 0, 53)))
-				return (NULL);
-			 break;
+			 ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &i, 0, 53)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			 ನಿಲ್ಲಿಸು;
 
-		case 'w':	/* The day of week, beginning on sunday. */
+		ಸ್ಥಿತಿ 'w':	/* The day of week, beginning on sunday. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_wday, 0, 6)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &tm->tm_wday, 0, 6)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
-		case 'Y':	/* The year. */
+		ಸ್ಥಿತಿ 'Y':	/* The year. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 9999)))
-				return (NULL);
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &i, 0, 9999)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
 			relyear = -1;
-			tm->tm_year = i - TM_YEAR_BASE;
-			break;
+			tm->tm_year = i - TM_YEAR_ತಳ;
+			ನಿಲ್ಲಿಸು;
 
-		case 'y':	/* The year within the century (2 digits). */
+		ಸ್ಥಿತಿ 'y':	/* The year within the century (2 digits). */
 			_LEGAL_ALT(_ALT_E | _ALT_O);
-			if (!(_conv_num(&bp, &relyear, 0, 99)))
-				return (NULL);
-			break;
+			ಆದರೆ (!(conv_ಅಂಕೆ(&bp, &relyear, 0, 99)))
+				ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+			ನಿಲ್ಲಿಸು;
 
 		/*
 		 * Miscellaneous conversions.
 		 */
-		case 'n':	/* Any kind of white-space. */
-		case 't':
+		ಸ್ಥಿತಿ 'n':	/* Any kind of white-space. */
+		ಸ್ಥಿತಿ 't':
 			_LEGAL_ALT(0);
-			while (isspace(*bp))
+			ಆಗ (ಖಾಲಿಯೇ(*bp))
 				bp++;
-			break;
+			ನಿಲ್ಲಿಸು;
 
 
-		default:	/* Unknown/unsupported conversion. */
-			return (NULL);
+		ಪೂರ್ವನಿಯೋಜಿತ:	/* Unknown/unsupported conversion. */
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		}
 
 
@@ -359,43 +359,43 @@ literal:
 	 * We need to evaluate the two digit year spec (%y)
 	 * last as we can get a century spec (%C) at any time.
 	 */
-	if (relyear != -1) {
-		if (century == TM_YEAR_BASE) {
-			if (relyear <= 68)
-				tm->tm_year = relyear + 2000 - TM_YEAR_BASE;
-			else
-				tm->tm_year = relyear + 1900 - TM_YEAR_BASE;
-		} else {
-			tm->tm_year = relyear + century - TM_YEAR_BASE;
+	ಆದರೆ (relyear != -1) {
+		ಆದರೆ (century == TM_YEAR_ತಳ) {
+			ಆದರೆ (relyear <= 68)
+				tm->tm_year = relyear + 2000 - TM_YEAR_ತಳ;
+			ಇಲ್ಲದಿದ್ದರೆ
+				tm->tm_year = relyear + 1900 - TM_YEAR_ತಳ;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			tm->tm_year = relyear + century - TM_YEAR_ತಳ;
 		}
 	}
 
-	return ((char *)bp);
+	ಹಿಂತಿರುಗಿ ((ಅಕ್ಷರ *)bp);
 }
 
 
-static int
-_conv_num(const unsigned char **buf, int *dest, int llim, int ulim)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+conv_ಅಂಕೆ(ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ **buf, ಪೂರ್ಣಾಂಕ *dest, ಪೂರ್ಣಾಂಕ llim, ಪೂರ್ಣಾಂಕ ulim)
 {
-	int result = 0;
-	int rulim = ulim;
+	ಪೂರ್ಣಾಂಕ ಫಲಿತಾಂಶ = 0;
+	ಪೂರ್ಣಾಂಕ rulim = ulim;
 
-	if (**buf < '0' || **buf > '9')
-		return (0);
+	ಆದರೆ (**buf < '0' || **buf > '9')
+		ಹಿಂತಿರುಗಿ (0);
 
 	/* we use rulim to break out of the loop when we run out of digits */
-	do {
-		result *= 10;
-		result += *(*buf)++ - '0';
+	ಮಾಡು {
+		ಫಲಿತಾಂಶ *= 10;
+		ಫಲಿತಾಂಶ += *(*buf)++ - '0';
 		rulim /= 10;
-	} while ((result * 10 <= ulim) && rulim && **buf >= '0' && **buf <= '9');
+	} ಆಗ ((ಫಲಿತಾಂಶ * 10 <= ulim) && rulim && **buf >= '0' && **buf <= '9');
 
-	if (result < llim || result > ulim)
-		return (0);
+	ಆದರೆ (ಫಲಿತಾಂಶ < llim || ಫಲಿತಾಂಶ > ulim)
+		ಹಿಂತಿರುಗಿ (0);
 
-	*dest = result;
-	return (1);
+	*dest = ಫಲಿತಾಂಶ;
+	ಹಿಂತಿರುಗಿ (1);
 }
 
-#endif /* HAVE_STRPTIME */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_STRPTIME */
 

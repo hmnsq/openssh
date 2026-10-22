@@ -15,87 +15,87 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SK_API_H
-#define _SK_API_H 1
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _SK_API_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _SK_API_H 1
 
-#include <stddef.h>
-#include <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
 
 /* Flags */
-#define SSH_SK_USER_PRESENCE_REQD	0x01
-#define SSH_SK_USER_VERIFICATION_REQD	0x04
-#define SSH_SK_FORCE_OPERATION		0x10
-#define SSH_SK_RESIDENT_KEY		0x20
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_USER_PRESENCE_REQD	0x01
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_USER_VERIFICATION_REQD	0x04
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_FORCE_OPERATION		0x10
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_RESIDENT_ಕೀಲಿ		0x20
 
 /* Algs */
-#define SSH_SK_ECDSA			0x00
-#define SSH_SK_ED25519			0x01
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ECDSA			0x00
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ED25519			0x01
 
 /* Error codes */
-#define SSH_SK_ERR_GENERAL		-1
-#define SSH_SK_ERR_UNSUPPORTED		-2
-#define SSH_SK_ERR_PIN_REQUIRED		-3
-#define SSH_SK_ERR_DEVICE_NOT_FOUND	-4
-#define SSH_SK_ERR_CREDENTIAL_EXISTS	-5
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ERR_GENERAL		-1
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ERR_UNSUPPORTED		-2
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ERR_PIN_REQUIRED		-3
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ERR_DEVICE_NOT_ಸಿಕ್ಕಿತು	-4
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ERR_CREDENTIAL_EXISTS	-5
 
-struct sk_enroll_response {
+ರಚನೆ sk_enroll_response {
 	uint8_t flags;
-	uint8_t *public_key;
-	size_t public_key_len;
-	uint8_t *key_handle;
-	size_t key_handle_len;
+	uint8_t *ಬಹಿರಂಗ_ಕೀಲಿ;
+	ಗಾತ್ರ_t ಬಹಿರಂಗ_ಕೀಲಿ_len;
+	uint8_t *ಕೀಲಿ_handle;
+	ಗಾತ್ರ_t ಕೀಲಿ_handle_len;
 	uint8_t *signature;
-	size_t signature_len;
+	ಗಾತ್ರ_t signature_len;
 	uint8_t *attestation_cert;
-	size_t attestation_cert_len;
+	ಗಾತ್ರ_t attestation_cert_len;
 	uint8_t *authdata;
-	size_t authdata_len;
+	ಗಾತ್ರ_t authdata_len;
 };
 
-struct sk_sign_response {
+ರಚನೆ sk_sign_response {
 	uint8_t flags;
 	uint32_t counter;
 	uint8_t *sig_r;
-	size_t sig_r_len;
+	ಗಾತ್ರ_t sig_r_len;
 	uint8_t *sig_s;
-	size_t sig_s_len;
+	ಗಾತ್ರ_t sig_s_len;
 };
 
-struct sk_resident_key {
+ರಚನೆ sk_resident_ಕೀಲಿ {
 	uint32_t alg;
-	size_t slot;
-	char *application;
-	struct sk_enroll_response key;
+	ಗಾತ್ರ_t ಸ್ಥಾನ;
+	ಅಕ್ಷರ *application;
+	ರಚನೆ sk_enroll_response ಕೀಲಿ;
 	uint8_t flags;
 	uint8_t *user_id;
-	size_t user_id_len;
+	ಗಾತ್ರ_t user_id_len;
 };
 
-struct sk_option {
-	char *name;
-	char *value;
+ರಚನೆ sk_option {
+	ಅಕ್ಷರ *name;
+	ಅಕ್ಷರ *ಮೌಲ್ಯ;
 	uint8_t required;
 };
 
-#define SSH_SK_VERSION_MAJOR		0x000a0000 /* current API version */
-#define SSH_SK_VERSION_MAJOR_MASK	0xffff0000
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ಆವೃತ್ತಿ_MAJOR		0x000a0000 /* current API version */
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_SK_ಆವೃತ್ತಿ_MAJOR_ಮುಖವಾಡ	0xffff0000
 
 /* Return the version of the middleware API */
-uint32_t sk_api_version(void);
+uint32_t sk_api_ಆವೃತ್ತಿ(ಶೂನ್ಯ);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+ಪೂರ್ಣಾಂಕ sk_enroll(uint32_t alg, ಸ್ಥಿರಾಂಕ uint8_t *challenge, ಗಾತ್ರ_t challenge_len,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *application, uint8_t flags, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pin,
+    ರಚನೆ sk_option **options, ರಚನೆ sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+ಪೂರ್ಣಾಂಕ sk_sign(uint32_t alg, ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ದತ್ತಾಂಶ_len,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *application, ಸ್ಥಿರಾಂಕ uint8_t *ಕೀಲಿ_handle, ಗಾತ್ರ_t ಕೀಲಿ_handle_len,
+    uint8_t flags, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pin, ರಚನೆ sk_option **options,
+    ರಚನೆ sk_sign_response **sign_response);
 
 /* Enumerate all resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+ಪೂರ್ಣಾಂಕ sk_ತುಂಬು_resident_ಕೀಲಿಗಳು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pin, ರಚನೆ sk_option **options,
+    ರಚನೆ sk_resident_ಕೀಲಿ ***rks, ಗಾತ್ರ_t *nrks);
 
-#endif /* _SK_API_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _SK_API_H */

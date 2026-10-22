@@ -24,35 +24,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+ರಚನೆ sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ Sensitive Sensitive;
+ರಚನೆ Sensitive {
+	ರಚನೆ sshkey	**ಕೀಲಿಗಳು;
+	ಪೂರ್ಣಾಂಕ		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+ರಚನೆ ssh_conn_info {
+	ಅಕ್ಷರ *conn_hash_hex;
+	ಅಕ್ಷರ *shorthost;
+	ಅಕ್ಷರ *uidstr;
+	ಅಕ್ಷರ *keyalias;
+	ಅಕ್ಷರ *thishost;
+	ಅಕ್ಷರ *host_arg;
+	ಅಕ್ಷರ *portstr;
+	ಅಕ್ಷರ *remhost;
+	ಅಕ್ಷರ *remuser;
+	ಅಕ್ಷರ *homedir;
+	ಅಕ್ಷರ *locuser;
+	ಅಕ್ಷರ *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+ರಚನೆ addrinfo;
+ರಚನೆ ssh;
+ರಚನೆ hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#ವ್ಯಾಖ್ಯಾನಿಸು DEFAULT_CLIENT_PERCENT_EXPAND_ವಾದಗಳು_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,44 +65,44 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
-	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
+#ವ್ಯಾಖ್ಯಾನಿಸು DEFAULT_CLIENT_PERCENT_EXPAND_ವಾದಗಳು(conn_info) \
+	DEFAULT_CLIENT_PERCENT_EXPAND_ವಾದಗಳು_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+ಪೂರ್ಣಾಂಕ	 ssh_connect(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+	    ರಚನೆ addrinfo *, ರಚನೆ sockaddr_storage *, u_short,
+	    ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ);
+ಶೂನ್ಯ	 ssh_kill_proxy_command(ಶೂನ್ಯ);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+ಶೂನ್ಯ	 ssh_login(ರಚನೆ ssh *, Sensitive *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ರಚನೆ sockaddr_storage *, u_short, ರಚನೆ passwd *, ಪೂರ್ಣಾಂಕ,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+ಪೂರ್ಣಾಂಕ	 verify_host_ಕೀಲಿ(ಅಕ್ಷರ *, ರಚನೆ sockaddr *, ರಚನೆ sshkey *,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+ಶೂನ್ಯ	 get_hostfile_hostname_ipaddr(ಅಕ್ಷರ *, ರಚನೆ sockaddr *, u_short,
+    ಅಕ್ಷರ **, ಅಕ್ಷರ **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+ಶೂನ್ಯ	 ssh_kex2(ರಚನೆ ssh *ssh, ಅಕ್ಷರ *, ರಚನೆ sockaddr_storage *, u_short,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+ಶೂನ್ಯ	 ssh_userauth2(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಅಕ್ಷರ *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+ಶೂನ್ಯ	 pubkey_dump(ರಚನೆ ssh *);
 
-int	 ssh_local_cmd(const char *);
+ಪೂರ್ಣಾಂಕ	 ssh_local_cmd(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+ಶೂನ್ಯ	 maybe_ಕೂಡಿಸು_ಕೀಲಿ_ಗಮ್ಯ_agent(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshkey *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+ಶೂನ್ಯ	 ತುಂಬು_hostkeys_command(ರಚನೆ hostkeys *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ ssh_conn_info *,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+ಪೂರ್ಣಾಂಕ hostkey_accepted_by_hostkeyalgs(ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+ಶೂನ್ಯ ssh_conn_info_free(ರಚನೆ ssh_conn_info *);
+ರಚನೆ ssh_conn_info *ssh_conn_info_dup(ಸ್ಥಿರಾಂಕ ರಚನೆ ssh_conn_info *);

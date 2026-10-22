@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಅನ್ತರ್ಭಾವ <openssl/ec.h>
 
-#include "ssherr.h"
-#define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ವ್ಯಾಖ್ಯಾನಿಸು SSHBUF_ಆಂತರಿಕ
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
-int
-sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
+ಪೂರ್ಣಾಂಕ
+sshbuf_get_bignum2(ರಚನೆ sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
-	const u_char *d;
-	size_t len;
-	int r;
+	ಸ್ಥಿರಾಂಕ u_char *d;
+	ಗಾತ್ರ_t len;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
-		    BN_bin2bn(d, len, v) == NULL) {
+	ಆದರೆ (valp != ಖಾಲಿ)
+		*valp = ಖಾಲಿ;
+	ಆದರೆ ((r = sshbuf_get_bignum2_ಬೈಟುಗಳು_ನೇರ(buf, &d, &len)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಆದರೆ (valp != ಖಾಲಿ) {
+		ಆದರೆ ((v = BN_new()) == ಖಾಲಿ ||
+		    BN_bin2bn(d, len, v) == ಖಾಲಿ) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+get_ec(ಸ್ಥಿರಾಂಕ u_char *d, ಗಾತ್ರ_t len, EC_ಬಿಂದು *v, ಸ್ಥಿರಾಂಕ EC_ಗುಂಪು *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	ಆದರೆ (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	ಆದರೆ (*d != ಬಿಂದು_CONVERSION_UNCOMPRESSED)
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_FORMAT;
+	ಆದರೆ (v != ಖಾಲಿ && EC_ಬಿಂದು_oct2point(g, v, d, len, ಖಾಲಿ) != 1)
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
+ಪೂರ್ಣಾಂಕ
+sshbuf_get_ec(ರಚನೆ sshbuf *buf, EC_ಬಿಂದು *v, ಸ್ಥಿರಾಂಕ EC_ಗುಂಪು *g)
 {
-	const u_char *d;
-	size_t len;
-	int r;
+	ಸ್ಥಿರಾಂಕ u_char *d;
+	ಗಾತ್ರ_t len;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	ಆದರೆ ((r = sshbuf_peek_string_ನೇರ(buf, &d, &len)) < 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಆದರೆ ((r = get_ec(d, len, v, g)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ಆದರೆ (sshbuf_get_string_ನೇರ(buf, ಖಾಲಿ, ಖಾಲಿ) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಆಂತರಿಕ_ERROR;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+ಪೂರ್ಣಾಂಕ
+sshbuf_get_eckey(ರಚನೆ sshbuf *buf, EC_ಕೀಲಿ *v)
 {
-	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
-	const u_char *d;
-	size_t len;
+	EC_ಬಿಂದು *pt = EC_ಬಿಂದು_new(EC_ಕೀಲಿ_get0_ಗುಂಪು(v));
+	ಪೂರ್ಣಾಂಕ r;
+	ಸ್ಥಿರಾಂಕ u_char *d;
+	ಗಾತ್ರ_t len;
 
-	if (pt == NULL) {
+	ಆದರೆ (pt == ಖಾಲಿ) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
-		EC_POINT_free(pt);
-		return r;
+	ಆದರೆ ((r = sshbuf_peek_string_ನೇರ(buf, &d, &len)) < 0) {
+		EC_ಬಿಂದು_free(pt);
+		ಹಿಂತಿರುಗಿ r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
-		EC_POINT_free(pt);
-		return r;
+	ಆದರೆ ((r = get_ec(d, len, pt, EC_ಕೀಲಿ_get0_ಗುಂಪು(v))) != 0) {
+		EC_ಬಿಂದು_free(pt);
+		ಹಿಂತಿರುಗಿ r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
-		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+	ಆದರೆ (EC_ಕೀಲಿ_ಗಣ_ಬಹಿರಂಗ_ಕೀಲಿ(v, pt) != 1) {
+		EC_ಬಿಂದು_free(pt);
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
-	EC_POINT_free(pt);
+	EC_ಬಿಂದು_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	ಆದರೆ (sshbuf_get_string_ನೇರ(buf, ಖಾಲಿ, ಖಾಲಿ) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಆಂತರಿಕ_ERROR;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
+ಪೂರ್ಣಾಂಕ
+sshbuf_put_bignum2(ರಚನೆ sshbuf *buf, ಸ್ಥಿರಾಂಕ BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	ಪೂರ್ಣಾಂಕ len = BN_ಅಂಕೆ_ಬೈಟುಗಳು(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಆದರೆ (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	ಆದರೆ (BN_bn2bin(v, d + 1) != len)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಆಂತರಿಕ_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	ಆದರೆ (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
-		explicit_bzero(d, sizeof(d));
-		return r;
+	ಆದರೆ ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+		explicit_bzero(d, ಗಾತ್ರ(d));
+		ಹಿಂತಿರುಗಿ r;
 	}
-	explicit_bzero(d, sizeof(d));
-	return 0;
+	explicit_bzero(d, ಗಾತ್ರ(d));
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
+ಪೂರ್ಣಾಂಕ
+sshbuf_put_ec(ರಚನೆ sshbuf *buf, ಸ್ಥಿರಾಂಕ EC_ಬಿಂದು *v, ಸ್ಥಿರಾಂಕ EC_ಗುಂಪು *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
-	size_t len;
-	int ret;
+	ಗಾತ್ರ_t len;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಆದರೆ ((len = EC_ಬಿಂದು_point2oct(g, v, ಬಿಂದು_CONVERSION_UNCOMPRESSED,
+	    ಖಾಲಿ, 0, ಖಾಲಿ)) > SSHBUF_MAX_ECPOINT) {
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
-	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	ಆದರೆ (EC_ಬಿಂದು_point2oct(g, v, ಬಿಂದು_CONVERSION_UNCOMPRESSED,
+	    d, len, ಖಾಲಿ) != len) {
+		ಹಿಂತಿರುಗಿ SSH_ERR_ಆಂತರಿಕ_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+ಪೂರ್ಣಾಂಕ
+sshbuf_put_eckey(ರಚನೆ sshbuf *buf, ಸ್ಥಿರಾಂಕ EC_ಕೀಲಿ *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
-	    EC_KEY_get0_group(v));
+	ಹಿಂತಿರುಗಿ sshbuf_put_ec(buf, EC_ಕೀಲಿ_get0_ಬಹಿರಂಗ_ಕೀಲಿ(v),
+	    EC_ಕೀಲಿ_get0_ಗುಂಪು(v));
 }
 
-int
-sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
+ಪೂರ್ಣಾಂಕ
+sshbuf_put_ec_pkey(ರಚನೆ sshbuf *buf, EVP_PKEY *pkey)
 {
-	const EC_KEY *ec;
+	ಸ್ಥಿರಾಂಕ EC_ಕೀಲಿ *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	ಆದರೆ ((ec = EVP_PKEY_get0_EC_ಕೀಲಿ(pkey)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_LIBCRYPTO_ERROR;
+	ಹಿಂತಿರುಗಿ sshbuf_put_eckey(buf, ec);
 }
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

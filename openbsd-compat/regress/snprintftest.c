@@ -15,64 +15,64 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define BUFSZ 2048
+#ವ್ಯಾಖ್ಯಾನಿಸು BUFSZ 2048
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-static int failed = 0;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ failed = 0;
 
-static void
-fail(const char *m)
+ಸ್ಥಿರ ಶೂನ್ಯ
+fail(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+ಪೂರ್ಣಾಂಕ x_snprintf(ಅಕ್ಷರ *str, ಗಾತ್ರ_t ಎಣಿಕೆ_2, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt, ...)
 {
-	size_t ret;
+	ಗಾತ್ರ_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ಎಣಿಕೆ_2, fmt, ap);
 	va_end(ap);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-main(void)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಶೂನ್ಯ)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	ಅಕ್ಷರ b[5];
+	ಅಕ್ಷರ *src = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', ಗಾತ್ರ(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	ಆದರೆ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	ಆದರೆ ((src = ಸ್ಮರಣೆ_ಕೊಡು(BUFSZ)) == ಖಾಲಿ) {
 		fail("malloc failed");
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, ಗಾತ್ರ(b), "%.*s", 1, src);
+		ಆದರೆ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ಆದರೆ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ಆದರೆ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	ಬಿಡುಗಡೆ(src);
+	ಹಿಂತಿರುಗಿ failed;
 }

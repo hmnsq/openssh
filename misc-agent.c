@@ -15,469 +15,469 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/un.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <libgen.h>
+#ಅನ್ತರ್ಭಾವ <dirent.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <time.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <libgen.h>
 
-#include "digest.h"
-#include "log.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "ssh.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "pathnames.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 /* stuff shared by agent listeners (ssh-agent and sshd agent forwarding) */
 
-#define SOCKET_HOSTNAME_HASHLEN 10 /* length of hostname hash in socket path */
+#ವ್ಯಾಖ್ಯಾನಿಸು SOCKET_HOSTNAME_HASHLEN 10 /* length of hostname hash in socket path */
 
 /* used for presenting random strings in unix_listener_tmp and hostname_hash */
-static const char presentation_chars[] =
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ presentation_chars[] =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 /* returns a text-encoded hash of the hostname of specified length (max 64) */
-static char *
-hostname_hash(size_t len)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+hostname_hash(ಗಾತ್ರ_t len)
 {
-	char hostname[NI_MAXHOST], p[65];
+	ಅಕ್ಷರ hostname[NI_MAXHOST], p[65];
 	u_char hash[64];
-	int r;
-	size_t l, i;
+	ಪೂರ್ಣಾಂಕ r;
+	ಗಾತ್ರ_t l, i;
 
-	l = ssh_digest_bytes(SSH_DIGEST_SHA512);
-	if (len > 64) {
+	l = ssh_digest_ಬೈಟುಗಳು(SSH_DIGEST_SHA512);
+	ಆದರೆ (len > 64) {
 		error_f("bad length %zu >= max %zd", len, l);
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	if (gethostname(hostname, sizeof(hostname)) == -1) {
+	ಆದರೆ (gethostname(hostname, ಗಾತ್ರ(hostname)) == -1) {
 		error_f("gethostname: %s", strerror(errno));
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512,
-	    hostname, strlen(hostname), hash, sizeof(hash))) != 0) {
+	ಆದರೆ ((r = ssh_digest_ಸ್ಮರಣೆ(SSH_DIGEST_SHA512,
+	    hostname, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(hostname), hash, ಗಾತ್ರ(hash))) != 0) {
 		error_fr(r, "ssh_digest_memory");
-		return NULL;
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
-	memset(p, '\0', sizeof(p));
-	for (i = 0; i < l; i++)
+	memset(p, '\0', ಗಾತ್ರ(p));
+	ಗಾಗಿ (i = 0; i < l; i++)
 		p[i] = presentation_chars[
-		    hash[i] % (sizeof(presentation_chars) - 1)];
+		    hash[i] % (ಗಾತ್ರ(presentation_chars) - 1)];
 	/* debug3_f("hostname \"%s\" => hash \"%s\"", hostname, p); */
 	p[len] = '\0';
-	return xstrdup(p);
+	ಹಿಂತಿರುಗಿ xstrdup(p);
 }
 
-static char *
-agent_hostname_hash(void)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+agent_hostname_hash(ಶೂನ್ಯ)
 {
-	return hostname_hash(SOCKET_HOSTNAME_HASHLEN);
+	ಹಿಂತಿರುಗಿ hostname_hash(SOCKET_HOSTNAME_HASHLEN);
 }
 
 /*
  * Creates a unix listener at a mkstemp(3)-style path, e.g. "/dir/sock.XXXXXX"
  * Supplied path is modified to the actual one used.
  */
-static int
-unix_listener_tmp(char *path, int backlog)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+unix_listener_tmp(ಅಕ್ಷರ *ಮಾರ್ಗ, ಪೂರ್ಣಾಂಕ backlog)
 {
-	struct sockaddr_un sunaddr;
-	int good, sock = -1;
-	size_t i, xstart;
-	mode_t prev_mask;
+	ರಚನೆ sockaddr_un sunaddr;
+	ಪೂರ್ಣಾಂಕ good, sock = -1;
+	ಗಾತ್ರ_t i, xstart;
+	ಬಹುಲಕ_t prev_ಮುಖವಾಡ;
 
 	/* Find first 'X' template character back from end of string */
-	xstart = strlen(path);
-	while (xstart > 0 && path[xstart - 1] == 'X')
+	xstart = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮಾರ್ಗ);
+	ಆಗ (xstart > 0 && ಮಾರ್ಗ[xstart - 1] == 'X')
 		xstart--;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, ಗಾತ್ರ(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	prev_mask = umask(0177);
-	for (good = 0; !good;) {
+	prev_ಮುಖವಾಡ = umask(0177);
+	ಗಾಗಿ (good = 0; !good;) {
 		sock = -1;
 		/* Randomise path suffix */
-		for (i = xstart; path[i] != '\0'; i++) {
-			path[i] = presentation_chars[
-			    arc4random_uniform(sizeof(presentation_chars)-1)];
+		ಗಾಗಿ (i = xstart; ಮಾರ್ಗ[i] != '\0'; i++) {
+			ಮಾರ್ಗ[i] = presentation_chars[
+			    arc4random_ಏಕರೂಪ(ಗಾತ್ರ(presentation_chars)-1)];
 		}
-		debug_f("trying path \"%s\"", path);
+		debug_f("trying path \"%s\"", ಮಾರ್ಗ);
 
-		if (strlcpy(sunaddr.sun_path, path,
-		    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+		ಆದರೆ (strlcpy(sunaddr.sun_ಮಾರ್ಗ, ಮಾರ್ಗ,
+		    ಗಾತ್ರ(sunaddr.sun_ಮಾರ್ಗ)) >= ಗಾತ್ರ(sunaddr.sun_ಮಾರ್ಗ)) {
 			error_f("path \"%s\" too long for Unix domain socket",
-			    path);
-			break;
+			    ಮಾರ್ಗ);
+			ನಿಲ್ಲಿಸು;
 		}
 
-		if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
+		ಆದರೆ ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
 			error_f("socket: %.100s", strerror(errno));
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-		if (bind(sock, (struct sockaddr *)&sunaddr,
-		    sizeof(sunaddr)) == -1) {
-			if (errno == EADDRINUSE) {
+		ಆದರೆ (bind(sock, (ರಚನೆ sockaddr *)&sunaddr,
+		    ಗಾತ್ರ(sunaddr)) == -1) {
+			ಆದರೆ (errno == EADDRINUSE) {
 				error_f("bind \"%s\": %.100s",
-				    path, strerror(errno));
+				    ಮಾರ್ಗ, strerror(errno));
 				close(sock);
 				sock = -1;
-				continue;
+				ಮುಂದುವರಿ;
 			}
-			error_f("bind \"%s\": %.100s", path, strerror(errno));
-			break;
+			error_f("bind \"%s\": %.100s", ಮಾರ್ಗ, strerror(errno));
+			ನಿಲ್ಲಿಸು;
 		}
-		if (listen(sock, backlog) == -1) {
-			error_f("listen \"%s\": %s", path, strerror(errno));
-			break;
+		ಆದರೆ (listen(sock, backlog) == -1) {
+			error_f("listen \"%s\": %s", ಮಾರ್ಗ, strerror(errno));
+			ನಿಲ್ಲಿಸು;
 		}
 		good = 1;
 	}
-	umask(prev_mask);
-	if (good) {
+	umask(prev_ಮುಖವಾಡ);
+	ಆದರೆ (good) {
 		debug3_f("listening on unix socket \"%s\" as fd=%d",
-		    path, sock);
-	} else if (sock != -1) {
+		    ಮಾರ್ಗ, sock);
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (sock != -1) {
 		close(sock);
 		sock = -1;
 	}
-	return sock;
+	ಹಿಂತಿರುಗಿ sock;
 }
 
 /*
  * Shared directory case (e.g. /tmp): create a temporary directory
  * for the socket.
  */
-static int
-agent_listener_shared(const char *parent_dir, pid_t pid, const char *tag,
-    int *sockp, char **pathp, char **dirp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+agent_listener_shared(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಪೋಷಕ_dir, pid_t pid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಟ್ಯಾಗ್,
+    ಪೂರ್ಣಾಂಕ *sockp, ಅಕ್ಷರ **pathp, ಅಕ್ಷರ **dirp)
 {
-	char *dir = NULL, *path = NULL;
-	int sock, ret = -1;
-	mode_t prev_mask;
+	ಅಕ್ಷರ *dir = ಖಾಲಿ, *ಮಾರ್ಗ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ sock, ret = -1;
+	ಬಹುಲಕ_t prev_ಮುಖವಾಡ;
 
-	*pathp = *dirp = NULL;
-	xasprintf(&dir, "%s/ssh-XXXXXXXXXXXX", parent_dir);
-	if (mkdtemp(dir) == NULL) {
+	*pathp = *dirp = ಖಾಲಿ;
+	xasprintf(&dir, "%s/ssh-XXXXXXXXXXXX", ಪೋಷಕ_dir);
+	ಆದರೆ (mkdtemp(dir) == ಖಾಲಿ) {
 		error_f("failed to create temporary directory "
 		    "in \"%s\": %s", dir, strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	xasprintf(&path, "%s/agent.%s.%ld", dir, tag, (long)pid);
-	prev_mask = umask(0177);
-	if ((sock = unix_listener(path, SSH_LISTEN_BACKLOG, 0)) < 0) {
+	xasprintf(&ಮಾರ್ಗ, "%s/agent.%s.%ld", dir, ಟ್ಯಾಗ್, (ದೀರ್ಘ)pid);
+	prev_ಮುಖವಾಡ = umask(0177);
+	ಆದರೆ ((sock = unix_listener(ಮಾರ್ಗ, SSH_LISTEN_BACKLOG, 0)) < 0) {
 		/* Error already logged */
-		umask(prev_mask);
-		if (rmdir(dir) != 0)
+		umask(prev_ಮುಖವಾಡ);
+		ಆದರೆ (rmdir(dir) != 0)
 			error_f("rmdir \"%s\": %s", dir, strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	umask(prev_mask);
+	umask(prev_ಮುಖವಾಡ);
 
 	/* Success */
 	*dirp = dir;
-	dir = NULL; /* transferred */
-	*pathp = path;
-	path = NULL; /* transferred */
+	dir = ಖಾಲಿ; /* transferred */
+	*pathp = ಮಾರ್ಗ;
+	ಮಾರ್ಗ = ಖಾಲಿ; /* transferred */
 	*sockp = sock;
 	ret = 0;
- out:
-	free(dir);
-	free(path);
-	return ret;
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(dir);
+	ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
  * User-specific directory case (e.g. ~/.ssh/agent): ensure directory
  * exists, and use a temp socket name under it.
  */
-static int
-agent_listener_user(const char *dir, pid_t pid, const char *tag,
-    int *sockp, char **pathp)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+agent_listener_user(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *dir, pid_t pid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಟ್ಯಾಗ್,
+    ಪೂರ್ಣಾಂಕ *sockp, ಅಕ್ಷರ **pathp)
 {
-	char *hostnamehash = NULL, *path = NULL;
-	int sock, ret = -1;
+	ಅಕ್ಷರ *hostnamehash = ಖಾಲಿ, *ಮಾರ್ಗ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ sock, ret = -1;
 
-	if ((hostnamehash = hostname_hash(SOCKET_HOSTNAME_HASHLEN)) == NULL)
-		return -1;
-	xasprintf(&path, "%s/s.%s.%s.%lld.XXXXXXXXXX",
-	    dir, hostnamehash, tag, (long long)pid);
-	if (mkdir_path(dir, 0700) != 0) {
+	ಆದರೆ ((hostnamehash = hostname_hash(SOCKET_HOSTNAME_HASHLEN)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
+	xasprintf(&ಮಾರ್ಗ, "%s/s.%s.%s.%lld.XXXXXXXXXX",
+	    dir, hostnamehash, ಟ್ಯಾಗ್, (ದೀರ್ಘ ದೀರ್ಘ)pid);
+	ಆದರೆ (mkdir_ಮಾರ್ಗ(dir, 0700) != 0) {
 		error_f("failed to create agent socket parent directory");
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if ((sock = unix_listener_tmp(path, SSH_LISTEN_BACKLOG)) == -1) {
+	ಆದರೆ ((sock = unix_listener_tmp(ಮಾರ್ಗ, SSH_LISTEN_BACKLOG)) == -1) {
 		/* error already logged */
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	/* Success */
-	*pathp = path;
-	path = NULL; /* transferred */
+	*pathp = ಮಾರ್ಗ;
+	ಮಾರ್ಗ = ಖಾಲಿ; /* transferred */
 	*sockp = sock;
 	ret = 0;
- out:
-	free(hostnamehash);
-	free(path);
-	return ret;
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(hostnamehash);
+	ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-static char *
-expand_pathspec(const char *path, const char *username,
-    uid_t uid, const char *homedir)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+expand_pathspec(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username,
+    uid_t uid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *homedir)
 {
-	char *uidbuf = NULL, *dir = NULL, *tmp = NULL;
+	ಅಕ್ಷರ *uidbuf = ಖಾಲಿ, *dir = ಖಾಲಿ, *tmp = ಖಾಲಿ;
 
-	xasprintf(&uidbuf, "%lld", (long long)uid);
+	xasprintf(&uidbuf, "%lld", (ದೀರ್ಘ ದೀರ್ಘ)uid);
 
-	if ((tmp = percent_expand(path, "u", username, "U", uidbuf,
-	    "h", homedir, NULL)) == NULL) {
+	ಆದರೆ ((tmp = percent_expand(ಮಾರ್ಗ, "u", username, "U", uidbuf,
+	    "h", homedir, ಖಾಲಿ)) == ಖಾಲಿ) {
 		error_f("failed to percent-expand agent socket directory");
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if (tilde_expand(tmp, uid, &dir) != 0) {
+	ಆದರೆ (tilde_expand(tmp, uid, &dir) != 0) {
 		error_f("failed to user-expand agent socket directory");
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	if (dir[0] != '/') {
+	ಆದರೆ (dir[0] != '/') {
 		/* Assume it's relative to the home directory */
-		free(tmp);
+		ಬಿಡುಗಡೆ(tmp);
 		tmp = dir;
 		xasprintf(&dir, "%s/%s", homedir, tmp);
 	}
- out:
-	free(uidbuf);
-	free(tmp);
-	return dir;
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(uidbuf);
+	ಬಿಡುಗಡೆ(tmp);
+	ಹಿಂತಿರುಗಿ dir;
 }
 
-int
-agent_listener(const char *pathspec, const char *username, uid_t uid,
-    const char *homedir, pid_t pid, const char *tag, int *sockp,
-    char **pathp, char **dirp)
+ಪೂರ್ಣಾಂಕ
+agent_listener(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pathspec, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username, uid_t uid,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *homedir, pid_t pid, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಟ್ಯಾಗ್, ಪೂರ್ಣಾಂಕ *sockp,
+    ಅಕ್ಷರ **pathp, ಅಕ್ಷರ **dirp)
 {
-	int sock = -1, ret = -1;
-	char *path = NULL, *dir = NULL;
+	ಪೂರ್ಣಾಂಕ sock = -1, ret = -1;
+	ಅಕ್ಷರ *ಮಾರ್ಗ = ಖಾಲಿ, *dir = ಖಾಲಿ;
 
 	*sockp = -1;
-	*pathp = *dirp = NULL;
+	*pathp = *dirp = ಖಾಲಿ;
 
-	if (pathspec == NULL || pathspec[0] == '\0') {
+	ಆದರೆ (pathspec == ಖಾಲಿ || pathspec[0] == '\0') {
 		error_f("no agent path specified");
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	if (strncmp(pathspec, "shared:", 7) == 0) {
-		if (pathspec[7] != '/') {
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(pathspec, "shared:", 7) == 0) {
+		ಆದರೆ (pathspec[7] != '/') {
 			error_f("shared agent socket paths must be absolute");
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		if ((dir = expand_pathspec(pathspec + 7,
-		    username, uid, homedir)) == NULL) {
+		ಆದರೆ ((dir = expand_pathspec(pathspec + 7,
+		    username, uid, homedir)) == ಖಾಲಿ) {
 			/* Error already logged */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		if (agent_listener_shared(dir, pid, tag,
-		    &sock, &path, dirp) != 0) {
+		ಆದರೆ (agent_listener_shared(dir, pid, ಟ್ಯಾಗ್,
+		    &sock, &ಮಾರ್ಗ, dirp) != 0) {
 			/* Error already logged */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-	} else if (strncmp(pathspec, "user:", 5) == 0) {
-		if ((dir = expand_pathspec(pathspec + 5,
-		    username, uid, homedir)) == NULL) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(pathspec, "user:", 5) == 0) {
+		ಆದರೆ ((dir = expand_pathspec(pathspec + 5,
+		    username, uid, homedir)) == ಖಾಲಿ) {
 			/* Error already logged */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		if (agent_listener_user(dir, pid, tag, &sock, &path) != 0) {
+		ಆದರೆ (agent_listener_user(dir, pid, ಟ್ಯಾಗ್, &sock, &ಮಾರ್ಗ) != 0) {
 			/* Error already logged */
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Shouldn't happen */
 		error_f("unsupported agent path specification %s", pathspec);
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/* success */
 	ret = 0;
 	*sockp = sock;
-	*pathp = path;
-	path = NULL; /* transferred */
- out:
-	free(path);
-	free(dir);
-	return ret;
+	*pathp = ಮಾರ್ಗ;
+	ಮಾರ್ಗ = ಖಾಲಿ; /* transferred */
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
+	ಬಿಡುಗಡೆ(dir);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-int
-agent_listener_cleanup(const char *pathspec, const char *sockpath,
-    const char *sockdir)
+ಪೂರ್ಣಾಂಕ
+agent_listener_cleanup(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pathspec, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sockpath,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sockdir)
 {
-	if (sockpath == NULL)
-		return 0;
-	if (unlink(sockpath) != 0) {
+	ಆದರೆ (sockpath == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (unlink(sockpath) != 0) {
 		error_f("unlink \"%s\": %s", sockpath, strerror(errno));
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
 	debug3_f("removed socket %s", sockpath);
 
-	if (pathspec == NULL)
-		return 0;
-	if (strncmp(pathspec, "shared:", 7) == 0 && sockdir != NULL) {
-		if (rmdir(sockdir) != 0) {
+	ಆದರೆ (pathspec == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(pathspec, "shared:", 7) == 0 && sockdir != ಖಾಲಿ) {
+		ಆದರೆ (rmdir(sockdir) != 0) {
 			error_f("rmdir \"%s\": %s", sockdir, strerror(errno));
-			return -1;
+			ಹಿಂತಿರುಗಿ -1;
 		}
 		debug3_f("removed socket directory %s", sockdir);
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-socket_is_stale(const char *path)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+socket_is_stale(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ)
 {
-	int fd, r;
-	struct sockaddr_un sunaddr;
-	socklen_t l = sizeof(r);
+	ಪೂರ್ಣಾಂಕ fd, r;
+	ರಚನೆ sockaddr_un sunaddr;
+	socklen_t l = ಗಾತ್ರ(r);
 
 	/* attempt non-blocking connect on socket */
-	memset(&sunaddr, '\0', sizeof(sunaddr));
+	memset(&sunaddr, '\0', ಗಾತ್ರ(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
-		debug_f("path for \"%s\" too long for sockaddr_un", path);
-		return 0;
+	ಆದರೆ (strlcpy(sunaddr.sun_ಮಾರ್ಗ, ಮಾರ್ಗ,
+	    ಗಾತ್ರ(sunaddr.sun_ಮಾರ್ಗ)) >= ಗಾತ್ರ(sunaddr.sun_ಮಾರ್ಗ)) {
+		debug_f("path for \"%s\" too long for sockaddr_un", ಮಾರ್ಗ);
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
+	ಆದರೆ ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
 		error_f("socket: %s", strerror(errno));
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	set_nonblock(fd);
+	ಗಣ_nonblock(fd);
 	/* a socket without a listener should yield an error immediately */
-	if (connect(fd, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
-		debug_f("connect \"%s\": %s", path, strerror(errno));
+	ಆದರೆ (connect(fd, (ರಚನೆ sockaddr *)&sunaddr, ಗಾತ್ರ(sunaddr)) == -1) {
+		debug_f("connect \"%s\": %s", ಮಾರ್ಗ, strerror(errno));
 		close(fd);
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
-	if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &r, &l) == -1) {
+	ಆದರೆ (getsockopt(fd, SOL_SOCKET, SO_ERROR, &r, &l) == -1) {
 		debug_f("getsockopt: %s", strerror(errno));
 		close(fd);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if (r != 0) {
-		debug_f("socket error on %s: %s", path, strerror(errno));
+	ಆದರೆ (r != 0) {
+		debug_f("socket error on %s: %s", ಮಾರ್ಗ, strerror(errno));
 		close(fd);
-		return 1;
+		ಹಿಂತಿರುಗಿ 1;
 	}
 	close(fd);
-	debug_f("socket %s seems still active", path);
-	return 0;
+	debug_f("socket %s seems still active", ಮಾರ್ಗ);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-#ifndef HAVE_FSTATAT
-# define fstatat(x, y, buf, z) lstat(path, buf)
-#endif
-#ifndef HAVE_UNLINKAT
-# define unlinkat(x, y, z) unlink(path)
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FSTATAT
+# define fstatat(x, y, buf, z) lstat(ಮಾರ್ಗ, buf)
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNLINKAT
+# define unlinkat(x, y, z) unlink(ಮಾರ್ಗ)
+#ಆದರೆ_ಅಂತ್ಯ
 
-void
-agent_cleanup_stale(const char *pathspec, const char *username, uid_t uid,
-    const char *homedir, int ignore_hosthash)
+ಶೂನ್ಯ
+agent_cleanup_stale(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pathspec, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *username, uid_t uid,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *homedir, ಪೂರ್ಣಾಂಕ ignore_hosthash)
 {
-	DIR *d = NULL;
-	struct dirent *dp;
-	struct stat sb;
-	char *prefix = NULL, *dir = NULL, *path;
-	struct timespec now, sub, *mtimp = NULL;
+	DIR *d = ಖಾಲಿ;
+	ರಚನೆ dirent *dp;
+	ರಚನೆ stat sb;
+	ಅಕ್ಷರ *ಪೂರ್ವಪ್ರತ್ಯಯ = ಖಾಲಿ, *dir = ಖಾಲಿ, *ಮಾರ್ಗ;
+	ರಚನೆ timespec now, sub, *mtimp = ಖಾಲಿ;
 
 	/* Only clean up user socket directories */
-	if (pathspec == NULL || strncmp(pathspec, "user:", 5) != 0)
-		return;
+	ಆದರೆ (pathspec == ಖಾಲಿ || ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(pathspec, "user:", 5) != 0)
+		ಹಿಂತಿರುಗಿ;
 
-	if ((dir = expand_pathspec(pathspec + 5,
-	    username, uid, homedir)) == NULL)
-		return; /* error already logged */
+	ಆದರೆ ((dir = expand_pathspec(pathspec + 5,
+	    username, uid, homedir)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ; /* error already logged */
 
 	debug_f("cleanup %s", dir);
 
 	/* Only consider sockets last modified > 1 hour ago */
-	if (clock_gettime(CLOCK_REALTIME, &now) != 0) {
+	ಆದರೆ (clock_gettime(CLOCK_REALTIME, &now) != 0) {
 		error_f("clock_gettime: %s", strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	sub.tv_sec = 60 * 60;
 	sub.tv_nsec = 0;
 	timespecsub(&now, &sub, &now);
 
 	/* Only consider sockets from the same hostname */
-	if (!ignore_hosthash) {
-		if ((path = agent_hostname_hash()) == NULL) {
+	ಆದರೆ (!ignore_hosthash) {
+		ಆದರೆ ((ಮಾರ್ಗ = agent_hostname_hash()) == ಖಾಲಿ) {
 			error_f("couldn't get hostname hash");
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
-		xasprintf(&prefix, "s.%s.", path);
-		free(path);
+		xasprintf(&ಪೂರ್ವಪ್ರತ್ಯಯ, "s.%s.", ಮಾರ್ಗ);
+		ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
 	}
 
-	if ((d = opendir(dir)) == NULL) {
-		if (errno != ENOENT)
+	ಆದರೆ ((d = opendir(dir)) == ಖಾಲಿ) {
+		ಆದರೆ (errno != ENOENT)
 			error_f("opendir \"%s\": %s", dir, strerror(errno));
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	while ((dp = readdir(d)) != NULL) {
-#ifdef HAVE_DIRENT_D_TYPE
-		if (dp->d_type != DT_SOCK && dp->d_type != DT_UNKNOWN)
-			continue;
-#endif
-		if (fstatat(dirfd(d), dp->d_name,
+	ಆಗ ((dp = readdir(d)) != ಖಾಲಿ) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_DIRENT_D_TYPE
+		ಆದರೆ (dp->d_type != DT_SOCK && dp->d_type != DT_UNKNOWN)
+			ಮುಂದುವರಿ;
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ (fstatat(dirfd(d), dp->d_name,
 		    &sb, AT_SYMLINK_NOFOLLOW) != 0 && errno != ENOENT) {
 			error_f("stat \"%s/%s\": %s",
 			    dir, dp->d_name, strerror(errno));
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (!S_ISSOCK(sb.st_mode))
-			continue;
-#ifdef HAVE_STRUCT_STAT_ST_MTIM
+		ಆದರೆ (!S_ISSOCK(sb.st_mode))
+			ಮುಂದುವರಿ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_STRUCT_STAT_ST_MTIM
 		mtimp = &sb.st_mtim;
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 		sub.tv_sec = sb.st_mtime;
 		sub.tv_nsec = 0;
 		mtimp = &sub;
-#endif
-		if (timespeccmp(mtimp, &now, >)) {
+#ಆದರೆ_ಅಂತ್ಯ
+		ಆದರೆ (timespeccmp(mtimp, &now, >)) {
 			debug3_f("Ignoring recent socket \"%s/%s\"",
 			    dir, dp->d_name);
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (!ignore_hosthash &&
-		    strncmp(dp->d_name, prefix, strlen(prefix)) != 0) {
+		ಆದರೆ (!ignore_hosthash &&
+		    ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(dp->d_name, ಪೂರ್ವಪ್ರತ್ಯಯ, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಪೂರ್ವಪ್ರತ್ಯಯ)) != 0) {
 			debug3_f("Ignoring socket \"%s/%s\" "
 			    "from different host", dir, dp->d_name);
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		xasprintf(&path, "%s/%s", dir, dp->d_name);
-		if (socket_is_stale(path)) {
-			debug_f("cleanup stale socket %s", path);
+		xasprintf(&ಮಾರ್ಗ, "%s/%s", dir, dp->d_name);
+		ಆದರೆ (socket_is_stale(ಮಾರ್ಗ)) {
+			debug_f("cleanup stale socket %s", ಮಾರ್ಗ);
 			unlinkat(dirfd(d), dp->d_name, 0);
 		}
-		free(path);
+		ಬಿಡುಗಡೆ(ಮಾರ್ಗ);
 	}
- out:
-	if (d != NULL)
+ ಹೊರಹೋಗು:
+	ಆದರೆ (d != ಖಾಲಿ)
 		closedir(d);
-	free(dir);
-	free(prefix);
+	ಬಿಡುಗಡೆ(dir);
+	ಬಿಡುಗಡೆ(ಪೂರ್ವಪ್ರತ್ಯಯ);
 }
 
-#undef unlinkat
-#undef fstatat
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು unlinkat
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು fstatat

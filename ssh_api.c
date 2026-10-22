@@ -15,93 +15,93 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
-#include "ssh_api.h"
-#include "compat.h"
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "dh.h"
-#include "misc.h"
-#include "ssh2.h"
-#include "version.h"
-#include "myproposal.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "ssh_api.h"
+#ಅನ್ತರ್ಭಾವ "compat.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "authfile.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "dh.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "version.h"
+#ಅನ್ತರ್ಭಾವ "myproposal.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-int	_ssh_exchange_banner(struct ssh *);
-int	_ssh_send_banner(struct ssh *, struct sshbuf *);
-int	_ssh_read_banner(struct ssh *, struct sshbuf *);
-int	_ssh_order_hostkeyalgs(struct ssh *);
-int	_ssh_verify_host_key(struct sshkey *, struct ssh *);
-struct sshkey *_ssh_host_public_key(int, int, struct ssh *);
-struct sshkey *_ssh_host_private_key(int, int, struct ssh *);
-int	_ssh_host_key_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+ಪೂರ್ಣಾಂಕ	_ssh_exchange_banner(ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	_ssh_send_banner(ರಚನೆ ssh *, ರಚನೆ sshbuf *);
+ಪೂರ್ಣಾಂಕ	_ssh_read_banner(ರಚನೆ ssh *, ರಚನೆ sshbuf *);
+ಪೂರ್ಣಾಂಕ	ssh_ಕ್ರಮ_hostkeyalgs(ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	ssh_verify_host_ಕೀಲಿ(ರಚನೆ sshkey *, ರಚನೆ ssh *);
+ರಚನೆ sshkey *ssh_host_ಬಹಿರಂಗ_ಕೀಲಿ(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ರಚನೆ sshkey *ssh_host_ಖಾಸಗಿ_ಕೀಲಿ(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	ssh_host_ಕೀಲಿ_sign(ರಚನೆ ssh *, ರಚನೆ sshkey *, ರಚನೆ sshkey *,
+    u_char **, ಗಾತ್ರ_t *, ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /*
  * stubs for privsep calls in the server side implementation of kex.
  */
-int	mm_sshkey_sign(struct sshkey *, u_char **, u_int *,
-    const u_char *, u_int, const char *, const char *, const char *, u_int);
+ಪೂರ್ಣಾಂಕ	mm_sshkey_sign(ರಚನೆ sshkey *, u_char **, u_int *,
+    ಸ್ಥಿರಾಂಕ u_char *, u_int, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, u_int);
 
-#ifdef WITH_OPENSSL
-DH	*mm_choose_dh(int, int, int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+DH	*mm_ಆರಿಸು_dh(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-int
-mm_sshkey_sign(struct sshkey *key, u_char **sigp, u_int *lenp,
-    const u_char *data, u_int datalen, const char *alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+ಪೂರ್ಣಾಂಕ
+mm_sshkey_sign(ರಚನೆ sshkey *ಕೀಲಿ, u_char **sigp, u_int *lenp,
+    ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, u_int datalen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alg,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sk_provider, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sk_pin, u_int compat)
 {
-	size_t slen = 0;
-	int ret;
+	ಗಾತ್ರ_t slen = 0;
+	ಪೂರ್ಣಾಂಕ ret;
 
-	ret = sshkey_sign(key, sigp, &slen, data, datalen, alg,
+	ret = sshkey_sign(ಕೀಲಿ, sigp, &slen, ದತ್ತಾಂಶ, datalen, alg,
 	    sk_provider, sk_pin, compat);
 	*lenp = slen;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_ಆರಿಸು_dh(ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ nbits, ಪೂರ್ಣಾಂಕ max)
 {
-	return choose_dh(min, nbits, max);
+	ಹಿಂತಿರುಗಿ ಆರಿಸು_dh(min, nbits, max);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* API */
 
-int
-ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
+ಪೂರ್ಣಾಂಕ
+ssh_init(ರಚನೆ ssh **sshp, ಪೂರ್ಣಾಂಕ is_server, ರಚನೆ kex_params *kex_params)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *populated[PROPOSAL_MAX];
-	struct ssh *ssh;
-	char **proposal;
-	static int called;
-	int r;
+	ಅಕ್ಷರ *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	ಅಕ್ಷರ *populated[PROPOSAL_MAX];
+	ರಚನೆ ssh *ssh;
+	ಅಕ್ಷರ **proposal;
+	ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ called;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (!called) {
-		seed_rng();
+	ಆದರೆ (!called) {
+		ಬೀಜ_rng();
 		called = 1;
 	}
 
-	if ((ssh = ssh_packet_set_connection(NULL, -1, -1)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (is_server)
-		ssh_packet_set_server(ssh);
+	ಆದರೆ ((ssh = ssh_packet_ಗಣ_connection(ಖಾಲಿ, -1, -1)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ (is_server)
+		ssh_packet_ಗಣ_server(ssh);
 
 	/* Initialize key exchange */
 	proposal = kex_params ? kex_params->proposal : myproposal;
@@ -110,17 +110,17 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 	    proposal[PROPOSAL_ENC_ALGS_CTOS],
 	    proposal[PROPOSAL_MAC_ALGS_CTOS],
 	    proposal[PROPOSAL_COMP_ALGS_CTOS],
-	    proposal[PROPOSAL_SERVER_HOST_KEY_ALGS]);
+	    proposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS]);
 	r = kex_ready(ssh, populated);
 	kex_proposal_free_entries(populated);
-	if (r != 0) {
+	ಆದರೆ (r != 0) {
 		ssh_free(ssh);
-		return r;
+		ಹಿಂತಿರುಗಿ r;
 	}
 
 	ssh->kex->server = is_server;
-	if (is_server) {
-#ifdef WITH_OPENSSL
+	ಆದರೆ (is_server) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_server;
@@ -129,16 +129,16 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_server;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_server;
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-		ssh->kex->load_host_public_key=&_ssh_host_public_key;
-		ssh->kex->load_host_private_key=&_ssh_host_private_key;
-		ssh->kex->sign=&_ssh_host_key_sign;
-	} else {
-#ifdef WITH_OPENSSL
+		ssh->kex->ತುಂಬು_host_ಬಹಿರಂಗ_ಕೀಲಿ=&ssh_host_ಬಹಿರಂಗ_ಕೀಲಿ;
+		ssh->kex->ತುಂಬು_host_ಖಾಸಗಿ_ಕೀಲಿ=&ssh_host_ಖಾಸಗಿ_ಕೀಲಿ;
+		ssh->kex->sign=&ssh_host_ಕೀಲಿ_sign;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -147,112 +147,112 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 		ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 		ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */
 		ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-		ssh->kex->verify_host_key =&_ssh_verify_host_key;
+		ssh->kex->verify_host_ಕೀಲಿ =&ssh_verify_host_ಕೀಲಿ;
 	}
 	*sshp = ssh;
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-void
-ssh_free(struct ssh *ssh)
+ಶೂನ್ಯ
+ssh_free(ರಚನೆ ssh *ssh)
 {
-	struct key_entry *k;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k;
 
-	if (ssh == NULL)
-		return;
+	ಆದರೆ (ssh == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
 
 	/*
 	 * we've only created the public keys variants in case we
 	 * are a acting as a server.
 	 */
-	while ((k = TAILQ_FIRST(&ssh->public_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->public_keys, k, next);
-		if (ssh->kex && ssh->kex->server)
-			sshkey_free(k->key);
-		free(k);
+	ಆಗ ((k = TAILQ_FIRST(&ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು)) != ಖಾಲಿ) {
+		TAILQ_REMOVE(&ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, k, ಮುಂದಿನ);
+		ಆದರೆ (ssh->kex && ssh->kex->server)
+			sshkey_free(k->ಕೀಲಿ);
+		ಬಿಡುಗಡೆ(k);
 	}
-	while ((k = TAILQ_FIRST(&ssh->private_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->private_keys, k, next);
-		free(k);
+	ಆಗ ((k = TAILQ_FIRST(&ssh->ಖಾಸಗಿ_ಕೀಲಿಗಳು)) != ಖಾಲಿ) {
+		TAILQ_REMOVE(&ssh->ಖಾಸಗಿ_ಕೀಲಿಗಳು, k, ಮುಂದಿನ);
+		ಬಿಡುಗಡೆ(k);
 	}
 	ssh_packet_close(ssh);
-	free(ssh);
+	ಬಿಡುಗಡೆ(ssh);
 }
 
-void
-ssh_set_app_data(struct ssh *ssh, void *app_data)
+ಶೂನ್ಯ
+ssh_ಗಣ_app_ದತ್ತಾಂಶ(ರಚನೆ ssh *ssh, ಶೂನ್ಯ *app_ದತ್ತಾಂಶ)
 {
-	ssh->app_data = app_data;
+	ssh->app_ದತ್ತಾಂಶ = app_ದತ್ತಾಂಶ;
 }
 
-void *
-ssh_get_app_data(struct ssh *ssh)
+ಶೂನ್ಯ *
+ssh_get_app_ದತ್ತಾಂಶ(ರಚನೆ ssh *ssh)
 {
-	return ssh->app_data;
+	ಹಿಂತಿರುಗಿ ssh->app_ದತ್ತಾಂಶ;
 }
 
 /* Returns < 0 on error, 0 otherwise */
-int
-ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
+ಪೂರ್ಣಾಂಕ
+ssh_ಕೂಡಿಸು_hostkey(ರಚನೆ ssh *ssh, ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	struct sshkey *pubkey = NULL;
-	struct key_entry *k = NULL, *k_prv = NULL;
-	int r;
+	ರಚನೆ sshkey *pubkey = ಖಾಲಿ;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k = ಖಾಲಿ, *k_prv = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (ssh->kex->server) {
-		if ((r = sshkey_from_private(key, &pubkey)) != 0)
-			return r;
-		if ((k = malloc(sizeof(*k))) == NULL ||
-		    (k_prv = malloc(sizeof(*k_prv))) == NULL) {
-			free(k);
+	ಆದರೆ (ssh->kex->server) {
+		ಆದರೆ ((r = sshkey_from_ಖಾಸಗಿ(ಕೀಲಿ, &pubkey)) != 0)
+			ಹಿಂತಿರುಗಿ r;
+		ಆದರೆ ((k = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*k))) == ಖಾಲಿ ||
+		    (k_prv = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*k_prv))) == ಖಾಲಿ) {
+			ಬಿಡುಗಡೆ(k);
 			sshkey_free(pubkey);
-			return SSH_ERR_ALLOC_FAIL;
+			ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 		}
-		k_prv->key = key;
-		TAILQ_INSERT_TAIL(&ssh->private_keys, k_prv, next);
+		k_prv->ಕೀಲಿ = ಕೀಲಿ;
+		TAILQ_INSERT_TAIL(&ssh->ಖಾಸಗಿ_ಕೀಲಿಗಳು, k_prv, ಮುಂದಿನ);
 
 		/* add the public key, too */
-		k->key = pubkey;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->ಕೀಲಿ = pubkey;
+		TAILQ_INSERT_TAIL(&ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, k, ಮುಂದಿನ);
 		r = 0;
-	} else {
-		if ((k = malloc(sizeof(*k))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		k->key = key;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ ((k = ಸ್ಮರಣೆ_ಕೊಡು(ಗಾತ್ರ(*k))) == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
+		k->ಕೀಲಿ = ಕೀಲಿ;
+		TAILQ_INSERT_TAIL(&ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, k, ಮುಂದಿನ);
 		r = 0;
 	}
 
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
-int
-ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *))
+ಪೂರ್ಣಾಂಕ
+ssh_ಗಣ_verify_host_ಕೀಲಿ_callback(ರಚನೆ ssh *ssh,
+    ಪೂರ್ಣಾಂಕ (*cb)(ರಚನೆ sshkey *, ರಚನೆ ssh *))
 {
-	if (cb == NULL || ssh->kex == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ಆದರೆ (cb == ಖಾಲಿ || ssh->kex == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
 
-	ssh->kex->verify_host_key = cb;
+	ssh->kex->verify_host_ಕೀಲಿ = cb;
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-ssh_input_append(struct ssh *ssh, const u_char *data, size_t len)
+ಪೂರ್ಣಾಂಕ
+ssh_ಒಳಹರಿವು_append(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t len)
 {
-	return sshbuf_put(ssh_packet_get_input(ssh), data, len);
+	ಹಿಂತಿರುಗಿ sshbuf_put(ssh_packet_get_ಒಳಹರಿವು(ssh), ದತ್ತಾಂಶ, len);
 }
 
-int
-ssh_packet_next(struct ssh *ssh, u_char *typep)
+ಪೂರ್ಣಾಂಕ
+ssh_packet_ಮುಂದಿನ(ರಚನೆ ssh *ssh, u_char *typep)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 	uint32_t seqnr;
 	u_char type;
 
@@ -260,10 +260,10 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 * Try to read a packet. Return SSH_MSG_NONE if no packet or not
 	 * enough data.
 	 */
-	*typep = SSH_MSG_NONE;
-	if (sshbuf_len(ssh->kex->client_version) == 0 ||
-	    sshbuf_len(ssh->kex->server_version) == 0)
-		return _ssh_exchange_banner(ssh);
+	*typep = SSH_ಸಂದೇಶ_NONE;
+	ಆದರೆ (sshbuf_len(ssh->kex->client_ಆವೃತ್ತಿ) == 0 ||
+	    sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) == 0)
+		ಹಿಂತಿರುಗಿ _ssh_exchange_banner(ssh);
 	/*
 	 * If we enough data and a dispatch function then
 	 * call the function and get the next packet.
@@ -275,175 +275,175 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 *     30-49    Key exchange method specific (numbers can be reused for
 	 *              different authentication methods)
 	 */
-	for (;;) {
-		if ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
-			return r;
-		if (type > 0 && type < DISPATCH_MAX &&
-		    type >= SSH2_MSG_KEXINIT && type <= SSH2_MSG_TRANSPORT_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
-				return r;
-		} else {
+	ಗಾಗಿ (;;) {
+		ಆದರೆ ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
+			ಹಿಂತಿರುಗಿ r;
+		ಆದರೆ (type > 0 && type < DISPATCH_MAX &&
+		    type >= SSH2_ಸಂದೇಶ_KEXINIT && type <= SSH2_ಸಂದೇಶ_TRANSPORT_MAX &&
+		    ssh->dispatch[type] != ಖಾಲಿ) {
+			ಆದರೆ ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
+				ಹಿಂತಿರುಗಿ r;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			*typep = type;
-			return 0;
+			ಹಿಂತಿರುಗಿ 0;
 		}
 	}
 }
 
-const u_char *
-ssh_packet_payload(struct ssh *ssh, size_t *lenp)
+ಸ್ಥಿರಾಂಕ u_char *
+ssh_packet_payload(ರಚನೆ ssh *ssh, ಗಾತ್ರ_t *lenp)
 {
-	return sshpkt_ptr(ssh, lenp);
+	ಹಿಂತಿರುಗಿ sshpkt_ptr(ssh, lenp);
 }
 
-int
-ssh_packet_put(struct ssh *ssh, int type, const u_char *data, size_t len)
+ಪೂರ್ಣಾಂಕ
+ssh_packet_put(ರಚನೆ ssh *ssh, ಪೂರ್ಣಾಂಕ type, ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t len)
 {
-	int r;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((r = sshpkt_start(ssh, type)) != 0 ||
-	    (r = sshpkt_put(ssh, data, len)) != 0 ||
+	ಆದರೆ ((r = sshpkt_ಆರಂಭ(ssh, type)) != 0 ||
+	    (r = sshpkt_put(ssh, ದತ್ತಾಂಶ, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		ಹಿಂತಿರುಗಿ r;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-const u_char *
-ssh_output_ptr(struct ssh *ssh, size_t *len)
+ಸ್ಥಿರಾಂಕ u_char *
+ssh_output_ptr(ರಚನೆ ssh *ssh, ಗಾತ್ರ_t *len)
 {
-	struct sshbuf *output = ssh_packet_get_output(ssh);
+	ರಚನೆ sshbuf *output = ssh_packet_get_output(ssh);
 
 	*len = sshbuf_len(output);
-	return sshbuf_ptr(output);
+	ಹಿಂತಿರುಗಿ sshbuf_ptr(output);
 }
 
-int
-ssh_output_consume(struct ssh *ssh, size_t len)
+ಪೂರ್ಣಾಂಕ
+ssh_output_consume(ರಚನೆ ssh *ssh, ಗಾತ್ರ_t len)
 {
-	return sshbuf_consume(ssh_packet_get_output(ssh), len);
+	ಹಿಂತಿರುಗಿ sshbuf_consume(ssh_packet_get_output(ssh), len);
 }
 
-int
-ssh_output_space(struct ssh *ssh, size_t len)
+ಪೂರ್ಣಾಂಕ
+ssh_output_space(ರಚನೆ ssh *ssh, ಗಾತ್ರ_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
+	ಹಿಂತಿರುಗಿ (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
 }
 
-int
-ssh_input_space(struct ssh *ssh, size_t len)
+ಪೂರ್ಣಾಂಕ
+ssh_ಒಳಹರಿವು_space(ರಚನೆ ssh *ssh, ಗಾತ್ರ_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_input(ssh), len));
+	ಹಿಂತಿರುಗಿ (0 == sshbuf_check_reserve(ssh_packet_get_ಒಳಹರಿವು(ssh), len));
 }
 
 /* Read other side's version identification. */
-int
-_ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
+ಪೂರ್ಣಾಂಕ
+_ssh_read_banner(ರಚನೆ ssh *ssh, ರಚನೆ sshbuf *banner)
 {
-	struct sshbuf *input = ssh_packet_get_input(ssh);
-	const char *mismatch = "Protocol mismatch.\r\n";
-	const u_char *s = sshbuf_ptr(input);
+	ರಚನೆ sshbuf *ಒಳಹರಿವು = ssh_packet_get_ಒಳಹರಿವು(ssh);
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mismatch = "Protocol mismatch.\r\n";
+	ಸ್ಥಿರಾಂಕ u_char *s = sshbuf_ptr(ಒಳಹರಿವು);
 	u_char c;
-	char *cp = NULL, *remote_version = NULL;
-	int r = 0, remote_major, remote_minor, expect_nl;
-	size_t n, j;
+	ಅಕ್ಷರ *cp = ಖಾಲಿ, *remote_ಆವೃತ್ತಿ = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ r = 0, remote_major, remote_minor, expect_nl;
+	ಗಾತ್ರ_t n, j;
 
-	for (j = n = 0;;) {
+	ಗಾಗಿ (j = n = 0;;) {
 		sshbuf_reset(banner);
 		expect_nl = 0;
-		for (;;) {
-			if (j >= sshbuf_len(input))
-				return 0; /* insufficient data in input buf */
+		ಗಾಗಿ (;;) {
+			ಆದರೆ (j >= sshbuf_len(ಒಳಹರಿವು))
+				ಹಿಂತಿರುಗಿ 0; /* insufficient data in input buf */
 			c = s[j++];
-			if (c == '\r') {
+			ಆದರೆ (c == '\r') {
 				expect_nl = 1;
-				continue;
+				ಮುಂದುವರಿ;
 			}
-			if (c == '\n')
-				break;
-			if (expect_nl)
-				goto bad;
-			if ((r = sshbuf_put_u8(banner, c)) != 0)
-				return r;
-			if (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
-				goto bad;
+			ಆದರೆ (c == '\n')
+				ನಿಲ್ಲಿಸು;
+			ಆದರೆ (expect_nl)
+				ಹೋಗು bad;
+			ಆದರೆ ((r = sshbuf_put_u8(banner, c)) != 0)
+				ಹಿಂತಿರುಗಿ r;
+			ಆದರೆ (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
+				ಹೋಗು bad;
 		}
-		if (sshbuf_len(banner) >= 4 &&
+		ಆದರೆ (sshbuf_len(banner) >= 4 &&
 		    memcmp(sshbuf_ptr(banner), "SSH-", 4) == 0)
-			break;
-		debug_f("%.*s", (int)sshbuf_len(banner),
+			ನಿಲ್ಲಿಸು;
+		debug_f("%.*s", (ಪೂರ್ಣಾಂಕ)sshbuf_len(banner),
 		    sshbuf_ptr(banner));
 		/* Accept lines before banner only on client */
-		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_LINES) {
+		ಆದರೆ (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_ಸಾಲುಗಳು) {
   bad:
-			if ((r = sshbuf_put(ssh_packet_get_output(ssh),
-			    mismatch, strlen(mismatch))) != 0)
-				return r;
-			return SSH_ERR_NO_PROTOCOL_VERSION;
+			ಆದರೆ ((r = sshbuf_put(ssh_packet_get_output(ssh),
+			    mismatch, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(mismatch))) != 0)
+				ಹಿಂತಿರುಗಿ r;
+			ಹಿಂತಿರುಗಿ SSH_ERR_NO_PROTOCOL_ಆವೃತ್ತಿ;
 		}
 	}
-	if ((r = sshbuf_consume(input, j)) != 0)
-		return r;
+	ಆದರೆ ((r = sshbuf_consume(ಒಳಹರಿವು, j)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 
 	/* XXX remote version must be the same size as banner for sscanf */
-	if ((cp = sshbuf_dup_string(banner)) == NULL ||
-	    (remote_version = calloc(1, sshbuf_len(banner))) == NULL) {
+	ಆದರೆ ((cp = sshbuf_dup_string(banner)) == ಖಾಲಿ ||
+	    (remote_ಆವೃತ್ತಿ = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, sshbuf_len(banner))) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(cp, "SSH-%d.%d-%[^\n]\n",
-	    &remote_major, &remote_minor, remote_version) != 3) {
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಓದು(cp, "SSH-%d.%d-%[^\n]\n",
+	    &remote_major, &remote_minor, remote_ಆವೃತ್ತಿ) != 3) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
-	    remote_major, remote_minor, remote_version);
+	    remote_major, remote_minor, remote_ಆವೃತ್ತಿ);
 
-	compat_banner(ssh, remote_version);
-	if  (remote_major == 1 && remote_minor == 99) {
+	compat_banner(ssh, remote_ಆವೃತ್ತಿ);
+	ಆದರೆ  (remote_major == 1 && remote_minor == 99) {
 		remote_major = 2;
 		remote_minor = 0;
 	}
-	if (remote_major != 2)
+	ಆದರೆ (remote_major != 2)
 		r = SSH_ERR_PROTOCOL_MISMATCH;
 
 	debug("Remote version string %.100s", cp);
- out:
-	free(cp);
-	free(remote_version);
-	return r;
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(cp);
+	ಬಿಡುಗಡೆ(remote_ಆವೃತ್ತಿ);
+	ಹಿಂತಿರುಗಿ r;
 }
 
 /* Send our own protocol version identification. */
-int
-_ssh_send_banner(struct ssh *ssh, struct sshbuf *banner)
+ಪೂರ್ಣಾಂಕ
+_ssh_send_banner(ರಚನೆ ssh *ssh, ರಚನೆ sshbuf *banner)
 {
-	char *cp;
-	int r;
+	ಅಕ್ಷರ *cp;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_VERSION)) != 0)
-		return r;
-	if ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
-		return r;
+	ಆದರೆ ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_ಆವೃತ್ತಿ)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಆದರೆ ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
+		ಹಿಂತಿರುಗಿ r;
 	/* Remove trailing \r\n */
-	if ((r = sshbuf_consume_end(banner, 2)) != 0)
-		return r;
-	if ((cp = sshbuf_dup_string(banner)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ ((r = sshbuf_consume_ಕೊನೆ(banner, 2)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	ಆದರೆ ((cp = sshbuf_dup_string(banner)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
 	debug("Local version string %.100s", cp);
-	free(cp);
-	return 0;
+	ಬಿಡುಗಡೆ(cp);
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_ssh_exchange_banner(struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+_ssh_exchange_banner(ರಚನೆ ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	ರಚನೆ kex *kex = ssh->kex;
+	ಪೂರ್ಣಾಂಕ r;
 
 	/*
 	 * if _ssh_read_banner() cannot parse a full version string
@@ -451,140 +451,140 @@ _ssh_exchange_banner(struct ssh *ssh)
 	 */
 
 	r = 0;
-	if (kex->server) {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->client_version);
-	} else {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
-			r = _ssh_read_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
-		    sshbuf_len(ssh->kex->server_version) != 0 &&
-		    sshbuf_len(ssh->kex->client_version) == 0)
-			r = _ssh_send_banner(ssh, ssh->kex->client_version);
+	ಆದರೆ (kex->server) {
+		ಆದರೆ (sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->server_ಆವೃತ್ತಿ);
+		ಆದರೆ (r == 0 &&
+		    sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) != 0 &&
+		    sshbuf_len(ssh->kex->client_ಆವೃತ್ತಿ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->client_ಆವೃತ್ತಿ);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) == 0)
+			r = _ssh_read_banner(ssh, ssh->kex->server_ಆವೃತ್ತಿ);
+		ಆದರೆ (r == 0 &&
+		    sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) != 0 &&
+		    sshbuf_len(ssh->kex->client_ಆವೃತ್ತಿ) == 0)
+			r = _ssh_send_banner(ssh, ssh->kex->client_ಆವೃತ್ತಿ);
 	}
-	if (r != 0)
-		return r;
+	ಆದರೆ (r != 0)
+		ಹಿಂತಿರುಗಿ r;
 	/* start initial kex as soon as we have exchanged the banners */
-	if (sshbuf_len(ssh->kex->server_version) != 0 &&
-	    sshbuf_len(ssh->kex->client_version) != 0) {
-		if ((r = _ssh_order_hostkeyalgs(ssh)) != 0 ||
+	ಆದರೆ (sshbuf_len(ssh->kex->server_ಆವೃತ್ತಿ) != 0 &&
+	    sshbuf_len(ssh->kex->client_ಆವೃತ್ತಿ) != 0) {
+		ಆದರೆ ((r = ssh_ಕ್ರಮ_hostkeyalgs(ssh)) != 0 ||
 		    (r = kex_send_kexinit(ssh)) != 0)
-			return r;
+			ಹಿಂತಿರುಗಿ r;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-struct sshkey *
-_ssh_host_public_key(int type, int nid, struct ssh *ssh)
+ರಚನೆ sshkey *
+ssh_host_ಬಹಿರಂಗ_ಕೀಲಿ(ಪೂರ್ಣಾಂಕ type, ಪೂರ್ಣಾಂಕ nid, ರಚನೆ ssh *ssh)
 {
-	struct key_entry *k;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, ಮುಂದಿನ) {
+		debug3_f("check %s", sshkey_type(k->ಕೀಲಿ));
+		ಆದರೆ (k->ಕೀಲಿ->type == type &&
+		    (type != ಕೀಲಿ_ECDSA || k->ಕೀಲಿ->ecdsa_nid == nid))
+			ಹಿಂತಿರುಗಿ (k->ಕೀಲಿ);
 	}
-	return (NULL);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
-struct sshkey *
-_ssh_host_private_key(int type, int nid, struct ssh *ssh)
+ರಚನೆ sshkey *
+ssh_host_ಖಾಸಗಿ_ಕೀಲಿ(ಪೂರ್ಣಾಂಕ type, ಪೂರ್ಣಾಂಕ nid, ರಚನೆ ssh *ssh)
 {
-	struct key_entry *k;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->private_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->ಖಾಸಗಿ_ಕೀಲಿಗಳು, ಮುಂದಿನ) {
+		debug3_f("check %s", sshkey_type(k->ಕೀಲಿ));
+		ಆದರೆ (k->ಕೀಲಿ->type == type &&
+		    (type != ಕೀಲಿ_ECDSA || k->ಕೀಲಿ->ecdsa_nid == nid))
+			ಹಿಂತಿರುಗಿ (k->ಕೀಲಿ);
 	}
-	return (NULL);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
-int
-_ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+ssh_verify_host_ಕೀಲಿ(ರಚನೆ sshkey *hostkey, ರಚನೆ ssh *ssh)
 {
-	struct key_entry *k;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k;
 
 	debug3_f("need %s", sshkey_type(hostkey));
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (sshkey_equal_public(hostkey, k->key))
-			return (0);	/* ok */
+	TAILQ_FOREACH(k, &ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, ಮುಂದಿನ) {
+		debug3_f("check %s", sshkey_type(k->ಕೀಲಿ));
+		ಆದರೆ (sshkey_equal_ಬಹಿರಂಗ(hostkey, k->ಕೀಲಿ))
+			ಹಿಂತಿರುಗಿ (0);	/* ok */
 	}
-	return (-1);	/* failed */
+	ಹಿಂತಿರುಗಿ (-1);	/* failed */
 }
 
 /* offer hostkey algorithms in kexinit depending on registered keys */
-int
-_ssh_order_hostkeyalgs(struct ssh *ssh)
+ಪೂರ್ಣಾಂಕ
+ssh_ಕ್ರಮ_hostkeyalgs(ರಚನೆ ssh *ssh)
 {
-	struct key_entry *k;
-	char *orig, *avail, *oavail = NULL, *alg, *replace = NULL;
-	char **proposal;
-	size_t maxlen;
-	int ktype, nid, r;
+	ರಚನೆ ಕೀಲಿ_ನಮೂದು *k;
+	ಅಕ್ಷರ *orig, *avail, *oavail = ಖಾಲಿ, *alg, *replace = ಖಾಲಿ;
+	ಅಕ್ಷರ **proposal;
+	ಗಾತ್ರ_t maxlen;
+	ಪೂರ್ಣಾಂಕ ktype, nid, r;
 
 	/* XXX we de-serialize ssh->kex->my, modify it, and change it */
-	if ((r = kex_buf2prop(ssh->kex->my, NULL, &proposal)) != 0)
-		return r;
-	orig = proposal[PROPOSAL_SERVER_HOST_KEY_ALGS];
-	if ((oavail = avail = strdup(orig)) == NULL) {
+	ಆದರೆ ((r = kex_buf2prop(ssh->kex->my, ಖಾಲಿ, &proposal)) != 0)
+		ಹಿಂತಿರುಗಿ r;
+	orig = proposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS];
+	ಆದರೆ ((oavail = avail = strdup(orig)) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
-	maxlen = strlen(avail) + 1;
-	if ((replace = calloc(1, maxlen)) == NULL) {
+	maxlen = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(avail) + 1;
+	ಆದರೆ ((replace = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, maxlen)) == ಖಾಲಿ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ಹೋಗು ಹೊರಹೋಗು;
 	}
 	*replace = '\0';
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
-			continue;
+	ಆಗ ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		ಆದರೆ ((ktype = sshkey_type_from_name(alg)) == ಕೀಲಿ_UNSPEC)
+			ಮುಂದುವರಿ;
 		nid = sshkey_ecdsa_nid_from_name(alg);
-		TAILQ_FOREACH(k, &ssh->public_keys, next) {
-			if (k->key->type != ktype &&
-			    (!sshkey_is_cert(k->key) ||
-			    k->key->type != sshkey_type_plain(ktype)))
-				continue;
-			if (sshkey_type_plain(k->key->type) == KEY_ECDSA &&
-			    k->key->ecdsa_nid != nid)
-				continue;
+		TAILQ_FOREACH(k, &ssh->ಬಹಿರಂಗ_ಕೀಲಿಗಳು, ಮುಂದಿನ) {
+			ಆದರೆ (k->ಕೀಲಿ->type != ktype &&
+			    (!sshkey_is_cert(k->ಕೀಲಿ) ||
+			    k->ಕೀಲಿ->type != sshkey_type_plain(ktype)))
+				ಮುಂದುವರಿ;
+			ಆದರೆ (sshkey_type_plain(k->ಕೀಲಿ->type) == ಕೀಲಿ_ECDSA &&
+			    k->ಕೀಲಿ->ecdsa_nid != nid)
+				ಮುಂದುವರಿ;
 			/* Candidate */
-			if (*replace != '\0')
+			ಆದರೆ (*replace != '\0')
 				strlcat(replace, ",", maxlen);
 			strlcat(replace, alg, maxlen);
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
-	if (*replace != '\0') {
+	ಆದರೆ (*replace != '\0') {
 		debug2_f("orig/%d    %s", ssh->kex->server, orig);
 		debug2_f("replace/%d %s", ssh->kex->server, replace);
-		free(orig);
-		proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = replace;
-		replace = NULL;	/* owned by proposal */
+		ಬಿಡುಗಡೆ(orig);
+		proposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = replace;
+		replace = ಖಾಲಿ;	/* owned by proposal */
 		r = kex_prop2buf(ssh->kex->my, proposal);
 	}
- out:
-	free(oavail);
-	free(replace);
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(oavail);
+	ಬಿಡುಗಡೆ(replace);
 	kex_prop_free(proposal);
-	return r;
+	ಹಿಂತಿರುಗಿ r;
 }
 
-int
-_ssh_host_key_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slen,
-    const u_char *data, size_t dlen, const char *alg)
+ಪೂರ್ಣಾಂಕ
+ssh_host_ಕೀಲಿ_sign(ರಚನೆ ssh *ssh, ರಚನೆ sshkey *privkey,
+    ರಚನೆ sshkey *pubkey, u_char **signature, ಗಾತ್ರ_t *slen,
+    ಸ್ಥಿರಾಂಕ u_char *ದತ್ತಾಂಶ, ಗಾತ್ರ_t dlen, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *alg)
 {
-	return sshkey_sign(privkey, signature, slen, data, dlen,
-	    alg, NULL, NULL, ssh->compat);
+	ಹಿಂತಿರುಗಿ sshkey_sign(privkey, signature, slen, ದತ್ತಾಂಶ, dlen,
+	    alg, ಖಾಲಿ, ಖಾಲಿ, ssh->compat);
 }

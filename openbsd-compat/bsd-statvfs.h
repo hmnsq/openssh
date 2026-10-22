@@ -14,41 +14,41 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#ಆದರೆ !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-#ifdef HAVE_SYS_STATFS_H
-#include <sys/statfs.h>
-#endif
-#ifdef HAVE_SYS_VFS_H
-#include <sys/vfs.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_MOUNT_H
+#ಅನ್ತರ್ಭಾವ <sys/mount.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_STATFS_H
+#ಅನ್ತರ್ಭಾವ <sys/statfs.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_VFS_H
+#ಅನ್ತರ್ಭಾವ <sys/vfs.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FSBLKCNT_T
-typedef unsigned long fsblkcnt_t;
-#endif
-#ifndef HAVE_FSFILCNT_T
-typedef unsigned long fsfilcnt_t;
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FSBLKCNT_T
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ fsblkcnt_t;
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FSFILCNT_T
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ fsfilcnt_t;
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef ST_RDONLY
-#define ST_RDONLY	1
-#endif
-#ifndef ST_NOSUID
-#define ST_NOSUID	2
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ST_RDONLY
+#ವ್ಯಾಖ್ಯಾನಿಸು ST_RDONLY	1
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ST_NOSUID
+#ವ್ಯಾಖ್ಯಾನಿಸು ST_NOSUID	2
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* as defined in IEEE Std 1003.1, 2004 Edition */
-struct statvfs {
-	unsigned long f_bsize;	/* File system block size. */
-	unsigned long f_frsize;	/* Fundamental file system block size. */
-	fsblkcnt_t f_blocks;	/* Total number of blocks on file system in */
+ರಚನೆ statvfs {
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ f_bsize;	/* File system block size. */
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ f_frsize;	/* Fundamental file system block size. */
+	fsblkcnt_t f_ಖಂಡಗಳು;	/* Total number of blocks on file system in */
 				/* units of f_frsize. */
 	fsblkcnt_t    f_bfree;	/* Total number of free blocks. */
 	fsblkcnt_t    f_bavail;	/* Number of free blocks available to  */
@@ -57,16 +57,16 @@ struct statvfs {
 	fsfilcnt_t    f_ffree;	/* Total number of free file serial numbers. */
 	fsfilcnt_t    f_favail;	/* Number of file serial numbers available to */
 				/* non-privileged process. */
-	unsigned long f_fsid;	/* File system ID. */
-	unsigned long f_flag;	/* BBit mask of f_flag values. */
-	unsigned long f_namemax;/*  Maximum filename length. */
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ f_fsid;	/* File system ID. */
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ f_flag;	/* BBit mask of f_flag values. */
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ f_namemax;/*  Maximum filename length. */
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_STATVFS
+ಪೂರ್ಣಾಂಕ statvfs(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ statvfs *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_FSTATVFS
+ಪೂರ್ಣಾಂಕ fstatvfs(ಪೂರ್ಣಾಂಕ, ರಚನೆ statvfs *);
+#ಆದರೆ_ಅಂತ್ಯ

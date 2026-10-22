@@ -7,163 +7,163 @@
  * OpenBSD project by leaving this copyright notice intact.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
  
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/socket.h>
+#ಅನ್ತರ್ಭಾವ <sys/queue.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/resource.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <arpa/inet.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
+#ಅನ್ತರ್ಭಾವ <openssl/bn.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include <errno.h>
-#include <limits.h>
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <poll.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <netdb.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <poll.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "digest.h"
-#include "kex.h"
-#include "compat.h"
-#include "myproposal.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "log.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "hostfile.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "dns.h"
-#include "addr.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "cipher.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "compat.h"
+#ಅನ್ತರ್ಭಾವ "myproposal.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "dispatch.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "atomicio.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "ssh_api.h"
+#ಅನ್ತರ್ಭಾವ "dns.h"
+#ಅನ್ತರ್ಭಾವ "addr.h"
 
 /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
    Default value is AF_UNSPEC means both IPv4 and IPv6. */
-int IPv4or6 = AF_UNSPEC;
+ಪೂರ್ಣಾಂಕ IPv4or6 = AF_UNSPEC;
 
-int ssh_port = SSH_DEFAULT_PORT;
+ಪೂರ್ಣಾಂಕ ssh_ಪೋರ್ಟ್ = SSH_DEFAULT_ಪೋರ್ಟ್;
 
-#define KT_RSA		(1)
-#define KT_ECDSA	(1<<1)
-#define KT_ED25519	(1<<2)
-#define KT_ECDSA_SK	(1<<4)
-#define KT_ED25519_SK	(1<<5)
-#define KT_MLDSA44_ED25519 (1<<6)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_RSA		(1)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_ECDSA	(1<<1)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_ED25519	(1<<2)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_ECDSA_SK	(1<<4)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_ED25519_SK	(1<<5)
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_MLDSA44_ED25519 (1<<6)
 
-#define KT_MIN		KT_RSA
-#define KT_MAX		KT_MLDSA44_ED25519
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_MIN		KT_RSA
+#ವ್ಯಾಖ್ಯಾನಿಸು KT_MAX		KT_MLDSA44_ED25519
 
-int get_cert = 0;
-int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
+ಪೂರ್ಣಾಂಕ get_cert = 0;
+ಪೂರ್ಣಾಂಕ get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
 
-int hash_hosts = 0;		/* Hash hostname on output */
+ಪೂರ್ಣಾಂಕ hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+ಪೂರ್ಣಾಂಕ print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
-int found_one = 0;		/* Successfully found a key */
+ಪೂರ್ಣಾಂಕ ಸಿಕ್ಕಿತು_one = 0;		/* Successfully found a key */
 
-int hashalg = -1;		/* Hash for SSHFP records or -1 for all */
+ಪೂರ್ಣಾಂಕ hashalg = -1;		/* Hash for SSHFP records or -1 for all */
 
-int quiet = 0;			/* Don't print key comment lines */
+ಪೂರ್ಣಾಂಕ quiet = 0;			/* Don't print key comment lines */
 
-#define MAXMAXFD 256
+#ವ್ಯಾಖ್ಯಾನಿಸು MAXMAXFD 256
 
 /* The number of seconds after which to give up on a TCP connection */
-int timeout = 5;
+ಪೂರ್ಣಾಂಕ timeout = 5;
 
-int maxfd;
-#define MAXCON (maxfd - 10)
+ಪೂರ್ಣಾಂಕ maxfd;
+#ವ್ಯಾಖ್ಯಾನಿಸು MAXCON (maxfd - 10)
 
-extern char *__progname;
-struct pollfd *read_wait;
-int ncon;
+ಬಾಹ್ಯ ಅಕ್ಷರ *__progname;
+ರಚನೆ pollfd *read_wait;
+ಪೂರ್ಣಾಂಕ ncon;
 
 /*
  * Keep a connection structure for each file descriptor.  The state
  * associated with file descriptor n is held in fdcon[n].
  */
-typedef struct Connection {
-	u_char c_status;	/* State of connection on this file desc. */
-#define CS_UNUSED 0		/* File descriptor unused */
-#define CS_CON 1		/* Waiting to connect/read greeting */
-	int c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
-	int c_keytype;		/* Only one of KT_* */
-	sig_atomic_t c_done;	/* SSH2 done */
-	char *c_namebase;	/* Address to free for c_name and c_namelist */
-	char *c_name;		/* Hostname of connection for errors */
-	char *c_namelist;	/* Pointer to other possible addresses */
-	char *c_output_name;	/* Hostname of connection for output */
-	struct ssh *c_ssh;	/* SSH-connection */
-	char c_banner[256];	/* Partial server greeting */
-	size_t c_banner_len;	/* Length of partial server greeting */
-	int c_banner_sent;	/* Client greeting has been sent */
-	struct timespec c_ts;	/* Time at which connection gets aborted */
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ Connection {
+	u_char c_ಸ್ಥಿತಿ;	/* State of connection on this file desc. */
+#ವ್ಯಾಖ್ಯಾನಿಸು CS_ಬಳಸದ 0		/* File descriptor unused */
+#ವ್ಯಾಖ್ಯಾನಿಸು CS_CON 1		/* Waiting to connect/read greeting */
+	ಪೂರ್ಣಾಂಕ c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
+	ಪೂರ್ಣಾಂಕ c_keytype;		/* Only one of KT_* */
+	sig_atomic_t c_ಮುಗಿದ;	/* SSH2 done */
+	ಅಕ್ಷರ *c_namebase;	/* Address to free for c_name and c_namelist */
+	ಅಕ್ಷರ *c_name;		/* Hostname of connection for errors */
+	ಅಕ್ಷರ *c_namelist;	/* Pointer to other possible addresses */
+	ಅಕ್ಷರ *c_output_name;	/* Hostname of connection for output */
+	ರಚನೆ ssh *c_ssh;	/* SSH-connection */
+	ಅಕ್ಷರ c_banner[256];	/* Partial server greeting */
+	ಗಾತ್ರ_t c_banner_len;	/* Length of partial server greeting */
+	ಪೂರ್ಣಾಂಕ c_banner_ಕಳುಹಿಸಿದ;	/* Client greeting has been sent */
+	ರಚನೆ timespec c_ts;	/* Time at which connection gets aborted */
 	TAILQ_ENTRY(Connection) c_link;	/* List of connections in timeout order. */
 } con;
 
 TAILQ_HEAD(conlist, Connection) tq;	/* Timeout Queue */
 con *fdcon;
 
-static void keyprint(con *c, struct sshkey *key);
+ಸ್ಥಿರ ಶೂನ್ಯ keyprint(con *c, ರಚನೆ sshkey *ಕೀಲಿ);
 
-static int
-fdlim_get(int hard)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+fdlim_get(ಪೂರ್ಣಾಂಕ hard)
 {
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
+#ಆದರೆ defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	ರಚನೆ rlimit rlfd;
 	rlim_t lim;
 
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return -1;
+	ಆದರೆ (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		ಹಿಂತಿರುಗಿ -1;
 	lim = hard ? rlfd.rlim_max : rlfd.rlim_cur;
-	if (lim <= 0)
-		return -1;
-	if (lim == RLIM_INFINITY)
+	ಆದರೆ (lim <= 0)
+		ಹಿಂತಿರುಗಿ -1;
+	ಆದರೆ (lim == RLIM_INFINITY)
 		lim = SSH_SYSFDMAX;
-	if (lim >= INT_MAX)
-		lim = INT_MAX;
-	return lim;
-#else
-	return (SSH_SYSFDMAX <= 0) ? -1 :
-	    ((SSH_SYSFDMAX >= INT_MAX) ? INT_MAX : SSH_SYSFDMAX);
-#endif
+	ಆದರೆ (lim >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ)
+		lim = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
+	ಹಿಂತಿರುಗಿ lim;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಹಿಂತಿರುಗಿ (SSH_SYSFDMAX <= 0) ? -1 :
+	    ((SSH_SYSFDMAX >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ) ? ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ : SSH_SYSFDMAX);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-static int
-fdlim_set(int lim)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+fdlim_ಗಣ(ಪೂರ್ಣಾಂಕ lim)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
-#endif
+#ಆದರೆ defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	ರಚನೆ rlimit rlfd;
+#ಆದರೆ_ಅಂತ್ಯ
 
-	if (lim <= 0)
-		return (-1);
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	ಆದರೆ (lim <= 0)
+		ಹಿಂತಿರುಗಿ (-1);
+#ಆದರೆ defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	ಆದರೆ (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		ಹಿಂತಿರುಗಿ (-1);
 	rlfd.rlim_cur = lim;
-	if (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
-#elif defined (HAVE_SETDTABLESIZE)
+	ಆದರೆ (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		ಹಿಂತಿರುಗಿ (-1);
+#ಅಥವಾಆದರೆ defined (HAVE_SETDTABLESIZE)
 	setdtablesize(lim);
-#endif
-	return (0);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ (0);
 }
 
 /*
@@ -171,121 +171,121 @@ fdlim_set(int lim)
  * separators.  This is the same as the 4.4BSD strsep, but different from the
  * one in the GNU libc.
  */
-static char *
-xstrsep(char **str, const char *delim)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+xstrsep(ಅಕ್ಷರ **str, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *delim)
 {
-	char *s, *e;
+	ಅಕ್ಷರ *s, *e;
 
-	if (!**str)
-		return (NULL);
+	ಆದರೆ (!**str)
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 
 	s = *str;
 	e = s + strcspn(s, delim);
 
-	if (*e != '\0')
+	ಆದರೆ (*e != '\0')
 		*e++ = '\0';
 	*str = e;
 
-	return (s);
+	ಹಿಂತಿರುಗಿ (s);
 }
 
 /*
  * Get the next non-null token (like GNU strsep).  Strsep() will return a
  * null token for two adjacent separators, so we may have to loop.
  */
-static char *
-strnnsep(char **stringp, char *delim)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+strnnsep(ಅಕ್ಷರ **stringp, ಅಕ್ಷರ *delim)
 {
-	char *tok;
+	ಅಕ್ಷರ *tok;
 
-	do {
+	ಮಾಡು {
 		tok = xstrsep(stringp, delim);
-	} while (tok && *tok == '\0');
-	return (tok);
+	} ಆಗ (tok && *tok == '\0');
+	ಹಿಂತಿರುಗಿ (tok);
 }
 
 
-static int
-key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಕೀಲಿ_print_wrapper(ರಚನೆ sshkey *hostkey, ರಚನೆ ssh *ssh)
 {
 	con *c;
 
-	if ((c = ssh_get_app_data(ssh)) != NULL)
+	ಆದರೆ ((c = ssh_get_app_ದತ್ತಾಂಶ(ssh)) != ಖಾಲಿ)
 		keyprint(c, hostkey);
 	/* always abort key exchange */
-	return -1;
+	ಹಿಂತಿರುಗಿ -1;
 }
 
-static int
-ssh2_capable(int remote_major, int remote_minor)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ssh2_capable(ಪೂರ್ಣಾಂಕ remote_major, ಪೂರ್ಣಾಂಕ remote_minor)
 {
-	switch (remote_major) {
-	case 1:
-		if (remote_minor == 99)
-			return 1;
-		break;
-	case 2:
-		return 1;
-	default:
-		break;
+	ಆಯ್ಕೆ (remote_major) {
+	ಸ್ಥಿತಿ 1:
+		ಆದರೆ (remote_minor == 99)
+			ಹಿಂತಿರುಗಿ 1;
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ 2:
+		ಹಿಂತಿರುಗಿ 1;
+	ಪೂರ್ವನಿಯೋಜಿತ:
+		ನಿಲ್ಲಿಸು;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void
+ಸ್ಥಿರ ಶೂನ್ಯ
 keygrab_ssh2(con *c)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	int r;
+	ಅಕ್ಷರ *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	ಪೂರ್ಣಾಂಕ r;
 
-	switch (c->c_keytype) {
-	case KT_RSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+	ಆಯ್ಕೆ (c->c_keytype) {
+	ಸ್ಥಿತಿ KT_RSA:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "rsa-sha2-512-cert-v01@openssh.com,"
 		    "rsa-sha2-256-cert-v01@openssh.com,"
 		    "ssh-rsa-cert-v01@openssh.com" :
 		    "rsa-sha2-512,"
 		    "rsa-sha2-256,"
 		    "ssh-rsa";
-		break;
-	case KT_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ KT_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "ssh-ed25519-cert-v01@openssh.com" : "ssh-ed25519";
-		break;
-	case KT_ECDSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ KT_ECDSA:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "ecdsa-sha2-nistp256-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp384-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp521-cert-v01@openssh.com" :
 		    "ecdsa-sha2-nistp256,"
 		    "ecdsa-sha2-nistp384,"
 		    "ecdsa-sha2-nistp521";
-		break;
-	case KT_MLDSA44_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ KT_MLDSA44_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "ssh-mldsa44-ed25519-cert" :
 		    "ssh-mldsa44-ed25519";
-		break;
-	case KT_ECDSA_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ KT_ECDSA_SK:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com" :
 		    "sk-ecdsa-sha2-nistp256@openssh.com";
-		break;
-	case KT_ED25519_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ KT_ED25519_SK:
+		myproposal[PROPOSAL_SERVER_HOST_ಕೀಲಿ_ALGS] = get_cert ?
 		    "sk-ssh-ed25519-cert-v01@openssh.com" :
 		    "sk-ssh-ed25519@openssh.com";
-		break;
-	default:
+		ನಿಲ್ಲಿಸು;
+	ಪೂರ್ವನಿಯೋಜಿತ:
 		fatal("unknown key type %d", c->c_keytype);
-		break;
+		ನಿಲ್ಲಿಸು;
 	}
-	if ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
-		free(c->c_ssh);
+	ಆದರೆ ((r = kex_ಸಿದ್ಧತೆ(c->c_ssh, myproposal)) != 0) {
+		ಬಿಡುಗಡೆ(c->c_ssh);
 		fprintf(stderr, "kex_setup: %s\n", ssh_err(r));
-		exit(1);
+		ನಿರ್ಗಮಿಸು(1);
 	}
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 	c->c_ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -294,153 +294,153 @@ keygrab_ssh2(con *c)
 	c->c_ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 	c->c_ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 	c->c_ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	c->c_ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh_set_verify_host_key_callback(c->c_ssh, key_print_wrapper);
+	ssh_ಗಣ_verify_host_ಕೀಲಿ_callback(c->c_ssh, ಕೀಲಿ_print_wrapper);
 	/*
 	 * do the key-exchange until an error occurs or until
 	 * the key_print_wrapper() callback sets c_done.
 	 */
-	ssh_dispatch_run(c->c_ssh, DISPATCH_BLOCK, &c->c_done);
+	ssh_dispatch_ಸತತ(c->c_ssh, DISPATCH_ಖಂಡ, &c->c_ಮುಗಿದ);
 }
 
-static void
-keyprint_one(const char *host, struct sshkey *key)
+ಸ್ಥಿರ ಶೂನ್ಯ
+keyprint_one(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	char *hostport = NULL, *hashed = NULL;
-	const char *known_host;
-	int r = 0;
+	ಅಕ್ಷರ *hostport = ಖಾಲಿ, *hashed = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ತಿಳಿದ_host;
+	ಪೂರ್ಣಾಂಕ r = 0;
 
-	found_one = 1;
+	ಸಿಕ್ಕಿತು_one = 1;
 
-	if (print_sshfp) {
-		export_dns_rr(host, key, stdout, 0, hashalg);
-		return;
+	ಆದರೆ (print_sshfp) {
+		export_dns_rr(host, ಕೀಲಿ, stdout, 0, hashalg);
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	hostport = put_host_port(host, ssh_port);
+	hostport = put_host_ಪೋರ್ಟ್(host, ssh_ಪೋರ್ಟ್);
 	lowercase(hostport);
-	if (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
+	ಆದರೆ (hash_hosts && (hashed = host_hash(hostport, ಖಾಲಿ, 0)) == ಖಾಲಿ)
 		fatal("host_hash failed");
-	known_host = hash_hosts ? hashed : hostport;
-	if (!get_cert)
-		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
-		(void)fputs("\n", stdout);
-	free(hashed);
-	free(hostport);
+	ತಿಳಿದ_host = hash_hosts ? hashed : hostport;
+	ಆದರೆ (!get_cert)
+		r = fprintf(stdout, "%s ", ತಿಳಿದ_host);
+	ಆದರೆ (r >= 0 && sshkey_write(ಕೀಲಿ, stdout) == 0)
+		(ಶೂನ್ಯ)fputs("\n", stdout);
+	ಬಿಡುಗಡೆ(hashed);
+	ಬಿಡುಗಡೆ(hostport);
 }
 
-static void
-keyprint(con *c, struct sshkey *key)
+ಸ್ಥಿರ ಶೂನ್ಯ
+keyprint(con *c, ರಚನೆ sshkey *ಕೀಲಿ)
 {
-	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
-	char *host, *ohosts;
+	ಅಕ್ಷರ *hosts = c->c_output_name ? c->c_output_name : c->c_name;
+	ಅಕ್ಷರ *host, *ohosts;
 
-	if (key == NULL)
-		return;
-	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
-		keyprint_one(hosts, key);
-		return;
+	ಆದರೆ (ಕೀಲಿ == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (get_cert || (!hash_hosts && ssh_ಪೋರ್ಟ್ == SSH_DEFAULT_ಪೋರ್ಟ್)) {
+		keyprint_one(hosts, ಕೀಲಿ);
+		ಹಿಂತಿರುಗಿ;
 	}
 	ohosts = hosts = xstrdup(hosts);
-	while ((host = strsep(&hosts, ",")) != NULL)
-		keyprint_one(host, key);
-	free(ohosts);
+	ಆಗ ((host = strsep(&hosts, ",")) != ಖಾಲಿ)
+		keyprint_one(host, ಕೀಲಿ);
+	ಬಿಡುಗಡೆ(ohosts);
 }
 
-static int
-tcpconnect(char *host)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+tcpconnect(ಅಕ್ಷರ *host)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr, s = -1;
+	ರಚನೆ addrinfo hints, *ai, *aitop;
+	ಅಕ್ಷರ strport[NI_MAXSERV];
+	ಪೂರ್ಣಾಂಕ gaierr, s = -1;
 
-	snprintf(strport, sizeof strport, "%d", ssh_port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, ಗಾತ್ರ strport, "%d", ssh_ಪೋರ್ಟ್);
+	memset(&hints, 0, ಗಾತ್ರ(hints));
 	hints.ai_family = IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+	ಆದರೆ ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	ಗಾಗಿ (ai = aitop; ai; ai = ai->ai_next) {
 		s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (s == -1) {
+		ಆದರೆ (s == -1) {
 			error("socket: %s", strerror(errno));
-			continue;
+			ಮುಂದುವರಿ;
 		}
-		if (set_nonblock(s) == -1)
+		ಆದರೆ (ಗಣ_nonblock(s) == -1)
 			fatal_f("set_nonblock(%d)", s);
-		if (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
+		ಆದರೆ (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
 		    errno != EINPROGRESS)
 			error("connect (`%s'): %s", host, strerror(errno));
-		else
-			break;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
 		close(s);
 		s = -1;
 	}
 	freeaddrinfo(aitop);
-	return s;
+	ಹಿಂತಿರುಗಿ s;
 }
 
-static int
-conalloc(const char *iname, const char *oname, int keytype)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+conalloc(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *iname, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *oname, ಪೂರ್ಣಾಂಕ keytype)
 {
-	char *namebase, *name, *namelist;
-	int s;
+	ಅಕ್ಷರ *namebase, *name, *namelist;
+	ಪೂರ್ಣಾಂಕ s;
 
 	namebase = namelist = xstrdup(iname);
 
-	do {
+	ಮಾಡು {
 		name = xstrsep(&namelist, ",");
-		if (!name) {
-			free(namebase);
-			return (-1);
+		ಆದರೆ (!name) {
+			ಬಿಡುಗಡೆ(namebase);
+			ಹಿಂತಿರುಗಿ (-1);
 		}
-	} while ((s = tcpconnect(name)) < 0);
+	} ಆಗ ((s = tcpconnect(name)) < 0);
 
-	if (s >= maxfd)
+	ಆದರೆ (s >= maxfd)
 		fatal("conalloc: fdno %d too high", s);
-	if (fdcon[s].c_status)
+	ಆದರೆ (fdcon[s].c_ಸ್ಥಿತಿ)
 		fatal("conalloc: attempt to reuse fdno %d", s);
 
 	debug3_f("oname %s kt %d", oname, keytype);
 	fdcon[s].c_fd = s;
-	fdcon[s].c_status = CS_CON;
+	fdcon[s].c_ಸ್ಥಿತಿ = CS_CON;
 	fdcon[s].c_namebase = namebase;
 	fdcon[s].c_name = name;
 	fdcon[s].c_namelist = namelist;
 	fdcon[s].c_output_name = xstrdup(oname);
 	fdcon[s].c_keytype = keytype;
 	fdcon[s].c_banner_len = 0;
-	fdcon[s].c_banner_sent = 0;
+	fdcon[s].c_banner_ಕಳುಹಿಸಿದ = 0;
 	monotime_ts(&fdcon[s].c_ts);
 	fdcon[s].c_ts.tv_sec += timeout;
 	TAILQ_INSERT_TAIL(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = s;
 	read_wait[s].events = POLLIN;
 	ncon++;
-	return (s);
+	ಹಿಂತಿರುಗಿ (s);
 }
 
-static void
-confree(int s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+confree(ಪೂರ್ಣಾಂಕ s)
 {
-	if (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
+	ಆದರೆ (s >= maxfd || fdcon[s].c_ಸ್ಥಿತಿ == CS_ಬಳಸದ)
 		fatal("confree: attempt to free bad fdno %d", s);
-	free(fdcon[s].c_namebase);
-	free(fdcon[s].c_output_name);
-	fdcon[s].c_status = CS_UNUSED;
+	ಬಿಡುಗಡೆ(fdcon[s].c_namebase);
+	ಬಿಡುಗಡೆ(fdcon[s].c_output_name);
+	fdcon[s].c_ಸ್ಥಿತಿ = CS_ಬಳಸದ;
 	fdcon[s].c_keytype = 0;
-	if (fdcon[s].c_ssh) {
+	ಆದರೆ (fdcon[s].c_ssh) {
 		ssh_packet_close(fdcon[s].c_ssh);
-		free(fdcon[s].c_ssh);
-		fdcon[s].c_ssh = NULL;
-	} else
+		ಬಿಡುಗಡೆ(fdcon[s].c_ssh);
+		fdcon[s].c_ssh = ಖಾಲಿ;
+	} ಇಲ್ಲದಿದ್ದರೆ
 		close(s);
 	TAILQ_REMOVE(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = -1;
@@ -448,41 +448,41 @@ confree(int s)
 	ncon--;
 }
 
-static int
-conrecycle(int s)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+conrecycle(ಪೂರ್ಣಾಂಕ s)
 {
 	con *c = &fdcon[s];
-	int ret;
+	ಪೂರ್ಣಾಂಕ ret;
 
 	ret = conalloc(c->c_namelist, c->c_output_name, c->c_keytype);
 	confree(s);
-	return (ret);
+	ಹಿಂತಿರುಗಿ (ret);
 }
 
-static void
-congreet(int s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+congreet(ಪೂರ್ಣಾಂಕ s)
 {
-	int remote_major = 0, remote_minor = 0;
+	ಪೂರ್ಣಾಂಕ remote_major = 0, remote_minor = 0;
 	ssize_t n;
-	char buf[256], ch;
-	char remote_version[sizeof buf];
+	ಅಕ್ಷರ buf[256], ch;
+	ಅಕ್ಷರ remote_ಆವೃತ್ತಿ[ಗಾತ್ರ buf];
 	con *c = &fdcon[s];
 
-	if (!c->c_banner_sent) {
+	ಆದರೆ (!c->c_banner_ಕಳುಹಿಸಿದ) {
 		/* send client banner */
-		n = snprintf(buf, sizeof buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
+		n = snprintf(buf, ಗಾತ್ರ buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2);
-		if (n < 0 || (size_t)n >= sizeof(buf)) {
+		ಆದರೆ (n < 0 || (ಗಾತ್ರ_t)n >= ಗಾತ್ರ(buf)) {
 			error("snprintf: buffer too small");
 			confree(s);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
-		if (atomicio(vwrite, s, buf, n) != (size_t)n) {
+		ಆದರೆ (atomicio(vwrite, s, buf, n) != (ಗಾತ್ರ_t)n) {
 			error("write (%s): %s", c->c_name, strerror(errno));
 			confree(s);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
-		c->c_banner_sent = 1;
+		c->c_banner_ಕಳುಹಿಸಿದ = 1;
 	}
 
 	/*
@@ -493,355 +493,355 @@ congreet(int s)
 	 * timeouts.  Partial lines are retained in the connection state
 	 * between calls.
 	 */
-	n = read(s, &ch, sizeof(ch));
-	if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
+	n = ಪಠ(s, &ch, ಗಾತ್ರ(ch));
+	ಆದರೆ (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
 	    errno == EINTR))
-		return;
-	if (n != 1) {
-		if (n == 0)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (n != 1) {
+		ಆದರೆ (n == 0)
 			errno = EPIPE;
-		switch (errno) {
-		case EPIPE:
+		ಆಯ್ಕೆ (errno) {
+		ಸ್ಥಿತಿ EPIPE:
 			error("%s: Connection closed by remote host",
 			    c->c_name);
-			break;
-		case ECONNREFUSED:
-			break;
-		default:
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ ECONNREFUSED:
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			error("read (%s): %s", c->c_name, strerror(errno));
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		conrecycle(s);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	c->c_banner[c->c_banner_len++] = ch == '\r' ? '\n' : ch;
-	if (ch != '\n') {
-		if (c->c_banner_len < sizeof(c->c_banner) - 1)
-			return; /* incomplete line */
-		if (strncmp(c->c_banner, "SSH-", 4) == 0) {
+	ಆದರೆ (ch != '\n') {
+		ಆದರೆ (c->c_banner_len < ಗಾತ್ರ(c->c_banner) - 1)
+			ಹಿಂತಿರುಗಿ; /* incomplete line */
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(c->c_banner, "SSH-", 4) == 0) {
 			/* banner exceeds RFC 4253 s4.2 length limit */
 			error("%s: greeting exceeds allowable length",
 			    c->c_name);
 			confree(s);
-			return;
+			ಹಿಂತಿರುಗಿ;
 		}
 		/* Discard an oversized pre-identification banner chunk. */
 		c->c_banner_len = 0;
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
-	if (strncmp(c->c_banner, "SSH-", 4) != 0) {
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(c->c_banner, "SSH-", 4) != 0) {
 		/* Ignore non-banner lines */
 		c->c_banner_len = 0;
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	c->c_banner[c->c_banner_len++] = '\0';
-	memcpy(buf, c->c_banner, c->c_banner_len);
-	if ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
+	ಸ್ಮರಣೆ_ನಕಲು(buf, c->c_banner, c->c_banner_len);
+	ಆದರೆ ((c->c_ssh = ssh_packet_ಗಣ_connection(ಖಾಲಿ, s, s)) == ಖಾಲಿ)
 		fatal("ssh_packet_set_connection failed");
-	ssh_packet_set_timeout(c->c_ssh, timeout, 1);
-	ssh_set_app_data(c->c_ssh, c);	/* back link */
+	ssh_packet_ಗಣ_timeout(c->c_ssh, timeout, 1);
+	ssh_ಗಣ_app_ದತ್ತಾಂಶ(c->c_ssh, c);	/* back link */
 	c->c_ssh->compat = 0;
-	if (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
-	    &remote_major, &remote_minor, remote_version) == 3)
-		compat_banner(c->c_ssh, remote_version);
-	if (!ssh2_capable(remote_major, remote_minor)) {
+	ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಓದು(buf, "SSH-%d.%d-%[^\n]\n",
+	    &remote_major, &remote_minor, remote_ಆವೃತ್ತಿ) == 3)
+		compat_banner(c->c_ssh, remote_ಆವೃತ್ತಿ);
+	ಆದರೆ (!ssh2_capable(remote_major, remote_minor)) {
 		debug("%s doesn't support ssh2", c->c_name);
 		confree(s);
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
-	if (!quiet) {
+	ಆದರೆ (!quiet) {
 		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
-		    c->c_name, ssh_port, chop(buf));
+		    c->c_name, ssh_ಪೋರ್ಟ್, chop(buf));
 	}
 	keygrab_ssh2(c);
 	confree(s);
 }
 
-static void
-conread(int s)
+ಸ್ಥಿರ ಶೂನ್ಯ
+conread(ಪೂರ್ಣಾಂಕ s)
 {
 	con *c = &fdcon[s];
 
-	if (c->c_status != CS_CON)
-		fatal("conread: invalid status %d", c->c_status);
+	ಆದರೆ (c->c_ಸ್ಥಿತಿ != CS_CON)
+		fatal("conread: invalid status %d", c->c_ಸ್ಥಿತಿ);
 
 	congreet(s);
 }
 
-static void
-conloop(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+conloop(ಶೂನ್ಯ)
 {
-	struct timespec seltime, now;
+	ರಚನೆ timespec seltime, now;
 	con *c;
-	int i;
+	ಪೂರ್ಣಾಂಕ i;
 
 	monotime_ts(&now);
 	c = TAILQ_FIRST(&tq);
 
-	if (c && timespeccmp(&c->c_ts, &now, >))
+	ಆದರೆ (c && timespeccmp(&c->c_ts, &now, >))
 		timespecsub(&c->c_ts, &now, &seltime);
-	else
+	ಇಲ್ಲದಿದ್ದರೆ
 		timespecclear(&seltime);
 
-	while (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
-			continue;
+	ಆಗ (ppoll(read_wait, maxfd, &seltime, ಖಾಲಿ) == -1) {
+		ಆದರೆ (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+			ಮುಂದುವರಿ;
 		error("poll error");
 	}
 
-	for (i = 0; i < maxfd; i++) {
-		if (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
+	ಗಾಗಿ (i = 0; i < maxfd; i++) {
+		ಆದರೆ (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
 			confree(i);
-		else if (read_wait[i].revents & (POLLIN))
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (read_wait[i].revents & (POLLIN))
 			conread(i);
 	}
 
 	c = TAILQ_FIRST(&tq);
-	while (c && timespeccmp(&c->c_ts, &now, <)) {
-		int s = c->c_fd;
+	ಆಗ (c && timespeccmp(&c->c_ts, &now, <)) {
+		ಪೂರ್ಣಾಂಕ s = c->c_fd;
 
 		c = TAILQ_NEXT(c, c_link);
 		conrecycle(s);
 	}
 }
 
-static void
-do_one_host(char *host)
+ಸ್ಥಿರ ಶೂನ್ಯ
+do_one_host(ಅಕ್ಷರ *host)
 {
-	char *name = strnnsep(&host, " \t\n");
-	int j;
+	ಅಕ್ಷರ *name = strnnsep(&host, " \t\n");
+	ಪೂರ್ಣಾಂಕ j;
 
-	if (name == NULL)
-		return;
-	for (j = KT_MIN; j <= KT_MAX; j *= 2) {
-		if (get_keytypes & j) {
-			while (ncon >= MAXCON)
+	ಆದರೆ (name == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
+	ಗಾಗಿ (j = KT_MIN; j <= KT_MAX; j *= 2) {
+		ಆದರೆ (get_keytypes & j) {
+			ಆಗ (ncon >= MAXCON)
 				conloop();
 			conalloc(name, *host ? host : name, j);
 		}
 	}
 }
 
-static void
-do_host(char *host)
+ಸ್ಥಿರ ಶೂನ್ಯ
+do_host(ಅಕ್ಷರ *host)
 {
-	char daddr[128];
-	struct xaddr addr, end_addr;
+	ಅಕ್ಷರ daddr[128];
+	ರಚನೆ xaddr addr, ಕೊನೆ_addr;
 	u_int masklen;
 
-	if (host == NULL)
-		return;
-	if (addr_pton_cidr(host, &addr, &masklen) != 0) {
+	ಆದರೆ (host == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
+	ಆದರೆ (addr_pton_cidr(host, &addr, &masklen) != 0) {
 		/* Assume argument is a hostname */
 		do_one_host(host);
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		/* Argument is a CIDR range */
 		debug("CIDR range %s", host);
-		end_addr = addr;
-		if (addr_host_to_all1s(&end_addr, masklen) != 0)
-			goto badaddr;
+		ಕೊನೆ_addr = addr;
+		ಆದರೆ (addr_host_ಗಮ್ಯ_all1s(&ಕೊನೆ_addr, masklen) != 0)
+			ಹೋಗು badaddr;
 		/*
 		 * Note: we deliberately include the all-zero/ones addresses.
 		 */
-		for (;;) {
-			if (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
+		ಗಾಗಿ (;;) {
+			ಆದರೆ (addr_ntop(&addr, daddr, ಗಾತ್ರ(daddr)) != 0) {
  badaddr:
 				error("Invalid address %s", host);
-				return;
+				ಹಿಂತಿರುಗಿ;
 			}
 			debug("CIDR expand: address %s", daddr);
 			do_one_host(daddr);
-			if (addr_cmp(&addr, &end_addr) == 0)
-				break;
+			ಆದರೆ (addr_cmp(&addr, &ಕೊನೆ_addr) == 0)
+				ನಿಲ್ಲಿಸು;
 			addr_increment(&addr);
 		}
 	}
 }
 
-static void
-usage(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+usage(ಶೂನ್ಯ)
 {
 	fprintf(stderr,
 	    "usage: ssh-keyscan [-46cDHqv] [-f file] [-O option] [-p port] [-T timeout]\n"
 	    "                   [-t type] [host | addrlist namelist]\n");
-	exit(1);
+	ನಿರ್ಗಮಿಸು(1);
 }
 
-int
-main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ
+ಮುಖ್ಯ(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
-	char *tname, *cp, *line = NULL;
-	size_t linesize = 0;
+	ಪೂರ್ಣಾಂಕ debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
+	ಪೂರ್ಣಾಂಕ opt, fopt_ಎಣಿಕೆ = 0, j;
+	ಅಕ್ಷರ *tname, *cp, *ಸಾಲು = ಖಾಲಿ;
+	ಗಾತ್ರ_t linesize = 0;
 	FILE *fp;
 
-	extern int optind;
-	extern char *optarg;
+	ಬಾಹ್ಯ ಪೂರ್ಣಾಂಕ optind;
+	ಬಾಹ್ಯ ಅಕ್ಷರ *optarg;
 
 	__progname = ssh_get_progname(argv[0]);
-	seed_rng();
+	ಬೀಜ_rng();
 	TAILQ_INIT(&tq);
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if (argc <= 1)
+	ಆದರೆ (argc <= 1)
 		usage();
 
-	while ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
-		switch (opt) {
-		case 'H':
+	ಆಗ ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
+		ಆಯ್ಕೆ (opt) {
+		ಸ್ಥಿತಿ 'H':
 			hash_hosts = 1;
-			break;
-		case 'c':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'c':
 			get_cert = 1;
-			break;
-		case 'D':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'D':
 			print_sshfp = 1;
-			break;
-		case 'p':
-			ssh_port = a2port(optarg);
-			if (ssh_port <= 0) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'p':
+			ssh_ಪೋರ್ಟ್ = a2port(optarg);
+			ಆದರೆ (ssh_ಪೋರ್ಟ್ <= 0) {
 				fprintf(stderr, "Bad port '%s'\n", optarg);
-				exit(1);
+				ನಿರ್ಗಮಿಸು(1);
 			}
-			break;
-		case 'T':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'T':
 			timeout = convtime(optarg);
-			if (timeout == -1 || timeout == 0) {
+			ಆದರೆ (timeout == -1 || timeout == 0) {
 				fprintf(stderr, "Bad timeout '%s'\n", optarg);
 				usage();
 			}
-			break;
-		case 'v':
-			if (!debug_flag) {
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'v':
+			ಆದರೆ (!debug_flag) {
 				debug_flag = 1;
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			}
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			else
+			ಇಲ್ಲದಿದ್ದರೆ
 				fatal("Too high debugging level.");
-			break;
-		case 'q':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'q':
 			quiet = 1;
-			break;
-		case 'f':
-			if (strcmp(optarg, "-") == 0)
-				optarg = NULL;
-			argv[fopt_count++] = optarg;
-			break;
-		case 'O':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'f':
+			ಆದರೆ (strcmp(optarg, "-") == 0)
+				optarg = ಖಾಲಿ;
+			argv[fopt_ಎಣಿಕೆ++] = optarg;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'O':
 			/* Maybe other misc options in the future too */
-			if (strncmp(optarg, "hashalg=", 8) != 0)
+			ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(optarg, "hashalg=", 8) != 0)
 				fatal("Unsupported -O option");
-			if ((hashalg = ssh_digest_alg_by_name(
+			ಆದರೆ ((hashalg = ssh_digest_alg_by_name(
 			    optarg + 8)) == -1)
 				fatal("Unsupported hash algorithm");
-			break;
-		case 't':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 't':
 			get_keytypes = 0;
 			tname = strtok(optarg, ",");
-			while (tname) {
-				int type = sshkey_type_from_shortname(tname);
+			ಆಗ (tname) {
+				ಪೂರ್ಣಾಂಕ type = sshkey_type_from_shortname(tname);
 
-				switch (type) {
-				case KEY_ECDSA:
+				ಆಯ್ಕೆ (type) {
+				ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA:
 					get_keytypes |= KT_ECDSA;
-					break;
-				case KEY_RSA:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_RSA:
 					get_keytypes |= KT_RSA;
-					break;
-				case KEY_ED25519:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_ED25519:
 					get_keytypes |= KT_ED25519;
-					break;
-				case KEY_ED25519_SK:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_ED25519_SK:
 					get_keytypes |= KT_ED25519_SK;
-					break;
-				case KEY_ECDSA_SK:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_ECDSA_SK:
 					get_keytypes |= KT_ECDSA_SK;
-					break;
-				case KEY_MLDSA44_ED25519:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_MLDSA44_ED25519:
 					get_keytypes |= KT_MLDSA44_ED25519;
-					break;
-				case KEY_UNSPEC:
-				default:
+					ನಿಲ್ಲಿಸು;
+				ಸ್ಥಿತಿ ಕೀಲಿ_UNSPEC:
+				ಪೂರ್ವನಿಯೋಜಿತ:
 					fatal("Unknown key type \"%s\"", tname);
 				}
-				tname = strtok(NULL, ",");
+				tname = strtok(ಖಾಲಿ, ",");
 			}
-			break;
-		case '4':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '4':
 			IPv4or6 = AF_INET;
-			break;
-		case '6':
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '6':
 			IPv4or6 = AF_INET6;
-			break;
-		default:
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	ಆದರೆ (optind == argc && !fopt_ಎಣಿಕೆ)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
-	if (maxfd < 0)
+	ಆದರೆ (maxfd < 0)
 		fatal("%s: fdlim_get: bad value", __progname);
-	if (maxfd > MAXMAXFD)
+	ಆದರೆ (maxfd > MAXMAXFD)
 		maxfd = MAXMAXFD;
-	if (MAXCON <= 0)
+	ಆದರೆ (MAXCON <= 0)
 		fatal("%s: not enough file descriptors", __progname);
-	if (maxfd > fdlim_get(0))
-		fdlim_set(maxfd);
-	fdcon = xcalloc(maxfd, sizeof(con));
-	read_wait = xcalloc(maxfd, sizeof(struct pollfd));
-	for (j = 0; j < maxfd; j++)
+	ಆದರೆ (maxfd > fdlim_get(0))
+		fdlim_ಗಣ(maxfd);
+	fdcon = xcalloc(maxfd, ಗಾತ್ರ(con));
+	read_wait = xcalloc(maxfd, ಗಾತ್ರ(ರಚನೆ pollfd));
+	ಗಾಗಿ (j = 0; j < maxfd; j++)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
-		if (argv[j] == NULL)
+	ಗಾಗಿ (j = 0; j < fopt_ಎಣಿಕೆ; j++) {
+		ಆದರೆ (argv[j] == ಖಾಲಿ)
 			fp = stdin;
-		else if ((fp = fopen(argv[j], "r")) == NULL)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((fp = fopen(argv[j], "r")) == ಖಾಲಿ)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		ಆಗ (getline(&ಸಾಲು, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
-				cp = line + strlen(line) - 1;
-			while (cp >= line) {
-				if (*cp == ' ' || *cp == '\t' ||
+			ಆದರೆ ((cp = strchr(ಸಾಲು, '#')) == ಖಾಲಿ)
+				cp = ಸಾಲು + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಾಲು) - 1;
+			ಆಗ (cp >= ಸಾಲು) {
+				ಆದರೆ (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
-				else
-					break;
+				ಇಲ್ಲದಿದ್ದರೆ
+					ನಿಲ್ಲಿಸು;
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
-				continue;
+			ಆದರೆ (*ಸಾಲು == '\0')
+				ಮುಂದುವರಿ;
 
-			do_host(line);
+			do_host(ಸಾಲು);
 		}
 
-		if (ferror(fp))
+		ಆದರೆ (ferror(fp))
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		if (fp != stdin)
+		ಆದರೆ (fp != stdin)
 			fclose(fp);
 	}
-	free(line);
+	ಬಿಡುಗಡೆ(ಸಾಲು);
 
-	while (optind < argc)
+	ಆಗ (optind < argc)
 		do_host(argv[optind++]);
 
-	while (ncon > 0)
+	ಆಗ (ncon > 0)
 		conloop();
 
-	return found_one ? 0 : 1;
+	ಹಿಂತಿರುಗಿ ಸಿಕ್ಕಿತು_one ? 0 : 1;
 }

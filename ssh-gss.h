@@ -23,18 +23,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _SSH_GSS_H
-#define _SSH_GSS_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _SSH_GSS_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _SSH_GSS_H
 
-#ifdef GSSAPI
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
 
-#ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#elif defined(HAVE_GSSAPI_GSSAPI_H)
-#include <gssapi/gssapi.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_GSSAPI_H
+#ಅನ್ತರ್ಭಾವ <gssapi.h>
+#ಅಥವಾಆದರೆ defined(HAVE_GSSAPI_GSSAPI_H)
+#ಅನ್ತರ್ಭಾವ <gssapi/gssapi.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef KRB5
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
 # ifndef HEIMDAL
 #  ifdef HAVE_GSSAPI_GENERIC_H
 #   include <gssapi_generic.h>
@@ -44,50 +44,50 @@
 
 /* Old MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
 
-#  if !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
+#  ಆದರೆ !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
 #   define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #  endif /* !HAVE_DECL_GSS_C_NT_... */
 
 # endif /* !HEIMDAL */
-#endif /* KRB5 */
+#ಆದರೆ_ಅಂತ್ಯ /* KRB5 */
 
 /* draft-ietf-secsh-gsskeyex-06 */
-#define SSH2_MSG_USERAUTH_GSSAPI_RESPONSE		60
-#define SSH2_MSG_USERAUTH_GSSAPI_TOKEN			61
-#define SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
-#define SSH2_MSG_USERAUTH_GSSAPI_ERROR			64
-#define SSH2_MSG_USERAUTH_GSSAPI_ERRTOK			65
-#define SSH2_MSG_USERAUTH_GSSAPI_MIC			66
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_RESPONSE		60
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_TOKEN			61
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_ERROR			64
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_ERRTOK			65
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH2_ಸಂದೇಶ_USERAUTH_GSSAPI_MIC			66
 
-#define SSH_GSS_OIDTYPE 0x06
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_GSS_OIDTYPE 0x06
 
-typedef struct {
-	char *filename;
-	char *envvar;
-	char *envval;
-	void *data;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	ಅಕ್ಷರ *filename;
+	ಅಕ್ಷರ *envvar;
+	ಅಕ್ಷರ *envval;
+	ಶೂನ್ಯ *ದತ್ತಾಂಶ;
 } ssh_gssapi_ccache;
 
-typedef struct {
-	gss_buffer_desc displayname;
-	gss_buffer_desc exportedname;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+	gss_ಬಫರ್_desc displayname;
+	gss_ಬಫರ್_desc exportedname;
 	gss_cred_id_t creds;
-	struct ssh_gssapi_mech_struct *mech;
+	ರಚನೆ ssh_gssapi_mech_struct *mech;
 	ssh_gssapi_ccache store;
-	int userok;
+	ಪೂರ್ಣಾಂಕ userok;
 } ssh_gssapi_client;
 
-typedef struct ssh_gssapi_mech_struct {
-	char *enc_name;
-	char *name;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ ssh_gssapi_mech_struct {
+	ಅಕ್ಷರ *enc_name;
+	ಅಕ್ಷರ *name;
 	gss_OID_desc oid;
-	int (*dochild) (ssh_gssapi_client *);
-	int (*userok) (ssh_gssapi_client *, char *);
-	int (*localname) (ssh_gssapi_client *, char **);
-	void (*storecreds) (ssh_gssapi_client *);
+	ಪೂರ್ಣಾಂಕ (*dochild) (ssh_gssapi_client *);
+	ಪೂರ್ಣಾಂಕ (*userok) (ssh_gssapi_client *, ಅಕ್ಷರ *);
+	ಪೂರ್ಣಾಂಕ (*localname) (ssh_gssapi_client *, ಅಕ್ಷರ **);
+	ಶೂನ್ಯ (*storecreds) (ssh_gssapi_client *);
 } ssh_gssapi_mech;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
 	OM_uint32	major; /* both */
 	OM_uint32	minor; /* both */
 	gss_ctx_id_t	context; /* both */
@@ -98,43 +98,43 @@ typedef struct {
 	gss_cred_id_t	client_creds; /* server */
 } Gssctxt;
 
-extern ssh_gssapi_mech *supported_mechs[];
+ಬಾಹ್ಯ ssh_gssapi_mech *supported_mechs[];
 
-int  ssh_gssapi_check_oid(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid_data(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid(Gssctxt *, gss_OID);
-void ssh_gssapi_supported_oids(gss_OID_set *);
-void ssh_gssapi_prepare_supported_oids(void);
-OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, int *);
+ಪೂರ್ಣಾಂಕ  ssh_gssapi_check_oid(Gssctxt *, ಶೂನ್ಯ *, ಗಾತ್ರ_t);
+ಶೂನ್ಯ ssh_gssapi_ಗಣ_oid_ದತ್ತಾಂಶ(Gssctxt *, ಶೂನ್ಯ *, ಗಾತ್ರ_t);
+ಶೂನ್ಯ ssh_gssapi_ಗಣ_oid(Gssctxt *, gss_OID);
+ಶೂನ್ಯ ssh_gssapi_supported_oids(gss_OID_ಗಣ *);
+ಶೂನ್ಯ ssh_gssapi_prepare_supported_oids(ಶೂನ್ಯ);
+OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, ಪೂರ್ಣಾಂಕ *);
 
-struct sshbuf;
-int ssh_gssapi_get_buffer_desc(struct sshbuf *, gss_buffer_desc *);
+ರಚನೆ sshbuf;
+ಪೂರ್ಣಾಂಕ ssh_gssapi_get_ಬಫರ್_desc(ರಚನೆ sshbuf *, gss_ಬಫರ್_desc *);
 
-OM_uint32 ssh_gssapi_import_name(Gssctxt *, const char *);
-OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, int,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+OM_uint32 ssh_gssapi_import_name(Gssctxt *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, ಪೂರ್ಣಾಂಕ,
+    gss_ಬಫರ್_desc *, gss_ಬಫರ್_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_accept_ctx(Gssctxt *,
-    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
+    gss_ಬಫರ್_desc *, gss_ಬಫರ್_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_getclient(Gssctxt *, ssh_gssapi_client *);
-void ssh_gssapi_error(Gssctxt *);
-char *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
-void ssh_gssapi_build_ctx(Gssctxt **);
-void ssh_gssapi_delete_ctx(Gssctxt **);
-OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_buildmic(struct sshbuf *, const char *,
-    const char *, const char *, const struct sshbuf *);
-int ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, const char *);
+ಶೂನ್ಯ ssh_gssapi_error(Gssctxt *);
+ಅಕ್ಷರ *ssh_gssapi_ಕೊನೆಯ_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
+ಶೂನ್ಯ ssh_gssapi_build_ctx(Gssctxt **);
+ಶೂನ್ಯ ssh_gssapi_delete_ctx(Gssctxt **);
+OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_ಬಫರ್_t, gss_ಬಫರ್_t);
+ಶೂನ್ಯ ssh_gssapi_buildmic(ರಚನೆ sshbuf *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *);
+ಪೂರ್ಣಾಂಕ ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /* In the server */
 OM_uint32 ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
-int ssh_gssapi_userok(char *name);
-OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_do_child(char ***, u_int *);
-void ssh_gssapi_cleanup_creds(void);
-void ssh_gssapi_storecreds(void);
-const char *ssh_gssapi_displayname(void);
-void ssh_gssapi_cleanup_global_client(void);
+ಪೂರ್ಣಾಂಕ ssh_gssapi_userok(ಅಕ್ಷರ *name);
+OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_ಬಫರ್_t, gss_ಬಫರ್_t);
+ಶೂನ್ಯ ssh_gssapi_do_ಮಗು(ಅಕ್ಷರ ***, u_int *);
+ಶೂನ್ಯ ssh_gssapi_cleanup_creds(ಶೂನ್ಯ);
+ಶೂನ್ಯ ssh_gssapi_storecreds(ಶೂನ್ಯ);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ssh_gssapi_displayname(ಶೂನ್ಯ);
+ಶೂನ್ಯ ssh_gssapi_cleanup_global_client(ಶೂನ್ಯ);
 
-#endif /* GSSAPI */
+#ಆದರೆ_ಅಂತ್ಯ /* GSSAPI */
 
-#endif /* _SSH_GSS_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _SSH_GSS_H */

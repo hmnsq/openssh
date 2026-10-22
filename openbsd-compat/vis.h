@@ -34,65 +34,65 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಆದರೆ !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#ifndef _VIS_H_
-#define	_VIS_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _VIS_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
 /*
  * to select alternate encoding format
  */
-#define	VIS_OCTAL	0x01	/* use octal \ddd format */
-#define	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_OCTAL	0x01	/* use octal \ddd format */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
 
 /*
  * to alter set of characters encoded (default is to encode all
  * non-graphic except space, tab, and newline).
  */
-#define	VIS_SP		0x04	/* also encode space */
-#define	VIS_TAB		0x08	/* also encode tab */
-#define	VIS_NL		0x10	/* also encode newline */
-#define	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
-#define	VIS_SAFE	0x20	/* only encode "unsafe" characters */
-#define	VIS_DQ		0x200	/* backslash-escape double quotes */
-#define	VIS_ALL		0x400	/* encode all characters */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_SP		0x04	/* also encode space */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_TAB		0x08	/* also encode tab */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_NL		0x10	/* also encode newline */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_ಸುರಕ್ಷಿತ	0x20	/* only encode "unsafe" characters */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_DQ		0x200	/* backslash-escape double quotes */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_ALL		0x400	/* encode all characters */
 
 /*
  * other
  */
-#define	VIS_NOSLASH	0x40	/* inhibit printing '\' */
-#define	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_NOSLASH	0x40	/* inhibit printing '\' */
+#ವ್ಯಾಖ್ಯಾನಿಸು	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
 
 /*
  * unvis return codes
  */
-#define	UNVIS_VALID	 1	/* character valid */
-#define	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
-#define	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
-#define	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
-#define	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_VALID	 1	/* character valid */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
 
 /*
  * unvis flags
  */
-#define	UNVIS_END	1	/* no more characters */
+#ವ್ಯಾಖ್ಯಾನಿಸು	UNVIS_ಕೊನೆ	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+ಅಕ್ಷರ	*vis(ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	strvis(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	stravis(ಅಕ್ಷರ **, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	strnvis(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಗಾತ್ರ_t, ಪೂರ್ಣಾಂಕ)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+ಪೂರ್ಣಾಂಕ	strvisx(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಗಾತ್ರ_t, ಪೂರ್ಣಾಂಕ)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+ಪೂರ್ಣಾಂಕ	strunvis(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	unvis(ಅಕ್ಷರ *, ಅಕ್ಷರ, ಪೂರ್ಣಾಂಕ *, ಪೂರ್ಣಾಂಕ);
+ssize_t strnunvis(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಗಾತ್ರ_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
-#endif /* !_VIS_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* !_VIS_H_ */
 
-#endif /* !HAVE_STRNVIS || BROKEN_STRNVIS */
+#ಆದರೆ_ಅಂತ್ಯ /* !HAVE_STRNVIS || BROKEN_STRNVIS */

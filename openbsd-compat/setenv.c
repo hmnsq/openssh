@@ -30,18 +30,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#ಆದರೆ !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-extern char **environ;
-#ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
-#endif
+ಬಾಹ್ಯ ಅಕ್ಷರ **environ;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETENV
+ಸ್ಥಿರ ಅಕ್ಷರ **lastenv;				/* last value of environ */
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
 /*
@@ -54,175 +54,175 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+__findenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಪೂರ್ಣಾಂಕ len, ಪೂರ್ಣಾಂಕ *ಸ್ಥಾನಾಂತರ)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	ಬಾಹ್ಯ ಅಕ್ಷರ **environ;
+	ಪೂರ್ಣಾಂಕ i;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *np;
+	ಅಕ್ಷರ **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
-			*offset = p - environ;
-			return (cp);
+	ಆದರೆ (name == ಖಾಲಿ || environ == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
+	ಗಾಗಿ (p = environ + *ಸ್ಥಾನಾಂತರ; (cp = *p) != ಖಾಲಿ; ++p) {
+		ಗಾಗಿ (np = name, i = len; i && *cp; i--)
+			ಆದರೆ (*cp++ != *np++)
+				ನಿಲ್ಲಿಸು;
+		ಆದರೆ (i == 0 && *cp++ == '=') {
+			*ಸ್ಥಾನಾಂತರ = p - environ;
+			ಹಿಂತಿರುಗಿ (cp);
 		}
 	}
-	return (NULL);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }
 
-#if 0 /* nothing uses putenv */
+#ಆದರೆ 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+ಪೂರ್ಣಾಂಕ
+putenv(ಅಕ್ಷರ *str)
 {
-	char **P, *cp;
-	size_t cnt;
-	int offset = 0;
+	ಅಕ್ಷರ **P, *cp;
+	ಗಾತ್ರ_t cnt;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಾನಾಂತರ = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	ಗಾಗಿ (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	ಆದರೆ (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		ಹಿಂತಿರುಗಿ (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
-		environ[offset++] = str;
+	ಆದರೆ (__findenv(str, (ಪೂರ್ಣಾಂಕ)(cp - str), &ಸ್ಥಾನಾಂತರ) != ಖಾಲಿ) {
+		environ[ಸ್ಥಾನಾಂತರ++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ಆಗ (__findenv(str, (ಪೂರ್ಣಾಂಕ)(cp - str), &ಸ್ಥಾನಾಂತರ)) {
+			ಗಾಗಿ (P = &environ[ಸ್ಥಾನಾಂತರ];; ++P)
+				ಆದರೆ (!(*P = *(P + 1)))
+					ನಿಲ್ಲಿಸು;
 		}
-		return (0);
+		ಹಿಂತಿರುಗಿ (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	ಗಾಗಿ (P = environ; *P != ಖಾಲಿ; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (ಅಕ್ಷರ **)realloc(lastenv, ಗಾತ್ರ(ಅಕ್ಷರ *) * (cnt + 2));
+	ಆದರೆ (!P)
+		ಹಿಂತಿರುಗಿ (-1);
+	ಆದರೆ (lastenv != environ)
+		ಸ್ಮರಣೆ_ನಕಲು(P, environ, cnt * ಗಾತ್ರ(ಅಕ್ಷರ *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = ಖಾಲಿ;
+	ಹಿಂತಿರುಗಿ (0);
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_SETENV
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SETENV
 /*
  * setenv --
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+ಪೂರ್ಣಾಂಕ
+setenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮೌಲ್ಯ, ಪೂರ್ಣಾಂಕ rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	ಅಕ್ಷರ *C, **P;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *np;
+	ಪೂರ್ಣಾಂಕ l_ಮೌಲ್ಯ, ಸ್ಥಾನಾಂತರ = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	ಗಾಗಿ (np = name; *np && *np != '='; ++np)
 		;
-#ifdef notyet
-	if (*np) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ notyet
+	ಆದರೆ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ಹಿಂತಿರುಗಿ (-1);			/* has `=' in name */
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	l_ಮೌಲ್ಯ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಮೌಲ್ಯ);
+	ಆದರೆ ((C = __findenv(name, (ಪೂರ್ಣಾಂಕ)(np - name), &ಸ್ಥಾನಾಂತರ)) != ಖಾಲಿ) {
+		ಪೂರ್ಣಾಂಕ tmpoff = ಸ್ಥಾನಾಂತರ + 1;
+		ಆದರೆ (!rewrite)
+			ಹಿಂತಿರುಗಿ (0);
+#ಆದರೆ 0 /* XXX - existing entry may not be writable */
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(C) >= l_ಮೌಲ್ಯ) {	/* old larger; copy over */
+			ಆಗ ((*C++ = *ಮೌಲ್ಯ++))
 				;
-			return (0);
+			ಹಿಂತಿರುಗಿ (0);
 		}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ಆಗ (__findenv(name, (ಪೂರ್ಣಾಂಕ)(np - name), &tmpoff)) {
+			ಗಾಗಿ (P = &environ[tmpoff];; ++P)
+				ಆದರೆ (!(*P = *(P + 1)))
+					ನಿಲ್ಲಿಸು;
 		}
-	} else {					/* create new slot */
-		size_t cnt;
+	} ಇಲ್ಲದಿದ್ದರೆ {					/* create new slot */
+		ಗಾತ್ರ_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		ಗಾಗಿ (P = environ; *P != ಖಾಲಿ; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (ಅಕ್ಷರ **)realloc(lastenv, ಗಾತ್ರ(ಅಕ್ಷರ *) * (cnt + 2));
+		ಆದರೆ (!P)
+			ಹಿಂತಿರುಗಿ (-1);
+		ಆದರೆ (lastenv != environ)
+			ಸ್ಮರಣೆ_ನಕಲು(P, environ, cnt * ಗಾತ್ರ(ಅಕ್ಷರ *));
 		lastenv = environ = P;
-		offset = cnt;
-		environ[cnt + 1] = NULL;
+		ಸ್ಥಾನಾಂತರ = cnt;
+		environ[cnt + 1] = ಖಾಲಿ;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	ಆದರೆ (!(environ[ಸ್ಥಾನಾಂತರ] =			/* name + `=' + value */
+	    ಸ್ಮರಣೆ_ಕೊಡು((ಗಾತ್ರ_t)((ಪೂರ್ಣಾಂಕ)(np - name) + l_ಮೌಲ್ಯ + 2))))
+		ಹಿಂತಿರುಗಿ (-1);
+	ಗಾಗಿ (C = environ[ಸ್ಥಾನಾಂತರ]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	ಗಾಗಿ (*C++ = '='; (*C++ = *ಮೌಲ್ಯ++); )
 		;
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
 
-#endif /* HAVE_SETENV */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_SETENV */
 
-#ifndef HAVE_UNSETENV
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_UNSETENV
 /*
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+ಪೂರ್ಣಾಂಕ
+unsetenv(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	ಅಕ್ಷರ **P;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *np;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಾನಾಂತರ = 0;
 
-	if (!name || !*name) {
+	ಆದರೆ (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		ಹಿಂತಿರುಗಿ (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	ಗಾಗಿ (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	ಆದರೆ (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ಹಿಂತಿರುಗಿ (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	ಆಗ (__findenv(name, (ಪೂರ್ಣಾಂಕ)(np - name), &ಸ್ಥಾನಾಂತರ)) {
+		ಗಾಗಿ (P = &environ[ಸ್ಥಾನಾಂತರ];; ++P)
+			ಆದರೆ (!(*P = *(P + 1)))
+				ನಿಲ್ಲಿಸು;
 	}
-	return (0);
+	ಹಿಂತಿರುಗಿ (0);
 }
-#endif /* HAVE_UNSETENV */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_UNSETENV */
 
-#endif /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
+#ಆದರೆ_ಅಂತ್ಯ /* !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV) */
 

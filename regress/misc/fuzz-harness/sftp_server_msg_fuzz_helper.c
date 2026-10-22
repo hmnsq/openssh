@@ -38,156 +38,156 @@ limitations under the License.
  * recovery so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <setjmp.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-extern void fuzz_arena_begin(void);
-extern void fuzz_arena_release(void);
-extern void fuzz_arena_cleanup(void);
+ಬಾಹ್ಯ ಶೂನ್ಯ fuzz_arena_begin(ಶೂನ್ಯ);
+ಬಾಹ್ಯ ಶೂನ್ಯ fuzz_arena_release(ಶೂನ್ಯ);
+ಬಾಹ್ಯ ಶೂನ್ಯ fuzz_arena_cleanup(ಶೂನ್ಯ);
 
-static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+ಸ್ಥಿರ jmp_buf fuzz_server_env;
+ಸ್ಥಿರ ಅಸ್ಥಿರ ಪೂರ್ಣಾಂಕ ಒಳ_fuzz_server = 0;
 
-void
-cleanup_exit(int code)
+ಶೂನ್ಯ
+cleanup_exit(ಪೂರ್ಣಾಂಕ ಸಂಕೇತ_2)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ಆದರೆ (ಒಳ_fuzz_server)
+		longjmp(fuzz_server_env, ಸಂಕೇತ_2 ? ಸಂಕೇತ_2 : 1);
+	_exit(ಸಂಕೇತ_2);
 }
 
-#define sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
-#include "../../../sftp-server.c"
-#undef sftp_server_cleanup_exit
+#ವ್ಯಾಖ್ಯಾನಿಸು sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
+#ಅನ್ತರ್ಭಾವ "../../../sftp-server.c"
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು sftp_server_cleanup_exit
 
-void
-sftp_server_cleanup_exit(int code)
+ಶೂನ್ಯ
+sftp_server_cleanup_exit(ಪೂರ್ಣಾಂಕ ಸಂಕೇತ_2)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ಆದರೆ (ಒಳ_fuzz_server)
+		longjmp(fuzz_server_env, ಸಂಕೇತ_2 ? ಸಂಕೇತ_2 : 1);
+	_exit(ಸಂಕೇತ_2);
 }
 
-static void (* const __force_use_renamed)(int) =
+ಸ್ಥಿರ ಶೂನ್ಯ (* ಸ್ಥಿರಾಂಕ __force_use_renamed)(ಪೂರ್ಣಾಂಕ) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+ಸ್ಥಿರ ರಚನೆ passwd fuzz_pw;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ log_initialized = 0;
 
-static void
-cleanup_handles(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+cleanup_handles(ಶೂನ್ಯ)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
-	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+	ಆದರೆ (handles == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ;
+	ಗಾಗಿ (i = 0; i < ಅಂಕೆ_handles; i++) {
+		ಆದರೆ (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (handles[i].use == HANDLE_DIR && handles[i].dirp != ಖಾಲಿ)
 			closedir(handles[i].dirp);
-		free(handles[i].name);
+		ಬಿಡುಗಡೆ(handles[i].name);
 	}
-	free(handles);
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
+	ಬಿಡುಗಡೆ(handles);
+	handles = ಖಾಲಿ;
+	ಅಂಕೆ_handles = 0;
+	ಮೊದಲ_ಬಳಸದ_handle = -1;
 }
 
-static void
-reset_module_globals(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+reset_module_globals(ಶೂನ್ಯ)
 {
 	pw = &fuzz_pw;
-	client_addr = NULL;
-	version = 0;
-	init_done = 0;
+	client_addr = ಖಾಲಿ;
+	ಆವೃತ್ತಿ = 0;
+	init_ಮುಗಿದ = 0;
 	readonly = 0;
-	request_allowlist = NULL;
-	request_denylist = NULL;
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
-	iqueue = NULL;
-	oqueue = NULL;
+	request_allowlist = ಖಾಲಿ;
+	request_denylist = ಖಾಲಿ;
+	handles = ಖಾಲಿ;
+	ಅಂಕೆ_handles = 0;
+	ಮೊದಲ_ಬಳಸದ_handle = -1;
+	iqueue = ಖಾಲಿ;
+	oqueue = ಖಾಲಿ;
 }
 
-void
-fuzz_server_one(const uint8_t *data, size_t size)
+ಶೂನ್ಯ
+fuzz_server_one(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2)
 {
-	if (!log_initialized) {
+	ಆದರೆ (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		ಅಕ್ಷರ tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		ಆದರೆ (mkdtemp(tmpdir) != ಖಾಲಿ && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, ಗಾತ್ರ(fuzz_pw));
+		fuzz_pw.pw_name = (ಅಕ್ಷರ *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (ಅಕ್ಷರ *)"/tmp";
+		fuzz_pw.pw_shell = (ಅಕ್ಷರ *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	ಆದರೆ (ಗಾತ್ರ_2 == 0 || ಗಾತ್ರ_2 > 65000)
+		ಹಿಂತಿರುಗಿ;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
-	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	ಒಳ_fuzz_server = 1;
+	ಆದರೆ (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
-			goto out;
+		ಆದರೆ (iqueue == ಖಾಲಿ || oqueue == ಖಾಲಿ)
+			ಹೋಗು ಹೊರಹೋಗು;
 
-		const uint8_t init_msg[] = {
+		ಸ್ಥಿರಾಂಕ uint8_t init_ಸಂದೇಶ[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
-			goto out;
+		ಆದರೆ (sshbuf_put(iqueue, init_ಸಂದೇಶ, ಗಾತ್ರ(init_ಸಂದೇಶ)) != 0)
+			ಹೋಗು ಹೊರಹೋಗು;
 		process();
 
 		sshbuf_reset(iqueue);
 		sshbuf_reset(oqueue);
 
 		uint8_t hdr[4] = {
-		    (uint8_t)((size >> 24) & 0xff),
-		    (uint8_t)((size >> 16) & 0xff),
-		    (uint8_t)((size >> 8) & 0xff),
-		    (uint8_t)(size & 0xff),
+		    (uint8_t)((ಗಾತ್ರ_2 >> 24) & 0xff),
+		    (uint8_t)((ಗಾತ್ರ_2 >> 16) & 0xff),
+		    (uint8_t)((ಗಾತ್ರ_2 >> 8) & 0xff),
+		    (uint8_t)(ಗಾತ್ರ_2 & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
-		    sshbuf_put(iqueue, data, size) != 0)
-			goto out;
+		ಆದರೆ (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		    sshbuf_put(iqueue, ದತ್ತಾಂಶ, ಗಾತ್ರ_2) != 0)
+			ಹೋಗು ಹೊರಹೋಗು;
 		process();
-	out:
+	ಹೊರಹೋಗು:
 		cleanup_handles();
 		sshbuf_free(iqueue);
 		sshbuf_free(oqueue);
-		free(client_addr);
-		iqueue = oqueue = NULL;
-		client_addr = NULL;
-		in_fuzz_server = 0;
+		ಬಿಡುಗಡೆ(client_addr);
+		iqueue = oqueue = ಖಾಲಿ;
+		client_addr = ಖಾಲಿ;
+		ಒಳ_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 	cleanup_handles();
-	in_fuzz_server = 0;
+	ಒಳ_fuzz_server = 0;
 	fuzz_arena_cleanup();
-	iqueue = oqueue = NULL;
-	client_addr = NULL;
+	iqueue = oqueue = ಖಾಲಿ;
+	client_addr = ಖಾಲಿ;
 }

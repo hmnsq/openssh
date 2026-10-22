@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef HAVE_GETGROUPLIST
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+ಪೂರ್ಣಾಂಕ
+getgrouplist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *uname, gid_t agroup, gid_t *groups, ಪೂರ್ಣಾಂಕ *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ರಚನೆ ಗುಂಪು *grp;
+	ಪೂರ್ಣಾಂಕ i, ngroups;
+	ಪೂರ್ಣಾಂಕ ret, maxgroups;
+	ಪೂರ್ಣಾಂಕ bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ಆದರೆ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ಹಿಂತಿರುಗಿ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	ಆಗ ((grp = getgrent())) {
+		ಆದರೆ (grp->gr_gid == agroup)
+			ಮುಂದುವರಿ;
+		ಗಾಗಿ (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ಆದರೆ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ಆದರೆ (bail)
+			ಮುಂದುವರಿ;
+		ಗಾಗಿ (i = 0; grp->gr_mem[i]; i++) {
+			ಆದರೆ (!strcmp(grp->gr_mem[i], uname)) {
+				ಆದರೆ (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					ಹೋಗು ಹೊರಹೋಗು;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
 		}
 	}
-out:
+ಹೊರಹೋಗು:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ಹಿಂತಿರುಗಿ (ret);
 }
 
-#endif /* HAVE_GETGROUPLIST */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_GETGROUPLIST */

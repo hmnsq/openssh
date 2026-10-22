@@ -16,19 +16,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <netinet/in.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <netinet/in.h>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
 
-#include "addr.h"
-#include "match.h"
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "addr.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
 /*
  * Match "addr" against list pattern list "_list", which may contain a
@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+ಪೂರ್ಣಾಂಕ
+addr_ಹೊಂದಿಕೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *addr, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	ಅಕ್ಷರ *list, *cp, *o;
+	ರಚನೆ xaddr try_addr, ಹೊಂದಿಕೆ_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	ಪೂರ್ಣಾಂಕ ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ಆದರೆ (addr != ಖಾಲಿ && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	ಆದರೆ ((o = list = strdup(_list)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
+	ಆಗ ((cp = strsep(&list, ",")) != ಖಾಲಿ) {
 		neg = *cp == '!';
-		if (neg)
+		ಆದರೆ (neg)
 			cp++;
-		if (*cp == '\0') {
+		ಆದರೆ (*cp == '\0') {
 			ret = -2;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		r = addr_pton_cidr(cp, &ಹೊಂದಿಕೆ_addr, &masklen);
+		ಆದರೆ (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
-			    &match_addr, masklen) == 0) {
+			ನಿಲ್ಲಿಸು;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (r == 0) {
+			ಆದರೆ (addr != ಖಾಲಿ && addr_netmatch(&try_addr,
+			    &ಹೊಂದಿಕೆ_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				ಆದರೆ (neg) {
 					ret = -1;
-					break;
+					ನಿಲ್ಲಿಸು;
 				}
 				ret = 1;
 			}
-			continue;
-		} else {
+			ಮುಂದುವರಿ;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
-				goto foundit;
+			ಆದರೆ (addr != ಖಾಲಿ && ಹೊಂದಿಕೆ_ನಮೂನೆ(addr, cp) == 1)
+				ಹೋಗು foundit;
 		}
 	}
-	free(o);
+	ಬಿಡುಗಡೆ(o);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+ಪೂರ್ಣಾಂಕ
+addr_ಹೊಂದಿಕೆ_cidr_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *addr, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	ಅಕ್ಷರ *list, *cp, *o;
+	ರಚನೆ xaddr try_addr, ಹೊಂದಿಕೆ_addr;
 	u_int masklen;
-	int ret = 0, r;
+	ಪೂರ್ಣಾಂಕ ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ಆದರೆ (addr != ಖಾಲಿ && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		ಹಿಂತಿರುಗಿ 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	ಆದರೆ ((o = list = strdup(_list)) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ -1;
+	ಆಗ ((cp = strsep(&list, ",")) != ಖಾಲಿ) {
+		ಆದರೆ (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 
 		/*
@@ -130,37 +130,37 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		ಆದರೆ (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-#define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+#ವ್ಯಾಖ್ಯಾನಿಸು VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
+		ಆದರೆ (strspn(cp, VALID_CIDR_CHARS) != ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
 		}
 
 		/* Prefer CIDR address matching */
-		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		r = addr_pton_cidr(cp, &ಹೊಂದಿಕೆ_addr, &masklen);
+		ಆದರೆ (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			ನಿಲ್ಲಿಸು;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			ನಿಲ್ಲಿಸು;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (r == 0 && addr != ಖಾಲಿ) {
+			ಆದರೆ (addr_netmatch(&try_addr, &ಹೊಂದಿಕೆ_addr,
 			    masklen) == 0)
 				ret = 1;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 	}
-	free(o);
+	ಬಿಡುಗಡೆ(o);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }

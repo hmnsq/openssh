@@ -14,22 +14,22 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿಸು SSH_DONT_OVERLOAD_OPENSSL_FUNCS
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifdef USE_OPENSSL_ENGINE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#include "openssl-compat.h"
+#ಅನ್ತರ್ಭಾವ "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,77 +40,77 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
-ssh_compatible_openssl(long headerver, long libver)
+ಪೂರ್ಣಾಂಕ
+ssh_compatible_openssl(ದೀರ್ಘ headerver, ದೀರ್ಘ libver)
 {
-	long mask, hfix, lfix;
+	ದೀರ್ಘ ಮುಖವಾಡ, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	ಆದರೆ (headerver == libver)
+		ಹಿಂತಿರುಗಿ 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
-		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+	ಆದರೆ (headerver >= 0x30000000) {
+		ಮುಖವಾಡ = 0xf0000000L; /* major only */
+		ಹಿಂತಿರುಗಿ (headerver & ಮುಖವಾಡ) == (libver & ಮುಖವಾಡ);
 	}
 
 	/*
 	 * For versions >= 1.0.0, but <3, major,minor,status must match and
 	 * library fix version must be equal to or newer than the header.
 	 */
-	mask = 0xfff0000fL; /* major,minor,status */
+	ಮುಖವಾಡ = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	ಆದರೆ ( (headerver & ಮುಖವಾಡ) == (libver & ಮುಖವಾಡ) && lfix >= hfix)
+		ಹಿಂತಿರುಗಿ 1;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-ssh_libcrypto_init(void)
+ಪೂರ್ಣಾಂಕ
+ssh_libcrypto_init(ಶೂನ್ಯ)
 {
-	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
-	    OPENSSL_INIT_ADD_ALL_DIGESTS;
+	uint64_t opts = OPENSSL_INIT_ಕೂಡಿಸು_ALL_CIPHERS |
+	    OPENSSL_INIT_ಕೂಡಿಸು_ALL_DIGESTS;
 
-#ifdef	USE_OPENSSL_ENGINE
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ	USE_OPENSSL_ENGINE
 	/* Enable use of crypto hardware */
-	ENGINE_load_builtin_engines();
-	ENGINE_register_all_complete();
+	ENGINE_ತುಂಬು_builtin_engines();
+	ENGINE_ರಿಜಿಸ್ಟರ್_all_complete();
 
 	/* Tell libcrypto config file to pick up engines defined there */
-	opts |= OPENSSL_INIT_LOAD_CONFIG;
-#endif /* USE_OPENSSL_ENGINE */
+	opts |= OPENSSL_INIT_ತುಂಬು_CONFIG;
+#ಆದರೆ_ಅಂತ್ಯ /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	ಹಿಂತಿರುಗಿ OPENSSL_init_crypto(opts, ಖಾಲಿ);
 }
 
-#ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_EVP_DIGESTSIGN
+ಪೂರ್ಣಾಂಕ
+EVP_DigestSign(EVP_MD_CTX *ctx, ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *sigret, ಗಾತ್ರ_t *siglen,
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *tbs, ಗಾತ್ರ_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	ಆದರೆ (sigret != ಖಾಲಿ) {
+		ಆದರೆ (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			ಹಿಂತಿರುಗಿ 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	ಹಿಂತಿರುಗಿ EVP_DigestSignFinal(ctx, sigret, siglen);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_EVP_DIGESTVERIFY
+ಪೂರ್ಣಾಂಕ
+EVP_DigestVerify(EVP_MD_CTX *ctx, ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *sigret, ಗಾತ್ರ_t siglen,
+    ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *tbs, ಗಾತ್ರ_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	ಆದರೆ (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		ಹಿಂತಿರುಗಿ -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	ಹಿಂತಿರುಗಿ EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

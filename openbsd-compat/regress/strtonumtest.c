@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#ಆದರೆ defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#ಆದರೆ defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-long long strtonum(const char *, long long, long long, const char **);
+ದೀರ್ಘ ದೀರ್ಘ strtonum(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ದೀರ್ಘ ದೀರ್ಘ, ದೀರ್ಘ ದೀರ್ಘ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **);
 
-int fail;
+ಪೂರ್ಣಾಂಕ fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+ಶೂನ್ಯ
+test(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p, ದೀರ್ಘ ದೀರ್ಘ lb, ದೀರ್ಘ ದೀರ್ಘ ub, ಪೂರ್ಣಾಂಕ ok)
 {
-	long long val;
-	const char *q;
+	ದೀರ್ಘ ದೀರ್ಘ val;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	ಆದರೆ (ok && q != ಖಾಲಿ) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!ok && q == ಖಾಲಿ) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+ಪೂರ್ಣಾಂಕ ಮುಖ್ಯ(ಶೂನ್ಯ)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	ಹಿಂತಿರುಗಿ (fail);
 }
 

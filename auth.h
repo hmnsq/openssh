@@ -25,78 +25,78 @@
  *
  */
 
-#ifndef AUTH_H
-#define AUTH_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ AUTH_H
+#ವ್ಯಾಖ್ಯಾನಿಸು AUTH_H
 
-#include <signal.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#ifdef HAVE_LOGIN_CAP
-#include <login_cap.h>
-#endif
-#ifdef BSD_AUTH
-#include <bsd_auth.h>
-#endif
-#ifdef KRB5
-#include <krb5.h>
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_LOGIN_CAP
+#ಅನ್ತರ್ಭಾವ <login_cap.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BSD_AUTH
+#ಅನ್ತರ್ಭಾವ <bsd_auth.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
+#ಅನ್ತರ್ಭಾವ <krb5.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-struct passwd;
-struct ssh;
-struct sshbuf;
-struct sshkey;
-struct sshkey_cert;
-struct sshauthopt;
+ರಚನೆ passwd;
+ರಚನೆ ssh;
+ರಚನೆ sshbuf;
+ರಚನೆ sshkey;
+ರಚನೆ sshkey_cert;
+ರಚನೆ sshauthopt;
 
-typedef struct Authctxt Authctxt;
-typedef struct Authmethod Authmethod;
-typedef struct KbdintDevice KbdintDevice;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ Authctxt Authctxt;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ Authmethod Authmethod;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ KbdintDevice KbdintDevice;
 
-struct Authctxt {
+ರಚನೆ Authctxt {
 	sig_atomic_t	 success;
-	int		 authenticated;	/* authenticated and alarms cancelled */
-	int		 postponed;	/* authentication needs another step */
-	int		 valid;		/* user exists and is allowed to login */
-	int		 attempt;
-	int		 failures;
-	int		 pk_ok_failures;
-	int		 auth_failure_already_counted;
-	int		 server_caused_failure;
-	int		 force_pwchange;
-	char		*user;		/* username sent by the client */
-	char		*service;
-	struct passwd	*pw;		/* set if 'valid' */
-	char		*style;
+	ಪೂರ್ಣಾಂಕ		 authenticated;	/* authenticated and alarms cancelled */
+	ಪೂರ್ಣಾಂಕ		 postponed;	/* authentication needs another step */
+	ಪೂರ್ಣಾಂಕ		 valid;		/* user exists and is allowed to login */
+	ಪೂರ್ಣಾಂಕ		 attempt;
+	ಪೂರ್ಣಾಂಕ		 failures;
+	ಪೂರ್ಣಾಂಕ		 pk_ok_failures;
+	ಪೂರ್ಣಾಂಕ		 auth_failure_already_counted;
+	ಪೂರ್ಣಾಂಕ		 server_caused_failure;
+	ಪೂರ್ಣಾಂಕ		 force_pwchange;
+	ಅಕ್ಷರ		*user;		/* username sent by the client */
+	ಅಕ್ಷರ		*service;
+	ರಚನೆ passwd	*pw;		/* set if 'valid' */
+	ಅಕ್ಷರ		*style;
 
 	/* Method lists for multiple authentication */
-	char		**auth_methods;	/* modified from server config */
-	u_int		 num_auth_methods;
+	ಅಕ್ಷರ		**auth_methods;	/* modified from server config */
+	u_int		 ಅಂಕೆ_auth_methods;
 
 	/* Authentication method-specific data */
-	void		*methoddata;
-	void		*kbdintctxt;
-#ifdef BSD_AUTH
+	ಶೂನ್ಯ		*methoddata;
+	ಶೂನ್ಯ		*kbdintctxt;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ BSD_AUTH
 	auth_session_t	*as;
-#endif
-#ifdef KRB5
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
 	krb5_context	 krb5_ctx;
 	krb5_ccache	 krb5_fwd_ccache;
 	krb5_principal	 krb5_user;
-	char		*krb5_ticket_file;
-	char		*krb5_ccname;
-#endif
-	struct sshbuf	*loginmsg;
+	ಅಕ್ಷರ		*krb5_ticket_file;
+	ಅಕ್ಷರ		*krb5_ccname;
+#ಆದರೆ_ಅಂತ್ಯ
+	ರಚನೆ sshbuf	*loginmsg;
 
 	/* Authentication keys already used; these will be refused henceforth */
-	struct sshkey	**prev_keys;
-	u_int		 nprev_keys;
+	ರಚನೆ sshkey	**prev_ಕೀಲಿಗಳು;
+	u_int		 nprev_ಕೀಲಿಗಳು;
 
 	/* Last used key and ancillary information from active auth method */
-	struct sshkey	*auth_method_key;
-	char		*auth_method_info;
+	ರಚನೆ sshkey	*auth_ವಿಧಾನ_ಕೀಲಿ;
+	ಅಕ್ಷರ		*auth_ವಿಧಾನ_info;
 
 	/* Information exposed to session */
-	struct sshbuf	*session_info;	/* Auth info for environment */
+	ರಚನೆ sshbuf	*session_info;	/* Auth info for environment */
 };
 
 /*
@@ -106,15 +106,15 @@ struct Authctxt {
  * the client.
  */
 
-struct authmethod_cfg {
-	const char *name;
-	const char *synonym;
-	int *enabled;
+ರಚನೆ authmethod_cfg {
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *synonym;
+	ಪೂರ್ಣಾಂಕ *enabled;
 };
 
-struct Authmethod {
-	struct authmethod_cfg *cfg;
-	int	(*userauth)(struct ssh *, const char *);
+ರಚನೆ Authmethod {
+	ರಚನೆ authmethod_cfg *cfg;
+	ಪೂರ್ಣಾಂಕ	(*userauth)(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 };
 
 /*
@@ -124,126 +124,126 @@ struct Authmethod {
  * respond	returns: 0 - success, 1 - need further interaction,
  *		otherwise - failure
  */
-struct KbdintDevice
+ರಚನೆ KbdintDevice
 {
-	const char *name;
-	void*	(*init_ctx)(Authctxt*);
-	int	(*query)(void *ctx, char **name, char **infotxt,
-		    u_int *numprompts, char ***prompts, u_int **echo_on);
-	int	(*respond)(void *ctx, u_int numresp, char **responses);
-	void	(*free_ctx)(void *ctx);
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
+	ಶೂನ್ಯ*	(*init_ctx)(Authctxt*);
+	ಪೂರ್ಣಾಂಕ	(*query)(ಶೂನ್ಯ *ctx, ಅಕ್ಷರ **name, ಅಕ್ಷರ **infotxt,
+		    u_int *numprompts, ಅಕ್ಷರ ***prompts, u_int **echo_on);
+	ಪೂರ್ಣಾಂಕ	(*respond)(ಶೂನ್ಯ *ctx, u_int numresp, ಅಕ್ಷರ **responses);
+	ಶೂನ್ಯ	(*free_ctx)(ಶೂನ್ಯ *ctx);
 };
 
-int
-auth_rhosts2(struct passwd *, const char *, const char *, const char *);
+ಪೂರ್ಣಾಂಕ
+auth_rhosts2(ರಚನೆ passwd *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-int      auth_password(struct ssh *, const char *);
+ಪೂರ್ಣಾಂಕ      auth_password(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
-	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
-    int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+ಪೂರ್ಣಾಂಕ	 hostbased_ಕೀಲಿ_allowed(ರಚನೆ ssh *, ರಚನೆ passwd *,
+	    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಅಕ್ಷರ *, ರಚನೆ sshkey *);
+ಪೂರ್ಣಾಂಕ	 user_ಕೀಲಿ_allowed(ರಚನೆ ssh *ssh, ರಚನೆ passwd *, ರಚನೆ sshkey *,
+    ಪೂರ್ಣಾಂಕ, ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ	 auth2_ಕೀಲಿ_already_ಬಳಸಿದ(Authctxt *, ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
-void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
-void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
-	    __attribute__((__format__ (printf, 2, 3)))
+ಶೂನ್ಯ	 auth2_authctxt_reset_info(Authctxt *);
+ಶೂನ್ಯ	 auth2_ದಾಖಲೆ_ಕೀಲಿ(Authctxt *, ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey *);
+ಶೂನ್ಯ	 auth2_ದಾಖಲೆ_info(Authctxt *authctxt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ...)
+	    __attribute__((__format__ (ಬರೆ, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
-void	 auth2_update_session_info(Authctxt *, const char *, const char *);
+ಶೂನ್ಯ	 auth2_update_session_info(Authctxt *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-#ifdef KRB5
-int	auth_krb5_password(Authctxt *authctxt, const char *password);
-void	krb5_cleanup_proc(Authctxt *authctxt);
-#endif /* KRB5 */
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ KRB5
+ಪೂರ್ಣಾಂಕ	auth_krb5_password(Authctxt *authctxt, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *password);
+ಶೂನ್ಯ	krb5_cleanup_proc(Authctxt *authctxt);
+#ಆದರೆ_ಅಂತ್ಯ /* KRB5 */
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-#include <shadow.h>
-int auth_shadow_acctexpired(struct spwd *);
-int auth_shadow_pwexpired(Authctxt *);
-#endif
+#ಆದರೆ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#ಅನ್ತರ್ಭಾವ <shadow.h>
+ಪೂರ್ಣಾಂಕ auth_shadow_acctexpired(ರಚನೆ spwd *);
+ಪೂರ್ಣಾಂಕ auth_shadow_pwexpired(Authctxt *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "auth-pam.h"
-#include "audit.h"
-void remove_kbdint_device(const char *);
+#ಅನ್ತರ್ಭಾವ "auth-pam.h"
+#ಅನ್ತರ್ಭಾವ "audit.h"
+ಶೂನ್ಯ remove_kbdint_device(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-void	do_authentication2(struct ssh *);
+ಶೂನ್ಯ	do_authentication2(ರಚನೆ ssh *);
 
-void	auth_log(struct ssh *, int, int, const char *, const char *);
-void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
-void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
-void	auth_failure_delay(Authctxt *, double);
+ಶೂನ್ಯ	auth_log(ರಚನೆ ssh *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ	auth_maxtries_exceeded(ರಚನೆ ssh *) __attribute__((noreturn));
+ಶೂನ್ಯ	userauth_ಮುಕ್ತಾಯ(ರಚನೆ ssh *, ಪೂರ್ಣಾಂಕ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	auth_ಬೇರು_allowed(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ	auth_failure_delay(Authctxt *, ದ್ವಿಗುಣ);
 
-char	*auth2_read_banner(void);
-int	 auth2_methods_valid(const char *, int);
-int	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
-int	 auth2_setup_methods_lists(Authctxt *);
-int	 auth2_method_allowed(Authctxt *, const char *, const char *);
+ಅಕ್ಷರ	*auth2_read_banner(ಶೂನ್ಯ);
+ಪೂರ್ಣಾಂಕ	 auth2_methods_valid(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 auth2_update_methods_lists(Authctxt *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 auth2_ಸಿದ್ಧತೆ_methods_lists(Authctxt *);
+ಪೂರ್ಣಾಂಕ	 auth2_ವಿಧಾನ_allowed(Authctxt *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-int	auth2_challenge(struct ssh *, char *);
-void	auth2_challenge_stop(struct ssh *);
-int	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int	bsdauth_respond(void *, u_int, char **);
+ಪೂರ್ಣಾಂಕ	auth2_challenge(ರಚನೆ ssh *, ಅಕ್ಷರ *);
+ಶೂನ್ಯ	auth2_challenge_stop(ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	bsdauth_query(ಶೂನ್ಯ *, ಅಕ್ಷರ **, ಅಕ್ಷರ **, u_int *, ಅಕ್ಷರ ***, u_int **);
+ಪೂರ್ಣಾಂಕ	bsdauth_respond(ಶೂನ್ಯ *, u_int, ಅಕ್ಷರ **);
 
-int	allowed_user(struct ssh *, struct passwd *);
-struct passwd * getpwnamallow(struct ssh *, const char *user);
+ಪೂರ್ಣಾಂಕ	allowed_user(ರಚನೆ ssh *, ರಚನೆ passwd *);
+ರಚನೆ passwd * getpwnamallow(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user);
 
-char	*expand_authorized_keys(const char *, struct passwd *pw);
-char	*authorized_principals_file(struct passwd *);
+ಅಕ್ಷರ	*expand_authorized_ಕೀಲಿಗಳು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ passwd *pw);
+ಅಕ್ಷರ	*authorized_principals_file(ರಚನೆ passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+ಪೂರ್ಣಾಂಕ	 auth_ಕೀಲಿ_is_revoked(ರಚನೆ sshkey *);
 
-const char	*auth_get_canonical_hostname(struct ssh *, int);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ	*auth_get_canonical_hostname(ರಚನೆ ssh *, ಪೂರ್ಣಾಂಕ);
 
-HostStatus
-check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
-    const char *, const char *);
+Host_ಸ್ಥಿತಿ
+check_ಕೀಲಿ_ಒಳ_hostfiles(ರಚನೆ passwd *, ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /* hostkey handling */
-struct sshkey	*get_hostkey_by_index(int);
-struct sshkey	*get_hostkey_public_by_index(int, struct ssh *);
-struct sshkey	*get_hostkey_public_by_type(int, int, struct ssh *);
-struct sshkey	*get_hostkey_private_by_type(int, int, struct ssh *);
-int	 get_hostkey_index(struct sshkey *, int, struct ssh *);
-int	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+ರಚನೆ sshkey	*get_hostkey_by_ಸೂಚ್ಯಂಕ(ಪೂರ್ಣಾಂಕ);
+ರಚನೆ sshkey	*get_hostkey_ಬಹಿರಂಗ_by_ಸೂಚ್ಯಂಕ(ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ರಚನೆ sshkey	*get_hostkey_ಬಹಿರಂಗ_by_type(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ರಚನೆ sshkey	*get_hostkey_ಖಾಸಗಿ_by_type(ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	 get_hostkey_ಸೂಚ್ಯಂಕ(ರಚನೆ sshkey *, ಪೂರ್ಣಾಂಕ, ರಚನೆ ssh *);
+ಪೂರ್ಣಾಂಕ	 sshd_hostkey_sign(ರಚನೆ ssh *, ರಚನೆ sshkey *, ರಚನೆ sshkey *,
+    u_char **, ಗಾತ್ರ_t *, ಸ್ಥಿರಾಂಕ u_char *, ಗಾತ್ರ_t, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /* Key / cert options linkage to auth layer */
-int	 auth_activate_options(struct ssh *, struct sshauthopt *);
-void	 auth_restrict_session(struct ssh *);
-void	 auth_log_authopts(const char *, const struct sshauthopt *, int);
+ಪೂರ್ಣಾಂಕ	 auth_activate_options(ರಚನೆ ssh *, ರಚನೆ sshauthopt *);
+ಶೂನ್ಯ	 auth_restrict_session(ರಚನೆ ssh *);
+ಶೂನ್ಯ	 auth_log_authopts(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ sshauthopt *, ಪೂರ್ಣಾಂಕ);
 
 /* debug messages during authentication */
-void	 auth_debug_add(const char *fmt,...)
-    __attribute__((format(printf, 1, 2)));
-void	 auth_debug_send(struct ssh *);
-void	 auth_debug_reset(void);
+ಶೂನ್ಯ	 auth_debug_ಕೂಡಿಸು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt,...)
+    __attribute__((format(ಬರೆ, 1, 2)));
+ಶೂನ್ಯ	 auth_debug_send(ರಚನೆ ssh *);
+ಶೂನ್ಯ	 auth_debug_reset(ಶೂನ್ಯ);
 
-struct passwd *fakepw(void);
+ರಚನೆ passwd *fakepw(ಶೂನ್ಯ);
 
 /* auth2-pubkeyfile.c */
-int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
-    const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
-    const char *, struct sshauthopt **);
-int	 auth_process_principals(FILE *, const char *,
-    const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
-    char *, const char *, const char *, const char *, struct sshauthopt **);
-int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
-    struct sshkey *, const char *, const char *, struct sshauthopt **);
-FILE	*auth_openkeyfile(const char *, struct passwd *, int);
-FILE	*auth_openprincipals(const char *, struct passwd *, int);
+ಪೂರ್ಣಾಂಕ	 auth_authorise_keyopts(ರಚನೆ passwd *, ರಚನೆ sshauthopt *, ಪೂರ್ಣಾಂಕ,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 auth_check_principals_ಸಾಲು(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey_cert *,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ	 auth_process_principals(FILE *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshkey_cert *, ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ	 auth_check_authkey_ಸಾಲು(ರಚನೆ passwd *, ರಚನೆ sshkey *,
+    ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshauthopt **);
+ಪೂರ್ಣಾಂಕ	 auth_check_authkeys_file(ರಚನೆ passwd *, FILE *, ಅಕ್ಷರ *,
+    ರಚನೆ sshkey *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ sshauthopt **);
+FILE	*auth_openkeyfile(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ passwd *, ಪೂರ್ಣಾಂಕ);
+FILE	*auth_openprincipals(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ರಚನೆ passwd *, ಪೂರ್ಣಾಂಕ);
 
-int	 sys_auth_passwd(struct ssh *, const char *);
+ಪೂರ್ಣಾಂಕ	 sys_auth_passwd(ರಚನೆ ssh *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
-#if defined(KRB5) && !defined(HEIMDAL)
-krb5_error_code ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
-#endif
+#ಆದರೆ defined(KRB5) && !defined(HEIMDAL)
+krb5_error_ಸಂಕೇತ ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* AUTH_H */
+#ಆದರೆ_ಅಂತ್ಯ /* AUTH_H */

@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಪೋರ್ಟ್_LINUX_H
+#ವ್ಯಾಖ್ಯಾನಿಸು ಪೋರ್ಟ್_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_SELINUX
+ಪೂರ್ಣಾಂಕ ssh_selinux_enabled(ಶೂನ್ಯ);
+ಶೂನ್ಯ ssh_selinux_ಸಿದ್ಧತೆ_pty(ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ ssh_selinux_ಸಿದ್ಧತೆ_exec_context(ಅಕ್ಷರ *);
+ಶೂನ್ಯ ssh_selinux_change_context(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಶೂನ್ಯ ssh_selinux_setfscreatecon(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ LINUX_OOM_ADJUST
+ಶೂನ್ಯ oom_adjust_restore(ಶೂನ್ಯ);
+ಶೂನ್ಯ oom_adjust_ಸಿದ್ಧತೆ(ಶೂನ್ಯ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ LINUX_MEMLOCK_ONFAULT
+ಶೂನ್ಯ memlock_onfault_ಸಿದ್ಧತೆ(ಶೂನ್ಯ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SYSTEMD_NOTIFY
+ಶೂನ್ಯ ssh_systemd_notify_ready(ಶೂನ್ಯ);
+ಶೂನ್ಯ ssh_systemd_notify_reload(ಶೂನ್ಯ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#endif /* ! _PORT_LINUX_H */
+#ಆದರೆ_ಅಂತ್ಯ /* ! _PORT_LINUX_H */

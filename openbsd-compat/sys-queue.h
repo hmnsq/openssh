@@ -34,100 +34,100 @@
 
 /* OPENBSD ORIGINAL: sys/sys/queue.h */
 
-#ifndef	_FAKE_QUEUE_H_
-#define	_FAKE_QUEUE_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ	FAKE_ಸರತಿ_H
+#ವ್ಯಾಖ್ಯಾನಿಸು	FAKE_ಸರತಿ_H
 
 /*
  * Require for OS/X and other platforms that have old/broken/incomplete
  * <sys/queue.h>.
  */
-#undef CIRCLEQ_EMPTY
-#undef CIRCLEQ_END
-#undef CIRCLEQ_ENTRY
-#undef CIRCLEQ_FIRST
-#undef CIRCLEQ_FOREACH
-#undef CIRCLEQ_FOREACH_REVERSE
-#undef CIRCLEQ_HEAD
-#undef CIRCLEQ_HEAD_INITIALIZER
-#undef CIRCLEQ_INIT
-#undef CIRCLEQ_INSERT_AFTER
-#undef CIRCLEQ_INSERT_BEFORE
-#undef CIRCLEQ_INSERT_HEAD
-#undef CIRCLEQ_INSERT_TAIL
-#undef CIRCLEQ_LAST
-#undef CIRCLEQ_NEXT
-#undef CIRCLEQ_PREV
-#undef CIRCLEQ_REMOVE
-#undef CIRCLEQ_REPLACE
-#undef LIST_EMPTY
-#undef LIST_END
-#undef LIST_ENTRY
-#undef LIST_FIRST
-#undef LIST_FOREACH
-#undef LIST_FOREACH_SAFE
-#undef LIST_HEAD
-#undef LIST_HEAD_INITIALIZER
-#undef LIST_INIT
-#undef LIST_INSERT_AFTER
-#undef LIST_INSERT_BEFORE
-#undef LIST_INSERT_HEAD
-#undef LIST_NEXT
-#undef LIST_REMOVE
-#undef LIST_REPLACE
-#undef SIMPLEQ_CONCAT
-#undef SIMPLEQ_EMPTY
-#undef SIMPLEQ_END
-#undef SIMPLEQ_ENTRY
-#undef SIMPLEQ_FIRST
-#undef SIMPLEQ_FOREACH
-#undef SIMPLEQ_FOREACH_SAFE
-#undef SIMPLEQ_HEAD
-#undef SIMPLEQ_HEAD_INITIALIZER
-#undef SIMPLEQ_INIT
-#undef SIMPLEQ_INSERT_AFTER
-#undef SIMPLEQ_INSERT_HEAD
-#undef SIMPLEQ_INSERT_TAIL
-#undef SIMPLEQ_NEXT
-#undef SIMPLEQ_REMOVE_AFTER
-#undef SIMPLEQ_REMOVE_HEAD
-#undef SLIST_EMPTY
-#undef SLIST_END
-#undef SLIST_ENTRY
-#undef SLIST_FIRST
-#undef SLIST_FOREACH
-#undef SLIST_FOREACH_PREVPTR
-#undef SLIST_FOREACH_SAFE
-#undef SLIST_HEAD
-#undef SLIST_HEAD_INITIALIZER
-#undef SLIST_INIT
-#undef SLIST_INSERT_AFTER
-#undef SLIST_INSERT_HEAD
-#undef SLIST_NEXT
-#undef SLIST_REMOVE
-#undef SLIST_REMOVE_AFTER
-#undef SLIST_REMOVE_HEAD
-#undef SLIST_REMOVE_NEXT
-#undef TAILQ_CONCAT
-#undef TAILQ_EMPTY
-#undef TAILQ_END
-#undef TAILQ_ENTRY
-#undef TAILQ_FIRST
-#undef TAILQ_FOREACH
-#undef TAILQ_FOREACH_REVERSE
-#undef TAILQ_FOREACH_REVERSE_SAFE
-#undef TAILQ_FOREACH_SAFE
-#undef TAILQ_HEAD
-#undef TAILQ_HEAD_INITIALIZER
-#undef TAILQ_INIT
-#undef TAILQ_INSERT_AFTER
-#undef TAILQ_INSERT_BEFORE
-#undef TAILQ_INSERT_HEAD
-#undef TAILQ_INSERT_TAIL
-#undef TAILQ_LAST
-#undef TAILQ_NEXT
-#undef TAILQ_PREV
-#undef TAILQ_REMOVE
-#undef TAILQ_REPLACE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_EMPTY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_ಕೊನೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_ENTRY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_FIRST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_FOREACH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_FOREACH_REVERSE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_HEAD_INITIALIZER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_INIT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_INSERT_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_INSERT_BEFORE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_INSERT_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_INSERT_TAIL
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_LAST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_NEXT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_PREV
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_REMOVE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು CIRCLEQ_REPLACE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_EMPTY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_ಕೊನೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_ENTRY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_FIRST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_FOREACH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_FOREACH_ಸುರಕ್ಷಿತ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_HEAD_INITIALIZER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_INIT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_INSERT_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_INSERT_BEFORE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_INSERT_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_NEXT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_REMOVE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು LIST_REPLACE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_CONCAT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_EMPTY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_ಕೊನೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_ENTRY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_FIRST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_FOREACH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_FOREACH_ಸುರಕ್ಷಿತ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_HEAD_INITIALIZER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_INIT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_INSERT_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_INSERT_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_INSERT_TAIL
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_NEXT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_REMOVE_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SIMPLEQ_REMOVE_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_EMPTY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_ಕೊನೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_ENTRY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_FIRST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_FOREACH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_FOREACH_PREVPTR
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_FOREACH_ಸುರಕ್ಷಿತ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_HEAD_INITIALIZER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_INIT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_INSERT_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_INSERT_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_NEXT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_REMOVE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_REMOVE_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_REMOVE_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು SLIST_REMOVE_ಮುಂದಿನ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_CONCAT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_EMPTY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_ಕೊನೆ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_ENTRY
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_FIRST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_FOREACH
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_FOREACH_ಹಿಮ್ಮುಖ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_FOREACH_ಹಿಮ್ಮುಖ_ಸುರಕ್ಷಿತ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_FOREACH_ಸುರಕ್ಷಿತ
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_HEAD_INITIALIZER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_INIT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_INSERT_AFTER
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_INSERT_BEFORE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_INSERT_HEAD
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_INSERT_TAIL
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_LAST
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_NEXT
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_PREV
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_REMOVE
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು TAILQ_REPLACE
 
 /*
  * This file defines five types of data structures: singly-linked lists,
@@ -173,456 +173,456 @@
  * For details on the use of these macros, see the queue(3) manual page.
  */
 
-#if defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
-#define _Q_INVALID ((void *)-1)
-#define _Q_INVALIDATE(a) (a) = _Q_INVALID
-#else
-#define _Q_INVALIDATE(a)
-#endif
+#ಆದರೆ defined(ಸರತಿ_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
+#ವ್ಯಾಖ್ಯಾನಿಸು _Q_INVALID ((ಶೂನ್ಯ *)-1)
+#ವ್ಯಾಖ್ಯಾನಿಸು _Q_INVALIDATE(a) (a) = _Q_INVALID
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು _Q_INVALIDATE(a)
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * Singly-linked List definitions.
  */
-#define SLIST_HEAD(name, type)						\
-struct name {								\
-	struct type *slh_first;	/* first element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SLIST_HEAD(name, type)						\
+ರಚನೆ name {								\
+	ರಚನೆ type *slh_ಮೊದಲ;	/* first element */			\
 }
 
-#define	SLIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_HEAD_INITIALIZER(ತಲೆ)					\
+	{ ಖಾಲಿ }
 
-#define SLIST_ENTRY(type)						\
-struct {								\
-	struct type *sle_next;	/* next element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SLIST_ENTRY(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *sle_ಮುಂದಿನ;	/* next element */			\
 }
 
 /*
  * Singly-linked List access methods.
  */
-#define	SLIST_FIRST(head)	((head)->slh_first)
-#define	SLIST_END(head)		NULL
-#define	SLIST_EMPTY(head)	(SLIST_FIRST(head) == SLIST_END(head))
-#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_FIRST(ತಲೆ)	((ತಲೆ)->slh_ಮೊದಲ)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_ಕೊನೆ(ತಲೆ)		ಖಾಲಿ
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_EMPTY(ತಲೆ)	(SLIST_FIRST(ತಲೆ) == SLIST_ಕೊನೆ(ತಲೆ))
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_NEXT(elm, ಕ್ಷೇತ್ರ)	((elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ)
 
-#define	SLIST_FOREACH(var, head, field)					\
-	for((var) = SLIST_FIRST(head);					\
-	    (var) != SLIST_END(head);					\
-	    (var) = SLIST_NEXT(var, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_FOREACH(var, ತಲೆ, ಕ್ಷೇತ್ರ)					\
+	ಗಾಗಿ((var) = SLIST_FIRST(ತಲೆ);					\
+	    (var) != SLIST_ಕೊನೆ(ತಲೆ);					\
+	    (var) = SLIST_NEXT(var, ಕ್ಷೇತ್ರ))
 
-#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLIST_FIRST(head);				\
-	    (var) && ((tvar) = SLIST_NEXT(var, field), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_FOREACH_ಸುರಕ್ಷಿತ(var, ತಲೆ, ಕ್ಷೇತ್ರ, tvar)			\
+	ಗಾಗಿ ((var) = SLIST_FIRST(ತಲೆ);				\
+	    (var) && ((tvar) = SLIST_NEXT(var, ಕ್ಷೇತ್ರ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Singly-linked List functions.
  */
-#define	SLIST_INIT(head) {						\
-	SLIST_FIRST(head) = SLIST_END(head);				\
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_INIT(ತಲೆ) {						\
+	SLIST_FIRST(ತಲೆ) = SLIST_ಕೊನೆ(ತಲೆ);				\
 }
 
-#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
-	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
-	(slistelm)->field.sle_next = (elm);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_INSERT_AFTER(slistelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ = (slistelm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ;		\
+	(slistelm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ = (elm);				\
+} ಆಗ (0)
 
-#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.sle_next = (head)->slh_first;			\
-	(head)->slh_first = (elm);					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_INSERT_HEAD(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ = (ತಲೆ)->slh_ಮೊದಲ;			\
+	(ತಲೆ)->slh_ಮೊದಲ = (elm);					\
+} ಆಗ (0)
 
-#define	SLIST_REMOVE_AFTER(elm, field) do {				\
-	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_REMOVE_AFTER(elm, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	(elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ = (elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ;	\
+} ಆಗ (0)
 
-#define	SLIST_REMOVE_HEAD(head, field) do {				\
-	(head)->slh_first = (head)->slh_first->field.sle_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SLIST_REMOVE_HEAD(ತಲೆ, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	(ತಲೆ)->slh_ಮೊದಲ = (ತಲೆ)->slh_ಮೊದಲ->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ;		\
+} ಆಗ (0)
 
-#define SLIST_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
-		SLIST_REMOVE_HEAD((head), field);			\
-	} else {							\
-		struct type *curelm = (head)->slh_first;		\
+#ವ್ಯಾಖ್ಯಾನಿಸು SLIST_REMOVE(ತಲೆ, elm, type, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ ((ತಲೆ)->slh_ಮೊದಲ == (elm)) {				\
+		SLIST_REMOVE_HEAD((ತಲೆ), ಕ್ಷೇತ್ರ);			\
+	} ಇಲ್ಲದಿದ್ದರೆ {							\
+		ರಚನೆ type *curelm = (ತಲೆ)->slh_ಮೊದಲ;		\
 									\
-		while (curelm->field.sle_next != (elm))			\
-			curelm = curelm->field.sle_next;		\
-		curelm->field.sle_next =				\
-		    curelm->field.sle_next->field.sle_next;		\
+		ಆಗ (curelm->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ != (elm))			\
+			curelm = curelm->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ;		\
+		curelm->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ =				\
+		    curelm->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ;		\
 	}								\
-	_Q_INVALIDATE((elm)->field.sle_next);				\
-} while (0)
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.sle_ಮುಂದಿನ);				\
+} ಆಗ (0)
 
 /*
  * List definitions.
  */
-#define LIST_HEAD(name, type)						\
-struct name {								\
-	struct type *lh_first;	/* first element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_HEAD(name, type)						\
+ರಚನೆ name {								\
+	ರಚನೆ type *lh_ಮೊದಲ;	/* first element */			\
 }
 
-#define LIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_HEAD_INITIALIZER(ತಲೆ)					\
+	{ ಖಾಲಿ }
 
-#define LIST_ENTRY(type)						\
-struct {								\
-	struct type *le_next;	/* next element */			\
-	struct type **le_prev;	/* address of previous next element */	\
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_ENTRY(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *le_ಮುಂದಿನ;	/* next element */			\
+	ರಚನೆ type **le_prev;	/* address of previous next element */	\
 }
 
 /*
  * List access methods.
  */
-#define	LIST_FIRST(head)		((head)->lh_first)
-#define	LIST_END(head)			NULL
-#define	LIST_EMPTY(head)		(LIST_FIRST(head) == LIST_END(head))
-#define	LIST_NEXT(elm, field)		((elm)->field.le_next)
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_FIRST(ತಲೆ)		((ತಲೆ)->lh_ಮೊದಲ)
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_ಕೊನೆ(ತಲೆ)			ಖಾಲಿ
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_EMPTY(ತಲೆ)		(LIST_FIRST(ತಲೆ) == LIST_ಕೊನೆ(ತಲೆ))
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_NEXT(elm, ಕ್ಷೇತ್ರ)		((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ)
 
-#define LIST_FOREACH(var, head, field)					\
-	for((var) = LIST_FIRST(head);					\
-	    (var)!= LIST_END(head);					\
-	    (var) = LIST_NEXT(var, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_FOREACH(var, ತಲೆ, ಕ್ಷೇತ್ರ)					\
+	ಗಾಗಿ((var) = LIST_FIRST(ತಲೆ);					\
+	    (var)!= LIST_ಕೊನೆ(ತಲೆ);					\
+	    (var) = LIST_NEXT(var, ಕ್ಷೇತ್ರ))
 
-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = LIST_FIRST(head);				\
-	    (var) && ((tvar) = LIST_NEXT(var, field), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_FOREACH_ಸುರಕ್ಷಿತ(var, ತಲೆ, ಕ್ಷೇತ್ರ, tvar)			\
+	ಗಾಗಿ ((var) = LIST_FIRST(ತಲೆ);				\
+	    (var) && ((tvar) = LIST_NEXT(var, ಕ್ಷೇತ್ರ), 1);		\
 	    (var) = (tvar))
 
 /*
  * List functions.
  */
-#define	LIST_INIT(head) do {						\
-	LIST_FIRST(head) = LIST_END(head);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_INIT(ತಲೆ) ಮಾಡು {						\
+	LIST_FIRST(ತಲೆ) = LIST_ಕೊನೆ(ತಲೆ);				\
+} ಆಗ (0)
 
-#define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
-		(listelm)->field.le_next->field.le_prev =		\
-		    &(elm)->field.le_next;				\
-	(listelm)->field.le_next = (elm);				\
-	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_INSERT_AFTER(listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ = (listelm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ) != ಖಾಲಿ)	\
+		(listelm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.le_prev =		\
+		    &(elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;				\
+	(listelm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ = (elm);				\
+	(elm)->ಕ್ಷೇತ್ರ.le_prev = &(listelm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;		\
+} ಆಗ (0)
 
-#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-	(elm)->field.le_next = (listelm);				\
-	*(listelm)->field.le_prev = (elm);				\
-	(listelm)->field.le_prev = &(elm)->field.le_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	LIST_INSERT_BEFORE(listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.le_prev = (listelm)->ಕ್ಷೇತ್ರ.le_prev;		\
+	(elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ = (listelm);				\
+	*(listelm)->ಕ್ಷೇತ್ರ.le_prev = (elm);				\
+	(listelm)->ಕ್ಷೇತ್ರ.le_prev = &(elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;		\
+} ಆಗ (0)
 
-#define LIST_INSERT_HEAD(head, elm, field) do {				\
-	if (((elm)->field.le_next = (head)->lh_first) != NULL)		\
-		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
-	(head)->lh_first = (elm);					\
-	(elm)->field.le_prev = &(head)->lh_first;			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_INSERT_HEAD(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ = (ತಲೆ)->lh_ಮೊದಲ) != ಖಾಲಿ)		\
+		(ತಲೆ)->lh_ಮೊದಲ->ಕ್ಷೇತ್ರ.le_prev = &(elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;\
+	(ತಲೆ)->lh_ಮೊದಲ = (elm);					\
+	(elm)->ಕ್ಷೇತ್ರ.le_prev = &(ತಲೆ)->lh_ಮೊದಲ;			\
+} ಆಗ (0)
 
-#define LIST_REMOVE(elm, field) do {					\
-	if ((elm)->field.le_next != NULL)				\
-		(elm)->field.le_next->field.le_prev =			\
-		    (elm)->field.le_prev;				\
-	*(elm)->field.le_prev = (elm)->field.le_next;			\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_REMOVE(elm, ಕ್ಷೇತ್ರ) ಮಾಡು {					\
+	ಆದರೆ ((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ != ಖಾಲಿ)				\
+		(elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.le_prev =			\
+		    (elm)->ಕ್ಷೇತ್ರ.le_prev;				\
+	*(elm)->ಕ್ಷೇತ್ರ.le_prev = (elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;			\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.le_prev);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ);				\
+} ಆಗ (0)
 
-#define LIST_REPLACE(elm, elm2, field) do {				\
-	if (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
-		(elm2)->field.le_next->field.le_prev =			\
-		    &(elm2)->field.le_next;				\
-	(elm2)->field.le_prev = (elm)->field.le_prev;			\
-	*(elm2)->field.le_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು LIST_REPLACE(elm, elm2, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	ಆದರೆ (((elm2)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ = (elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ) != ಖಾಲಿ)	\
+		(elm2)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.le_prev =			\
+		    &(elm2)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ;				\
+	(elm2)->ಕ್ಷೇತ್ರ.le_prev = (elm)->ಕ್ಷೇತ್ರ.le_prev;			\
+	*(elm2)->ಕ್ಷೇತ್ರ.le_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.le_prev);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.le_ಮುಂದಿನ);				\
+} ಆಗ (0)
 
 /*
  * Simple queue definitions.
  */
-#define SIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqh_first;	/* first element */			\
-	struct type **sqh_last;	/* addr of last next element */		\
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_HEAD(name, type)					\
+ರಚನೆ name {								\
+	ರಚನೆ type *sqh_ಮೊದಲ;	/* first element */			\
+	ರಚನೆ type **sqh_ಕೊನೆಯ;	/* addr of last next element */		\
 }
 
-#define SIMPLEQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).sqh_first }
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_HEAD_INITIALIZER(ತಲೆ)					\
+	{ ಖಾಲಿ, &(ತಲೆ).sqh_ಮೊದಲ }
 
-#define SIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqe_next;	/* next element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_ENTRY(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *sqe_ಮುಂದಿನ;	/* next element */			\
 }
 
 /*
  * Simple queue access methods.
  */
-#define	SIMPLEQ_FIRST(head)	    ((head)->sqh_first)
-#define	SIMPLEQ_END(head)	    NULL
-#define	SIMPLEQ_EMPTY(head)	    (SIMPLEQ_FIRST(head) == SIMPLEQ_END(head))
-#define	SIMPLEQ_NEXT(elm, field)    ((elm)->field.sqe_next)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_FIRST(ತಲೆ)	    ((ತಲೆ)->sqh_ಮೊದಲ)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_ಕೊನೆ(ತಲೆ)	    ಖಾಲಿ
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_EMPTY(ತಲೆ)	    (SIMPLEQ_FIRST(ತಲೆ) == SIMPLEQ_ಕೊನೆ(ತಲೆ))
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_NEXT(elm, ಕ್ಷೇತ್ರ)    ((elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ)
 
-#define SIMPLEQ_FOREACH(var, head, field)				\
-	for((var) = SIMPLEQ_FIRST(head);				\
-	    (var) != SIMPLEQ_END(head);					\
-	    (var) = SIMPLEQ_NEXT(var, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_FOREACH(var, ತಲೆ, ಕ್ಷೇತ್ರ)				\
+	ಗಾಗಿ((var) = SIMPLEQ_FIRST(ತಲೆ);				\
+	    (var) != SIMPLEQ_ಕೊನೆ(ತಲೆ);					\
+	    (var) = SIMPLEQ_NEXT(var, ಕ್ಷೇತ್ರ))
 
-#define	SIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = SIMPLEQ_NEXT(var, field), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_FOREACH_ಸುರಕ್ಷಿತ(var, ತಲೆ, ಕ್ಷೇತ್ರ, tvar)			\
+	ಗಾಗಿ ((var) = SIMPLEQ_FIRST(ತಲೆ);				\
+	    (var) && ((tvar) = SIMPLEQ_NEXT(var, ಕ್ಷೇತ್ರ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Simple queue functions.
  */
-#define	SIMPLEQ_INIT(head) do {						\
-	(head)->sqh_first = NULL;					\
-	(head)->sqh_last = &(head)->sqh_first;				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	SIMPLEQ_INIT(ತಲೆ) ಮಾಡು {						\
+	(ತಲೆ)->sqh_ಮೊದಲ = ಖಾಲಿ;					\
+	(ತಲೆ)->sqh_ಕೊನೆಯ = &(ತಲೆ)->sqh_ಮೊದಲ;				\
+} ಆಗ (0)
 
-#define SIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(head)->sqh_first = (elm);					\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_INSERT_HEAD(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ = (ತಲೆ)->sqh_ಮೊದಲ) == ಖಾಲಿ)	\
+		(ತಲೆ)->sqh_ಕೊನೆಯ = &(elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ;		\
+	(ತಲೆ)->sqh_ಮೊದಲ = (elm);					\
+} ಆಗ (0)
 
-#define SIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqe_next = NULL;					\
-	*(head)->sqh_last = (elm);					\
-	(head)->sqh_last = &(elm)->field.sqe_next;			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_INSERT_TAIL(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ = ಖಾಲಿ;					\
+	*(ತಲೆ)->sqh_ಕೊನೆಯ = (elm);					\
+	(ತಲೆ)->sqh_ಕೊನೆಯ = &(elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ;			\
+} ಆಗ (0)
 
-#define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(listelm)->field.sqe_next = (elm);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_INSERT_AFTER(ತಲೆ, listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {		\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ = (listelm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ) == ಖಾಲಿ)\
+		(ತಲೆ)->sqh_ಕೊನೆಯ = &(elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ;		\
+	(listelm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ = (elm);				\
+} ಆಗ (0)
 
-#define SIMPLEQ_REMOVE_HEAD(head, field) do {			\
-	if (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
-		(head)->sqh_last = &(head)->sqh_first;			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_REMOVE_HEAD(ತಲೆ, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((ತಲೆ)->sqh_ಮೊದಲ = (ತಲೆ)->sqh_ಮೊದಲ->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ) == ಖಾಲಿ) \
+		(ತಲೆ)->sqh_ಕೊನೆಯ = &(ತಲೆ)->sqh_ಮೊದಲ;			\
+} ಆಗ (0)
 
-#define SIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
-	    == NULL)							\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_REMOVE_AFTER(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ = (elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ) \
+	    == ಖಾಲಿ)							\
+		(ತಲೆ)->sqh_ಕೊನೆಯ = &(elm)->ಕ್ಷೇತ್ರ.sqe_ಮುಂದಿನ;		\
+} ಆಗ (0)
 
-#define SIMPLEQ_CONCAT(head1, head2) do {				\
-	if (!SIMPLEQ_EMPTY((head2))) {					\
-		*(head1)->sqh_last = (head2)->sqh_first;		\
-		(head1)->sqh_last = (head2)->sqh_last;			\
+#ವ್ಯಾಖ್ಯಾನಿಸು SIMPLEQ_CONCAT(head1, head2) ಮಾಡು {				\
+	ಆದರೆ (!SIMPLEQ_EMPTY((head2))) {					\
+		*(head1)->sqh_ಕೊನೆಯ = (head2)->sqh_ಮೊದಲ;		\
+		(head1)->sqh_ಕೊನೆಯ = (head2)->sqh_ಕೊನೆಯ;			\
 		SIMPLEQ_INIT((head2));					\
 	}								\
-} while (0)
+} ಆಗ (0)
 
 /*
  * XOR Simple queue definitions.
  */
-#define XSIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqx_first;	/* first element */			\
-	struct type **sqx_last;	/* addr of last next element */		\
-	unsigned long sqx_cookie;					\
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_ತಲೆ(name, type)					\
+ರಚನೆ name {								\
+	ರಚನೆ type *sqx_ಮೊದಲ;	/* first element */			\
+	ರಚನೆ type **sqx_ಕೊನೆಯ;	/* addr of last next element */		\
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ sqx_cookie;					\
 }
 
-#define XSIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqx_next;	/* next element */			\
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_ನಮೂದು(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *sqx_ಮುಂದಿನ;	/* next element */			\
 }
 
 /*
  * XOR Simple queue access methods.
  */
-#define XSIMPLEQ_XOR(head, ptr)	    ((__typeof(ptr))((head)->sqx_cookie ^ \
-					(unsigned long)(ptr)))
-#define	XSIMPLEQ_FIRST(head)	    XSIMPLEQ_XOR(head, ((head)->sqx_first))
-#define	XSIMPLEQ_END(head)	    NULL
-#define	XSIMPLEQ_EMPTY(head)	    (XSIMPLEQ_FIRST(head) == XSIMPLEQ_END(head))
-#define	XSIMPLEQ_NEXT(head, elm, field)    XSIMPLEQ_XOR(head, ((elm)->field.sqx_next))
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_XOR(ತಲೆ, ptr)	    ((__typeof(ptr))((ತಲೆ)->sqx_cookie ^ \
+					(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ)(ptr)))
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_ಮೊದಲ(ತಲೆ)	    XSIMPLEQ_XOR(ತಲೆ, ((ತಲೆ)->sqx_ಮೊದಲ))
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_ಕೊನೆ(ತಲೆ)	    ಖಾಲಿ
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_ಖಾಲಿಗಳು(ತಲೆ)	    (XSIMPLEQ_ಮೊದಲ(ತಲೆ) == XSIMPLEQ_ಕೊನೆ(ತಲೆ))
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_ಮುಂದಿನ(ತಲೆ, elm, ಕ್ಷೇತ್ರ)    XSIMPLEQ_XOR(ತಲೆ, ((elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ))
 
 
-#define XSIMPLEQ_FOREACH(var, head, field)				\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) != XSIMPLEQ_END(head);				\
-	    (var) = XSIMPLEQ_NEXT(head, var, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_FOREACH(var, ತಲೆ, ಕ್ಷೇತ್ರ)				\
+	ಗಾಗಿ ((var) = XSIMPLEQ_ಮೊದಲ(ತಲೆ);				\
+	    (var) != XSIMPLEQ_ಕೊನೆ(ತಲೆ);				\
+	    (var) = XSIMPLEQ_ಮುಂದಿನ(ತಲೆ, var, ಕ್ಷೇತ್ರ))
 
-#define	XSIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = XSIMPLEQ_NEXT(head, var, field), 1);	\
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_FOREACH_ಸುರಕ್ಷಿತ(var, ತಲೆ, ಕ್ಷೇತ್ರ, tvar)			\
+	ಗಾಗಿ ((var) = XSIMPLEQ_ಮೊದಲ(ತಲೆ);				\
+	    (var) && ((tvar) = XSIMPLEQ_ಮುಂದಿನ(ತಲೆ, var, ಕ್ಷೇತ್ರ), 1);	\
 	    (var) = (tvar))
 
 /*
  * XOR Simple queue functions.
  */
-#define	XSIMPLEQ_INIT(head) do {					\
-	arc4random_buf(&(head)->sqx_cookie, sizeof((head)->sqx_cookie)); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, NULL);			\
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	XSIMPLEQ_INIT(ತಲೆ) ಮಾಡು {					\
+	arc4random_buf(&(ತಲೆ)->sqx_cookie, ಗಾತ್ರ((ತಲೆ)->sqx_cookie)); \
+	(ತಲೆ)->sqx_ಮೊದಲ = XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ);			\
+	(ತಲೆ)->sqx_ಕೊನೆಯ = XSIMPLEQ_XOR(ತಲೆ, &(ತಲೆ)->sqx_ಮೊದಲ);	\
+} ಆಗ (0)
 
-#define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_ಸೇರಿಸು_ತಲೆ(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ = (ತಲೆ)->sqx_ಮೊದಲ) ==		\
+	    XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ))					\
+		(ತಲೆ)->sqx_ಕೊನೆಯ = XSIMPLEQ_XOR(ತಲೆ, &(elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ); \
+	(ತಲೆ)->sqx_ಮೊದಲ = XSIMPLEQ_XOR(ತಲೆ, (elm));			\
+} ಆಗ (0)
 
-#define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
-	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_ಸೇರಿಸು_ಬಾಲ(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ = XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ);		\
+	*(XSIMPLEQ_XOR(ತಲೆ, (ತಲೆ)->sqx_ಕೊನೆಯ)) = XSIMPLEQ_XOR(ತಲೆ, (elm)); \
+	(ತಲೆ)->sqx_ಕೊನೆಯ = XSIMPLEQ_XOR(ತಲೆ, &(elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ);	\
+} ಆಗ (0)
 
-#define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(listelm)->field.sqx_next = XSIMPLEQ_XOR(head, (elm));		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_ಸೇರಿಸು_AFTER(ತಲೆ, listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {		\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ = (listelm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ) ==	\
+	    XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ))					\
+		(ತಲೆ)->sqx_ಕೊನೆಯ = XSIMPLEQ_XOR(ತಲೆ, &(elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ); \
+	(listelm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ = XSIMPLEQ_XOR(ತಲೆ, (elm));		\
+} ಆಗ (0)
 
-#define XSIMPLEQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
-	    (head)->sqx_first)->field.sqx_next) == XSIMPLEQ_XOR(head, NULL)) \
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first); \
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_REMOVE_ತಲೆ(ತಲೆ, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	ಆದರೆ (((ತಲೆ)->sqx_ಮೊದಲ = XSIMPLEQ_XOR(ತಲೆ,			\
+	    (ತಲೆ)->sqx_ಮೊದಲ)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ) == XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ)) \
+		(ತಲೆ)->sqx_ಕೊನೆಯ = XSIMPLEQ_XOR(ತಲೆ, &(ತಲೆ)->sqx_ಮೊದಲ); \
+} ಆಗ (0)
 
-#define XSIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
-	    (elm)->field.sqx_next)->field.sqx_next)			\
-	    == XSIMPLEQ_XOR(head, NULL))				\
-		(head)->sqx_last = 					\
-		    XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು XSIMPLEQ_REMOVE_AFTER(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ = XSIMPLEQ_XOR(ತಲೆ,			\
+	    (elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ)			\
+	    == XSIMPLEQ_XOR(ತಲೆ, ಖಾಲಿ))				\
+		(ತಲೆ)->sqx_ಕೊನೆಯ = 					\
+		    XSIMPLEQ_XOR(ತಲೆ, &(elm)->ಕ್ಷೇತ್ರ.sqx_ಮುಂದಿನ);		\
+} ಆಗ (0)
 
 
 /*
  * Tail queue definitions.
  */
-#define TAILQ_HEAD(name, type)						\
-struct name {								\
-	struct type *tqh_first;	/* first element */			\
-	struct type **tqh_last;	/* addr of last next element */		\
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_HEAD(name, type)						\
+ರಚನೆ name {								\
+	ರಚನೆ type *tqh_first;	/* first element */			\
+	ರಚನೆ type **tqh_last;	/* addr of last next element */		\
 }
 
-#define TAILQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).tqh_first }
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_HEAD_INITIALIZER(ತಲೆ)					\
+	{ ಖಾಲಿ, &(ತಲೆ).tqh_first }
 
-#define TAILQ_ENTRY(type)						\
-struct {								\
-	struct type *tqe_next;	/* next element */			\
-	struct type **tqe_prev;	/* address of previous next element */	\
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_ENTRY(type)						\
+ರಚನೆ {								\
+	ರಚನೆ type *tqe_next;	/* next element */			\
+	ರಚನೆ type **tqe_prev;	/* address of previous next element */	\
 }
 
 /*
  * Tail queue access methods.
  */
-#define	TAILQ_FIRST(head)		((head)->tqh_first)
-#define	TAILQ_END(head)			NULL
-#define	TAILQ_NEXT(elm, field)		((elm)->field.tqe_next)
-#define TAILQ_LAST(head, headname)					\
-	(*(((struct headname *)((head)->tqh_last))->tqh_last))
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_FIRST(ತಲೆ)		((ತಲೆ)->tqh_first)
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_ಕೊನೆ(ತಲೆ)			ಖಾಲಿ
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_NEXT(elm, ಕ್ಷೇತ್ರ)		((elm)->ಕ್ಷೇತ್ರ.tqe_next)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_LAST(ತಲೆ, headname)					\
+	(*(((ರಚನೆ headname *)((ತಲೆ)->tqh_last))->tqh_last))
 /* XXX */
-#define TAILQ_PREV(elm, headname, field)				\
-	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
-#define	TAILQ_EMPTY(head)						\
-	(TAILQ_FIRST(head) == TAILQ_END(head))
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_PREV(elm, headname, ಕ್ಷೇತ್ರ)				\
+	(*(((ರಚನೆ headname *)((elm)->ಕ್ಷೇತ್ರ.tqe_prev))->tqh_last))
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_EMPTY(ತಲೆ)						\
+	(TAILQ_FIRST(ತಲೆ) == TAILQ_ಕೊನೆ(ತಲೆ))
 
-#define TAILQ_FOREACH(var, head, field)					\
-	for((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_NEXT(var, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_FOREACH(var, ತಲೆ, ಕ್ಷೇತ್ರ)					\
+	ಗಾಗಿ((var) = TAILQ_FIRST(ತಲೆ);					\
+	    (var) != TAILQ_ಕೊನೆ(ತಲೆ);					\
+	    (var) = TAILQ_NEXT(var, ಕ್ಷೇತ್ರ))
 
-#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_NEXT(var, field), 1);			\
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_FOREACH_ಸುರಕ್ಷಿತ(var, ತಲೆ, ಕ್ಷೇತ್ರ, tvar)			\
+	ಗಾಗಿ ((var) = TAILQ_FIRST(ತಲೆ);					\
+	    (var) != TAILQ_ಕೊನೆ(ತಲೆ) &&					\
+	    ((tvar) = TAILQ_NEXT(var, ಕ್ಷೇತ್ರ), 1);			\
 	    (var) = (tvar))
 
 
-#define TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-	for((var) = TAILQ_LAST(head, headname);				\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_PREV(var, headname, field))
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_FOREACH_ಹಿಮ್ಮುಖ(var, ತಲೆ, headname, ಕ್ಷೇತ್ರ)		\
+	ಗಾಗಿ((var) = TAILQ_LAST(ತಲೆ, headname);				\
+	    (var) != TAILQ_ಕೊನೆ(ತಲೆ);					\
+	    (var) = TAILQ_PREV(var, headname, ಕ್ಷೇತ್ರ))
 
-#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = TAILQ_LAST(head, headname);			\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_PREV(var, headname, field), 1);		\
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_FOREACH_ಹಿಮ್ಮುಖ_ಸುರಕ್ಷಿತ(var, ತಲೆ, headname, ಕ್ಷೇತ್ರ, tvar)	\
+	ಗಾಗಿ ((var) = TAILQ_LAST(ತಲೆ, headname);			\
+	    (var) != TAILQ_ಕೊನೆ(ತಲೆ) &&					\
+	    ((tvar) = TAILQ_PREV(var, headname, ಕ್ಷೇತ್ರ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Tail queue functions.
  */
-#define	TAILQ_INIT(head) do {						\
-	(head)->tqh_first = NULL;					\
-	(head)->tqh_last = &(head)->tqh_first;				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_INIT(ತಲೆ) ಮಾಡು {						\
+	(ತಲೆ)->tqh_first = ಖಾಲಿ;					\
+	(ತಲೆ)->tqh_last = &(ತಲೆ)->tqh_first;				\
+} ಆಗ (0)
 
-#define TAILQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
-		(head)->tqh_first->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(head)->tqh_first = (elm);					\
-	(elm)->field.tqe_prev = &(head)->tqh_first;			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_INSERT_HEAD(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.tqe_next = (ತಲೆ)->tqh_first) != ಖಾಲಿ)	\
+		(ತಲೆ)->tqh_first->ಕ್ಷೇತ್ರ.tqe_prev =			\
+		    &(elm)->ಕ್ಷೇತ್ರ.tqe_next;				\
+	ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->tqh_last = &(elm)->ಕ್ಷೇತ್ರ.tqe_next;		\
+	(ತಲೆ)->tqh_first = (elm);					\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_prev = &(ತಲೆ)->tqh_first;			\
+} ಆಗ (0)
 
-#define TAILQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.tqe_next = NULL;					\
-	(elm)->field.tqe_prev = (head)->tqh_last;			\
-	*(head)->tqh_last = (elm);					\
-	(head)->tqh_last = &(elm)->field.tqe_next;			\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_INSERT_TAIL(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_next = ಖಾಲಿ;					\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_prev = (ತಲೆ)->tqh_last;			\
+	*(ತಲೆ)->tqh_last = (elm);					\
+	(ತಲೆ)->tqh_last = &(elm)->ಕ್ಷೇತ್ರ.tqe_next;			\
+} ಆಗ (0)
 
-#define TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(listelm)->field.tqe_next = (elm);				\
-	(elm)->field.tqe_prev = &(listelm)->field.tqe_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_INSERT_AFTER(ತಲೆ, listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {		\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.tqe_next = (listelm)->ಕ್ಷೇತ್ರ.tqe_next) != ಖಾಲಿ)\
+		(elm)->ಕ್ಷೇತ್ರ.tqe_next->ಕ್ಷೇತ್ರ.tqe_prev =			\
+		    &(elm)->ಕ್ಷೇತ್ರ.tqe_next;				\
+	ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->tqh_last = &(elm)->ಕ್ಷೇತ್ರ.tqe_next;		\
+	(listelm)->ಕ್ಷೇತ್ರ.tqe_next = (elm);				\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_prev = &(listelm)->ಕ್ಷೇತ್ರ.tqe_next;		\
+} ಆಗ (0)
 
-#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
-	(elm)->field.tqe_next = (listelm);				\
-	*(listelm)->field.tqe_prev = (elm);				\
-	(listelm)->field.tqe_prev = &(elm)->field.tqe_next;		\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು	TAILQ_INSERT_BEFORE(listelm, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_prev = (listelm)->ಕ್ಷೇತ್ರ.tqe_prev;		\
+	(elm)->ಕ್ಷೇತ್ರ.tqe_next = (listelm);				\
+	*(listelm)->ಕ್ಷೇತ್ರ.tqe_prev = (elm);				\
+	(listelm)->ಕ್ಷೇತ್ರ.tqe_prev = &(elm)->ಕ್ಷೇತ್ರ.tqe_next;		\
+} ಆಗ (0)
 
-#define TAILQ_REMOVE(head, elm, field) do {				\
-	if (((elm)->field.tqe_next) != NULL)				\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    (elm)->field.tqe_prev;				\
-	else								\
-		(head)->tqh_last = (elm)->field.tqe_prev;		\
-	*(elm)->field.tqe_prev = (elm)->field.tqe_next;			\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_REMOVE(ತಲೆ, elm, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	ಆದರೆ (((elm)->ಕ್ಷೇತ್ರ.tqe_next) != ಖಾಲಿ)				\
+		(elm)->ಕ್ಷೇತ್ರ.tqe_next->ಕ್ಷೇತ್ರ.tqe_prev =			\
+		    (elm)->ಕ್ಷೇತ್ರ.tqe_prev;				\
+	ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->tqh_last = (elm)->ಕ್ಷೇತ್ರ.tqe_prev;		\
+	*(elm)->ಕ್ಷೇತ್ರ.tqe_prev = (elm)->ಕ್ಷೇತ್ರ.tqe_next;			\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.tqe_next);				\
+} ಆಗ (0)
 
-#define TAILQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
-		(elm2)->field.tqe_next->field.tqe_prev =		\
-		    &(elm2)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm2)->field.tqe_next;		\
-	(elm2)->field.tqe_prev = (elm)->field.tqe_prev;			\
-	*(elm2)->field.tqe_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_REPLACE(ತಲೆ, elm, elm2, ಕ್ಷೇತ್ರ) ಮಾಡು {			\
+	ಆದರೆ (((elm2)->ಕ್ಷೇತ್ರ.tqe_next = (elm)->ಕ್ಷೇತ್ರ.tqe_next) != ಖಾಲಿ)	\
+		(elm2)->ಕ್ಷೇತ್ರ.tqe_next->ಕ್ಷೇತ್ರ.tqe_prev =		\
+		    &(elm2)->ಕ್ಷೇತ್ರ.tqe_next;				\
+	ಇಲ್ಲದಿದ್ದರೆ								\
+		(ತಲೆ)->tqh_last = &(elm2)->ಕ್ಷೇತ್ರ.tqe_next;		\
+	(elm2)->ಕ್ಷೇತ್ರ.tqe_prev = (elm)->ಕ್ಷೇತ್ರ.tqe_prev;			\
+	*(elm2)->ಕ್ಷೇತ್ರ.tqe_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ಕ್ಷೇತ್ರ.tqe_next);				\
+} ಆಗ (0)
 
-#define TAILQ_CONCAT(head1, head2, field) do {				\
-	if (!TAILQ_EMPTY(head2)) {					\
+#ವ್ಯಾಖ್ಯಾನಿಸು TAILQ_CONCAT(head1, head2, ಕ್ಷೇತ್ರ) ಮಾಡು {				\
+	ಆದರೆ (!TAILQ_EMPTY(head2)) {					\
 		*(head1)->tqh_last = (head2)->tqh_first;		\
-		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
+		(head2)->tqh_first->ಕ್ಷೇತ್ರ.tqe_prev = (head1)->tqh_last;	\
 		(head1)->tqh_last = (head2)->tqh_last;			\
 		TAILQ_INIT((head2));					\
 	}								\
-} while (0)
+} ಆಗ (0)
 
-#endif	/* !_SYS_QUEUE_H_ */
+#ಆದರೆ_ಅಂತ್ಯ	/* !_SYS_QUEUE_H_ */

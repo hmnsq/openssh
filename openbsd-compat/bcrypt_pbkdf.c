@@ -19,28 +19,28 @@
 
 /* This version has been modified to use SHA512 from SUPERCOP */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef HAVE_BCRYPT_PBKDF
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_BCRYPT_PBKDF
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#ifdef HAVE_STDLIB_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_STDLIB_H
 # include <stdlib.h>
-#endif
-#include <string.h>
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#ifdef HAVE_BLF_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_BLF_H
 # include <blf.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "crypto_api.h"
-#ifdef SHA512_DIGEST_LENGTH
-# undef SHA512_DIGEST_LENGTH
-#endif
-#define SHA512_DIGEST_LENGTH crypto_hash_sha512_BYTES
+#ಅನ್ತರ್ಭಾವ "crypto_api.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SHA512_DIGEST_ಉದ್ದಳತೆ
+# undef SHA512_DIGEST_ಉದ್ದಳತೆ
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿಸು SHA512_DIGEST_ಉದ್ದಳತೆ crypto_hash_sha512_ಬೈಟುಗಳು
 
-#define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
+#ವ್ಯಾಖ್ಯಾನಿಸು	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*
  * pkcs #5 pbkdf2 implementation using the "bcrypt" hash
@@ -66,123 +66,123 @@
  * wise caller could do; we just do it for you.
  */
 
-#define BCRYPT_WORDS 8
-#define BCRYPT_HASHSIZE (BCRYPT_WORDS * 4)
+#ವ್ಯಾಖ್ಯಾನಿಸು BCRYPT_ಪದಗಳು 8
+#ವ್ಯಾಖ್ಯಾನಿಸು BCRYPT_HASHSIZE (BCRYPT_ಪದಗಳು * 4)
 
-static void
-bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
+ಸ್ಥಿರ ಶೂನ್ಯ
+bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *ಹೊರಹೋಗು)
 {
 	blf_ctx state;
 	uint8_t __attribute__ ((__nonstring__)) ciphertext[BCRYPT_HASHSIZE] =
 	    "OxychromaticBlowfishSwatDynamite";
-	uint32_t cdata[BCRYPT_WORDS];
-	int i;
+	uint32_t cdata[BCRYPT_ಪದಗಳು];
+	ಪೂರ್ಣಾಂಕ i;
 	uint16_t j;
-	size_t shalen = SHA512_DIGEST_LENGTH;
+	ಗಾತ್ರ_t shalen = SHA512_DIGEST_ಉದ್ದಳತೆ;
 
 	/* key expansion */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, sha2salt, shalen, sha2pass, shalen);
-	for (i = 0; i < 64; i++) {
+	ಗಾಗಿ (i = 0; i < 64; i++) {
 		Blowfish_expand0state(&state, sha2salt, shalen);
 		Blowfish_expand0state(&state, sha2pass, shalen);
 	}
 
 	/* encryption */
 	j = 0;
-	for (i = 0; i < BCRYPT_WORDS; i++)
-		cdata[i] = Blowfish_stream2word(ciphertext, sizeof(ciphertext),
+	ಗಾಗಿ (i = 0; i < BCRYPT_ಪದಗಳು; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, ಗಾತ್ರ(ciphertext),
 		    &j);
-	for (i = 0; i < 64; i++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+	ಗಾಗಿ (i = 0; i < 64; i++)
+		blf_enc(&state, cdata, BCRYPT_ಪದಗಳು / 2);
 
 	/* copy out */
-	for (i = 0; i < BCRYPT_WORDS; i++) {
-		out[4 * i + 3] = (cdata[i] >> 24) & 0xff;
-		out[4 * i + 2] = (cdata[i] >> 16) & 0xff;
-		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
-		out[4 * i + 0] = cdata[i] & 0xff;
+	ಗಾಗಿ (i = 0; i < BCRYPT_ಪದಗಳು; i++) {
+		ಹೊರಹೋಗು[4 * i + 3] = (cdata[i] >> 24) & 0xff;
+		ಹೊರಹೋಗು[4 * i + 2] = (cdata[i] >> 16) & 0xff;
+		ಹೊರಹೋಗು[4 * i + 1] = (cdata[i] >> 8) & 0xff;
+		ಹೊರಹೋಗು[4 * i + 0] = cdata[i] & 0xff;
 	}
 
 	/* zap */
-	explicit_bzero(ciphertext, sizeof(ciphertext));
-	explicit_bzero(cdata, sizeof(cdata));
-	explicit_bzero(&state, sizeof(state));
+	explicit_bzero(ciphertext, ಗಾತ್ರ(ciphertext));
+	explicit_bzero(cdata, ಗಾತ್ರ(cdata));
+	explicit_bzero(&state, ಗಾತ್ರ(state));
 }
 
-int
-bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds)
+ಪೂರ್ಣಾಂಕ
+bcrypt_pbkdf(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *pass, ಗಾತ್ರ_t passlen, ಸ್ಥಿರಾಂಕ uint8_t *salt, ಗಾತ್ರ_t saltlen,
+    uint8_t *ಕೀಲಿ, ಗಾತ್ರ_t keylen, ಚಿಹ್ನೆರಹಿತ ಪೂರ್ಣಾಂಕ ಸುತ್ತುಗಳು)
 {
-	uint8_t sha2pass[SHA512_DIGEST_LENGTH];
-	uint8_t sha2salt[SHA512_DIGEST_LENGTH];
-	uint8_t out[BCRYPT_HASHSIZE];
+	uint8_t sha2pass[SHA512_DIGEST_ಉದ್ದಳತೆ];
+	uint8_t sha2salt[SHA512_DIGEST_ಉದ್ದಳತೆ];
+	uint8_t ಹೊರಹೋಗು[BCRYPT_HASHSIZE];
 	uint8_t tmpout[BCRYPT_HASHSIZE];
 	uint8_t *countsalt;
-	size_t i, j, amt, stride;
-	uint32_t count;
-	size_t origkeylen = keylen;
+	ಗಾತ್ರ_t i, j, amt, stride;
+	uint32_t ಎಣಿಕೆ_2;
+	ಗಾತ್ರ_t origkeylen = keylen;
 
 	/* nothing crazy */
-	if (rounds < 1)
-		goto bad;
-	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
-	    keylen > sizeof(out) * sizeof(out) || saltlen > 1<<20)
-		goto bad;
-	if ((countsalt = calloc(1, saltlen + 4)) == NULL)
-		goto bad;
-	stride = (keylen + sizeof(out) - 1) / sizeof(out);
+	ಆದರೆ (ಸುತ್ತುಗಳು < 1)
+		ಹೋಗು bad;
+	ಆದರೆ (passlen == 0 || saltlen == 0 || keylen == 0 ||
+	    keylen > ಗಾತ್ರ(ಹೊರಹೋಗು) * ಗಾತ್ರ(ಹೊರಹೋಗು) || saltlen > 1<<20)
+		ಹೋಗು bad;
+	ಆದರೆ ((countsalt = ಸೊನ್ನೆ_ಸ್ಮರಣೆ_ಕೊಡು(1, saltlen + 4)) == ಖಾಲಿ)
+		ಹೋಗು bad;
+	stride = (keylen + ಗಾತ್ರ(ಹೊರಹೋಗು) - 1) / ಗಾತ್ರ(ಹೊರಹೋಗು);
 	amt = (keylen + stride - 1) / stride;
 
-	memcpy(countsalt, salt, saltlen);
+	ಸ್ಮರಣೆ_ನಕಲು(countsalt, salt, saltlen);
 
 	/* collapse password */
 	crypto_hash_sha512(sha2pass, pass, passlen);
 
 	/* generate key, sizeof(out) at a time */
-	for (count = 1; keylen > 0; count++) {
-		countsalt[saltlen + 0] = (count >> 24) & 0xff;
-		countsalt[saltlen + 1] = (count >> 16) & 0xff;
-		countsalt[saltlen + 2] = (count >> 8) & 0xff;
-		countsalt[saltlen + 3] = count & 0xff;
+	ಗಾಗಿ (ಎಣಿಕೆ_2 = 1; keylen > 0; ಎಣಿಕೆ_2++) {
+		countsalt[saltlen + 0] = (ಎಣಿಕೆ_2 >> 24) & 0xff;
+		countsalt[saltlen + 1] = (ಎಣಿಕೆ_2 >> 16) & 0xff;
+		countsalt[saltlen + 2] = (ಎಣಿಕೆ_2 >> 8) & 0xff;
+		countsalt[saltlen + 3] = ಎಣಿಕೆ_2 & 0xff;
 
 		/* first round, salt is salt */
 		crypto_hash_sha512(sha2salt, countsalt, saltlen + 4);
 
 		bcrypt_hash(sha2pass, sha2salt, tmpout);
-		memcpy(out, tmpout, sizeof(out));
+		ಸ್ಮರಣೆ_ನಕಲು(ಹೊರಹೋಗು, tmpout, ಗಾತ್ರ(ಹೊರಹೋಗು));
 
-		for (i = 1; i < rounds; i++) {
+		ಗಾಗಿ (i = 1; i < ಸುತ್ತುಗಳು; i++) {
 			/* subsequent rounds, salt is previous output */
-			crypto_hash_sha512(sha2salt, tmpout, sizeof(tmpout));
+			crypto_hash_sha512(sha2salt, tmpout, ಗಾತ್ರ(tmpout));
 			bcrypt_hash(sha2pass, sha2salt, tmpout);
-			for (j = 0; j < sizeof(out); j++)
-				out[j] ^= tmpout[j];
+			ಗಾಗಿ (j = 0; j < ಗಾತ್ರ(ಹೊರಹೋಗು); j++)
+				ಹೊರಹೋಗು[j] ^= tmpout[j];
 		}
 
 		/*
 		 * pbkdf2 deviation: output the key material non-linearly.
 		 */
 		amt = MINIMUM(amt, keylen);
-		for (i = 0; i < amt; i++) {
-			size_t dest = i * stride + (count - 1);
-			if (dest >= origkeylen)
-				break;
-			key[dest] = out[i];
+		ಗಾಗಿ (i = 0; i < amt; i++) {
+			ಗಾತ್ರ_t dest = i * stride + (ಎಣಿಕೆ_2 - 1);
+			ಆದರೆ (dest >= origkeylen)
+				ನಿಲ್ಲಿಸು;
+			ಕೀಲಿ[dest] = ಹೊರಹೋಗು[i];
 		}
 		keylen -= i;
 	}
 
 	/* zap */
 	freezero(countsalt, saltlen + 4);
-	explicit_bzero(out, sizeof(out));
-	explicit_bzero(tmpout, sizeof(tmpout));
+	explicit_bzero(ಹೊರಹೋಗು, ಗಾತ್ರ(ಹೊರಹೋಗು));
+	explicit_bzero(tmpout, ಗಾತ್ರ(tmpout));
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 
 bad:
 	/* overwrite with random in case caller doesn't check return code */
-	arc4random_buf(key, keylen);
-	return -1;
+	arc4random_buf(ಕೀಲಿ, keylen);
+	ಹಿಂತಿರುಗಿ -1;
 }
-#endif /* HAVE_BCRYPT_PBKDF */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE_BCRYPT_PBKDF */

@@ -30,56 +30,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _GETOPT_H_
+#ವ್ಯಾಖ್ಯಾನಿಸು _GETOPT_H_
 
-#ifndef __THROW
-# if defined __cplusplus
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ __THROW
+# ಆದರೆ defined __cplusplus
 #  define __THROW throw()
-# else
+# ಇಲ್ಲದಿದ್ದರೆ
 #  define __THROW
 # endif
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /*
  * GNU-like getopt_long() and 4.4BSD getsubopt()/optreset extensions
  */
-#define no_argument        0
-#define required_argument  1
-#define optional_argument  2
+#ವ್ಯಾಖ್ಯಾನಿಸು no_argument        0
+#ವ್ಯಾಖ್ಯಾನಿಸು required_argument  1
+#ವ್ಯಾಖ್ಯಾನಿಸು optional_argument  2
 
-#if 0
-struct option {
+#ಆದರೆ 0
+ರಚನೆ option {
 	/* name of long option */
-	const char *name;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ಪೂರ್ಣಾಂಕ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ಪೂರ್ಣಾಂಕ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ಪೂರ್ಣಾಂಕ val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
-#endif
+ಪೂರ್ಣಾಂಕ	 getopt_long(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+	    ಸ್ಥಿರಾಂಕ ರಚನೆ option *, ಪೂರ್ಣಾಂಕ *);
+ಪೂರ್ಣಾಂಕ	 getopt_long_only(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+	    ಸ್ಥಿರಾಂಕ ರಚನೆ option *, ಪೂರ್ಣಾಂಕ *);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _GETOPT_DEFINED_
+#ವ್ಯಾಖ್ಯಾನಿಸು _GETOPT_DEFINED_
+ಪೂರ್ಣಾಂಕ	 getopt(ಪೂರ್ಣಾಂಕ, ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *) __THROW;
+ಪೂರ್ಣಾಂಕ	 getsubopt(ಅಕ್ಷರ **, ಅಕ್ಷರ * ಸ್ಥಿರಾಂಕ *, ಅಕ್ಷರ **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
-#endif
+ಬಾಹ್ಯ   ಅಕ್ಷರ *optarg;                  /* getopt(3) external variables */
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಂಕ opterr;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಂಕ optind;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಂಕ optopt;
+ಬಾಹ್ಯ   ಪೂರ್ಣಾಂಕ optreset;
+ಬಾಹ್ಯ   ಅಕ್ಷರ *suboptarg;               /* getsubopt(3) external variable */
+#ಆದರೆ_ಅಂತ್ಯ
  
-#endif /* !_GETOPT_H_ */
+#ಆದರೆ_ಅಂತ್ಯ /* !_GETOPT_H_ */

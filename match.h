@@ -11,20 +11,20 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef MATCH_H
-#define MATCH_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ ಹೊಂದಿಕೆ_H
+#ವ್ಯಾಖ್ಯಾನಿಸು ಹೊಂದಿಕೆ_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_ನಮೂನೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_ನಮೂನೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_usergroup_ನಮೂನೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_hostname(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_host_and_ip(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 ಹೊಂದಿಕೆ_user(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ	*ಹೊಂದಿಕೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, u_int *);
+ಅಕ್ಷರ	*ಹೊಂದಿಕೆ_filter_denylist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಅಕ್ಷರ	*ಹೊಂದಿಕೆ_filter_allowlist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
-#endif
+ಪೂರ್ಣಾಂಕ	 addr_ಹೊಂದಿಕೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+ಪೂರ್ಣಾಂಕ	 addr_ಹೊಂದಿಕೆ_cidr_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+#ಆದರೆ_ಅಂತ್ಯ

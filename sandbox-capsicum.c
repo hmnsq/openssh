@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef SANDBOX_CAPSICUM
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ SANDBOX_CAPSICUM
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/capsicum.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ಅನ್ತರ್ಭಾವ <sys/resource.h>
+#ಅನ್ತರ್ಭಾವ <sys/capsicum.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#ifdef HAVE_CAPSICUM_HELPERS_H
-#include <capsicum_helpers.h>
-#endif
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_CAPSICUM_HELPERS_H
+#ಅನ್ತರ್ಭಾವ <capsicum_helpers.h>
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include "log.h"
-#include "monitor.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "monitor.h"
+#ಅನ್ತರ್ಭಾವ "ssh-sandbox.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 /*
  * Capsicum sandbox that sets zero nfiles, nprocs and filesize rlimits,
@@ -44,67 +44,67 @@
  * capability mode.
  */
 
-struct ssh_sandbox {
-	int m_recvfd;
-	int m_log_sendfd;
+ರಚನೆ ssh_sandbox {
+	ಪೂರ್ಣಾಂಕ m_recvfd;
+	ಪೂರ್ಣಾಂಕ m_log_sendfd;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ರಚನೆ ssh_sandbox *
+ssh_sandbox_init(ರಚನೆ monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ರಚನೆ ssh_sandbox *box;
 
 	debug3_f("preparing capsicum sandbox");
-	box = xcalloc(1, sizeof(*box));
+	box = xcalloc(1, ಗಾತ್ರ(*box));
 	box->m_recvfd = monitor->m_recvfd;
 	box->m_log_sendfd = monitor->m_log_sendfd;
-	return box;
+	ಹಿಂತಿರುಗಿ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ಶೂನ್ಯ
+ssh_sandbox_ಮಗು(ರಚನೆ ssh_sandbox *box)
 {
-	struct rlimit rl_zero;
+	ರಚನೆ rlimit rl_zero;
 	cap_rights_t rights;
 
-#ifdef HAVE_CAPH_CACHE_TZDATA
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_CAPH_CACHE_TZDATA
 	caph_cache_tzdata();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	ಆದರೆ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-#ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SANDBOX_SKIP_RLIMIT_NOFILE
+	ಆದರೆ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-#endif
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			__func__, strerror(errno));
 
 	cap_rights_init(&rights);
 
-	if (cap_rights_limit(STDIN_FILENO, &rights) < 0 && errno != ENOSYS)
+	ಆದರೆ (cap_rights_ಎಲ್ಲೆ(STDIN_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stdin: %m");
-	if (cap_rights_limit(STDOUT_FILENO, &rights) < 0 && errno != ENOSYS)
+	ಆದರೆ (cap_rights_ಎಲ್ಲೆ(STDOUT_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stdout: %m");
-	if (cap_rights_limit(STDERR_FILENO, &rights) < 0 && errno != ENOSYS)
+	ಆದರೆ (cap_rights_ಎಲ್ಲೆ(STDERR_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stderr: %m");
 
 	cap_rights_init(&rights, CAP_READ, CAP_WRITE);
-	if (cap_rights_limit(box->m_recvfd, &rights) < 0 &&
+	ಆದರೆ (cap_rights_ಎಲ್ಲೆ(box->m_recvfd, &rights) < 0 &&
 	    errno != ENOSYS)
 		fatal_f("failed to limit the network socket");
 	cap_rights_init(&rights, CAP_WRITE);
-	if (cap_rights_limit(box->m_log_sendfd, &rights) < 0 &&
+	ಆದರೆ (cap_rights_ಎಲ್ಲೆ(box->m_log_sendfd, &rights) < 0 &&
 	    errno != ENOSYS)
 		fatal_f("failed to limit the logging socket");
-	if (cap_enter() < 0 && errno != ENOSYS)
+	ಆದರೆ (cap_enter() < 0 && errno != ENOSYS)
 		fatal_f("failed to enter capability mode");
 
 }
 
-#endif /* SANDBOX_CAPSICUM */
+#ಆದರೆ_ಅಂತ್ಯ /* SANDBOX_CAPSICUM */

@@ -27,25 +27,25 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/stat.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <stddef.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
+#ಅನ್ತರ್ಭಾವ <limits.h>
 
-#ifndef SYMLOOP_MAX
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ SYMLOOP_MAX
 # define SYMLOOP_MAX 32
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* XXX rewrite sftp-server to use POSIX realpath and remove this hack */
 
-char *sftp_realpath(const char *path, char *resolved);
+ಅಕ್ಷರ *sftp_realpath(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಅಕ್ಷರ *resolved);
 
 /*
  * char *realpath(const char *path, char resolved[PATH_MAX]);
@@ -54,98 +54,98 @@ char *sftp_realpath(const char *path, char *resolved);
  * components.  Returns (resolved) on success, or (NULL) on failure,
  * in which case the path which caused trouble is left in (resolved).
  */
-char *
-sftp_realpath(const char *path, char *resolved)
+ಅಕ್ಷರ *
+sftp_realpath(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ, ಅಕ್ಷರ *resolved)
 {
-	struct stat sb;
-	char *p, *q, *s;
-	size_t left_len, resolved_len;
-	unsigned symlinks;
-	int serrno, slen, mem_allocated;
-	char left[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
+	ರಚನೆ stat sb;
+	ಅಕ್ಷರ *p, *q, *s;
+	ಗಾತ್ರ_t ಎಡ_len, resolved_len;
+	ಚಿಹ್ನೆರಹಿತ symlinks;
+	ಪೂರ್ಣಾಂಕ serrno, slen, mem_allocated;
+	ಅಕ್ಷರ ಎಡ[PATH_MAX], ಮುಂದಿನ_token[PATH_MAX], symlink[PATH_MAX];
 
-	if (path[0] == '\0') {
+	ಆದರೆ (ಮಾರ್ಗ[0] == '\0') {
 		errno = ENOENT;
-		return (NULL);
+		ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 	}
 
 	serrno = errno;
 
-	if (resolved == NULL) {
-		resolved = malloc(PATH_MAX);
-		if (resolved == NULL)
-			return (NULL);
+	ಆದರೆ (resolved == ಖಾಲಿ) {
+		resolved = ಸ್ಮರಣೆ_ಕೊಡು(PATH_MAX);
+		ಆದರೆ (resolved == ಖಾಲಿ)
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		mem_allocated = 1;
-	} else
+	} ಇಲ್ಲದಿದ್ದರೆ
 		mem_allocated = 0;
 
 	symlinks = 0;
-	if (path[0] == '/') {
+	ಆದರೆ (ಮಾರ್ಗ[0] == '/') {
 		resolved[0] = '/';
 		resolved[1] = '\0';
-		if (path[1] == '\0')
-			return (resolved);
+		ಆದರೆ (ಮಾರ್ಗ[1] == '\0')
+			ಹಿಂತಿರುಗಿ (resolved);
 		resolved_len = 1;
-		left_len = strlcpy(left, path + 1, sizeof(left));
-	} else {
-		if (getcwd(resolved, PATH_MAX) == NULL) {
-			if (mem_allocated)
-				free(resolved);
-			else
+		ಎಡ_len = strlcpy(ಎಡ, ಮಾರ್ಗ + 1, ಗಾತ್ರ(ಎಡ));
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (getcwd(resolved, PATH_MAX) == ಖಾಲಿ) {
+			ಆದರೆ (mem_allocated)
+				ಬಿಡುಗಡೆ(resolved);
+			ಇಲ್ಲದಿದ್ದರೆ
 				strlcpy(resolved, ".", PATH_MAX);
-			return (NULL);
+			ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 		}
-		resolved_len = strlen(resolved);
-		left_len = strlcpy(left, path, sizeof(left));
+		resolved_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(resolved);
+		ಎಡ_len = strlcpy(ಎಡ, ಮಾರ್ಗ, ಗಾತ್ರ(ಎಡ));
 	}
-	if (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
+	ಆದರೆ (ಎಡ_len >= ಗಾತ್ರ(ಎಡ) || resolved_len >= PATH_MAX) {
 		errno = ENAMETOOLONG;
-		goto err;
+		ಹೋಗು err;
 	}
 
 	/*
 	 * Iterate over path components in `left'.
 	 */
-	while (left_len != 0) {
+	ಆಗ (ಎಡ_len != 0) {
 		/*
 		 * Extract the next path component and adjust `left'
 		 * and its length.
 		 */
-		p = strchr(left, '/');
-		s = p ? p : left + left_len;
-		if (s - left >= (ptrdiff_t)sizeof(next_token)) {
+		p = strchr(ಎಡ, '/');
+		s = p ? p : ಎಡ + ಎಡ_len;
+		ಆದರೆ (s - ಎಡ >= (ptrdiff_t)ಗಾತ್ರ(ಮುಂದಿನ_token)) {
 			errno = ENAMETOOLONG;
-			goto err;
+			ಹೋಗು err;
 		}
-		memcpy(next_token, left, s - left);
-		next_token[s - left] = '\0';
-		left_len -= s - left;
-		if (p != NULL)
-			memmove(left, s + 1, left_len + 1);
-		if (resolved[resolved_len - 1] != '/') {
-			if (resolved_len + 1 >= PATH_MAX) {
+		ಸ್ಮರಣೆ_ನಕಲು(ಮುಂದಿನ_token, ಎಡ, s - ಎಡ);
+		ಮುಂದಿನ_token[s - ಎಡ] = '\0';
+		ಎಡ_len -= s - ಎಡ;
+		ಆದರೆ (p != ಖಾಲಿ)
+			memmove(ಎಡ, s + 1, ಎಡ_len + 1);
+		ಆದರೆ (resolved[resolved_len - 1] != '/') {
+			ಆದರೆ (resolved_len + 1 >= PATH_MAX) {
 				errno = ENAMETOOLONG;
-				goto err;
+				ಹೋಗು err;
 			}
 			resolved[resolved_len++] = '/';
 			resolved[resolved_len] = '\0';
 		}
-		if (next_token[0] == '\0')
-			continue;
-		else if (strcmp(next_token, ".") == 0)
-			continue;
-		else if (strcmp(next_token, "..") == 0) {
+		ಆದರೆ (ಮುಂದಿನ_token[0] == '\0')
+			ಮುಂದುವರಿ;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ಮುಂದಿನ_token, ".") == 0)
+			ಮುಂದುವರಿ;
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(ಮುಂದಿನ_token, "..") == 0) {
 			/*
 			 * Strip the last path component except when we have
 			 * single "/"
 			 */
-			if (resolved_len > 1) {
+			ಆದರೆ (resolved_len > 1) {
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
 				*q = '\0';
 				resolved_len = q - resolved;
 			}
-			continue;
+			ಮುಂದುವರಿ;
 		}
 
 		/*
@@ -153,31 +153,31 @@ sftp_realpath(const char *path, char *resolved)
 		 * lstat() fails we still can return successfully if
 		 * there are no more path components left.
 		 */
-		resolved_len = strlcat(resolved, next_token, PATH_MAX);
-		if (resolved_len >= PATH_MAX) {
+		resolved_len = strlcat(resolved, ಮುಂದಿನ_token, PATH_MAX);
+		ಆದರೆ (resolved_len >= PATH_MAX) {
 			errno = ENAMETOOLONG;
-			goto err;
+			ಹೋಗು err;
 		}
-		if (lstat(resolved, &sb) != 0) {
-			if (errno == ENOENT && p == NULL) {
+		ಆದರೆ (lstat(resolved, &sb) != 0) {
+			ಆದರೆ (errno == ENOENT && p == ಖಾಲಿ) {
 				errno = serrno;
-				return (resolved);
+				ಹಿಂತಿರುಗಿ (resolved);
 			}
-			goto err;
+			ಹೋಗು err;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (symlinks++ > SYMLOOP_MAX) {
+		ಆದರೆ (S_ISLNK(sb.st_mode)) {
+			ಆದರೆ (symlinks++ > SYMLOOP_MAX) {
 				errno = ELOOP;
-				goto err;
+				ಹೋಗು err;
 			}
-			slen = readlink(resolved, symlink, sizeof(symlink) - 1);
-			if (slen < 0)
-				goto err;
+			slen = readlink(resolved, symlink, ಗಾತ್ರ(symlink) - 1);
+			ಆದರೆ (slen < 0)
+				ಹೋಗು err;
 			symlink[slen] = '\0';
-			if (symlink[0] == '/') {
+			ಆದರೆ (symlink[0] == '/') {
 				resolved[1] = 0;
 				resolved_len = 1;
-			} else if (resolved_len > 1) {
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (resolved_len > 1) {
 				/* Strip the last path component. */
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
@@ -190,23 +190,23 @@ sftp_realpath(const char *path, char *resolved)
 			 * append them to symlink. The result is placed
 			 * in `left'.
 			 */
-			if (p != NULL) {
-				if (symlink[slen - 1] != '/') {
-					if (slen + 1 >=
-					    (ptrdiff_t)sizeof(symlink)) {
+			ಆದರೆ (p != ಖಾಲಿ) {
+				ಆದರೆ (symlink[slen - 1] != '/') {
+					ಆದರೆ (slen + 1 >=
+					    (ptrdiff_t)ಗಾತ್ರ(symlink)) {
 						errno = ENAMETOOLONG;
-						goto err;
+						ಹೋಗು err;
 					}
 					symlink[slen] = '/';
 					symlink[slen + 1] = 0;
 				}
-				left_len = strlcat(symlink, left, sizeof(symlink));
-				if (left_len >= sizeof(symlink)) {
+				ಎಡ_len = strlcat(symlink, ಎಡ, ಗಾತ್ರ(symlink));
+				ಆದರೆ (ಎಡ_len >= ಗಾತ್ರ(symlink)) {
 					errno = ENAMETOOLONG;
-					goto err;
+					ಹೋಗು err;
 				}
 			}
-			left_len = strlcpy(left, symlink, sizeof(left));
+			ಎಡ_len = strlcpy(ಎಡ, symlink, ಗಾತ್ರ(ಎಡ));
 		}
 	}
 
@@ -214,12 +214,12 @@ sftp_realpath(const char *path, char *resolved)
 	 * Remove trailing slash except when the resolved pathname
 	 * is a single "/".
 	 */
-	if (resolved_len > 1 && resolved[resolved_len - 1] == '/')
+	ಆದರೆ (resolved_len > 1 && resolved[resolved_len - 1] == '/')
 		resolved[resolved_len - 1] = '\0';
-	return (resolved);
+	ಹಿಂತಿರುಗಿ (resolved);
 
 err:
-	if (mem_allocated)
-		free(resolved);
-	return (NULL);
+	ಆದರೆ (mem_allocated)
+		ಬಿಡುಗಡೆ(resolved);
+	ಹಿಂತಿರುಗಿ (ಖಾಲಿ);
 }

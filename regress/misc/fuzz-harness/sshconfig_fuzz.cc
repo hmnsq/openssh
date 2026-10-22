@@ -1,34 +1,34 @@
 // libfuzzer driver for SSH client configuration file parser.
 // Covers readconf.c: process_config_line_depth() and related parsing logic.
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <pwd.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdint.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <pwd.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-extern "C" {
+ಬಾಹ್ಯ "C" {
 
-#include "includes.h"
-#include "ssh.h"
-#include "misc.h"
-#include "log.h"
-#include "readconf.h"
-#include "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ಅನ್ತರ್ಭಾವ "ssh.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "readconf.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
 
 // Stub out log output to reduce noise
-void sshsig_free(struct sshsig_ctx *ctx) {}
+ಶೂನ್ಯ sshsig_free(ರಚನೆ sshsig_ctx *ctx) {}
 
 }  // extern "C"
 
-static struct passwd fuzz_pw;
-static char fuzz_username[] = "fuzzer";
-static char fuzz_home[] = "/tmp";
-static char fuzz_shell[] = "/bin/sh";
+ಸ್ಥಿರ ರಚನೆ passwd fuzz_pw;
+ಸ್ಥಿರ ಅಕ್ಷರ fuzz_username[] = "fuzzer";
+ಸ್ಥಿರ ಅಕ್ಷರ fuzz_home[] = "/tmp";
+ಸ್ಥಿರ ಅಕ್ಷರ fuzz_shell[] = "/bin/sh";
 
-static void init_pw(void) {
+ಸ್ಥಿರ ಶೂನ್ಯ init_pw(ಶೂನ್ಯ) {
     fuzz_pw.pw_name = fuzz_username;
     fuzz_pw.pw_uid = getuid();
     fuzz_pw.pw_gid = getgid();
@@ -36,24 +36,24 @@ static void init_pw(void) {
     fuzz_pw.pw_shell = fuzz_shell;
 }
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-    static int initialized = 0;
-    if (!initialized) {
+ಬಾಹ್ಯ "C" ಪೂರ್ಣಾಂಕ LLVMFuzzer_Test_One_ಒಳಹರಿವು(ಸ್ಥಿರಾಂಕ uint8_t *ದತ್ತಾಂಶ, ಗಾತ್ರ_t ಗಾತ್ರ_2) {
+    ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ initialized = 0;
+    ಆದರೆ (!initialized) {
         log_init("sshconfig_fuzz", SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_AUTH, 0);
         init_pw();
         initialized = 1;
     }
 
     // Write fuzz input to a temp file (read_config_file requires a path)
-    char tmpfile[] = "/tmp/sshconfig_fuzz_XXXXXX";
-    int fd = mkstemp(tmpfile);
-    if (fd < 0)
-        return 0;
+    ಅಕ್ಷರ tmpfile[] = "/tmp/sshconfig_fuzz_XXXXXX";
+    ಪೂರ್ಣಾಂಕ fd = mkstemp(tmpfile);
+    ಆದರೆ (fd < 0)
+        ಹಿಂತಿರುಗಿ 0;
 
-    if (write(fd, data, size) != (ssize_t)size) {
+    ಆದರೆ (ಲಿಖ(fd, ದತ್ತಾಂಶ, ಗಾತ್ರ_2) != (ssize_t)ಗಾತ್ರ_2) {
         close(fd);
         unlink(tmpfile);
-        return 0;
+        ಹಿಂತಿರುಗಿ 0;
     }
     close(fd);
 
@@ -63,11 +63,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     // Process each line through the config parser
     // Errors are intentional (fuzzing) — suppress but don't crash
     read_config_file(tmpfile, &fuzz_pw, "fuzz.example.com", "fuzz.example.com",
-                     NULL, &options, 0, NULL);
+                     ಖಾಲಿ, &options, 0, ಖಾಲಿ);
 
     // Clean up allocated options
     // (options cleanup is intentionally omitted; leak sanitizer disabled for fuzzing)
 
     unlink(tmpfile);
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }

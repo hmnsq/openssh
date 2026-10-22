@@ -23,43 +23,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
-#ifndef HAVE_PSELECT
+#ಅನ್ತರ್ಭಾವ "includes.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_PSELECT
 
-#include <sys/types.h>
-#include <sys/time.h>
-#ifdef HAVE_SYS_SELECT_H
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/time.h>
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_SYS_SELECT_H
 # include <sys/select.h>
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#include <errno.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ಅನ್ತರ್ಭಾವ <errno.h>
+#ಅನ್ತರ್ಭಾವ <fcntl.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <unistd.h>
 
-#include "log.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
 
-#ifndef HAVE_SIGHANDLER_T
-typedef void (*sighandler_t)(int);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE_SIGHANDLER_T
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಶೂನ್ಯ (*sighandler_t)(ಪೂರ್ಣಾಂಕ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-static sighandler_t saved_sighandler[_NSIG];
-static int notify_pipe[2];	/* 0 = read end, 1 = write end */
+ಸ್ಥಿರ sighandler_t saved_sighandler[_NSIG];
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ notify_pipe[2];	/* 0 = read end, 1 = write end */
 
 /*
  * Because the debugging for this is so noisy, we only output on the first
  * call, and suppress it thereafter.
  */
-static int suppress_debug;
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ suppress_debug;
 
-static void
-pselect_set_nonblock(int fd)
+ಸ್ಥಿರ ಶೂನ್ಯ
+pselect_ಗಣ_nonblock(ಪೂರ್ಣಾಂಕ fd)
 {
-	int val;
+	ಪೂರ್ಣಾಂಕ val;
 
-	if ((val = fcntl(fd, F_GETFL)) == -1 ||
+	ಆದರೆ ((val = fcntl(fd, F_GETFL)) == -1 ||
 	     fcntl(fd, F_SETFL, val|O_NONBLOCK) == -1)
 		error_f("fcntl: %s", strerror(errno));
 }
@@ -68,54 +68,54 @@ pselect_set_nonblock(int fd)
  * we write to this pipe if a SIGCHLD is caught in order to avoid
  * the race between select() and child_terminated.
  */
-static int
-pselect_notify_setup(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+pselect_notify_ಸಿದ್ಧತೆ(ಶೂನ್ಯ)
 {
-	if (pipe(notify_pipe) == -1) {
+	ಆದರೆ (pipe(notify_pipe) == -1) {
 		error("pipe(notify_pipe) failed %s", strerror(errno));
 		notify_pipe[0] = notify_pipe[1] = -1;
-		return -1;
+		ಹಿಂತಿರುಗಿ -1;
 	}
-	pselect_set_nonblock(notify_pipe[0]);
-	pselect_set_nonblock(notify_pipe[1]);
-	if (!suppress_debug)
+	pselect_ಗಣ_nonblock(notify_pipe[0]);
+	pselect_ಗಣ_nonblock(notify_pipe[1]);
+	ಆದರೆ (!suppress_debug)
 		debug3_f("pipe0 %d pipe1 %d", notify_pipe[0], notify_pipe[1]);
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
-static void
-pselect_notify_parent(void)
+ಸ್ಥಿರ ಶೂನ್ಯ
+pselect_notify_ಪೋಷಕ(ಶೂನ್ಯ)
 {
-	if (notify_pipe[1] != -1)
-		(void)write(notify_pipe[1], "", 1);
+	ಆದರೆ (notify_pipe[1] != -1)
+		(ಶೂನ್ಯ)ಲಿಖ(notify_pipe[1], "", 1);
 }
-static void
+ಸ್ಥಿರ ಶೂನ್ಯ
 pselect_notify_prepare(fd_set *readset)
 {
-	if (notify_pipe[0] != -1)
+	ಆದರೆ (notify_pipe[0] != -1)
 		FD_SET(notify_pipe[0], readset);
 }
-static void
-pselect_notify_done(fd_set *readset)
+ಸ್ಥಿರ ಶೂನ್ಯ
+pselect_notify_ಮುಗಿದ(fd_set *readset)
 {
-	char c;
+	ಅಕ್ಷರ c;
 
-	if (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
-		while (read(notify_pipe[0], &c, 1) != -1)
+	ಆದರೆ (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
+		ಆಗ (ಪಠ(notify_pipe[0], &c, 1) != -1)
 			debug2_f("reading");
 		FD_CLR(notify_pipe[0], readset);
 	}
-	(void)close(notify_pipe[0]);
-	(void)close(notify_pipe[1]);
+	(ಶೂನ್ಯ)close(notify_pipe[0]);
+	(ಶೂನ್ಯ)close(notify_pipe[1]);
 }
 
 /*ARGSUSED*/
-static void
-pselect_sig_handler(int sig)
+ಸ್ಥಿರ ಶೂನ್ಯ
+pselect_sig_handler(ಪೂರ್ಣಾಂಕ sig)
 {
-	int save_errno = errno;
+	ಪೂರ್ಣಾಂಕ save_errno = errno;
 
-	pselect_notify_parent();
-	if (saved_sighandler[sig] != NULL)
+	pselect_notify_ಪೋಷಕ();
+	ಆದರೆ (saved_sighandler[sig] != ಖಾಲಿ)
 		(*saved_sighandler[sig])(sig);  /* call original handler */
 	errno = save_errno;
 }
@@ -124,34 +124,34 @@ pselect_sig_handler(int sig)
  * A minimal implementation of pselect(2), built on top of select(2).
  */
 
-int
-pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
-    const struct timespec *timeout, const sigset_t *mask)
+ಪೂರ್ಣಾಂಕ
+pselect(ಪೂರ್ಣಾಂಕ nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ timespec *timeout, ಸ್ಥಿರಾಂಕ sigset_t *ಮುಖವಾಡ)
 {
-	int ret, sig, saved_errno, unmasked = 0;
+	ಪೂರ್ಣಾಂಕ ret, sig, saved_errno, unmasked = 0;
 	sigset_t osig;
-	struct sigaction sa, osa;
-	struct timeval tv, *tvp = NULL;
+	ರಚನೆ sigaction sa, osa;
+	ರಚನೆ timeval tv, *tvp = ಖಾಲಿ;
 
-	if (timeout != NULL) {
+	ಆದರೆ (timeout != ಖಾಲಿ) {
 		tv.tv_sec = timeout->tv_sec;
 		tv.tv_usec = timeout->tv_nsec / 1000;
 		tvp = &tv;
 	}
-	if (mask == NULL)  /* no signal mask, just call select */
-		return select(nfds, readfds, writefds, exceptfds, tvp);
+	ಆದರೆ (ಮುಖವಾಡ == ಖಾಲಿ)  /* no signal mask, just call select */
+		ಹಿಂತಿರುಗಿ select(nfds, readfds, writefds, exceptfds, tvp);
 
 	/* For each signal unmasked, save old handler and install ours. */
-	for (sig = 0; sig < _NSIG; sig++) {
-		saved_sighandler[sig] = NULL;
-		if (sig == SIGKILL || sig == SIGSTOP || sigismember(mask, sig))
-			continue;
-		if (sigaction(sig, NULL, &sa) == 0 &&
+	ಗಾಗಿ (sig = 0; sig < _NSIG; sig++) {
+		saved_sighandler[sig] = ಖಾಲಿ;
+		ಆದರೆ (sig == SIGKILL || sig == SIGSTOP || sigismember(ಮುಖವಾಡ, sig))
+			ಮುಂದುವರಿ;
+		ಆದರೆ (sigaction(sig, ಖಾಲಿ, &sa) == 0 &&
 		    sa.sa_handler != SIG_IGN && sa.sa_handler != SIG_DFL) {
 			unmasked = 1;
 			sa.sa_handler = pselect_sig_handler;
-			if (sigaction(sig, &sa, &osa) == 0) {
-				if (!suppress_debug)
+			ಆದರೆ (sigaction(sig, &sa, &osa) == 0) {
+				ಆದರೆ (!suppress_debug)
 					debug3_f("installed signal handler for"
 					    " %s, previous 0x%p",
 					    strsignal(sig), osa.sa_handler);
@@ -159,36 +159,36 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 			}
 		}
 	}
-	if (unmasked) {
-		if ((ret = pselect_notify_setup()) == -1) {
+	ಆದರೆ (unmasked) {
+		ಆದರೆ ((ret = pselect_notify_ಸಿದ್ಧತೆ()) == -1) {
 			saved_errno = ENOMEM;
-			goto out;
+			ಹೋಗು ಹೊರಹೋಗು;
 		}
 		pselect_notify_prepare(readfds);
 		nfds = MAX(nfds, notify_pipe[0] + 1);
 	}
 
 	/* Unmask signals, call select then restore signal mask. */
-	sigprocmask(SIG_SETMASK, mask, &osig);
+	sigprocmask(SIG_SETMASK, ಮುಖವಾಡ, &osig);
 	ret = select(nfds, readfds, writefds, exceptfds, tvp);
 	saved_errno = errno;
-	sigprocmask(SIG_SETMASK, &osig, NULL);
+	sigprocmask(SIG_SETMASK, &osig, ಖಾಲಿ);
 
-	if (unmasked)
-		pselect_notify_done(readfds);
+	ಆದರೆ (unmasked)
+		pselect_notify_ಮುಗಿದ(readfds);
 
- out:
+ ಹೊರಹೋಗು:
 	/* Restore signal handlers. */
-	for (sig = 0; sig < _NSIG; sig++) {
-		if (saved_sighandler[sig] == NULL)
-			continue;
-		if (sigaction(sig, NULL, &sa) == 0) {
+	ಗಾಗಿ (sig = 0; sig < _NSIG; sig++) {
+		ಆದರೆ (saved_sighandler[sig] == ಖಾಲಿ)
+			ಮುಂದುವರಿ;
+		ಆದರೆ (sigaction(sig, ಖಾಲಿ, &sa) == 0) {
 			sa.sa_handler = saved_sighandler[sig];
-			if (sigaction(sig, &sa, NULL) == 0) {
-				if (!suppress_debug)
+			ಆದರೆ (sigaction(sig, &sa, ಖಾಲಿ) == 0) {
+				ಆದರೆ (!suppress_debug)
 					debug3_f("restored signal handler for "
 					    "%s", strsignal(sig));
-			} else {
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				error_f("failed to restore signal handler for "
 				    "%s: %s", strsignal(sig), strerror(errno));
 			}
@@ -196,6 +196,6 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	}
 	suppress_debug = 1;
 	errno = saved_errno;
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

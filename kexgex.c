@@ -24,81 +24,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifdef WITH_OPENSSL
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WITH_OPENSSL
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <openssl/evp.h>
-#include <signal.h>
+#ಅನ್ತರ್ಭಾವ <openssl/evp.h>
+#ಅನ್ತರ್ಭಾವ <signal.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#ಅನ್ತರ್ಭಾವ "openbsd-compat/openssl-compat.h"
 
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "cipher.h"
+#ಅನ್ತರ್ಭಾವ "kex.h"
+#ಅನ್ತರ್ಭಾವ "ssh2.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "digest.h"
 
-int
+ಪೂರ್ಣಾಂಕ
 kexgex_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    int min, int wantbits, int max,
-    const BIGNUM *prime,
-    const BIGNUM *gen,
-    const BIGNUM *client_dh_pub,
-    const BIGNUM *server_dh_pub,
-    const u_char *shared_secret, size_t secretlen,
-    u_char *hash, size_t *hashlen)
+    ಪೂರ್ಣಾಂಕ hash_alg,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *client_ಆವೃತ್ತಿ,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *server_ಆವೃತ್ತಿ,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *client_kexinit,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *server_kexinit,
+    ಸ್ಥಿರಾಂಕ ರಚನೆ sshbuf *server_host_ಕೀಲಿ_blob,
+    ಪೂರ್ಣಾಂಕ min, ಪೂರ್ಣಾಂಕ wantbits, ಪೂರ್ಣಾಂಕ max,
+    ಸ್ಥಿರಾಂಕ BIGNUM *ಅವಿಭಾಜ್ಯ,
+    ಸ್ಥಿರಾಂಕ BIGNUM *gen,
+    ಸ್ಥಿರಾಂಕ BIGNUM *client_dh_pub,
+    ಸ್ಥಿರಾಂಕ BIGNUM *server_dh_pub,
+    ಸ್ಥಿರಾಂಕ u_char *shared_secret, ಗಾತ್ರ_t secretlen,
+    u_char *hash, ಗಾತ್ರ_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	ರಚನೆ sshbuf *b;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
-	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
+	ಆದರೆ (*hashlen < ssh_digest_ಬೈಟುಗಳು(SSH_DIGEST_SHA1))
+		ಹಿಂತಿರುಗಿ SSH_ERR_INVALID_ವಾದ;
+	ಆದರೆ ((b = sshbuf_new()) == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ SSH_ERR_ALLOC_FAIL;
+	ಆದರೆ ((r = sshbuf_put_stringb(b, client_ಆವೃತ್ತಿ)) < 0 ||
+	    (r = sshbuf_put_stringb(b, server_ಆವೃತ್ತಿ)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ಸಂದೇಶ_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ಸಂದೇಶ_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_ಕೀಲಿ_blob)) != 0 ||
 	    (min != -1 && (r = sshbuf_put_u32(b, min)) != 0) ||
 	    (r = sshbuf_put_u32(b, wantbits)) != 0 ||
 	    (max != -1 && (r = sshbuf_put_u32(b, max)) != 0) ||
-	    (r = sshbuf_put_bignum2(b, prime)) != 0 ||
+	    (r = sshbuf_put_bignum2(b, ಅವಿಭಾಜ್ಯ)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, gen)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, client_dh_pub)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||
 	    (r = sshbuf_put(b, shared_secret, secretlen)) != 0) {
 		sshbuf_free(b);
-		return r;
+		ಹಿಂತಿರುಗಿ r;
 	}
-#ifdef DEBUG_KEXDH
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_KEXDH
 	sshbuf_dump(b, stderr);
-#endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (ssh_digest_ಬಫರ್(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		ಹಿಂತಿರುಗಿ SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
-	*hashlen = ssh_digest_bytes(hash_alg);
-#ifdef DEBUG_KEXDH
+	*hashlen = ssh_digest_ಬೈಟುಗಳು(hash_alg);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ DEBUG_KEXDH
 	dump_digest("hash", hash, *hashlen);
-#endif
-	return 0;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ 0;
 }
-#endif /* WITH_OPENSSL */
+#ಆದರೆ_ಅಂತ್ಯ /* WITH_OPENSSL */

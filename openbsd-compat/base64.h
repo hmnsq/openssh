@@ -40,24 +40,24 @@
  * IF IBM IS APPRISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
 
-#ifndef _BSD_BASE64_H
-#define _BSD_BASE64_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ _BSD_BASE64_H
+#ವ್ಯಾಖ್ಯಾನಿಸು _BSD_BASE64_H
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#ifndef HAVE___B64_NTOP
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE___B64_NTOP
 # ifndef HAVE_B64_NTOP
-int b64_ntop(u_char const *src, size_t srclength, char *target,
-    size_t targsize);
+ಪೂರ್ಣಾಂಕ b64_ntop(u_char ಸ್ಥಿರಾಂಕ *src, ಗಾತ್ರ_t srclength, ಅಕ್ಷರ *ಗುರಿ,
+    ಗಾತ್ರ_t targsize);
 # endif /* !HAVE_B64_NTOP */
 # define __b64_ntop(a,b,c,d) b64_ntop(a,b,c,d)
-#endif /* HAVE___B64_NTOP */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE___B64_NTOP */
 
-#ifndef HAVE___B64_PTON
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ HAVE___B64_PTON
 # ifndef HAVE_B64_PTON
-int b64_pton(char const *src, u_char *target, size_t targsize);
+ಪೂರ್ಣಾಂಕ b64_pton(ಅಕ್ಷರ ಸ್ಥಿರಾಂಕ *src, u_char *ಗುರಿ, ಗಾತ್ರ_t targsize);
 # endif /* !HAVE_B64_PTON */
 # define __b64_pton(a,b,c) b64_pton(a,b,c)
-#endif /* HAVE___B64_PTON */
+#ಆದರೆ_ಅಂತ್ಯ /* HAVE___B64_PTON */
 
-#endif /* _BSD_BASE64_H */
+#ಆದರೆ_ಅಂತ್ಯ /* _BSD_BASE64_H */

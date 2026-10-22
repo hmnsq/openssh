@@ -23,57 +23,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#ಅನ್ತರ್ಭಾವ "packet.h"
+#ಅನ್ತರ್ಭಾವ "ssherr.h"
+#ಅನ್ತರ್ಭಾವ "log.h"
+#ಅನ್ತರ್ಭಾವ "sshkey.h"
+#ಅನ್ತರ್ಭಾವ "hostfile.h"
+#ಅನ್ತರ್ಭಾವ "auth.h"
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ GSSAPI
+#ಅನ್ತರ್ಭಾವ "ssh-gss.h"
+#ಆದರೆ_ಅಂತ್ಯ
+#ಅನ್ತರ್ಭಾವ "monitor_wrap.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
+#ಅನ್ತರ್ಭಾವ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+ಬಾಹ್ಯ ServerOptions options;
+ಬಾಹ್ಯ ರಚನೆ authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+userauth_passwd(ರಚನೆ ssh *ssh, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ವಿಧಾನ)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	ಅಕ್ಷರ *password = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	ಗಾತ್ರ_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	ಆದರೆ ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	    (change && (r = sshpkt_get_cstring(ssh, ಖಾಲಿ, ಖಾಲಿ)) != 0) ||
+	    (r = sshpkt_get_ಕೊನೆ(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	ಆದರೆ (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	ಹಿಂತಿರುಗಿ authenticated;
 }
 
-Authmethod method_passwd = {
+Authmethod ವಿಧಾನ_passwd = {
 	&methodcfg_passwd,
 	userauth_passwd,
 };

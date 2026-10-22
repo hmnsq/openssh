@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#ಅನ್ತರ್ಭಾವ "../test_helper/test_helper.h"
+#ಅನ್ತರ್ಭಾವ "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+ಶೂನ್ಯ mldsa_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ mlkem_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ ed25519_tests(ಶೂನ್ಯ);
+ಶೂನ್ಯ mldsa_eddsa_tests(ಶೂನ್ಯ);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+ರಚನೆ sshbuf *ತುಂಬು_ಪಠ್ಯ_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name);
+ಅಕ್ಷರ *get_json_string(ರಚನೆ sshbuf *content, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೀಲಿ, ಪೂರ್ಣಾಂಕ consume);
 
-static struct sshbuf *
-load_file(const char *name)
+ಸ್ಥಿರ ರಚನೆ sshbuf *
+ತುಂಬು_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	struct sshbuf *ret = NULL;
+	ರಚನೆ sshbuf *ret = ಖಾಲಿ;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_ತುಂಬು_file(test_ದತ್ತಾಂಶ_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, ಖಾಲಿ);
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+ರಚನೆ sshbuf *
+ತುಂಬು_ಪಠ್ಯ_file(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
-	size_t len;
+	ರಚನೆ sshbuf *ret = ತುಂಬು_file(name);
+	ಸ್ಥಿರಾಂಕ u_char *p;
+	ಗಾತ್ರ_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	ಗಾಗಿ (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		ಆದರೆ (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
-			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+			ASSERT_INT_EQ(sshbuf_consume_ಕೊನೆ(ret, 1), 0);
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 
@@ -59,65 +59,65 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+ಅಕ್ಷರ *
+get_json_string(ರಚನೆ sshbuf *content, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೀಲಿ, ಪೂರ್ಣಾಂಕ consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
-	size_t off, end_off;
+	ರಚನೆ sshbuf *tmp;
+	ಅಕ್ಷರ *k, *ret;
+	ಗಾತ್ರ_t off, ಕೊನೆ_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, ಖಾಲಿ);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", ಕೀಲಿ), 0);
+	ಆದರೆ (sshbuf_ಕಂಡುಹಿಡಿ(tmp, 0, k, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
-	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	ASSERT_INT_EQ(sshbuf_consume(tmp, off + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(k)), 0);
+	ಬಿಡುಗಡೆ(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	ಆಗ (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		ಆದರೆ (ಖಾಲಿಯೇ(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
-	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
-	memcpy(ret, sshbuf_ptr(tmp), end_off);
-	ret[end_off] = '\0';
-	if (consume) {
-		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
-		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
+	ASSERT_INT_EQ(sshbuf_ಕಂಡುಹಿಡಿ(tmp, 0, "\"", 1, &ಕೊನೆ_off), 0);
+	ASSERT_PTR_NE(ret = ಸ್ಮರಣೆ_ಕೊಡು(ಕೊನೆ_off + 1), ಖಾಲಿ);
+	ಸ್ಮರಣೆ_ನಕಲು(ret, sshbuf_ptr(tmp), ಕೊನೆ_off);
+	ret[ಕೊನೆ_off] = '\0';
+	ಆದರೆ (consume) {
+		ASSERT_INT_EQ(sshbuf_consume(tmp, ಕೊನೆ_off), 0);
+		ASSERT_INT_EQ(sshbuf_consume_upto_ಮಗು(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
-void
-tests(void)
+ಶೂನ್ಯ
+tests(ಶೂನ್ಯ)
 {
-#ifdef USE_MLDSA
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MLDSA
 	mldsa_tests();
-#endif
-#ifdef USE_MLKEM768X25519
+#ಆದರೆ_ಅಂತ್ಯ
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MLKEM768X25519
 	mlkem_tests();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	ed25519_tests();
-#ifdef USE_MLDSA
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ USE_MLDSA
 	mldsa_eddsa_tests();
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
-void
-benchmarks(void)
+ಶೂನ್ಯ
+benchmarks(ಶೂನ್ಯ)
 {
 	/* none */
 }

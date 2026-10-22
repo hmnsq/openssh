@@ -5,18 +5,18 @@
  * poly1305-donna-unrolled.c from https://github.com/floodyberry/poly1305-donna
  */
 
-#ifndef POLY1305_H
-#define POLY1305_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ POLY1305_H
+#ವ್ಯಾಖ್ಯಾನಿಸು POLY1305_H
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#define POLY1305_KEYLEN		32
-#define POLY1305_TAGLEN		16
+#ವ್ಯಾಖ್ಯಾನಿಸು POLY1305_KEYLEN		32
+#ವ್ಯಾಖ್ಯಾನಿಸು POLY1305_TAGLEN		16
 
-void poly1305_auth(u_char out[POLY1305_TAGLEN], const u_char *m, size_t inlen,
-    const u_char key[POLY1305_KEYLEN])
+ಶೂನ್ಯ poly1305_auth(u_char ಹೊರಹೋಗು[POLY1305_TAGLEN], ಸ್ಥಿರಾಂಕ u_char *m, ಗಾತ್ರ_t inlen,
+    ಸ್ಥಿರಾಂಕ u_char ಕೀಲಿ[POLY1305_KEYLEN])
     __attribute__((__bounded__(__minbytes__, 1, POLY1305_TAGLEN)))
     __attribute__((__bounded__(__buffer__, 2, 3)))
     __attribute__((__bounded__(__minbytes__, 4, POLY1305_KEYLEN)));
 
-#endif	/* POLY1305_H */
+#ಆದರೆ_ಅಂತ್ಯ	/* POLY1305_H */

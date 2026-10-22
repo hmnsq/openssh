@@ -36,19 +36,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ಅನ್ತರ್ಭಾವ "includes.h"
 
-#include <sys/types.h>
+#ಅನ್ತರ್ಭಾವ <sys/types.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ಅನ್ತರ್ಭಾವ <ctype.h>
+#ಅನ್ತರ್ಭಾವ <stdlib.h>
+#ಅನ್ತರ್ಭಾವ <string.h>
+#ಅನ್ತರ್ಭಾವ <stdarg.h>
+#ಅನ್ತರ್ಭಾವ <stdio.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "misc.h"
+#ಅನ್ತರ್ಭಾವ "xmalloc.h"
+#ಅನ್ತರ್ಭಾವ "match.h"
+#ಅನ್ತರ್ಭಾವ "misc.h"
 
 /*
  * Computes the epsilon closure of an NFA set.
@@ -57,20 +57,20 @@
  *
  * This function modifies 'states' in place.
  */
-static void
-epsilon_closure(char *states, const char *pattern, size_t M)
+ಸ್ಥಿರ ಶೂನ್ಯ
+epsilon_ಆವರಣ(ಅಕ್ಷರ *ಸ್ಥಿತಿಗಳು, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಗಾತ್ರ_t M)
 {
-	size_t i;
+	ಗಾತ್ರ_t i;
 
 	/* only need a forward pass as there are no back jumps in our grammar */
-	for (i = 0; i < M; i++) {
-		if (!states[i] || pattern[i] != '*')
-			continue;
+	ಗಾಗಿ (i = 0; i < M; i++) {
+		ಆದರೆ (!ಸ್ಥಿತಿಗಳು[i] || ನಮೂನೆ[i] != '*')
+			ಮುಂದುವರಿ;
 		/*
 		 * State i is active, and pattern[i] is '*', so we can
 		 * epsilon-transition to i+1.
 		 */
-		states[i + 1] = 1;
+		ಸ್ಥಿತಿಗಳು[i + 1] = 1;
 	}
 }
 
@@ -78,77 +78,77 @@ epsilon_closure(char *states, const char *pattern, size_t M)
  * Returns true if the given string matches the pattern (which may contain ?
  * and * as wildcards), and zero if it does not match. Uses an NFA internally.
  */
-int
-match_pattern(const char *s, const char *pattern)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_ನಮೂನೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ)
 {
-	size_t M;
-	size_t i;
-	char *states, *next_states, *tmp;
-	int active, matched = 0;
+	ಗಾತ್ರ_t M;
+	ಗಾತ್ರ_t i;
+	ಅಕ್ಷರ *ಸ್ಥಿತಿಗಳು, *ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು, *tmp;
+	ಪೂರ್ಣಾಂಕ ಸಕ್ರಿಯ, matched = 0;
 
 	/* trivial case: empty pattern vs empty input */
-	if ((M = strlen(pattern)) == 0)
-		return *s == '\0';
+	ಆದರೆ ((M = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ)) == 0)
+		ಹಿಂತಿರುಗಿ *s == '\0';
 
 	/* A state for each pattern character, plus one final accepting state */
-	states = xcalloc(M + 1, sizeof(*states));
-	next_states = xcalloc(M + 1, sizeof(*next_states));
+	ಸ್ಥಿತಿಗಳು = xcalloc(M + 1, ಗಾತ್ರ(*ಸ್ಥಿತಿಗಳು));
+	ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು = xcalloc(M + 1, ಗಾತ್ರ(*ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು));
 
 	/* Initial state: state 0 is active */
-	states[0] = 1;
+	ಸ್ಥಿತಿಗಳು[0] = 1;
 	/* Other states might be reachable now if the pattern starts with '*' */
-	epsilon_closure(states, pattern, M);
+	epsilon_ಆವರಣ(ಸ್ಥಿತಿಗಳು, ನಮೂನೆ, M);
 
-	for (; *s; s++) {
-		memset(next_states, 0, M + 1);
+	ಗಾಗಿ (; *s; s++) {
+		memset(ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು, 0, M + 1);
 
 		/* Calculate the reachable next states given the input char */
-		for (i = 0; i < M; i++) {
-			if (!states[i])
-				continue;
-			if (pattern[i] == '*') {
+		ಗಾಗಿ (i = 0; i < M; i++) {
+			ಆದರೆ (!ಸ್ಥಿತಿಗಳು[i])
+				ಮುಂದುವರಿ;
+			ಆದರೆ (ನಮೂನೆ[i] == '*') {
 				/*
 				 * '*' matches any character, so we can
 				 * stay in state i
 				 */
-				next_states[i] = 1;
-			} else if (pattern[i] == '?' || pattern[i] == *s) {
+				ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು[i] = 1;
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ನಮೂನೆ[i] == '?' || ನಮೂನೆ[i] == *s) {
 				/*
 				 * '?' matches any character, or we have
 				 * a literal match.
 				 */
-				next_states[i + 1] = 1;
+				ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು[i + 1] = 1;
 			}
 		}
 
 		/* Expand the reachable next states with epsilon transitions */
-		epsilon_closure(next_states, pattern, M);
+		epsilon_ಆವರಣ(ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು, ನಮೂನೆ, M);
 
 		/* Swap states and next_states */
-		tmp = states;
-		states = next_states;
-		next_states = tmp;
+		tmp = ಸ್ಥಿತಿಗಳು;
+		ಸ್ಥಿತಿಗಳು = ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು;
+		ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು = tmp;
 
 		/* Check if we have any active pattern states left */
-		active = 0;
-		for (i = 0; i <= M; i++) {
-			if (states[i]) {
-				active = 1;
-				break;
+		ಸಕ್ರಿಯ = 0;
+		ಗಾಗಿ (i = 0; i <= M; i++) {
+			ಆದರೆ (ಸ್ಥಿತಿಗಳು[i]) {
+				ಸಕ್ರಿಯ = 1;
+				ನಿಲ್ಲಿಸು;
 			}
 		}
-		if (!active)
-			goto out; /* No active states, fail early */
+		ಆದರೆ (!ಸಕ್ರಿಯ)
+			ಹೋಗು ಹೊರಹೋಗು; /* No active states, fail early */
 	}
 	/*
 	 * We matched only if we ended up in the final, accepting state
 	 * after consuming all the input.
 	 */
-	matched = states[M];
- out:
-	free(states);
-	free(next_states);
-	return matched;
+	matched = ಸ್ಥಿತಿಗಳು[M];
+ ಹೊರಹೋಗು:
+	ಬಿಡುಗಡೆ(ಸ್ಥಿತಿಗಳು);
+	ಬಿಡುಗಡೆ(ಮುಂದಿನ_ಸ್ಥಿತಿಗಳು);
+	ಹಿಂತಿರುಗಿ matched;
 }
 
 /*
@@ -157,49 +157,49 @@ match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_pattern_list(const char *string, const char *pattern, int dolower)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_ನಮೂನೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ, ಪೂರ್ಣಾಂಕ dolower)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	u_int i, subi, len = strlen(pattern);
+	ಅಕ್ಷರ sub[1024];
+	ಪೂರ್ಣಾಂಕ negated;
+	ಪೂರ್ಣಾಂಕ got_ಧನಾತ್ಮಕ;
+	u_int i, subi, len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ನಮೂನೆ);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_ಧನಾತ್ಮಕ = 0;
+	ಗಾಗಿ (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ಆದರೆ (ನಮೂನೆ[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} ಇಲ್ಲದಿದ್ದರೆ
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		ಗಾಗಿ (subi = 0;
+		    i < len && subi < ಗಾತ್ರ(sub) - 1 && ನಮೂನೆ[i] != ',';
 		    subi++, i++)
-			sub[subi] = dolower && isupper((u_char)pattern[i]) ?
-			    tolower((u_char)pattern[i]) : pattern[i];
+			sub[subi] = dolower && isupper((u_char)ನಮೂನೆ[i]) ?
+			    tolower((u_char)ನಮೂನೆ[i]) : ನಮೂನೆ[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ಆದರೆ (subi >= ಗಾತ್ರ(sub) - 1)
+			ಹಿಂತಿರುಗಿ 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ಆದರೆ (i < len && ನಮೂನೆ[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		ಆದರೆ (ಹೊಂದಿಕೆ_ನಮೂನೆ(string, sub)) {
+			ಆದರೆ (negated)
+				ಹಿಂತಿರುಗಿ -1;		/* Negative */
+			ಇಲ್ಲದಿದ್ದರೆ
+				got_ಧನಾತ್ಮಕ = 1;	/*ಧನಾತ್ಮಕ*/
 		}
 	}
 
@@ -207,20 +207,20 @@ match_pattern_list(const char *string, const char *pattern, int dolower)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	ಹಿಂತಿರುಗಿ got_ಧನಾತ್ಮಕ;
 }
 
 /* Match a list representing users or groups. */
-int
-match_usergroup_pattern_list(const char *string, const char *pattern)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_usergroup_ನಮೂನೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *string, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ)
 {
-#ifdef HAVE_CYGWIN
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ HAVE_CYGWIN
 	/* Windows usernames may be Unicode and are not case sensitive */
-	return cygwin_ug_match_pattern_list(string, pattern);
-#else
+	ಹಿಂತಿರುಗಿ cygwin_ug_ಹೊಂದಿಕೆ_ನಮೂನೆ_list(string, ನಮೂನೆ);
+#ಇಲ್ಲದಿದ್ದರೆ
 	/* Case sensitive match */
-	return match_pattern_list(string, pattern, 0);
-#endif
+	ಹಿಂತಿರುಗಿ ಹೊಂದಿಕೆ_ನಮೂನೆ_list(string, ನಮೂನೆ, 0);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 /*
@@ -229,16 +229,16 @@ match_usergroup_pattern_list(const char *string, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_hostname(const char *host, const char *pattern)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_hostname(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ)
 {
-	char *hostcopy = xstrdup(host);
-	int r;
+	ಅಕ್ಷರ *hostcopy = xstrdup(host);
+	ಪೂರ್ಣಾಂಕ r;
 
 	lowercase(hostcopy);
-	r = match_pattern_list(hostcopy, pattern, 1);
-	free(hostcopy);
-	return r;
+	r = ಹೊಂದಿಕೆ_ನಮೂನೆ_list(hostcopy, ನಮೂನೆ, 1);
+	ಬಿಡುಗಡೆ(hostcopy);
+	ಹಿಂತಿರುಗಿ r;
 }
 
 /*
@@ -246,24 +246,24 @@ match_hostname(const char *host, const char *pattern)
  * or if we get no match at all.  returns -1 on error, or 1 on
  * successful match.
  */
-int
-match_host_and_ip(const char *host, const char *ipaddr,
-    const char *patterns)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_host_and_ip(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ipaddr,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *patterns)
 {
-	int mhost, mip;
+	ಪೂರ್ಣಾಂಕ mhost, mip;
 
-	if ((mip = addr_match_list(ipaddr, patterns)) == -2)
-		return -1; /* error in ipaddr match */
-	else if (host == NULL || ipaddr == NULL || mip == -1)
-		return 0; /* negative ip address match, or testing pattern */
+	ಆದರೆ ((mip = addr_ಹೊಂದಿಕೆ_list(ipaddr, patterns)) == -2)
+		ಹಿಂತಿರುಗಿ -1; /* error in ipaddr match */
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (host == ಖಾಲಿ || ipaddr == ಖಾಲಿ || mip == -1)
+		ಹಿಂತಿರುಗಿ 0; /* negative ip address match, or testing pattern */
 
 	/* negative hostname match */
-	if ((mhost = match_hostname(host, patterns)) == -1)
-		return 0;
+	ಆದರೆ ((mhost = ಹೊಂದಿಕೆ_hostname(host, patterns)) == -1)
+		ಹಿಂತಿರುಗಿ 0;
 	/* no match at all */
-	if (mhost == 0 && mip == 0)
-		return 0;
-	return 1;
+	ಆದರೆ (mhost == 0 && mip == 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
 /*
@@ -271,82 +271,82 @@ match_host_and_ip(const char *host, const char *ipaddr,
  * If user, host and ipaddr are all NULL then validate pattern/
  * Returns -1 on invalid pattern, 0 on no match, 1 on match.
  */
-int
-match_user(const char *user, const char *host, const char *ipaddr,
-    const char *pattern)
+ಪೂರ್ಣಾಂಕ
+ಹೊಂದಿಕೆ_user(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *user, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *host, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ipaddr,
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ನಮೂನೆ)
 {
-	char *p, *pat;
-	int ret;
+	ಅಕ್ಷರ *p, *pat;
+	ಪೂರ್ಣಾಂಕ ret;
 
 	/* test mode */
-	if (user == NULL && host == NULL && ipaddr == NULL) {
-		if ((p = strrchr(pattern, '@')) != NULL &&
-		    match_host_and_ip(NULL, NULL, p + 1) < 0)
-			return -1;
-		return 0;
+	ಆದರೆ (user == ಖಾಲಿ && host == ಖಾಲಿ && ipaddr == ಖಾಲಿ) {
+		ಆದರೆ ((p = strrchr(ನಮೂನೆ, '@')) != ಖಾಲಿ &&
+		    ಹೊಂದಿಕೆ_host_and_ip(ಖಾಲಿ, ಖಾಲಿ, p + 1) < 0)
+			ಹಿಂತಿರುಗಿ -1;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (user == NULL)
-		return 0; /* shouldn't happen */
+	ಆದರೆ (user == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ 0; /* shouldn't happen */
 
-	if (strrchr(pattern, '@') == NULL)
-		return match_pattern(user, pattern);
+	ಆದರೆ (strrchr(ನಮೂನೆ, '@') == ಖಾಲಿ)
+		ಹಿಂತಿರುಗಿ ಹೊಂದಿಕೆ_ನಮೂನೆ(user, ನಮೂನೆ);
 
-	pat = xstrdup(pattern);
+	pat = xstrdup(ನಮೂನೆ);
 	p = strrchr(pat, '@');
 	*p++ = '\0';
 
-	if ((ret = match_pattern(user, pat)) == 1)
-		ret = match_host_and_ip(host, ipaddr, p);
-	free(pat);
+	ಆದರೆ ((ret = ಹೊಂದಿಕೆ_ನಮೂನೆ(user, pat)) == 1)
+		ret = ಹೊಂದಿಕೆ_host_and_ip(host, ipaddr, p);
+	ಬಿಡುಗಡೆ(pat);
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }
 
 /*
  * Returns first item from client-list that is also supported by server-list,
  * caller must free the returned string.
  */
-#define	MAX_PROP	40
-#define	SEP	","
-char *
-match_list(const char *client, const char *server, u_int *next)
+#ವ್ಯಾಖ್ಯಾನಿಸು	MAX_PROP	40
+#ವ್ಯಾಖ್ಯಾನಿಸು	SEP	","
+ಅಕ್ಷರ *
+ಹೊಂದಿಕೆ_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *client, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *server, u_int *ಮುಂದಿನ)
 {
-	char *sproposals[MAX_PROP];
-	char *c, *s, *p, *ret, *cp, *sp;
-	int i, j, nproposals;
+	ಅಕ್ಷರ *sproposals[MAX_PROP];
+	ಅಕ್ಷರ *c, *s, *p, *ret, *cp, *sp;
+	ಪೂರ್ಣಾಂಕ i, j, nproposals;
 
 	c = cp = xstrdup(client);
 	s = sp = xstrdup(server);
 
-	for ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
+	ಗಾಗಿ ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&sp, SEP)), i++) {
-		if (i < MAX_PROP)
+		ಆದರೆ (i < MAX_PROP)
 			sproposals[i] = p;
-		else
-			break;
+		ಇಲ್ಲದಿದ್ದರೆ
+			ನಿಲ್ಲಿಸು;
 	}
 	nproposals = i;
 
-	for ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
+	ಗಾಗಿ ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&cp, SEP)), i++) {
-		for (j = 0; j < nproposals; j++) {
-			if (strcmp(p, sproposals[j]) == 0) {
+		ಗಾಗಿ (j = 0; j < nproposals; j++) {
+			ಆದರೆ (strcmp(p, sproposals[j]) == 0) {
 				ret = xstrdup(p);
-				if (next != NULL)
-					*next = (cp == NULL) ?
-					    strlen(c) : (u_int)(cp - c);
-				free(c);
-				free(s);
-				return ret;
+				ಆದರೆ (ಮುಂದಿನ != ಖಾಲಿ)
+					*ಮುಂದಿನ = (cp == ಖಾಲಿ) ?
+					    ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(c) : (u_int)(cp - c);
+				ಬಿಡುಗಡೆ(c);
+				ಬಿಡುಗಡೆ(s);
+				ಹಿಂತಿರುಗಿ ret;
 			}
 		}
 	}
-	if (next != NULL)
-		*next = strlen(c);
-	free(c);
-	free(s);
-	return NULL;
+	ಆದರೆ (ಮುಂದಿನ != ಖಾಲಿ)
+		*ಮುಂದಿನ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(c);
+	ಬಿಡುಗಡೆ(c);
+	ಬಿಡುಗಡೆ(s);
+	ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 /*
@@ -356,51 +356,51 @@ match_list(const char *client, const char *server, u_int *next)
  * zero indicates that only items matching filter should be included.
  * returns NULL on allocation error, otherwise caller must free result.
  */
-static char *
-filter_list(const char *proposal, const char *filter, int denylist)
+ಸ್ಥಿರ ಅಕ್ಷರ *
+filter_list(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *proposal, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filter, ಪೂರ್ಣಾಂಕ denylist)
 {
-	size_t len = strlen(proposal) + 1;
-	char *fix_prop = malloc(len);
-	char *orig_prop = strdup(proposal);
-	char *cp, *tmp;
-	int r;
+	ಗಾತ್ರ_t len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(proposal) + 1;
+	ಅಕ್ಷರ *fix_prop = ಸ್ಮರಣೆ_ಕೊಡು(len);
+	ಅಕ್ಷರ *orig_prop = strdup(proposal);
+	ಅಕ್ಷರ *cp, *tmp;
+	ಪೂರ್ಣಾಂಕ r;
 
-	if (fix_prop == NULL || orig_prop == NULL) {
-		free(orig_prop);
-		free(fix_prop);
-		return NULL;
+	ಆದರೆ (fix_prop == ಖಾಲಿ || orig_prop == ಖಾಲಿ) {
+		ಬಿಡುಗಡೆ(orig_prop);
+		ಬಿಡುಗಡೆ(fix_prop);
+		ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 	}
 
 	tmp = orig_prop;
 	*fix_prop = '\0';
-	while ((cp = strsep(&tmp, ",")) != NULL) {
-		r = match_pattern_list(cp, filter, 0);
-		if ((denylist && r != 1) || (!denylist && r == 1)) {
-			if (*fix_prop != '\0')
+	ಆಗ ((cp = strsep(&tmp, ",")) != ಖಾಲಿ) {
+		r = ಹೊಂದಿಕೆ_ನಮೂನೆ_list(cp, filter, 0);
+		ಆದರೆ ((denylist && r != 1) || (!denylist && r == 1)) {
+			ಆದರೆ (*fix_prop != '\0')
 				strlcat(fix_prop, ",", len);
 			strlcat(fix_prop, cp, len);
 		}
 	}
-	free(orig_prop);
-	return fix_prop;
+	ಬಿಡುಗಡೆ(orig_prop);
+	ಹಿಂತಿರುಗಿ fix_prop;
 }
 
 /*
  * Filters a comma-separated list of strings, excluding any entry matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_denylist(const char *proposal, const char *filter)
+ಅಕ್ಷರ *
+ಹೊಂದಿಕೆ_filter_denylist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *proposal, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filter)
 {
-	return filter_list(proposal, filter, 1);
+	ಹಿಂತಿರುಗಿ filter_list(proposal, filter, 1);
 }
 
 /*
  * Filters a comma-separated list of strings, including only entries matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_allowlist(const char *proposal, const char *filter)
+ಅಕ್ಷರ *
+ಹೊಂದಿಕೆ_filter_allowlist(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *proposal, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filter)
 {
-	return filter_list(proposal, filter, 0);
+	ಹಿಂತಿರುಗಿ filter_list(proposal, filter, 0);
 }
