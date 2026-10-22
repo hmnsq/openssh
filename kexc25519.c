@@ -25,175 +25,175 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "ssh2.h"
+#ضمن "sshkey.h"
+#ضمن "kex.h"
+#ضمن "sshbuf.h"
+#ضمن "digest.h"
+#ضمن "ssherr.h"
+#ضمن "ssh2.h"
 
-extern int crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
-    const u_char b[CURVE25519_SIZE], const u_char c[CURVE25519_SIZE])
+خارجي صحيح crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
+    ثابت u_char b[CURVE25519_SIZE], ثابت u_char c[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 3, CURVE25519_SIZE)));
 
-void
-kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+فراغ
+kexc25519_keygen(u_char کلیل[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 {
-	static const u_char basepoint[CURVE25519_SIZE] = {9};
+	ساكن ثابت u_char basepoint[CURVE25519_SIZE] = {9};
 
-	arc4random_buf(key, CURVE25519_SIZE);
-	crypto_scalarmult_curve25519(pub, key, basepoint);
+	arc4random_buf(کلیل, CURVE25519_SIZE);
+	crypto_scalarmult_curve25519(pub, کلیل, basepoint);
 }
 
-int
-kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int raw)
+صحيح
+kexc25519_shared_کلیل_ext(ثابت u_char کلیل[CURVE25519_SIZE],
+    ثابت u_char pub[CURVE25519_SIZE], بنية sshbuf *out, صحيح raw)
 {
-	u_char shared_key[CURVE25519_SIZE];
+	u_char shared_کلیل[CURVE25519_SIZE];
 	u_char zero[CURVE25519_SIZE];
-	int r;
+	صحيح r;
 
-	crypto_scalarmult_curve25519(shared_key, key, pub);
+	crypto_scalarmult_curve25519(shared_کلیل, کلیل, pub);
 
 	/* Check for all-zero shared secret */
 	explicit_bzero(zero, CURVE25519_SIZE);
-	if (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
-		return SSH_ERR_KEY_INVALID_EC_VALUE;
+	إذا (timingsafe_bcmp(zero, shared_کلیل, CURVE25519_SIZE) == 0)
+		أرجع SSH_ERR_کلیل_INVALID_EC_بەها;
 
 #ifdef DEBUG_KEXECDH
-	dump_digest("shared secret 25519", shared_key, CURVE25519_SIZE);
+	dump_digest("shared secret 25519", shared_کلیل, CURVE25519_SIZE);
 #endif
-	if (raw)
-		r = sshbuf_put(out, shared_key, CURVE25519_SIZE);
-	else
-		r = sshbuf_put_bignum2_bytes(out, shared_key, CURVE25519_SIZE);
-	explicit_bzero(shared_key, CURVE25519_SIZE);
-	return r;
+	إذا (raw)
+		r = sshbuf_put(out, shared_کلیل, CURVE25519_SIZE);
+	وإلا
+		r = sshbuf_put_bignum2_bytes(out, shared_کلیل, CURVE25519_SIZE);
+	explicit_bzero(shared_کلیل, CURVE25519_SIZE);
+	أرجع r;
 }
 
-int
-kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+صحيح
+kexc25519_shared_کلیل(ثابت u_char کلیل[CURVE25519_SIZE],
+    ثابت u_char pub[CURVE25519_SIZE], بنية sshbuf *out)
 {
-	return kexc25519_shared_key_ext(key, pub, out, 0);
+	أرجع kexc25519_shared_کلیل_ext(کلیل, pub, out, 0);
 }
 
-int
-kex_c25519_keypair(struct kex *kex)
+صحيح
+kex_c25519_keypair(بنية kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
-	int r;
+	بنية sshbuf *buf = عدم;
+	u_char *cp = عدم;
+	صحيح r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
-		goto out;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	إذا ((buf = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
+		اذهب out;
+	kexc25519_keygen(kex->c25519_client_کلیل, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = عدم;
  out:
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-int
-kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
-   struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+صحيح
+kex_c25519_enc(بنية kex *kex, ثابت بنية sshbuf *client_blob,
+   بنية sshbuf **server_blobp, بنية sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
+	بنية sshbuf *server_blob = عدم;
+	بنية sshbuf *buf = عدم;
+	ثابت u_char *client_pub;
 	u_char *server_pub;
-	u_char server_key[CURVE25519_SIZE];
-	int r;
+	u_char server_کلیل[CURVE25519_SIZE];
+	صحيح r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = عدم;
+	*shared_secretp = عدم;
 
-	if (sshbuf_len(client_blob) != CURVE25519_SIZE) {
+	إذا (sshbuf_len(client_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب out;
 	}
 	client_pub = sshbuf_ptr(client_blob);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key 25519:", client_pub, CURVE25519_SIZE);
 #endif
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	إذا ((server_blob = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
-		goto out;
-	kexc25519_keygen(server_key, server_pub);
+	إذا ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
+		اذهب out;
+	kexc25519_keygen(server_کلیل, server_pub);
 	/* allocate shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	إذا ((buf = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
-		goto out;
+	إذا ((r = kexc25519_shared_کلیل_ext(server_کلیل, client_pub, buf, 0)) < 0)
+		اذهب out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
+	server_blob = عدم;
+	buf = عدم;
  out:
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_کلیل, حجم(server_کلیل));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-int
-kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+صحيح
+kex_c25519_dec(بنية kex *kex, ثابت بنية sshbuf *server_blob,
+    بنية sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	const u_char *server_pub;
-	int r;
+	بنية sshbuf *buf = عدم;
+	ثابت u_char *server_pub;
+	صحيح r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = عدم;
 
-	if (sshbuf_len(server_blob) != CURVE25519_SIZE) {
+	إذا (sshbuf_len(server_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب out;
 	}
 	server_pub = sshbuf_ptr(server_blob);
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	/* shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	إذا ((buf = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	إذا ((r = kexc25519_shared_کلیل_ext(kex->c25519_client_کلیل, server_pub,
 	    buf, 0)) < 0)
-		goto out;
+		اذهب out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = عدم;
  out:
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }

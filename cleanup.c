@@ -15,18 +15,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <unistd.h>
-#include <stdarg.h>
+#ضمن <unistd.h>
+#ضمن <stdarg.h>
 
-#include "log.h"
+#ضمن "log.h"
 
 /* default implementation */
-void
-cleanup_exit(int i)
+فراغ
+cleanup_exit(صحيح i)
 {
 	_exit(i);
 }

@@ -24,113 +24,113 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ضمن <stdlib.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <pwd.h>
+#ضمن <stdio.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
 
-#include "ssh.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "digest.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#ضمن "ssh.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "sshkey.h"
+#ضمن "digest.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "auth-options.h"
+#ضمن "authfile.h"
+#ضمن "match.h"
+#ضمن "ssherr.h"
+#ضمن "xmalloc.h"
 
-int
-auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
-    int allow_cert_authority, const char *remote_ip, const char *remote_host,
-    const char *loc)
+صحيح
+auth_authorise_keyopts(بنية passwd *pw, بنية sshauthopt *opts,
+    صحيح allow_cert_authority, ثابت حرف *remote_ip, ثابت حرف *remote_host,
+    ثابت حرف *loc)
 {
-	time_t now = time(NULL);
-	char buf[64];
+	time_t now = time(عدم);
+	حرف buf[64];
 
 	/*
 	 * Check keys/principals file expiry time.
 	 * NB. validity interval in certificate is handled elsewhere.
 	 */
-	if (opts->valid_before && now > 0 &&
+	إذا (opts->valid_before && now > 0 &&
 	    opts->valid_before < (uint64_t)now) {
-		format_absolute_time(opts->valid_before, buf, sizeof(buf));
+		format_absolute_time(opts->valid_before, buf, حجم(buf));
 		debug("%s: entry expired at %s", loc, buf);
 		auth_debug_add("%s: entry expired at %s", loc, buf);
-		return -1;
+		أرجع -1;
 	}
 	/* Consistency checks */
-	if (opts->cert_principals != NULL && !opts->cert_authority) {
+	إذا (opts->cert_principals != عدم && !opts->cert_authority) {
 		debug("%s: principals on non-CA key", loc);
 		auth_debug_add("%s: principals on non-CA key", loc);
 		/* deny access */
-		return -1;
+		أرجع -1;
 	}
 	/* cert-authority flag isn't valid in authorized_principals files */
-	if (!allow_cert_authority && opts->cert_authority) {
+	إذا (!allow_cert_authority && opts->cert_authority) {
 		debug("%s: cert-authority flag invalid here", loc);
 		auth_debug_add("%s: cert-authority flag invalid here", loc);
 		/* deny access */
-		return -1;
+		أرجع -1;
 	}
 
 	/* Perform from= checks */
-	if (opts->required_from_host_keys != NULL) {
-		switch (match_host_and_ip(remote_host, remote_ip,
-		    opts->required_from_host_keys )) {
-		case 1:
+	إذا (opts->required_from_host_کلیلەکان != عدم) {
+		بدل (match_host_and_ip(remote_host, remote_ip,
+		    opts->required_from_host_کلیلەکان )) {
+		حالة 1:
 			/* Host name matches. */
-			break;
-		case -1:
-		default:
+			اكسر;
+		حالة -1:
+		افتراضي:
 			debug("%s: invalid from criteria", loc);
 			auth_debug_add("%s: invalid from criteria", loc);
 			/* FALLTHROUGH */
-		case 0:
+		حالة 0:
 			logit("%s: Authentication tried for %.100s with "
 			    "correct key but not from a permitted "
 			    "host (host=%.200s, ip=%.200s, required=%.200s).",
 			    loc, pw->pw_name, remote_host, remote_ip,
-			    opts->required_from_host_keys);
+			    opts->required_from_host_کلیلەکان);
 			auth_debug_add("%s: Your host '%.200s' is not "
 			    "permitted to use this key for login.",
 			    loc, remote_host);
 			/* deny access */
-			return -1;
+			أرجع -1;
 		}
 	}
 	/* Check source-address restriction from certificate */
-	if (opts->required_from_host_cert != NULL) {
-		switch (addr_match_cidr_list(remote_ip,
+	إذا (opts->required_from_host_cert != عدم) {
+		بدل (addr_match_cidr_list(remote_ip,
 		    opts->required_from_host_cert)) {
-		case 1:
+		حالة 1:
 			/* accepted */
-			break;
-		case -1:
-		default:
+			اكسر;
+		حالة -1:
+		افتراضي:
 			/* invalid */
 			error("%s: Certificate source-address invalid", loc);
 			/* FALLTHROUGH */
-		case 0:
+		حالة 0:
 			logit("%s: Authentication tried for %.100s with valid "
 			    "certificate but not from a permitted source "
 			    "address (%.200s).", loc, pw->pw_name, remote_ip);
 			auth_debug_add("%s: Your address '%.200s' is not "
 			    "permitted to use this certificate for login.",
 			    loc, remote_ip);
-			return -1;
+			أرجع -1;
 		}
 	}
 	/*
@@ -141,30 +141,30 @@ auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
 	 */
 	auth_log_authopts(loc, opts, 1);
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-match_principals_option(const char *principal_list, struct sshkey_cert *cert)
+ساكن صحيح
+match_principals_option(ثابت حرف *principal_list, بنية sshkey_cert *cert)
 {
-	char *list, *olist, *entry;
+	حرف *list, *olist, *entry;
 	u_int i;
 
 	olist = list = xstrdup(principal_list);
-	for (;;) {
-		if ((entry = strsep(&list, ",")) == NULL || *entry == '\0')
-			break;
-		for (i = 0; i < cert->nprincipals; i++) {
-			if (strcmp(entry, cert->principals[i]) == 0) {
+	لكل (;;) {
+		إذا ((entry = strsep(&list, ",")) == عدم || *entry == '\0')
+			اكسر;
+		لكل (i = 0; i < cert->nprincipals; i++) {
+			إذا (strcmp(entry, cert->principals[i]) == 0) {
 				debug3("matched principal from key i"
 				    "options \"%.100s\"", entry);
-				free(olist);
-				return 1;
+				حرر(olist);
+				أرجع 1;
 			}
 		}
 	}
-	free(olist);
-	return 0;
+	حرر(olist);
+	أرجع 0;
 }
 
 /*
@@ -172,91 +172,91 @@ match_principals_option(const char *principal_list, struct sshkey_cert *cert)
  * authoptsp is principal is authorised, -1 otherwise. "loc" is used as a
  * log preamble for file/line information.
  */
-int
-auth_check_principals_line(char *cp, const struct sshkey_cert *cert,
-    const char *loc, struct sshauthopt **authoptsp)
+صحيح
+auth_check_principals_هێڵ(حرف *cp, ثابت بنية sshkey_cert *cert,
+    ثابت حرف *loc, بنية sshauthopt **authoptsp)
 {
 	u_int i, found = 0;
-	char *ep, *line_opts;
-	const char *reason = NULL;
-	struct sshauthopt *opts = NULL;
+	حرف *ep, *هێڵ_opts;
+	ثابت حرف *reason = عدم;
+	بنية sshauthopt *opts = عدم;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	إذا (authoptsp != عدم)
+		*authoptsp = عدم;
 
 	/* Trim trailing whitespace. */
 	ep = cp + strlen(cp) - 1;
-	while (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
+	طالما (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
 		*ep-- = '\0';
 
 	/*
 	 * If the line has internal whitespace then assume it has
 	 * key options.
 	 */
-	line_opts = NULL;
-	if ((ep = strrchr(cp, ' ')) != NULL ||
-	    (ep = strrchr(cp, '\t')) != NULL) {
-		for (; *ep == ' ' || *ep == '\t'; ep++)
+	هێڵ_opts = عدم;
+	إذا ((ep = strrchr(cp, ' ')) != عدم ||
+	    (ep = strrchr(cp, '\t')) != عدم) {
+		لكل (; *ep == ' ' || *ep == '\t'; ep++)
 			;
-		line_opts = cp;
+		هێڵ_opts = cp;
 		cp = ep;
 	}
-	if ((opts = sshauthopt_parse(line_opts, &reason)) == NULL) {
+	إذا ((opts = sshauthopt_parse(هێڵ_opts, &reason)) == عدم) {
 		debug("%s: bad principals options: %s", loc, reason);
 		auth_debug_add("%s: bad principals options: %s", loc, reason);
-		return -1;
+		أرجع -1;
 	}
 	/* Check principals in cert against those on line */
-	for (i = 0; i < cert->nprincipals; i++) {
-		if (strcmp(cp, cert->principals[i]) != 0)
-			continue;
+	لكل (i = 0; i < cert->nprincipals; i++) {
+		إذا (strcmp(cp, cert->principals[i]) != 0)
+			استمر;
 		debug3("%s: matched principal \"%.100s\"",
 		    loc, cert->principals[i]);
 		found = 1;
 	}
-	if (found && authoptsp != NULL) {
+	إذا (found && authoptsp != عدم) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = عدم;
 	}
 	sshauthopt_free(opts);
-	return found ? 0 : -1;
+	أرجع found ? 0 : -1;
 }
 
-int
-auth_process_principals(FILE *f, const char *file,
-    const struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+صحيح
+auth_process_principals(FILE *f, ثابت حرف *file,
+    ثابت بنية sshkey_cert *cert, بنية sshauthopt **authoptsp)
 {
-	char loc[256], *line = NULL, *cp, *ep;
+	حرف loc[256], *هێڵ = عدم, *cp, *ep;
 	size_t linesize = 0;
 	u_long linenum = 0, nonblank = 0;
 	u_int found_principal = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	إذا (authoptsp != عدم)
+		*authoptsp = عدم;
 
-	while (getline(&line, &linesize, f) != -1) {
+	طالما (getline(&هێڵ, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire input */
-		if (found_principal)
-			continue;
+		إذا (found_principal)
+			استمر;
 
 		/* Skip leading whitespace. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		لكل (cp = هێڵ; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		/* Skip blank and comment lines. */
-		if ((ep = strchr(cp, '#')) != NULL)
+		إذا ((ep = strchr(cp, '#')) != عدم)
 			*ep = '\0';
-		if (!*cp || *cp == '\n')
-			continue;
+		إذا (!*cp || *cp == '\n')
+			استمر;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_principals_line(cp, cert, loc, authoptsp) == 0)
+		snprintf(loc, حجم(loc), "%.200s:%lu", file, linenum);
+		إذا (auth_check_principals_هێڵ(cp, cert, loc, authoptsp) == 0)
 			found_principal = 1;
 	}
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	free(line);
-	return found_principal;
+	حرر(هێڵ);
+	أرجع found_principal;
 }
 
 /*
@@ -264,81 +264,81 @@ auth_process_principals(FILE *f, const char *file,
  * matches, -1 otherwise. Will return key/cert options via *authoptsp
  * on success. "loc" is used as file/line location in log messages.
  */
-int
-auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
-    char *cp, const char *remote_ip, const char *remote_host, const char *loc,
-    struct sshauthopt **authoptsp)
+صحيح
+auth_check_authkey_هێڵ(بنية passwd *pw, بنية sshkey *کلیل,
+    حرف *cp, ثابت حرف *remote_ip, ثابت حرف *remote_host, ثابت حرف *loc,
+    بنية sshauthopt **authoptsp)
 {
-	int want_keytype = sshkey_is_cert(key) ? KEY_UNSPEC : key->type;
-	struct sshkey *found = NULL;
-	struct sshauthopt *keyopts = NULL, *certopts = NULL, *finalopts = NULL;
-	char *key_options = NULL, *fp = NULL;
-	const char *reason = NULL;
-	int ret = -1;
+	صحيح want_keytype = sshkey_is_cert(کلیل) ? کلیل_UNSPEC : کلیل->type;
+	بنية sshkey *found = عدم;
+	بنية sshauthopt *keyopts = عدم, *certopts = عدم, *finalopts = عدم;
+	حرف *کلیل_options = عدم, *fp = عدم;
+	ثابت حرف *reason = عدم;
+	صحيح ret = -1;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	إذا (authoptsp != عدم)
+		*authoptsp = عدم;
 
-	if ((found = sshkey_new(want_keytype)) == NULL) {
+	إذا ((found = sshkey_new(want_keytype)) == عدم) {
 		debug3_f("keytype %d failed", want_keytype);
-		goto out;
+		اذهب out;
 	}
 
 	/* XXX djm: peek at key type in line and skip if unwanted */
 
-	if (sshkey_read(found, &cp) != 0) {
+	إذا (sshkey_read(found, &cp) != 0) {
 		/* no key?  check for options */
 		debug2("%s: check options: '%s'", loc, cp);
-		key_options = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
+		کلیل_options = cp;
+		إذا (sshkey_advance_past_options(&cp) != 0) {
 			reason = "invalid key option string";
-			goto fail_reason;
+			اذهب fail_reason;
 		}
 		skip_space(&cp);
-		if (sshkey_read(found, &cp) != 0) {
+		إذا (sshkey_read(found, &cp) != 0) {
 			/* still no key?  advance to next line*/
 			debug2("%s: advance: '%s'", loc, cp);
-			goto out;
+			اذهب out;
 		}
 	}
 	/* Parse key options now; we need to know if this is a CA key */
-	if ((keyopts = sshauthopt_parse(key_options, &reason)) == NULL) {
+	إذا ((keyopts = sshauthopt_parse(کلیل_options, &reason)) == عدم) {
 		debug("%s: bad key options: %s", loc, reason);
 		auth_debug_add("%s: bad key options: %s", loc, reason);
-		goto out;
+		اذهب out;
 	}
 	/* Ignore keys that don't match or incorrectly marked as CAs */
-	if (sshkey_is_cert(key)) {
+	إذا (sshkey_is_cert(کلیل)) {
 		/* Certificate; check signature key against CA */
-		if (!sshkey_equal(found, key->cert->signature_key) ||
+		إذا (!sshkey_equal(found, کلیل->cert->signature_کلیل) ||
 		    !keyopts->cert_authority)
-			goto out;
-	} else {
+			اذهب out;
+	} وإلا {
 		/* Plain key: check it against key found in file */
-		if (!sshkey_equal(found, key) || keyopts->cert_authority)
-			goto out;
+		إذا (!sshkey_equal(found, کلیل) || keyopts->cert_authority)
+			اذهب out;
 	}
 
 	/* We have a candidate key, perform authorisation checks */
-	if ((fp = sshkey_fingerprint(found,
-	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	إذا ((fp = sshkey_fingerprint(found,
+	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == عدم)
 		fatal_f("fingerprint failed");
 
 	debug("%s: matching %s found: %s %s", loc,
-	    sshkey_is_cert(key) ? "CA" : "key", sshkey_type(found), fp);
+	    sshkey_is_cert(کلیل) ? "CA" : "key", sshkey_type(found), fp);
 
-	if (auth_authorise_keyopts(pw, keyopts,
-	    sshkey_is_cert(key), remote_ip, remote_host, loc) != 0) {
+	إذا (auth_authorise_keyopts(pw, keyopts,
+	    sshkey_is_cert(کلیل), remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by key options";
-		goto fail_reason;
+		اذهب fail_reason;
 	}
 	/* That's all we need for plain keys. */
-	if (!sshkey_is_cert(key)) {
+	إذا (!sshkey_is_cert(کلیل)) {
 		verbose("Accepted key %s %s found at %s",
 		    sshkey_type(found), fp, loc);
 		finalopts = keyopts;
-		keyopts = NULL;
-		goto success;
+		keyopts = عدم;
+		اذهب success;
 	}
 
 	/*
@@ -346,168 +346,168 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	 */
 
 	/* Parse and check options present in certificate */
-	if ((certopts = sshauthopt_from_cert(key)) == NULL) {
+	إذا ((certopts = sshauthopt_from_cert(کلیل)) == عدم) {
 		reason = "Invalid certificate options";
-		goto cert_fail_reason;
+		اذهب cert_fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, certopts, 0,
+	إذا (auth_authorise_keyopts(pw, certopts, 0,
 	    remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by certificate options";
-		goto cert_fail_reason;
+		اذهب cert_fail_reason;
 	}
-	if ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == NULL)
-		goto cert_fail_reason;
+	إذا ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == عدم)
+		اذهب cert_fail_reason;
 
 	/*
 	 * If the user has specified a list of principals as
 	 * a key option, then prefer that list to matching
 	 * their username in the certificate principals list.
 	 */
-	if (keyopts->cert_principals != NULL &&
-	    !match_principals_option(keyopts->cert_principals, key->cert)) {
+	إذا (keyopts->cert_principals != عدم &&
+	    !match_principals_option(keyopts->cert_principals, کلیل->cert)) {
 		reason = "Certificate does not contain an authorized principal";
-		goto cert_fail_reason;
+		اذهب cert_fail_reason;
 	}
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    keyopts->cert_principals == NULL ? pw->pw_name : NULL,
+	إذا (sshkey_cert_check_authority_now(کلیل, 0, 0,
+	    keyopts->cert_principals == عدم ? pw->pw_name : عدم,
 	    &reason) != 0)
-		goto cert_fail_reason;
+		اذهب cert_fail_reason;
 
 	verbose("Accepted certificate ID \"%s\" (serial %llu) "
 	    "signed by CA %s %s found at %s",
-	    key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
+	    کلیل->cert->کلیل_id,
+	    (unsigned long long)کلیل->cert->serial,
 	    sshkey_type(found), fp, loc);
 
  success:
-	if (finalopts == NULL)
+	إذا (finalopts == عدم)
 		fatal_f("internal error: missing options");
-	if (authoptsp != NULL) {
+	إذا (authoptsp != عدم) {
 		*authoptsp = finalopts;
-		finalopts = NULL;
+		finalopts = عدم;
 	}
 	/* success */
 	ret = 0;
-	goto out;
+	اذهب out;
 
  cert_fail_reason:
 	error("Refusing certificate ID \"%s\" serial=%llu "
-	    "signed by %s CA %s via %s: %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), fp, loc, reason);
+	    "signed by %s CA %s via %s: %s", کلیل->cert->کلیل_id,
+	    (unsigned long long)کلیل->cert->serial,
+	    sshkey_type(کلیل->cert->signature_کلیل), fp, loc, reason);
 	auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-	    key->cert->key_id, (unsigned long long)key->cert->serial, reason);
-	goto out;
+	    کلیل->cert->کلیل_id, (unsigned long long)کلیل->cert->serial, reason);
+	اذهب out;
 
  fail_reason:
 	error("%s at %s", reason, loc);
 	auth_debug_add("%s", reason);
  out:
-	free(fp);
+	حرر(fp);
 	sshauthopt_free(keyopts);
 	sshauthopt_free(certopts);
 	sshauthopt_free(finalopts);
 	sshkey_free(found);
-	return ret;
+	أرجع ret;
 }
 
 /*
  * Checks whether key is allowed in authorized_keys-format file,
  * returns 1 if the key is allowed or 0 otherwise.
  */
-int
-auth_check_authkeys_file(struct passwd *pw, FILE *f, char *file,
-    struct sshkey *key, const char *remote_ip,
-    const char *remote_host, struct sshauthopt **authoptsp)
+صحيح
+auth_check_authkeys_file(بنية passwd *pw, FILE *f, حرف *file,
+    بنية sshkey *کلیل, ثابت حرف *remote_ip,
+    ثابت حرف *remote_host, بنية sshauthopt **authoptsp)
 {
-	char *cp, *line = NULL, loc[256];
+	حرف *cp, *هێڵ = عدم, loc[256];
 	size_t linesize = 0;
-	int found_key = 0;
+	صحيح found_کلیل = 0;
 	u_long linenum = 0, nonblank = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	إذا (authoptsp != عدم)
+		*authoptsp = عدم;
 
-	while (getline(&line, &linesize, f) != -1) {
+	طالما (getline(&هێڵ, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire file */
-		if (found_key)
-			continue;
+		إذا (found_کلیل)
+			استمر;
 
 		/* Skip leading whitespace, empty and comment lines. */
-		cp = line;
+		cp = هێڵ;
 		skip_space(&cp);
-		if (!*cp || *cp == '\n' || *cp == '#')
-			continue;
+		إذا (!*cp || *cp == '\n' || *cp == '#')
+			استمر;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_authkey_line(pw, key, cp,
+		snprintf(loc, حجم(loc), "%.200s:%lu", file, linenum);
+		إذا (auth_check_authkey_هێڵ(pw, کلیل, cp,
 		    remote_ip, remote_host, loc, authoptsp) == 0)
-			found_key = 1;
+			found_کلیل = 1;
 	}
-	free(line);
+	حرر(هێڵ);
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	return found_key;
+	أرجع found_کلیل;
 }
 
-static FILE *
-auth_openfile(const char *file, struct passwd *pw, int strict_modes,
-    int log_missing, char *file_type)
+ساكن FILE *
+auth_openfile(ثابت حرف *file, بنية passwd *pw, صحيح strict_modes,
+    صحيح log_missing, حرف *file_type)
 {
-	char line[1024];
-	struct stat st;
-	int fd;
+	حرف هێڵ[1024];
+	بنية stat st;
+	صحيح fd;
 	FILE *f;
 
-	if ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
-		if (errno != ENOENT) {
+	إذا ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
+		إذا (errno != ENOENT) {
 			logit("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
-		} else if (log_missing) {
+		} وإلا إذا (log_missing) {
 			debug("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
 		}
-		return NULL;
+		أرجع عدم;
 	}
 
-	if (fstat(fd, &st) == -1) {
+	إذا (fstat(fd, &st) == -1) {
 		close(fd);
-		return NULL;
+		أرجع عدم;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	إذا (!S_ISREG(st.st_mode)) {
 		logit("User '%s' %s '%s' is not a regular file",
 		    pw->pw_name, file_type, file);
 		close(fd);
-		return NULL;
+		أرجع عدم;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	إذا ((f = fdopen(fd, "r")) == عدم) {
 		close(fd);
-		return NULL;
+		أرجع عدم;
 	}
-	if (strict_modes &&
-	    safe_path_fd(fileno(f), file, pw, line, sizeof(line)) != 0) {
+	إذا (strict_modes &&
+	    safe_path_fd(fileno(f), file, pw, هێڵ, حجم(هێڵ)) != 0) {
 		fclose(f);
-		logit("Authentication refused: %s", line);
-		auth_debug_add("Ignored %s: %s", file_type, line);
-		return NULL;
+		logit("Authentication refused: %s", هێڵ);
+		auth_debug_add("Ignored %s: %s", file_type, هێڵ);
+		أرجع عدم;
 	}
 
-	return f;
+	أرجع f;
 }
 
 
 FILE *
-auth_openkeyfile(const char *file, struct passwd *pw, int strict_modes)
+auth_openkeyfile(ثابت حرف *file, بنية passwd *pw, صحيح strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 1, "authorized keys");
+	أرجع auth_openfile(file, pw, strict_modes, 1, "authorized keys");
 }
 
 FILE *
-auth_openprincipals(const char *file, struct passwd *pw, int strict_modes)
+auth_openprincipals(ثابت حرف *file, بنية passwd *pw, صحيح strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 0,
+	أرجع auth_openfile(file, pw, strict_modes, 0,
 	    "authorized principals");
 }
 

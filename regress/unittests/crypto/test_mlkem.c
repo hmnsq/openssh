@@ -5,29 +5,29 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef USE_MLKEM768X25519
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "crypto_api.h"
 
-struct mlkem768_kat {
-	const char *seed;
-	const char *pk_hash;
-	const char *sk_hash;
-	const char *enc_seed;
-	const char *ct_hash;
-	const char *shared_secret;
+بنية mlkem768_kat {
+	ثابت حرف *seed;
+	ثابت حرف *pk_hash;
+	ثابت حرف *sk_hash;
+	ثابت حرف *enc_seed;
+	ثابت حرف *ct_hash;
+	ثابت حرف *shared_secret;
 };
 
-static const struct mlkem768_kat mlkem768_kats[] = {
+ساكن ثابت بنية mlkem768_kat mlkem768_kats[] = {
 	{
 		"7c9935a0b07694aa0c6d10e4db6b1add2fd81a25"
 		"ccb148032dcd739936737f2d"
@@ -110,10 +110,10 @@ static const struct mlkem768_kat mlkem768_kats[] = {
 	}
 };
 
-void mlkem_tests(void);
+فراغ mlkem_tests(فراغ);
 
-void
-mlkem_tests(void)
+فراغ
+mlkem_tests(فراغ)
 {
 	uint8_t pk[MLKEM768_PUBLICKEYBYTES];
 	uint8_t sk[MLKEM768_SECRETKEYBYTES];
@@ -126,7 +126,7 @@ mlkem_tests(void)
 	size_t i;
 
 	TEST_START("ML-KEM 768 KATs");
-	for (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
+	لكل (i = 0; i < حجم(mlkem768_kats) / حجم(mlkem768_kats[0]); i++) {
 		test_subtest_info("vector %zu", i);
 
 		hex2bin(seed, mlkem768_kats[i].seed, 64);
@@ -136,8 +136,8 @@ mlkem_tests(void)
 		/* Keypair generation */
 		ASSERT_INT_EQ(crypto_kem_mlkem768_keypair_seeded(pk, sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, حجم(pk));
+		sha3_256(sk_hash, sk, حجم(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
@@ -151,7 +151,7 @@ mlkem_tests(void)
 		ASSERT_INT_EQ(crypto_kem_mlkem768_enc_seeded(ct, shared_secret,
 		    pk, enc_seed), 0);
 
-		sha3_256(ct_hash, ct, sizeof(ct));
+		sha3_256(ct_hash, ct, حجم(ct));
 		ASSERT_MEM_EQ(ct_hash, expected_ct_hash, 32);
 		ASSERT_MEM_EQ(shared_secret, expected_shared_secret, 32);
 
