@@ -30,12 +30,12 @@
 #ifndef	_COMPAT_POLL_H_
 #define	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <poll.h>
 
 #ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
+प्रकारनिर्देश संरचना pollfd {
+	पूर्णाङ्क	fd;
 	short	events;
 	short	revents;
 } pollfd_t;
@@ -59,7 +59,7 @@ typedef struct pollfd {
 # define POLLNVAL	0x0020
 #endif
 
-#if 0
+#यदि 0
 /* the following are currently not implemented */
 #define	POLLRDNORM	0x0040
 #define POLLNORM	POLLRDNORM
@@ -73,18 +73,18 @@ typedef struct pollfd {
 
 #ifndef HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+प्रकारनिर्देश unsigned long	nfds_t;
+# अन्यथा
+प्रकारनिर्देश unsigned पूर्णाङ्क	nfds_t;
 # endif
 #endif
 
 #ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
+पूर्णाङ्क   poll(संरचना pollfd *, nfds_t, पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
+पूर्णाङ्क   ppoll(संरचना pollfd *, nfds_t, ध्रुव संरचना timespec *, ध्रुव sigset_t *);
 #endif
 
 #endif /* !_COMPAT_POLL_H_ */
