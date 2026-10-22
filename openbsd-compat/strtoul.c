@@ -45,12 +45,12 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(const char *nptr, char **endptr, 정수 base)
 {
 	const char *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	정수 c;
+	정수 neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
@@ -58,51 +58,51 @@ strtoul(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} 동안 (isspace(c));
+	만약 (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} 아니면 {
 		neg = 0;
-		if (c == '+')
+		만약 (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	만약 ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	만약 (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	위해 (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		만약 (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		아니면 만약 (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		아니면
 			break;
-		if (c >= base)
+		만약 (c >= base)
 			break;
-		if (any < 0)
+		만약 (any < 0)
 			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		만약 (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} 아니면 {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	만약 (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
+	만약 (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	반환 (acc);
 }
 #endif /* !HAVE_STRTOUL */

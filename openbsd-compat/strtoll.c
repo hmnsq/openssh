@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const char *nptr, char **endptr, 정수 base)
 {
 	const char *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	정수 c;
+	정수 neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -62,22 +62,22 @@ strtoll(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} 동안 (isspace(c));
+	만약 (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} 아니면 {
 		neg = 0;
-		if (c == '+')
+		만약 (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	만약 ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	만약 (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	만약 (neg) {
+		만약 (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	위해 (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		만약 (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		아니면 만약 (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		아니면
 			break;
-		if (c >= base)
+		만약 (c >= base)
 			break;
-		if (any < 0)
+		만약 (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		만약 (neg) {
+			만약 (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} 아니면 {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} 아니면 {
+			만약 (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} 아니면 {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
+	만약 (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	반환 (acc);
 }
 #endif /* HAVE_STRTOLL */

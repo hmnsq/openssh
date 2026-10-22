@@ -86,23 +86,23 @@
 #endif
 
 struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
+	unsigned 정수		rdi_length;	/* length of data */
 	unsigned char		*rdi_data;	/* record data */
 };
 
 struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
+	unsigned 정수		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned 정수		rri_rdclass;	/* class number */
+	unsigned 정수		rri_rdtype;	/* RR type number */
+	unsigned 정수		rri_ttl;	/* time to live */
+	unsigned 정수		rri_nrdatas;	/* size of rdatas array */
+	unsigned 정수		rri_nsigs;	/* size of sigs array */
 	char			*rri_name;	/* canonical name */
 	struct rdatainfo	*rri_rdatas;	/* individual records */
 	struct rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
+정수		getrrsetbyname(const char *, unsigned 정수, unsigned 정수, unsigned 정수, struct rrsetinfo **);
 void		freerrset(struct rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */

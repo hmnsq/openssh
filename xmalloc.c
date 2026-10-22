@@ -24,7 +24,7 @@
 #include "xmalloc.h"
 #include "log.h"
 
-#if defined(__OpenBSD__)
+#만약 defined(__OpenBSD__)
 const char * const malloc_options = "S";
 #endif /* __OpenBSD__ */
 
@@ -33,12 +33,12 @@ xmalloc(size_t size)
 {
 	void *ptr;
 
-	if (size == 0)
+	만약 (size == 0)
 		fatal("xmalloc: zero size");
 	ptr = malloc(size);
-	if (ptr == NULL)
+	만약 (ptr == NULL)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	반환 ptr;
 }
 
 void *
@@ -46,15 +46,15 @@ xcalloc(size_t nmemb, size_t size)
 {
 	void *ptr;
 
-	if (size == 0 || nmemb == 0)
+	만약 (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	만약 (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
 	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	만약 (ptr == NULL)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	반환 ptr;
 }
 
 void *
@@ -63,10 +63,10 @@ xreallocarray(void *ptr, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	만약 (new_ptr == NULL)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	반환 new_ptr;
 }
 
 void *
@@ -75,10 +75,10 @@ xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
 	void *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	만약 (new_ptr == NULL)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	반환 new_ptr;
 }
 
 char *
@@ -89,28 +89,28 @@ xstrdup(const char *str)
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	반환 memcpy(cp, str, len);
 }
 
-int
+정수
 xvasprintf(char **ret, const char *fmt, va_list ap)
 {
-	int i;
+	정수 i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	만약 (i < 0 || *ret == NULL)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	반환 i;
 }
 
-int
+정수
 xasprintf(char **ret, const char *fmt, ...)
 {
 	va_list ap;
-	int i;
+	정수 i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	반환 i;
 }

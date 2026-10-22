@@ -23,13 +23,13 @@
 
 #include "openbsd-compat/bsd-signal.h"
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int sig)
+#만약 !defined(HAVE_STRSIGNAL)
+char *strsignal(정수 sig)
 {
 	static char buf[16];
 
 	(void)snprintf(buf, sizeof(buf), "%d", sig);
-	return buf;
+	반환 buf;
 }
 #endif
 

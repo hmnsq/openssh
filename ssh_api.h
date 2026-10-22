@@ -39,7 +39,7 @@ struct kex_params {
  * ssh_init() create a ssh connection object with given (optional)
  * key exchange parameters.
  */
-int	ssh_init(struct ssh **, int is_server, struct kex_params *kex_params);
+정수	ssh_init(struct ssh **, 정수 is_server, struct kex_params *kex_params);
 
 /*
  * release ssh connection state.
@@ -60,7 +60,7 @@ void	*ssh_get_app_data(struct ssh *);
  * private hostkeys are required if we need to act as a server.
  * public hostkeys are used to verify the servers hostkey.
  */
-int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
+정수	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
 
 /*
  * ssh_set_verify_host_key_callback() registers a callback function
@@ -68,8 +68,8 @@ int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
  * function given must return 0 if the hostkey is ok, -1 if the
  * verification has failed.
  */
-int	ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *));
+정수	ssh_set_verify_host_key_callback(struct ssh *ssh,
+    정수 (*cb)(struct sshkey *, struct ssh *));
 
 /*
  * ssh_packet_next() advances to the next input packet and returns
@@ -85,7 +85,7 @@ int	ssh_set_verify_host_key_callback(struct ssh *ssh,
  * would not proceed. the output byte-stream is accessed through
  * ssh_output_ptr().
  */
-int	ssh_packet_next(struct ssh *ssh, u_char *typep);
+정수	ssh_packet_next(struct ssh *ssh, u_char *typep);
 
 /*
  * ssh_packet_payload() returns a pointer to the raw payload data of
@@ -99,25 +99,25 @@ const u_char	*ssh_packet_payload(struct ssh *ssh, size_t *lenp);
  * and payload.
  * the encrypted packet is appended to the output byte-stream.
  */
-int	ssh_packet_put(struct ssh *ssh, int type, const u_char *data,
+정수	ssh_packet_put(struct ssh *ssh, 정수 type, const u_char *data,
     size_t len);
 
 /*
  * ssh_input_space() checks if 'len' bytes can be appended to the
  * input byte-stream.
  */
-int	ssh_input_space(struct ssh *ssh, size_t len);
+정수	ssh_input_space(struct ssh *ssh, size_t len);
 
 /*
  * ssh_input_append() appends data to the input byte-stream.
  */
-int	ssh_input_append(struct ssh *ssh, const u_char *data, size_t len);
+정수	ssh_input_append(struct ssh *ssh, const u_char *data, size_t len);
 
 /*
  * ssh_output_space() checks if 'len' bytes can be appended to the
  * output byte-stream. XXX
  */
-int	ssh_output_space(struct ssh *ssh, size_t len);
+정수	ssh_output_space(struct ssh *ssh, size_t len);
 
 /*
  * ssh_output_ptr() retrieves both a pointer and the length of the
@@ -131,6 +131,6 @@ const u_char	*ssh_output_ptr(struct ssh *ssh, size_t *len);
  * ssh_output_consume() removes the given number of bytes from
  * the output byte-stream.
  */
-int	ssh_output_consume(struct ssh *ssh, size_t len);
+정수	ssh_output_consume(struct ssh *ssh, size_t len);
 
 #endif

@@ -85,125 +85,125 @@ attrib_to_stat(const Attrib *a, struct stat *st)
 {
 	memset(st, 0, sizeof(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	만약 (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	만약 (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	만약 (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	만약 (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
+정수
 decode_attrib(struct sshbuf *b, Attrib *a)
 {
-	int r;
+	정수 r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	만약 ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		반환 r;
+	만약 (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		만약 ((r = sshbuf_get_u64(b, &a->size)) != 0)
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	만약 (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		만약 ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	만약 (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		만약 ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	만약 (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		만약 ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			반환 r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+	만약 (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
 		char *type;
 		u_char *data;
 		size_t dlen;
 		u_int i, count;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
+		만약 ((r = sshbuf_get_u32(b, &count)) != 0)
+			반환 r;
+		만약 (count > 0x100000)
+			반환 SSH_ERR_INVALID_FORMAT;
+		위해 (i = 0; i < count; i++) {
+			만약 ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+				반환 r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
 			free(type);
 			free(data);
 		}
 	}
-	return 0;
+	반환 0;
 }
 
 /* Encode attributes to buffer */
-int
+정수
 encode_attrib(struct sshbuf *b, const Attrib *a)
 {
-	int r;
+	정수 r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	만약 ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		반환 r;
+	만약 (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		만약 ((r = sshbuf_put_u64(b, a->size)) != 0)
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	만약 (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		만약 ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	만약 (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		만약 ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			반환 r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	만약 (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		만약 ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			반환 r;
 	}
-	return 0;
+	반환 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
 const char *
-fx2txt(int status)
+fx2txt(정수 status)
 {
 	switch (status) {
 	case SSH2_FX_OK:
-		return("No error");
+		반환("No error");
 	case SSH2_FX_EOF:
-		return("End of file");
+		반환("End of file");
 	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
+		반환("No such file or directory");
 	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
+		반환("Permission denied");
 	case SSH2_FX_FAILURE:
-		return("Failure");
+		반환("Failure");
 	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
+		반환("Bad message");
 	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
+		반환("No connection");
 	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
+		반환("Connection lost");
 	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
+		반환("Operation unsupported");
 	default:
-		return("Unknown status");
+		반환("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -212,52 +212,52 @@ fx2txt(int status)
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
 char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
+ls_file(const char *name, const struct stat *st, 정수 remote, 정수 si_units,
     const char *user, const char *group)
 {
-	int ulen, glen, sz = 0;
+	정수 ulen, glen, sz = 0;
 	struct tm *ltime = localtime(&st->st_mtime);
 	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
 	char sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
+	만약 (remote) {
+		만약 (user == NULL) {
 			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
+		만약 (group == NULL) {
 			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
 		strlcpy(lc, "?", sizeof(lc));
-	} else {
+	} 아니면 {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
 		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
+	만약 (ltime != NULL) {
 		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+		만약 (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
 			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
+		아니면
 			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	만약 (sz == 0)
 		tbuf[0] = '\0';
 	ulen = MAXIMUM(strlen(user), 8);
 	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
+	만약 (si_units) {
 		fmt_scaled((long long)st->st_size, sbuf);
 		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
+	} 아니면 {
 		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    (unsigned long long)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	반환 xstrdup(buf);
 }

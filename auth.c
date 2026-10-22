@@ -93,130 +93,130 @@ static struct sshbuf *auth_debug;
  * If the user's shell is not executable, false will be returned.
  * Otherwise true is returned.
  */
-int
+정수
 allowed_user(struct ssh *ssh, struct passwd * pw)
 {
 	struct stat st;
 	const char *hostname = NULL, *ipaddr = NULL;
-	int r;
+	정수 r;
 	u_int i;
 
 	/* Shouldn't be called if pw is NULL, but better safe than sorry... */
-	if (!pw || !pw->pw_name)
-		return 0;
+	만약 (!pw || !pw->pw_name)
+		반환 0;
 
-	if (!options.use_pam && platform_locked_account(pw)) {
+	만약 (!options.use_pam && platform_locked_account(pw)) {
 		logit("User %.100s not allowed because account is locked",
 		    pw->pw_name);
-		return 0;
+		반환 0;
 	}
 
 	/*
 	 * Deny if shell does not exist or is not executable unless we
 	 * are chrooting.
 	 */
-	if (options.chroot_directory == NULL ||
+	만약 (options.chroot_directory == NULL ||
 	    strcasecmp(options.chroot_directory, "none") == 0) {
 		char *shell = xstrdup((pw->pw_shell[0] == '\0') ?
 		    _PATH_BSHELL : pw->pw_shell); /* empty = /bin/sh */
 
-		if (stat(shell, &st) == -1) {
+		만약 (stat(shell, &st) == -1) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "does not exist", pw->pw_name, shell);
 			free(shell);
-			return 0;
+			반환 0;
 		}
-		if (S_ISREG(st.st_mode) == 0 ||
+		만약 (S_ISREG(st.st_mode) == 0 ||
 		    (st.st_mode & (S_IXOTH|S_IXUSR|S_IXGRP)) == 0) {
 			logit("User %.100s not allowed because shell %.100s "
 			    "is not executable", pw->pw_name, shell);
 			free(shell);
-			return 0;
+			반환 0;
 		}
 		free(shell);
 	}
 
-	if (options.num_deny_users > 0 || options.num_allow_users > 0 ||
+	만약 (options.num_deny_users > 0 || options.num_allow_users > 0 ||
 	    options.num_deny_groups > 0 || options.num_allow_groups > 0) {
 		hostname = auth_get_canonical_hostname(ssh, options.use_dns);
 		ipaddr = ssh_remote_ipaddr(ssh);
 	}
 
 	/* Return false if user is listed in DenyUsers */
-	if (options.num_deny_users > 0) {
-		for (i = 0; i < options.num_deny_users; i++) {
+	만약 (options.num_deny_users > 0) {
+		위해 (i = 0; i < options.num_deny_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.deny_users[i]);
-			if (r < 0) {
+			만약 (r < 0) {
 				fatal("Invalid DenyUsers pattern \"%.100s\"",
 				    options.deny_users[i]);
-			} else if (r != 0) {
+			} 아니면 만약 (r != 0) {
 				logit("User %.100s from %.100s not allowed "
 				    "because listed in DenyUsers",
 				    pw->pw_name, hostname);
-				return 0;
+				반환 0;
 			}
 		}
 	}
 	/* Return false if AllowUsers isn't empty and user isn't listed there */
-	if (options.num_allow_users > 0) {
-		for (i = 0; i < options.num_allow_users; i++) {
+	만약 (options.num_allow_users > 0) {
+		위해 (i = 0; i < options.num_allow_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.allow_users[i]);
-			if (r < 0) {
+			만약 (r < 0) {
 				fatal("Invalid AllowUsers pattern \"%.100s\"",
 				    options.allow_users[i]);
-			} else if (r == 1)
+			} 아니면 만약 (r == 1)
 				break;
 		}
 		/* i < options.num_allow_users iff we break for loop */
-		if (i >= options.num_allow_users) {
+		만약 (i >= options.num_allow_users) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not listed in AllowUsers", pw->pw_name, hostname);
-			return 0;
+			반환 0;
 		}
 	}
-	if (options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	만약 (options.num_deny_groups > 0 || options.num_allow_groups > 0) {
 		/* Get the user's group access list (primary and supplementary) */
-		if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		만약 (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not in any group", pw->pw_name, hostname);
-			return 0;
+			반환 0;
 		}
 
 		/* Return false if one of user's groups is listed in DenyGroups */
-		if (options.num_deny_groups > 0)
-			if (ga_match(options.deny_groups,
+		만약 (options.num_deny_groups > 0)
+			만약 (ga_match(options.deny_groups,
 			    options.num_deny_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because a group is listed in DenyGroups",
 				    pw->pw_name, hostname);
-				return 0;
+				반환 0;
 			}
 		/*
 		 * Return false if AllowGroups isn't empty and one of user's groups
 		 * isn't listed there
 		 */
-		if (options.num_allow_groups > 0)
-			if (!ga_match(options.allow_groups,
+		만약 (options.num_allow_groups > 0)
+			만약 (!ga_match(options.allow_groups,
 			    options.num_allow_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because none of user's groups are listed "
 				    "in AllowGroups", pw->pw_name, hostname);
-				return 0;
+				반환 0;
 			}
 		ga_free();
 	}
 
 #ifdef CUSTOM_SYS_AUTH_ALLOWED_USER
-	if (!sys_auth_allowed_user(pw, loginmsg))
-		return 0;
+	만약 (!sys_auth_allowed_user(pw, loginmsg))
+		반환 0;
 #endif
 
 	/* We found no reason not to let this user try to log on... */
-	return 1;
+	반환 1;
 }
 
 /*
@@ -230,10 +230,10 @@ format_method_key(Authctxt *authctxt)
 	const char *methinfo = authctxt->auth_method_info;
 	char *fp, *cafp, *ret = NULL;
 
-	if (key == NULL)
-		return NULL;
+	만약 (key == NULL)
+		반환 NULL;
 
-	if (sshkey_is_cert(key)) {
+	만약 (sshkey_is_cert(key)) {
 		fp = sshkey_fingerprint(key,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
 		cafp = sshkey_fingerprint(key->cert->signature_key,
@@ -248,7 +248,7 @@ format_method_key(Authctxt *authctxt)
 		    methinfo == NULL ? "" : methinfo);
 		free(fp);
 		free(cafp);
-	} else {
+	} 아니면 {
 		fp = sshkey_fingerprint(key, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		xasprintf(&ret, "%s %s%s%s", sshkey_type(key),
@@ -257,37 +257,37 @@ format_method_key(Authctxt *authctxt)
 		    methinfo == NULL ? "" : methinfo);
 		free(fp);
 	}
-	return ret;
+	반환 ret;
 }
 
 void
-auth_log(struct ssh *ssh, int authenticated, int partial,
+auth_log(struct ssh *ssh, 정수 authenticated, 정수 partial,
     const char *method, const char *submethod)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
-	int level = SYSLOG_LEVEL_VERBOSE;
+	정수 level = SYSLOG_LEVEL_VERBOSE;
 	const char *authmsg;
 	char *extra = NULL;
 
-	if (!mm_is_monitor() && !authctxt->postponed)
-		return;
+	만약 (!mm_is_monitor() && !authctxt->postponed)
+		반환;
 
 	/* Raise logging level */
-	if (authenticated == 1 ||
+	만약 (authenticated == 1 ||
 	    !authctxt->valid ||
 	    authctxt->failures >= options.max_authtries / 2 ||
 	    strcmp(method, "password") == 0)
 		level = SYSLOG_LEVEL_INFO;
 
-	if (authctxt->postponed)
+	만약 (authctxt->postponed)
 		authmsg = "Postponed";
-	else if (partial)
+	아니면 만약 (partial)
 		authmsg = "Partial";
-	else
+	아니면
 		authmsg = authenticated ? "Accepted" : "Failed";
 
-	if ((extra = format_method_key(authctxt)) == NULL) {
-		if (authctxt->auth_method_info != NULL)
+	만약 ((extra = format_method_key(authctxt)) == NULL) {
+		만약 (authctxt->auth_method_info != NULL)
 			extra = xstrdup(authctxt->auth_method_info);
 	}
 
@@ -304,11 +304,11 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 
 	free(extra);
 
-#if defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
-	if (authenticated == 0 && !(authctxt->postponed || partial)) {
+#만약 defined(CUSTOM_FAILED_LOGIN) || defined(SSH_AUDIT_EVENTS)
+	만약 (authenticated == 0 && !(authctxt->postponed || partial)) {
 		/* Log failed login attempt */
 # ifdef CUSTOM_FAILED_LOGIN
-		if (strcmp(method, "password") == 0 ||
+		만약 (strcmp(method, "password") == 0 ||
 		    strncmp(method, "keyboard-interactive", 20) == 0 ||
 		    strcmp(method, "challenge-response") == 0)
 			record_failed_login(ssh, authctxt->user,
@@ -319,8 +319,8 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 # endif
 	}
 #endif
-#if defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
-	if (authenticated)
+#만약 defined(CUSTOM_FAILED_LOGIN) && defined(WITH_AIXAUTHENTICATE)
+	만약 (authenticated)
 		sys_auth_record_login(authctxt->user,
 		    auth_get_canonical_hostname(ssh, options.use_dns), "ssh",
 		    loginmsg);
@@ -345,28 +345,28 @@ auth_maxtries_exceeded(struct ssh *ssh)
 /*
  * Check whether root logins are disallowed.
  */
-int
+정수
 auth_root_allowed(struct ssh *ssh, const char *method)
 {
 	switch (options.permit_root_login) {
 	case PERMIT_YES:
-		return 1;
+		반환 1;
 	case PERMIT_NO_PASSWD:
-		if (strcmp(method, "publickey") == 0 ||
+		만약 (strcmp(method, "publickey") == 0 ||
 		    strcmp(method, "hostbased") == 0 ||
 		    strcmp(method, "gssapi-with-mic") == 0)
-			return 1;
+			반환 1;
 		break;
 	case PERMIT_FORCED_ONLY:
-		if (auth_opts->force_command != NULL) {
+		만약 (auth_opts->force_command != NULL) {
 			logit("Root login accepted for forced command.");
-			return 1;
+			반환 1;
 		}
 		break;
 	}
 	logit("ROOT LOGIN REFUSED FROM %.200s port %d",
 	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-	return 0;
+	반환 0;
 }
 
 
@@ -381,7 +381,7 @@ char *
 expand_authorized_keys(const char *filename, struct passwd *pw)
 {
 	char *file, uidstr[32], ret[PATH_MAX];
-	int i;
+	정수 i;
 
 	snprintf(uidstr, sizeof(uidstr), "%llu",
 	    (unsigned long long)pw->pw_uid);
@@ -392,22 +392,22 @@ expand_authorized_keys(const char *filename, struct passwd *pw)
 	 * Ensure that filename starts anchored. If not, be backward
 	 * compatible and prepend the '%h/'
 	 */
-	if (path_absolute(file))
-		return (file);
+	만약 (path_absolute(file))
+		반환 (file);
 
 	i = snprintf(ret, sizeof(ret), "%s/%s", pw->pw_dir, file);
-	if (i < 0 || (size_t)i >= sizeof(ret))
+	만약 (i < 0 || (size_t)i >= sizeof(ret))
 		fatal("expand_authorized_keys: path too long");
 	free(file);
-	return (xstrdup(ret));
+	반환 (xstrdup(ret));
 }
 
 char *
 authorized_principals_file(struct passwd *pw)
 {
-	if (options.authorized_principals_file == NULL)
-		return NULL;
-	return expand_authorized_keys(options.authorized_principals_file, pw);
+	만약 (options.authorized_principals_file == NULL)
+		반환 NULL;
+	반환 expand_authorized_keys(options.authorized_principals_file, pw);
 }
 
 /* return ok if key exists in sysfile or userfile */
@@ -423,9 +423,9 @@ check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
 
 	hostkeys = init_hostkeys();
 	load_hostkeys(hostkeys, host, sysfile, 0);
-	if (userfile != NULL) {
+	만약 (userfile != NULL) {
 		user_hostfile = tilde_expand_filename(userfile, pw->pw_uid);
-		if (options.strict_modes &&
+		만약 (options.strict_modes &&
 		    (stat(user_hostfile, &st) == 0) &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
@@ -434,7 +434,7 @@ check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
 			    pw->pw_name, user_hostfile);
 			auth_debug_add("Ignored %.200s: bad ownership or modes",
 			    user_hostfile);
-		} else {
+		} 아니면 {
 			temporarily_use_uid(pw);
 			load_hostkeys(hostkeys, host, user_hostfile, 0);
 			restore_uid();
@@ -442,18 +442,18 @@ check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
 		free(user_hostfile);
 	}
 	host_status = check_key_in_hostkeys(hostkeys, key, &found);
-	if (host_status == HOST_REVOKED)
+	만약 (host_status == HOST_REVOKED)
 		error("WARNING: revoked key for %s attempted authentication",
 		    host);
-	else if (host_status == HOST_OK)
+	아니면 만약 (host_status == HOST_OK)
 		debug_f("key for %s found at %s:%ld",
 		    found->host, found->file, found->line);
-	else
+	아니면
 		debug_f("key for host %s not found", host);
 
 	free_hostkeys(hostkeys);
 
-	return host_status;
+	반환 host_status;
 }
 
 struct passwd *
@@ -478,23 +478,23 @@ getpwnamallow(struct ssh *ssh, const char *user)
 	parse_server_match_config(&options, &includes, ci);
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	위해 (i = 0; i < options.num_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 	server_process_channel_timeouts(ssh);
 	server_process_permitopen(ssh);
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#만약 defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_setauthdb(user);
 #endif
 
 	pw = getpwnam(user);
 
-#if defined(_AIX) && defined(HAVE_SETAUTHDB)
+#만약 defined(_AIX) && defined(HAVE_SETAUTHDB)
 	aix_restoreauthdb();
 #endif
-	if (pw == NULL) {
+	만약 (pw == NULL) {
 		logit("Invalid user %.100s from %.100s port %d",
 		    user, ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 #ifdef CUSTOM_FAILED_LOGIN
@@ -504,63 +504,63 @@ getpwnamallow(struct ssh *ssh, const char *user)
 #ifdef SSH_AUDIT_EVENTS
 		audit_event(ssh, SSH_INVALID_USER);
 #endif /* SSH_AUDIT_EVENTS */
-		return (NULL);
+		반환 (NULL);
 	}
-	if (!allowed_user(ssh, pw))
-		return (NULL);
+	만약 (!allowed_user(ssh, pw))
+		반환 (NULL);
 #ifdef HAVE_LOGIN_CAP
-	if ((lc = login_getpwclass(pw)) == NULL) {
+	만약 ((lc = login_getpwclass(pw)) == NULL) {
 		debug("unable to get login class: %s", user);
-		return (NULL);
+		반환 (NULL);
 	}
 #ifdef HAVE_AUTH_HOSTOK
 	from_host = auth_get_canonical_hostname(ssh, options.use_dns);
 	from_ip = ssh_remote_ipaddr(ssh);
-	if (!auth_hostok(lc, from_host, from_ip)) {
+	만약 (!auth_hostok(lc, from_host, from_ip)) {
 		debug("Denied connection for %.200s from %.200s [%.200s].",
 		      pw->pw_name, from_host, from_ip);
-		return (NULL);
+		반환 (NULL);
 	}
 #endif /* HAVE_AUTH_HOSTOK */
 #ifdef HAVE_AUTH_TIMEOK
-	if (!auth_timeok(lc, time(NULL))) {
+	만약 (!auth_timeok(lc, time(NULL))) {
 		debug("LOGIN %.200s REFUSED (TIME)", pw->pw_name);
-		return (NULL);
+		반환 (NULL);
 	}
 #endif /* HAVE_AUTH_TIMEOK */
 #ifdef BSD_AUTH
-	if ((as = auth_open()) == NULL || auth_setpwd(as, pw) != 0 ||
+	만약 ((as = auth_open()) == NULL || auth_setpwd(as, pw) != 0 ||
 	    auth_approval(as, lc, pw->pw_name, "ssh") <= 0) {
 		debug("Approval failure for %s", user);
 		pw = NULL;
 	}
-	if (as != NULL)
+	만약 (as != NULL)
 		auth_close(as);
 #endif
 #endif
-	if (pw != NULL)
-		return (pwcopy(pw));
-	return (NULL);
+	만약 (pw != NULL)
+		반환 (pwcopy(pw));
+	반환 (NULL);
 }
 
 /* Returns 1 if key is revoked by revoked_keys_file, 0 otherwise */
-int
+정수
 auth_key_is_revoked(struct sshkey *key)
 {
 	char *fp = NULL;
 	u_int i;
-	int r;
+	정수 r;
 
-	if (options.num_revoked_keys_files == 0)
-		return 0;
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	만약 (options.num_revoked_keys_files == 0)
+		반환 0;
+	만약 ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_fr(r, "fingerprint key");
 		goto out;
 	}
 
-	for (i = 0; i < options.num_revoked_keys_files; i++) {
+	위해 (i = 0; i < options.num_revoked_keys_files; i++) {
 		r = sshkey_check_revoked(key, options.revoked_keys_files[i]);
 		switch (r) {
 		case 0:
@@ -583,7 +583,7 @@ auth_key_is_revoked(struct sshkey *key)
 
  out:
 	free(fp);
-	return r == 0 ? 0 : 1;
+	반환 r == 0 ? 0 : 1;
 }
 
 void
@@ -591,14 +591,14 @@ auth_debug_add(const char *fmt,...)
 {
 	char buf[1024];
 	va_list args;
-	int r;
+	정수 r;
 
 	va_start(args, fmt);
 	vsnprintf(buf, sizeof(buf), fmt, args);
 	va_end(args);
 	debug3("%s", buf);
-	if (auth_debug != NULL)
-		if ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
+	만약 (auth_debug != NULL)
+		만약 ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
 			fatal_fr(r, "sshbuf_put_cstring");
 }
 
@@ -606,12 +606,12 @@ void
 auth_debug_send(struct ssh *ssh)
 {
 	char *msg;
-	int r;
+	정수 r;
 
-	if (auth_debug == NULL)
-		return;
-	while (sshbuf_len(auth_debug) != 0) {
-		if ((r = sshbuf_get_cstring(auth_debug, &msg, NULL)) != 0)
+	만약 (auth_debug == NULL)
+		반환;
+	동안 (sshbuf_len(auth_debug) != 0) {
+		만약 ((r = sshbuf_get_cstring(auth_debug, &msg, NULL)) != 0)
 			fatal_fr(r, "sshbuf_get_cstring");
 		ssh_packet_send_debug(ssh, "%s", msg);
 		free(msg);
@@ -621,29 +621,29 @@ auth_debug_send(struct ssh *ssh)
 void
 auth_debug_reset(void)
 {
-	if (auth_debug != NULL)
+	만약 (auth_debug != NULL)
 		sshbuf_reset(auth_debug);
-	else if ((auth_debug = sshbuf_new()) == NULL)
+	아니면 만약 ((auth_debug = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 }
 
 struct passwd *
 fakepw(void)
 {
-	static int done = 0;
+	static 정수 done = 0;
 	static struct passwd fake;
 	const char hashchars[] = "./ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	    "abcdefghijklmnopqrstuvwxyz0123456789"; /* from bcrypt.c */
 	char *cp;
 
-	if (done)
-		return (&fake);
+	만약 (done)
+		반환 (&fake);
 
 	memset(&fake, 0, sizeof(fake));
 	fake.pw_name = "NOUSER";
 	fake.pw_passwd = xstrdup("$2a$10$"
 	    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-	for (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
+	위해 (cp = fake.pw_passwd + 7; *cp != '\0'; cp++)
 		*cp = hashchars[arc4random_uniform(sizeof(hashchars) - 1)];
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
 	fake.pw_gecos = "NOUSER";
@@ -657,7 +657,7 @@ fakepw(void)
 	fake.pw_shell = "/nonexist";
 	done = 1;
 
-	return (&fake);
+	반환 (&fake);
 }
 
 /*
@@ -667,28 +667,28 @@ fakepw(void)
  */
 
 const char *
-auth_get_canonical_hostname(struct ssh *ssh, int use_dns)
+auth_get_canonical_hostname(struct ssh *ssh, 정수 use_dns)
 {
 	static char *dnsname;
 
-	if (!use_dns)
-		return ssh_remote_ipaddr(ssh);
-	if (dnsname != NULL)
-		return dnsname;
+	만약 (!use_dns)
+		반환 ssh_remote_ipaddr(ssh);
+	만약 (dnsname != NULL)
+		반환 dnsname;
 	dnsname = ssh_remote_hostname(ssh);
-	return dnsname;
+	반환 dnsname;
 }
 
 /* These functions link key/cert options to the auth framework */
 
 /* Log sshauthopt options locally and (optionally) for remote transmission */
 void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+auth_log_authopts(const char *loc, const struct sshauthopt *opts, 정수 do_remote)
 {
-	int do_env = options.permit_user_env && opts->nenv > 0;
-	int do_permitopen = opts->npermitopen > 0 &&
+	정수 do_env = options.permit_user_env && opts->nenv > 0;
+	정수 do_permitopen = opts->npermitopen > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_LOCAL) != 0;
-	int do_permitlisten = opts->npermitlisten > 0 &&
+	정수 do_permitlisten = opts->npermitlisten > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_REMOTE) != 0;
 	size_t i;
 	char msg[1024], buf[64];
@@ -713,13 +713,13 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	    opts->permit_x11_forwarding_flag ? " x11-forwarding" : "");
 
 	debug("%s: %s", loc, msg);
-	if (do_remote)
+	만약 (do_remote)
 		auth_debug_add("%s: %s", loc, msg);
 
-	if (options.permit_user_env) {
-		for (i = 0; i < opts->nenv; i++) {
+	만약 (options.permit_user_env) {
+		위해 (i = 0; i < opts->nenv; i++) {
 			debug("%s: environment: %s", loc, opts->env[i]);
-			if (do_remote) {
+			만약 (do_remote) {
 				auth_debug_add("%s: environment: %s",
 				    loc, opts->env[i]);
 			}
@@ -727,24 +727,24 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	}
 
 	/* Go into a little more details for the local logs. */
-	if (opts->valid_before != 0) {
+	만약 (opts->valid_before != 0) {
 		format_absolute_time(opts->valid_before, buf, sizeof(buf));
 		debug("%s: expires at %s", loc, buf);
 	}
-	if (opts->cert_principals != NULL) {
+	만약 (opts->cert_principals != NULL) {
 		debug("%s: authorized principals: \"%s\"",
 		    loc, opts->cert_principals);
 	}
-	if (opts->force_command != NULL)
+	만약 (opts->force_command != NULL)
 		debug("%s: forced command: \"%s\"", loc, opts->force_command);
-	if (do_permitopen) {
-		for (i = 0; i < opts->npermitopen; i++) {
+	만약 (do_permitopen) {
+		위해 (i = 0; i < opts->npermitopen; i++) {
 			debug("%s: permitted open: %s",
 			    loc, opts->permitopen[i]);
 		}
 	}
-	if (do_permitlisten) {
-		for (i = 0; i < opts->npermitlisten; i++) {
+	만약 (do_permitlisten) {
+		위해 (i = 0; i < opts->npermitlisten; i++) {
 			debug("%s: permitted listen: %s",
 			    loc, opts->permitlisten[i]);
 		}
@@ -752,19 +752,19 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 }
 
 /* Activate a new set of key/cert options; merging with what is there. */
-int
+정수
 auth_activate_options(struct ssh *ssh, struct sshauthopt *opts)
 {
 	struct sshauthopt *old = auth_opts;
 	const char *emsg = NULL;
 
 	debug_f("setting new authentication options");
-	if ((auth_opts = sshauthopt_merge(old, opts, &emsg)) == NULL) {
+	만약 ((auth_opts = sshauthopt_merge(old, opts, &emsg)) == NULL) {
 		error("Inconsistent authentication options: %s", emsg);
-		return -1;
+		반환 -1;
 	}
 	sshauthopt_free(old);
-	return 0;
+	반환 0;
 }
 
 /* Disable forwarding, etc for the session */
@@ -776,12 +776,12 @@ auth_restrict_session(struct ssh *ssh)
 	debug_f("restricting session");
 
 	/* A blank sshauthopt defaults to permitting nothing */
-	if ((restricted = sshauthopt_new()) == NULL)
+	만약 ((restricted = sshauthopt_new()) == NULL)
 		fatal_f("sshauthopt_new failed");
 	restricted->permit_pty_flag = 1;
 	restricted->restricted = 1;
 
-	if (auth_activate_options(ssh, restricted) != 0)
+	만약 (auth_activate_options(ssh, restricted) != 0)
 		fatal_f("failed to restrict session");
 	sshauthopt_free(restricted);
 }

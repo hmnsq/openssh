@@ -52,14 +52,14 @@ struct sshcipher_ctx;
 
 const struct sshcipher *cipher_by_name(const char *);
 const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+정수	 ciphers_valid(const char *);
+char	*cipher_alg_list(char, 정수);
+const char *compression_alg_list(정수);
+정수	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
+    const u_char *, u_int, const u_char *, u_int, 정수);
+정수	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
+정수	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
     const u_char *, u_int);
 void	 cipher_free(struct sshcipher_ctx *);
 u_int	 cipher_blocksize(const struct sshcipher *);
@@ -72,6 +72,6 @@ u_int	 cipher_is_internal(const struct sshcipher *);
 
 u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+정수	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

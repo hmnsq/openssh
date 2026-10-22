@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#만약 !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #include <sys/types.h>
 
@@ -64,9 +64,9 @@ struct statvfs {
 #endif
 
 #ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
+정수 statvfs(const char *, struct statvfs *);
 #endif
 
 #ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
+정수 fstatvfs(정수, struct statvfs *);
 #endif

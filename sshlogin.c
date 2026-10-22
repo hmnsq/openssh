@@ -79,7 +79,7 @@ get_last_login_time(uid_t uid, const char *logname,
 
 	login_get_lastlog(&li, uid);
 	strlcpy(buf, li.hostname, bufsize);
-	return (time_t)li.tv_sec;
+	반환 (time_t)li.tv_sec;
 }
 
 /*
@@ -95,33 +95,33 @@ store_lastlog_message(const char *user, uid_t uid)
 	time_t last_login_time;
 # endif
 	char *time_string;
-	int r;
+	정수 r;
 
-	if (!options.print_lastlog)
-		return;
+	만약 (!options.print_lastlog)
+		반환;
 
 # ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
 	time_string = sys_auth_get_lastlogin_msg(user, uid);
-	if (time_string != NULL) {
-		if ((r = sshbuf_put(loginmsg,
+	만약 (time_string != NULL) {
+		만약 ((r = sshbuf_put(loginmsg,
 		    time_string, strlen(time_string))) != 0)
 			fatal_fr(r, "buffer error");
 		free(time_string);
 	}
-# else
+# 아니면
 	last_login_time = get_last_login_time(uid, user, hostname,
 	    sizeof(hostname));
 
-	if (last_login_time != 0) {
+	만약 (last_login_time != 0) {
 		time_string = ctime(&last_login_time);
 		time_string[strcspn(time_string, "\n")] = '\0';
-		if (strcmp(hostname, "") == 0)
+		만약 (strcmp(hostname, "") == 0)
 			r = sshbuf_putf(loginmsg, "Last login: %s\r\n",
 			    time_string);
-		else
+		아니면
 			r = sshbuf_putf(loginmsg, "Last login: %s from %s\r\n",
 			    time_string, hostname);
-		if (r != 0)
+		만약 (r != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
 # endif /* CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG */

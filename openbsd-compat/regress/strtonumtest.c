@@ -24,40 +24,40 @@
 #include <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#만약 defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
 #endif
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#만약 defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
 #endif
 
 long long strtonum(const char *, long long, long long, const char **);
 
-int fail;
+정수 fail;
 
 void
-test(const char *p, long long lb, long long ub, int ok)
+test(const char *p, long long lb, long long ub, 정수 ok)
 {
 	long long val;
 	const char *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	만약 (ok && q != NULL) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} 아니면 만약 (!ok && q == NULL) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+정수 main(void)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	반환 (fail);
 }
 

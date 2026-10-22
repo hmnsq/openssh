@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(정수 *status)
 {
 	union wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	만약 (status)
+		*status = (정수) statusp.w_status;
 
-	return (wait_pid);
+	반환 (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+정수
+tcgetattr(정수 fd, struct termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	반환 (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+정수
+tcsetattr(정수 fd, 정수 opt, const struct termios *t)
 {
 	struct termios localterm;
 
-	if (opt & TCSASOFT) {
+	만약 (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
 	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
+		반환 (ioctl(fd, TIOCSETA, t));
 	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
+		반환 (ioctl(fd, TIOCSETAW, t));
 	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+		반환 (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		반환 (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+정수 tcsetpgrp(정수 fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	반환 (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
 speed_t cfgetospeed(const struct termios *t)
 {
-	return (t->c_ospeed);
+	반환 (t->c_ospeed);
 }
 
 speed_t cfgetispeed(const struct termios *t)
 {
-	return (t->c_ispeed);
+	반환 (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+정수
+cfsetospeed(struct termios *t,정수 speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	반환 (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+정수
+cfsetispeed(struct termios *t, 정수 speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	반환 (0);
 }
 #endif /* HAVE_NEXT */

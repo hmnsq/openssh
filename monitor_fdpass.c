@@ -39,15 +39,15 @@
 #include "log.h"
 #include "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+정수
+mm_send_fd(정수 sock, 정수 fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+#만약 defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
 	struct msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+		char buf[CMSG_SPACE(sizeof(정수))];
 	} cmsgbuf;
 	struct cmsghdr *cmsg;
 #endif
@@ -60,15 +60,15 @@ mm_send_fd(int sock, int fd)
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&fd;
 	msg.msg_accrightslen = sizeof(fd);
-#else
+#아니면
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
 	msg.msg_controllen = sizeof(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(sizeof(정수));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
+	*(정수 *)CMSG_DATA(cmsg) = fd;
 #endif
 
 	vec.iov_base = &ch;
@@ -78,43 +78,43 @@ mm_send_fd(int sock, int fd)
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	동안 ((n = sendmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	만약 (n == -1) {
 		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+		반환 -1;
 	}
 
-	if (n != 1) {
+	만약 (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		반환 -1;
 	}
-	return 0;
-#else
+	반환 0;
+#아니면
 	error_f("file descriptor passing not supported");
-	return -1;
+	반환 -1;
 #endif
 }
 
-int
-mm_receive_fd(int sock)
+정수
+mm_receive_fd(정수 sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+#만약 defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
 	struct msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+		char buf[CMSG_SPACE(sizeof(정수))];
 	} cmsgbuf;
 	struct cmsghdr *cmsg;
 #endif
 	struct iovec vec;
 	ssize_t n;
 	char ch;
-	int fd;
+	정수 fd;
 	struct pollfd pfd;
 
 	memset(&msg, 0, sizeof(msg));
@@ -125,7 +125,7 @@ mm_receive_fd(int sock)
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&fd;
 	msg.msg_accrightslen = sizeof(fd);
-#else
+#아니면
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 	msg.msg_control = &cmsgbuf.buf;
 	msg.msg_controllen = sizeof(cmsgbuf.buf);
@@ -133,44 +133,44 @@ mm_receive_fd(int sock)
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	동안 ((n = recvmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	만약 (n == -1) {
 		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+		반환 -1;
 	}
 
-	if (n != 1) {
+	만약 (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		반환 -1;
 	}
 
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+	만약 (msg.msg_accrightslen != sizeof(fd)) {
 		error_f("no fd");
-		return -1;
+		반환 -1;
 	}
-#else
+#아니면
 	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+	만약 (cmsg == NULL) {
 		error_f("no message header");
-		return -1;
+		반환 -1;
 	}
 
 #ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+	만약 (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		반환 -1;
 	}
 #endif
-	fd = (*(int *)CMSG_DATA(cmsg));
+	fd = (*(정수 *)CMSG_DATA(cmsg));
 #endif
-	return fd;
-#else
+	반환 fd;
+#아니면
 	error_f("file descriptor passing not supported");
-	return -1;
+	반환 -1;
 #endif
 }

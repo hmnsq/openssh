@@ -44,10 +44,10 @@
 static void *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	반환 authctxt;
 }
 
-int
+정수
 bsdauth_query(void *ctx, char **name, char **infotxt,
    u_int *numprompts, char ***prompts, u_int **echo_on)
 {
@@ -59,28 +59,28 @@ bsdauth_query(void *ctx, char **name, char **infotxt,
 	*prompts = NULL;
 	*echo_on = NULL;
 
-	if (authctxt->as != NULL) {
+	만약 (authctxt->as != NULL) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		만약 (challenge == NULL) {
 			auth_close(authctxt->as);
 			authctxt->as = NULL;
 		}
 	}
 
-	if (challenge == NULL) {
+	만약 (challenge == NULL) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
+		만약 (authctxt->as == NULL)
 			challenge = NULL;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	만약 (challenge == NULL)
+		반환 -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
@@ -89,29 +89,29 @@ bsdauth_query(void *ctx, char **name, char **infotxt,
 	*echo_on = xcalloc(*numprompts, sizeof(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	반환 0;
 }
 
-int
+정수
 bsdauth_respond(void *ctx, u_int numresponses, char **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	정수 authok;
 
-	if (!authctxt->valid)
-		return -1;
+	만약 (!authctxt->valid)
+		반환 -1;
 
-	if (authctxt->as == NULL)
+	만약 (authctxt->as == NULL)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	만약 (numresponses != 1)
+		반환 -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
 	authctxt->as = NULL;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	반환 (authok == 0) ? -1 : 0;
 }
 
 static void
@@ -119,7 +119,7 @@ bsdauth_free_ctx(void *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	만약 (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
 		authctxt->as = NULL;
 	}

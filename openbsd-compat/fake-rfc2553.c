@@ -44,64 +44,64 @@
 #include <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+정수 getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
+		size_t hostlen, char *serv, size_t servlen, 정수 flags)
 {
 	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 	struct hostent *hp;
 	char tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	만약 ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
 	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
+		반환 (EAI_FAMILY);
+	만약 (serv != NULL) {
 		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+		만약 (strlcpy(serv, tmpserv, servlen) >= servlen)
+			반환 (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	만약 (host != NULL) {
+		만약 (flags & NI_NUMERICHOST) {
+			만약 (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
+				반환 (EAI_MEMORY);
+			아니면
+				반환 (0);
+		} 아니면 {
 			hp = gethostbyaddr((char *)&sin->sin_addr,
 			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+			만약 (hp == NULL)
+				반환 (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			만약 (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				반환 (EAI_MEMORY);
+			아니면
+				반환 (0);
 		}
 	}
-	return (0);
+	반환 (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
 const char *
-#else
+#아니면
 char *
 #endif
-gai_strerror(int err)
+gai_strerror(정수 err)
 {
 	switch (err) {
 	case EAI_NODATA:
-		return ("no address associated with name");
+		반환 ("no address associated with name");
 	case EAI_MEMORY:
-		return ("memory allocation failure");
+		반환 ("memory allocation failure");
 	case EAI_NONAME:
-		return ("name or service is not known");
+		반환 ("name or service is not known");
 	case EAI_FAMILY:
-		return ("ai_family not supported");
+		반환 ("ai_family not supported");
 	default:
-		return ("unknown/invalid error");
+		반환 ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
@@ -112,7 +112,7 @@ freeaddrinfo(struct addrinfo *ai)
 {
 	struct addrinfo *next;
 
-	for(; ai != NULL;) {
+	위해(; ai != NULL;) {
 		next = ai->ai_next;
 		free(ai);
 		ai = next;
@@ -122,13 +122,13 @@ freeaddrinfo(struct addrinfo *ai)
 
 #ifndef HAVE_GETADDRINFO
 static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+addrinfo *malloc_ai(정수 port, u_long addr, const struct addrinfo *hints)
 {
 	struct addrinfo *ai;
 
 	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	만약 (ai == NULL)
+		반환 (NULL);
 
 	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
 
@@ -141,96 +141,96 @@ addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
 	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	만약 (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	아니면
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	만약 (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	반환 (ai);
 }
 
-int
+정수
 getaddrinfo(const char *hostname, const char *servname,
     const struct addrinfo *hints, struct addrinfo **res)
 {
 	struct hostent *hp;
 	struct servent *sp;
 	struct in_addr in;
-	int i;
-	long int port;
+	정수 i;
+	long 정수 port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	만약 (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
+		반환 (EAI_FAMILY);
+	만약 (servname != NULL) {
 		char *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		만약 (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		아니면 만약 ((sp = getservbyname(servname, NULL)) != NULL)
 			port = sp->s_port;
-		else
+		아니면
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	만약 (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		만약 (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		만약 (*res == NULL)
+			반환 (EAI_MEMORY);
+		반환 (0);
 	}
 
-	if (!hostname) {
+	만약 (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		만약 (*res == NULL)
+			반환 (EAI_MEMORY);
+		반환 (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	만약 (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		만약 (*res == NULL)
+			반환 (EAI_MEMORY);
+		반환 (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	만약 (hints && hints->ai_flags & AI_NUMERICHOST)
+		반환 (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+	만약 (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
 		struct addrinfo *cur, *prev;
 
 		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
+		위해 (i = 0; hp->h_addr_list[i]; i++) {
 			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			만약 (cur == NULL) {
+				만약 (*res != NULL)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				반환 (EAI_MEMORY);
 			}
-			if (prev)
+			만약 (prev)
 				prev->ai_next = cur;
-			else
+			아니면
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		반환 (0);
 	}
 
-	return (EAI_NODATA);
+	반환 (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */

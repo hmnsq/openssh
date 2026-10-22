@@ -45,7 +45,7 @@
 
 #include "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
+#만약 !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
 
 #include <stdlib.h>
 #include <string.h>
@@ -59,13 +59,13 @@
 #define malloc(x)	(xmalloc(x))
 #define calloc(x, y)	(xcalloc((x),(y)))
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-	       unsigned int rdtype, unsigned int flags,
+정수
+getrrsetbyname(const char *hostname, unsigned 정수 rdclass,
+	       unsigned 정수 rdtype, unsigned 정수 flags,
 	       struct rrsetinfo **res)
 {
-	int result;
-	unsigned int i, j, index_ans, index_sig;
+	정수 result;
+	unsigned 정수 i, j, index_ans, index_sig;
 	struct rrsetinfo *rrset = NULL;
 	struct rdatainfo *rdata;
 	size_t len;
@@ -77,26 +77,26 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	ldns_rr *rr;
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	만약 (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	만약 (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	만약 (flags) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* Initialize resolver from resolv.conf */
 	domain = ldns_dname_new_frm_str(hostname);
-	if ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
+	만약 ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
 	    LDNS_STATUS_OK) {
 		result = ERRSET_FAIL;
 		goto fail;
@@ -112,28 +112,28 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	pkt = ldns_resolver_query(ldns_res, domain, rdtype, rdclass, LDNS_RD);
 
 	/*** TODO: finer errcodes -- see original **/
-	if (!pkt || ldns_pkt_ancount(pkt) < 1) {
+	만약 (!pkt || ldns_pkt_ancount(pkt) < 1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
 	/* initialize rrset */
 	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	만약 (rrset == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
 	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
-	if (!rrset->rri_nrdatas) {
+	만약 (!rrset->rri_nrdatas) {
 		result = ERRSET_NODATA;
 		goto fail;
 	}
 
 	/* copy name from answer section */
 	len = ldns_rdf_size(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
-	if ((rrset->rri_name = malloc(len)) == NULL) {
+	만약 ((rrset->rri_name = malloc(len)) == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -147,9 +147,9 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	debug2("ldns: got %u answers from DNS", rrset->rri_nrdatas);
 
 	/* Check for authenticated data */
-	if (ldns_pkt_ad(pkt)) {
+	만약 (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
-	} else { /* AD is not set, try autonomous validation */
+	} 아니면 { /* AD is not set, try autonomous validation */
 		ldns_rr_list * trusted_keys = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
@@ -161,11 +161,11 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
-		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
+		만약 ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
 		     trusted_keys)) == LDNS_STATUS_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
-		} else {
+		} 아니면 {
 			debug2("ldns: RRset validation failed: %s",
 			    ldns_get_errorstr_by_id(err));
 		}
@@ -177,55 +177,55 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
 	   sizeof(struct rdatainfo));
 
-	if (rrset->rri_rdatas == NULL) {
+	만약 (rrset->rri_rdatas == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	만약 (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs,
 		    sizeof(struct rdatainfo));
 
-		if (rrset->rri_sigs == NULL) {
+		만약 (rrset->rri_sigs == NULL) {
 			result = ERRSET_NOMEMORY;
 			goto fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
+	위해 (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
 		rdata = NULL;
 		rr = ldns_rr_list_rr(ldns_pkt_answer(pkt), i);
 
-		if (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
+		만약 (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
 		    ldns_rr_get_type(rr) == rrset->rri_rdtype) {
 			rdata = &rrset->rri_rdatas[index_ans++];
 		}
 
-		if (rr->_rr_class == rrset->rri_rdclass &&
+		만약 (rr->_rr_class == rrset->rri_rdclass &&
 		    rr->_rr_type == LDNS_RR_TYPE_RRSIG &&
 		    rrset->rri_sigs) {
 			rdata = &rrset->rri_sigs[index_sig++];
 		}
 
-		if (rdata) {
+		만약 (rdata) {
 			size_t rdata_offset = 0;
 
 			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
+			위해 (j=0; j< rr->_rd_count; j++) {
 				rdata->rdi_length +=
 				    ldns_rdf_size(ldns_rr_rdf(rr, j));
 			}
 
 			rdata->rdi_data = malloc(rdata->rdi_length);
-			if (rdata->rdi_data == NULL) {
+			만약 (rdata->rdi_data == NULL) {
 				result = ERRSET_NOMEMORY;
 				goto fail;
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
+			위해 (j=0; j< rr->_rd_count; j++) {
 				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
 				memcpy(rdata->rdi_data + rdata_offset,
 				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);
@@ -246,7 +246,7 @@ fail:
 	ldns_rr_list_deep_free(rrdata);
 	ldns_resolver_deep_free(ldns_res);
 
-	return result;
+	반환 result;
 }
 
 
@@ -255,28 +255,28 @@ freerrset(struct rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	만약 (rrset == NULL)
+		반환;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
+	만약 (rrset->rri_rdatas) {
+		위해 (i = 0; i < rrset->rri_nrdatas; i++) {
+			만약 (rrset->rri_rdatas[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_rdatas[i].rdi_data);
 		}
 		free(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
+	만약 (rrset->rri_sigs) {
+		위해 (i = 0; i < rrset->rri_nsigs; i++) {
+			만약 (rrset->rri_sigs[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_sigs[i].rdi_data);
 		}
 		free(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
+	만약 (rrset->rri_name)
 		free(rrset->rri_name);
 	free(rrset);
 }

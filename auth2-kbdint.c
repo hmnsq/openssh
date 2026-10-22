@@ -44,25 +44,25 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_kbdint;
 
-static int
+static 정수
 userauth_kbdint(struct ssh *ssh, const char *method)
 {
-	int r, authenticated = 0;
+	정수 r, authenticated = 0;
 	char *lang, *devs;
 
-	if ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
+	만약 ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &devs, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	debug("keyboard-interactive devs %s", devs);
 
-	if (options.kbd_interactive_authentication)
+	만약 (options.kbd_interactive_authentication)
 		authenticated = auth2_challenge(ssh, devs);
 
 	free(devs);
 	free(lang);
-	return authenticated;
+	반환 authenticated;
 }
 
 Authmethod method_kbdint = {

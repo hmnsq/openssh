@@ -73,31 +73,31 @@ extern login_cap_t *lc;
  * Tries to authenticate the user using password.  Returns true if
  * authentication succeeds.
  */
-int
+정수
 auth_password(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	struct passwd *pw = authctxt->pw;
-	int result, ok = authctxt->valid;
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	static int expire_checked = 0;
+	정수 result, ok = authctxt->valid;
+#만약 defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	static 정수 expire_checked = 0;
 #endif
 
-	if (strlen(password) > MAX_PASSWORD_LEN)
-		return 0;
+	만약 (strlen(password) > MAX_PASSWORD_LEN)
+		반환 0;
 
 #ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+	만약 (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
 		ok = 0;
 #endif
-	if (*password == '\0' && options.permit_empty_passwd == 0)
-		return 0;
+	만약 (*password == '\0' && options.permit_empty_passwd == 0)
+		반환 0;
 
 #ifdef KRB5
-	if (options.kerberos_authentication == 1) {
-		int ret = auth_krb5_password(authctxt, password);
-		if (ret == 1 || ret == 0)
-			return ret && ok;
+	만약 (options.kerberos_authentication == 1) {
+		정수 ret = auth_krb5_password(authctxt, password);
+		만약 (ret == 1 || ret == 0)
+			반환 ret && ok;
 		/* Fall back to ordinary passwd authentication. */
 	}
 #endif
@@ -105,34 +105,34 @@ auth_password(struct ssh *ssh, const char *password)
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
-			return 0;
+		만약 (hToken == INVALID_HANDLE_VALUE)
+			반환 0;
 		cygwin_set_impersonation_token(hToken);
-		return ok;
+		반환 ok;
 	}
 #endif
 #ifdef USE_PAM
-	if (options.use_pam)
-		return (sshpam_auth_passwd(authctxt, password) && ok);
+	만약 (options.use_pam)
+		반환 (sshpam_auth_passwd(authctxt, password) && ok);
 #endif
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	if (!expire_checked) {
+#만약 defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	만약 (!expire_checked) {
 		expire_checked = 1;
-		if (auth_shadow_pwexpired(authctxt))
+		만약 (auth_shadow_pwexpired(authctxt))
 			authctxt->force_pwchange = 1;
 	}
 #endif
 	result = sys_auth_passwd(ssh, password);
-	if (authctxt->force_pwchange)
+	만약 (authctxt->force_pwchange)
 		auth_restrict_session(ssh);
-	return (result && ok);
+	반환 (result && ok);
 }
 
 #ifdef BSD_AUTH
 static void
 warn_expiry(Authctxt *authctxt, auth_session_t *as)
 {
-	int r;
+	정수 r;
 	int64_t pwtimeleft, actimeleft, daysleft, pwwarntime, acwarntime;
 
 	pwwarntime = acwarntime = TWO_WEEKS;
@@ -140,55 +140,55 @@ warn_expiry(Authctxt *authctxt, auth_session_t *as)
 	pwtimeleft = auth_check_change(as);
 	actimeleft = auth_check_expire(as);
 #ifdef HAVE_LOGIN_CAP
-	if (authctxt->valid) {
+	만약 (authctxt->valid) {
 		pwwarntime = login_getcaptime(lc, "password-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 		acwarntime = login_getcaptime(lc, "expire-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 	}
 #endif
-	if (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
+	만약 (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
 		daysleft = pwtimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		만약 ((r = sshbuf_putf(loginmsg,
 		    "Your password will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if (actimeleft != 0 && actimeleft < acwarntime) {
+	만약 (actimeleft != 0 && actimeleft < acwarntime) {
 		daysleft = actimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		만약 ((r = sshbuf_putf(loginmsg,
 		    "Your account will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 }
 
-int
+정수
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	auth_session_t *as;
-	static int expire_checked = 0;
+	static 정수 expire_checked = 0;
 
 	as = auth_usercheck(authctxt->pw->pw_name, authctxt->style, "auth-ssh",
 	    (char *)password);
-	if (as == NULL)
-		return (0);
-	if (auth_getstate(as) & AUTH_PWEXPIRED) {
+	만약 (as == NULL)
+		반환 (0);
+	만약 (auth_getstate(as) & AUTH_PWEXPIRED) {
 		auth_close(as);
 		auth_restrict_session(ssh);
 		authctxt->force_pwchange = 1;
-		return (1);
-	} else {
-		if (!expire_checked) {
+		반환 (1);
+	} 아니면 {
+		만약 (!expire_checked) {
 			expire_checked = 1;
 			warn_expiry(authctxt, as);
 		}
-		return (auth_close(as));
+		반환 (auth_close(as));
 	}
 }
 #elif !defined(CUSTOM_SYS_AUTH_PASSWD)
-int
+정수
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -198,18 +198,18 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	/* Just use the supplied fake password if authctxt is invalid */
 	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	만약 (pw_password == NULL)
+		반환 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	만약 (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		반환 (1);
 
 	/*
 	 * Encrypt the candidate password using the proper salt, or pass a
 	 * NULL and let xcrypt pick one.
 	 */
-	if (authctxt->valid && pw_password[0] && pw_password[1])
+	만약 (authctxt->valid && pw_password[0] && pw_password[1])
 		salt = pw_password;
 	encrypted_password = xcrypt(password, salt);
 
@@ -217,7 +217,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * Authentication is accepted if the encrypted passwords
 	 * are identical.
 	 */
-	return encrypted_password != NULL &&
+	반환 encrypted_password != NULL &&
 	    strcmp(encrypted_password, pw_password) == 0;
 }
 #endif

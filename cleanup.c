@@ -26,7 +26,7 @@
 
 /* default implementation */
 void
-cleanup_exit(int i)
+cleanup_exit(정수 i)
 {
 	_exit(i);
 }

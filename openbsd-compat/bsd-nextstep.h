@@ -37,21 +37,21 @@
 #define dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
+pid_t posix_wait(정수 *);
 #define wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
 pid_t getppid(void);
 void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+정수 innetgr(const char *, const char *, const char *, const char *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
+정수 tcgetattr(정수, struct termios *);
+정수 tcsetattr(정수, 정수, const struct termios *);
+정수 tcsetpgrp(정수, pid_t);
 speed_t cfgetospeed(const struct termios *);
 speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
+정수 cfsetospeed(struct termios *, 정수);
+정수 cfsetispeed(struct termios *, 정수);
 #endif /* HAVE_NEXT */
 #endif /* _NEXT_POSIX_H */

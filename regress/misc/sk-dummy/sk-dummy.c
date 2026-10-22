@@ -49,7 +49,7 @@
 
 /* #define SK_DEBUG 1 */
 
-#if SSH_SK_VERSION_MAJOR != 0x000a0000
+#만약 SSH_SK_VERSION_MAJOR != 0x000a0000
 # error SK API has changed, sk-dummy.c needs an update
 #endif
 
@@ -66,7 +66,7 @@ static void skdebug(const char *func, const char *fmt, ...)
 static void
 skdebug(const char *func, const char *fmt, ...)
 {
-#if defined(SK_DEBUG)
+#만약 defined(SK_DEBUG)
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -74,7 +74,7 @@ skdebug(const char *func, const char *fmt, ...)
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
 	va_end(ap);
-#else
+#아니면
 	(void)func; /* XXX */
 	(void)fmt; /* XXX */
 #endif
@@ -83,17 +83,17 @@ skdebug(const char *func, const char *fmt, ...)
 uint32_t
 sk_api_version(void)
 {
-	return SSH_SK_VERSION_MAJOR;
+	반환 SSH_SK_VERSION_MAJOR;
 }
 
-static int
+static 정수
 pack_key_ecdsa(struct sk_enroll_response *response)
 {
 #ifdef WITH_OPENSSL
 	EC_KEY *key = NULL;
 	const EC_GROUP *g;
 	const EC_POINT *q;
-	int ret = -1;
+	정수 ret = -1;
 	long privlen;
 	BIO *bio = NULL;
 	char *privptr;
@@ -103,16 +103,16 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 	response->key_handle = NULL;
 	response->key_handle_len = 0;
 
-	if ((key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1)) == NULL) {
+	만약 ((key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1)) == NULL) {
 		skdebug(__func__, "EC_KEY_new_by_curve_name");
 		goto out;
 	}
-	if (EC_KEY_generate_key(key) != 1) {
+	만약 (EC_KEY_generate_key(key) != 1) {
 		skdebug(__func__, "EC_KEY_generate_key");
 		goto out;
 	}
 	EC_KEY_set_asn1_flag(key, OPENSSL_EC_NAMED_CURVE);
-	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
+	만약 ((bio = BIO_new(BIO_s_mem())) == NULL ||
 	    (g = EC_KEY_get0_group(key)) == NULL ||
 	    (q = EC_KEY_get0_public_key(key)) == NULL) {
 		skdebug(__func__, "couldn't get key parameters");
@@ -120,30 +120,30 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 	}
 	response->public_key_len = EC_POINT_point2oct(g, q,
 	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	만약 (response->public_key_len == 0 || response->public_key_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
 		    response->public_key_len);
 		goto out;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	만약 ((response->public_key = malloc(response->public_key_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	만약 (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
 	    response->public_key, response->public_key_len, NULL) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
 		goto out;
 	}
 	/* Key handle contains PEM encoded private key */
-	if (!PEM_write_bio_ECPrivateKey(bio, key, NULL, NULL, 0, NULL, NULL)) {
+	만약 (!PEM_write_bio_ECPrivateKey(bio, key, NULL, NULL, 0, NULL, NULL)) {
 		skdebug(__func__, "PEM_write_bio_ECPrivateKey failed");
 		goto out;
 	}
-	if ((privlen = BIO_get_mem_data(bio, &privptr)) <= 0) {
+	만약 ((privlen = BIO_get_mem_data(bio, &privptr)) <= 0) {
 		skdebug(__func__, "BIO_get_mem_data failed");
 		goto out;
 	}
-	if ((response->key_handle = malloc(privlen)) == NULL) {
+	만약 ((response->key_handle = malloc(privlen)) == NULL) {
 		skdebug(__func__, "malloc key_handle failed");
 		goto out;
 	}
@@ -152,14 +152,14 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 	/* success */
 	ret = 0;
  out:
-	if (ret != 0) {
-		if (response->public_key != NULL) {
+	만약 (ret != 0) {
+		만약 (response->public_key != NULL) {
 			memset(response->public_key, 0,
 			    response->public_key_len);
 			free(response->public_key);
 			response->public_key = NULL;
 		}
-		if (response->key_handle != NULL) {
+		만약 (response->key_handle != NULL) {
 			memset(response->key_handle, 0,
 			    response->key_handle_len);
 			free(response->key_handle);
@@ -168,16 +168,16 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 	}
 	BIO_free(bio);
 	EC_KEY_free(key);
-	return ret;
-#else
-	return -1;
+	반환 ret;
+#아니면
+	반환 -1;
 #endif
 }
 
-static int
+static 정수
 pack_key_ed25519(struct sk_enroll_response *response)
 {
-	int ret = -1;
+	정수 ret = -1;
 	u_char pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	u_char sk[crypto_sign_ed25519_SECRETKEYBYTES];
 
@@ -191,14 +191,14 @@ pack_key_ed25519(struct sk_enroll_response *response)
 	crypto_sign_ed25519_keypair(pk, sk);
 
 	response->public_key_len = sizeof(pk);
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	만약 ((response->public_key = malloc(response->public_key_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
 	memcpy(response->public_key, pk, sizeof(pk));
 	/* Key handle contains sk */
 	response->key_handle_len = sizeof(sk);
-	if ((response->key_handle = malloc(response->key_handle_len)) == NULL) {
+	만약 ((response->key_handle = malloc(response->key_handle_len)) == NULL) {
 		skdebug(__func__, "malloc key_handle failed");
 		goto out;
 	}
@@ -206,58 +206,58 @@ pack_key_ed25519(struct sk_enroll_response *response)
 	/* success */
 	ret = 0;
  out:
-	if (ret != 0)
+	만약 (ret != 0)
 		free(response->public_key);
-	return ret;
+	반환 ret;
 }
 
-static int
+static 정수
 check_options(struct sk_option **options)
 {
 	size_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
+	만약 (options == NULL)
+		반환 0;
+	위해 (i = 0; options[i] != NULL; i++) {
 		skdebug(__func__, "requested unsupported option %s",
 		    options[i]->name);
-		if (options[i]->required) {
+		만약 (options[i]->required) {
 			skdebug(__func__, "unknown required option");
-			return -1;
+			반환 -1;
 		}
 	}
-	return 0;
+	반환 0;
 }
 
-int
+정수
 sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
     const char *application, uint8_t flags, const char *pin,
     struct sk_option **options, struct sk_enroll_response **enroll_response)
 {
 	struct sk_enroll_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL;
+	정수 ret = SSH_SK_ERR_GENERAL;
 
 	(void)flags; /* XXX; unused */
 
-	if (enroll_response == NULL) {
+	만약 (enroll_response == NULL) {
 		skdebug(__func__, "enroll_response == NULL");
 		goto out;
 	}
 	*enroll_response = NULL;
-	if (check_options(options) != 0)
+	만약 (check_options(options) != 0)
 		goto out; /* error already logged */
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	만약 ((response = calloc(1, sizeof(*response))) == NULL) {
 		skdebug(__func__, "calloc response failed");
 		goto out;
 	}
 	response->flags = flags;
 	switch(alg) {
 	case SSH_SK_ECDSA:
-		if (pack_key_ecdsa(response) != 0)
+		만약 (pack_key_ecdsa(response) != 0)
 			goto out;
 		break;
 	case SSH_SK_ED25519:
-		if (pack_key_ed25519(response) != 0)
+		만약 (pack_key_ed25519(response) != 0)
 			goto out;
 		break;
 	default:
@@ -265,7 +265,7 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		goto out;
 	}
 	/* Have to return something here */
-	if ((response->signature = calloc(1, 1)) == NULL) {
+	만약 ((response->signature = calloc(1, 1)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
 		goto out;
 	}
@@ -275,14 +275,14 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	response = NULL;
 	ret = 0;
  out:
-	if (response != NULL) {
+	만약 (response != NULL) {
 		free(response->public_key);
 		free(response->key_handle);
 		free(response->signature);
 		free(response->attestation_cert);
 		free(response);
 	}
-	return ret;
+	반환 ret;
 }
 
 static void
@@ -293,17 +293,17 @@ dump(const char *preamble, const void *sv, size_t l)
 	size_t i;
 
 	fprintf(stderr, "%s (len %zu):\n", preamble, l);
-	for (i = 0; i < l; i++) {
-		if (i % 16 == 0)
+	위해 (i = 0; i < l; i++) {
+		만약 (i % 16 == 0)
 			fprintf(stderr, "%04zu: ", i);
 		fprintf(stderr, "%02x", s[i]);
-		if (i % 16 == 15 || i == l - 1)
+		만약 (i % 16 == 15 || i == l - 1)
 			fprintf(stderr, "\n");
 	}
 #endif
 }
 
-static int
+static 정수
 sig_ecdsa(const uint8_t *message, size_t message_len,
     const char *application, uint32_t counter, uint8_t flags,
     const uint8_t *key_handle, size_t key_handle_len,
@@ -312,7 +312,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 #ifdef WITH_OPENSSL
 	ECDSA_SIG *sig = NULL;
 	const BIGNUM *sig_r, *sig_s;
-	int ret = -1;
+	정수 ret = -1;
 	BIO *bio = NULL;
 	EVP_PKEY *pk = NULL;
 	EC_KEY *ec = NULL;
@@ -322,25 +322,25 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 	uint8_t countbuf[4];
 
 	/* Decode EC_KEY from key handle */
-	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
-	    BIO_write(bio, key_handle, key_handle_len) != (int)key_handle_len) {
+	만약 ((bio = BIO_new(BIO_s_mem())) == NULL ||
+	    BIO_write(bio, key_handle, key_handle_len) != (정수)key_handle_len) {
 		skdebug(__func__, "BIO setup failed");
 		goto out;
 	}
-	if ((pk = PEM_read_bio_PrivateKey(bio, NULL, NULL, "")) == NULL) {
+	만약 ((pk = PEM_read_bio_PrivateKey(bio, NULL, NULL, "")) == NULL) {
 		skdebug(__func__, "PEM_read_bio_PrivateKey failed");
 		goto out;
 	}
-	if (EVP_PKEY_base_id(pk) != EVP_PKEY_EC) {
+	만약 (EVP_PKEY_base_id(pk) != EVP_PKEY_EC) {
 		skdebug(__func__, "Not an EC key: %d", EVP_PKEY_base_id(pk));
 		goto out;
 	}
-	if ((ec = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
+	만약 ((ec = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
 		skdebug(__func__, "EVP_PKEY_get1_EC_KEY failed");
 		goto out;
 	}
 	/* Expect message to be pre-hashed */
-	if (message_len != SHA256_DIGEST_LENGTH) {
+	만약 (message_len != SHA256_DIGEST_LENGTH) {
 		skdebug(__func__, "bad message len %zu", message_len);
 		goto out;
 	}
@@ -364,14 +364,14 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 	SHA256Final(sighash, &ctx);
 	dump("sighash", sighash, sizeof(sighash));
 	/* create and encode signature */
-	if ((sig = ECDSA_do_sign(sighash, sizeof(sighash), ec)) == NULL) {
+	만약 ((sig = ECDSA_do_sign(sighash, sizeof(sighash), ec)) == NULL) {
 		skdebug(__func__, "ECDSA_do_sign failed");
 		goto out;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
 	response->sig_r_len = BN_num_bytes(sig_r);
 	response->sig_s_len = BN_num_bytes(sig_s);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
+	만약 ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
 	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
 		goto out;
@@ -384,7 +384,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 	explicit_bzero(&apphash, sizeof(apphash));
 	explicit_bzero(&sighash, sizeof(sighash));
 	ECDSA_SIG_free(sig);
-	if (ret != 0) {
+	만약 (ret != 0) {
 		free(response->sig_r);
 		free(response->sig_s);
 		response->sig_r = NULL;
@@ -393,20 +393,20 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 	BIO_free(bio);
 	EC_KEY_free(ec);
 	EVP_PKEY_free(pk);
-	return ret;
-#else
-	return -1;
+	반환 ret;
+#아니면
+	반환 -1;
 #endif
 }
 
-static int
+static 정수
 sig_ed25519(const uint8_t *message, size_t message_len,
     const char *application, uint32_t counter, uint8_t flags,
     const uint8_t *key_handle, size_t key_handle_len,
     struct sk_sign_response *response)
 {
 	size_t o;
-	int ret = -1;
+	정수 ret = -1;
 	SHA2_CTX ctx;
 	uint8_t	apphash[SHA256_DIGEST_LENGTH];
 	uint8_t signbuf[sizeof(apphash) + sizeof(flags) +
@@ -414,12 +414,12 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 	uint8_t sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
 
-	if (key_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
+	만약 (key_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
 		skdebug(__func__, "bad key handle length %zu", key_handle_len);
 		goto out;
 	}
 	/* Expect message to be pre-hashed */
-	if (message_len != SHA256_DIGEST_LENGTH) {
+	만약 (message_len != SHA256_DIGEST_LENGTH) {
 		skdebug(__func__, "bad message len %zu", message_len);
 		goto out;
 	}
@@ -439,24 +439,24 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 	signbuf[o++] = counter & 0xff;
 	memcpy(signbuf + o, message, message_len);
 	o += message_len;
-	if (o != sizeof(signbuf)) {
+	만약 (o != sizeof(signbuf)) {
 		skdebug(__func__, "bad sign buf len %zu, expected %zu",
 		    o, sizeof(signbuf));
 		goto out;
 	}
 	dump("signbuf", signbuf, sizeof(signbuf));
 	/* create and encode signature */
-	if (crypto_sign_ed25519_detached(sig, &siglen, signbuf, sizeof(signbuf),
+	만약 (crypto_sign_ed25519_detached(sig, &siglen, signbuf, sizeof(signbuf),
 	    key_handle) != 0) {
 		skdebug(__func__, "crypto_sign_ed25519_detached failed");
 		goto out;
 	}
-	if (siglen != sizeof(sig)) {
+	만약 (siglen != sizeof(sig)) {
 		skdebug(__func__, "bad signature length %llu", siglen);
 		goto out;
 	}
 	response->sig_r_len = sizeof(sig);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
+	만약 ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
 		goto out;
 	}
@@ -468,32 +468,32 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 	explicit_bzero(&apphash, sizeof(apphash));
 	explicit_bzero(&signbuf, sizeof(signbuf));
 	explicit_bzero(&sig, sizeof(sig));
-	if (ret != 0) {
+	만약 (ret != 0) {
 		free(response->sig_r);
 		response->sig_r = NULL;
 	}
-	return ret;
+	반환 ret;
 }
 
-int
+정수
 sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
     const char *application, const uint8_t *key_handle, size_t key_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response)
 {
 	struct sk_sign_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL;
+	정수 ret = SSH_SK_ERR_GENERAL;
 	SHA2_CTX ctx;
 	uint8_t message[32];
 
-	if (sign_response == NULL) {
+	만약 (sign_response == NULL) {
 		skdebug(__func__, "sign_response == NULL");
 		goto out;
 	}
 	*sign_response = NULL;
-	if (check_options(options) != 0)
+	만약 (check_options(options) != 0)
 		goto out; /* error already logged */
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	만약 ((response = calloc(1, sizeof(*response))) == NULL) {
 		skdebug(__func__, "calloc response failed");
 		goto out;
 	}
@@ -504,13 +504,13 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	response->counter = 0x12345678;
 	switch(alg) {
 	case SSH_SK_ECDSA:
-		if (sig_ecdsa(message, sizeof(message), application,
+		만약 (sig_ecdsa(message, sizeof(message), application,
 		    response->counter, flags, key_handle, key_handle_len,
 		    response) != 0)
 			goto out;
 		break;
 	case SSH_SK_ED25519:
-		if (sig_ed25519(message, sizeof(message), application,
+		만약 (sig_ed25519(message, sizeof(message), application,
 		    response->counter, flags, key_handle, key_handle_len,
 		    response) != 0)
 			goto out;
@@ -524,17 +524,17 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	ret = 0;
  out:
 	explicit_bzero(message, sizeof(message));
-	if (response != NULL) {
+	만약 (response != NULL) {
 		free(response->sig_r);
 		free(response->sig_s);
 		free(response);
 	}
-	return ret;
+	반환 ret;
 }
 
-int
+정수
 sk_load_resident_keys(const char *pin, struct sk_option **options,
     struct sk_resident_key ***rks, size_t *nrks)
 {
-	return SSH_SK_ERR_UNSUPPORTED;
+	반환 SSH_SK_ERR_UNSUPPORTED;
 }

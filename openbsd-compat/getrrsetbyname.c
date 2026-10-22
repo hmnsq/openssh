@@ -47,7 +47,7 @@
 
 #include "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#만약 !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
 #include <stdlib.h>
 #include <string.h>
@@ -57,8 +57,8 @@
 
 #include "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+#만약 defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+extern 정수 h_errno;
 #endif
 
 /* We don't need multithread support here */
@@ -113,7 +113,7 @@ struct __res_state _res;
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#만약 !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -133,7 +133,7 @@ _getshort(const u_char *msgp)
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	반환 (u);
 }
 
 static u_int32_t
@@ -142,7 +142,7 @@ _getlong(const u_char *msgp)
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	반환 (u);
 }
 #endif /* missing _getshort/_getlong */
 
@@ -175,53 +175,53 @@ struct dns_response {
 	struct dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+static struct dns_response *parse_dns_response(const u_char *, 정수);
+static struct dns_query *parse_dns_qsection(const u_char *, 정수,
+    const u_char **, 정수);
+static struct dns_rr *parse_dns_rrsection(const u_char *, 정수, const u_char **,
+    정수);
 
 static void free_dns_query(struct dns_query *);
 static void free_dns_rr(struct dns_rr *);
 static void free_dns_response(struct dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+static 정수 count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
+정수
+getrrsetbyname(const char *hostname, unsigned 정수 rdclass,
+    unsigned 정수 rdtype, unsigned 정수 flags,
     struct rrsetinfo **res)
 {
 	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
+	정수 result;
 	struct rrsetinfo *rrset = NULL;
 	struct dns_response *response = NULL;
 	struct dns_rr *rr;
 	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
+	정수 length;
+	unsigned 정수 index_ans, index_sig;
 	u_char answer[ANSWER_BUFFER_SIZE];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	만약 (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	만약 (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	만약 (flags) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+	만약 ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
@@ -232,14 +232,14 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	만약 (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
 #endif /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
+	length = res_query(hostname, (signed 정수) rdclass, (signed 정수) rdtype,
 	    answer, sizeof(answer));
-	if (length < 0) {
+	만약 (length < 0) {
 		switch(h_errno) {
 		case HOST_NOT_FOUND:
 			result = ERRSET_NONAME;
@@ -255,19 +255,19 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 	/* parse result */
 	response = parse_dns_response(answer, length);
-	if (response == NULL) {
+	만약 (response == NULL) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
-	if (response->header.qdcount != 1) {
+	만약 (response->header.qdcount != 1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
 	/* initialize rrset */
 	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	만약 (rrset == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -278,13 +278,13 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef HAVE_HEADER_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	만약 (response->header.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
 #endif
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
+	만약 (rrset->rri_name == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -298,39 +298,39 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
 	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
+	만약 (rrset->rri_rdatas == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	만약 (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
+		만약 (rrset->rri_sigs == NULL) {
 			result = ERRSET_NOMEMORY;
 			goto fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
+	위해 (rr = response->answer, index_ans = 0, index_sig = 0;
 	    rr; rr = rr->next) {
 
 		rdata = NULL;
 
-		if (rr->class == rrset->rri_rdclass &&
+		만약 (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
 			rdata = &rrset->rri_rdatas[index_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		만약 (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
 			rdata = &rrset->rri_sigs[index_sig++];
 
-		if (rdata) {
+		만약 (rdata) {
 			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
+			만약 (rr->size != 0) {
 				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
+				만약 (rdata->rdi_data == NULL) {
 					result = ERRSET_NOMEMORY;
 					goto fail;
 				}
@@ -341,14 +341,14 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	반환 (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	만약 (rrset != NULL)
 		freerrset(rrset);
-	if (response != NULL)
+	만약 (response != NULL)
 		free_dns_response(response);
-	return (result);
+	반환 (result);
 }
 
 void
@@ -356,28 +356,28 @@ freerrset(struct rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	만약 (rrset == NULL)
+		반환;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
+	만약 (rrset->rri_rdatas) {
+		위해 (i = 0; i < rrset->rri_nrdatas; i++) {
+			만약 (rrset->rri_rdatas[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_rdatas[i].rdi_data);
 		}
 		free(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
+	만약 (rrset->rri_sigs) {
+		위해 (i = 0; i < rrset->rri_nsigs; i++) {
+			만약 (rrset->rri_sigs[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_sigs[i].rdi_data);
 		}
 		free(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
+	만약 (rrset->rri_name)
 		free(rrset->rri_name);
 	free(rrset);
 }
@@ -386,18 +386,18 @@ freerrset(struct rrsetinfo *rrset)
  * DNS response parsing routines
  */
 static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+parse_dns_response(const u_char *answer, 정수 size)
 {
 	struct dns_response *resp;
 	const u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	만약 (size < HFIXEDSZ)
+		반환 (NULL);
 
 	/* allocate memory for the response */
 	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	만약 (resp == NULL)
+		반환 (NULL);
 
 	/* initialize current pointer */
 	cp = answer;
@@ -413,85 +413,85 @@ parse_dns_response(const u_char *answer, int size)
 	resp->header.arcount = ntohs(resp->header.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	만약 (resp->header.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		반환 (NULL);
 	}
 
 	/* parse query section */
 	resp->query = parse_dns_qsection(answer, size, &cp,
 	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	만약 (resp->header.qdcount && resp->query == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		반환 (NULL);
 	}
 
 	/* parse answer section */
 	resp->answer = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	만약 (resp->header.ancount && resp->answer == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		반환 (NULL);
 	}
 
 	/* parse authority section */
 	resp->authority = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	만약 (resp->header.nscount && resp->authority == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		반환 (NULL);
 	}
 
 	/* parse additional section */
 	resp->additional = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	만약 (resp->header.arcount && resp->additional == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		반환 (NULL);
 	}
 
-	return (resp);
+	반환 (resp);
 }
 
 static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+parse_dns_qsection(const u_char *answer, 정수 size, const u_char **cp, 정수 count)
 {
 	struct dns_query *head, *curr, *prev;
-	int i, length;
+	정수 i, length;
 	char name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		만약 (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} 동안 (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	위해 (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		만약 (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
-			return (NULL);
+			반환 (NULL);
 		}
 		/* allocate and initialize struct */
 		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
+		만약 (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		만약 (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		만약 (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
 		    sizeof(name));
-		if (length < 0) {
+		만약 (length < 0) {
 			free_dns_query(head);
-			return (NULL);
+			반환 (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		만약 (curr->name == NULL) {
 			free_dns_query(head);
-			return (NULL);
+			반환 (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -508,50 +508,50 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 	}
 #undef NEED
 
-	return (head);
+	반환 (head);
 }
 
 static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+parse_dns_rrsection(const u_char *answer, 정수 size, const u_char **cp,
+    정수 count)
 {
 	struct dns_rr *head, *curr, *prev;
-	int i, length;
+	정수 i, length;
 	char name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		만약 (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} 동안 (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	위해 (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		만약 (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
-			return (NULL);
+			반환 (NULL);
 		}
 
 		/* allocate and initialize struct */
 		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
+		만약 (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		만약 (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		만약 (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
 		    sizeof(name));
-		if (length < 0) {
+		만약 (length < 0) {
 			free_dns_rr(head);
-			return (NULL);
+			반환 (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		만약 (curr->name == NULL) {
 			free_dns_rr(head);
-			return (NULL);
+			반환 (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -578,10 +578,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata itself */
 		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
+		만약 (curr->size != 0) {
+			만약 ((curr->rdata = malloc(curr->size)) == NULL) {
 				free_dns_rr(head);
-				return (NULL);
+				반환 (NULL);
 			}
 			memcpy(curr->rdata, *cp, curr->size);
 		}
@@ -589,7 +589,7 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 	}
 #undef NEED
 
-	return (head);
+	반환 (head);
 }
 
 static void
@@ -597,7 +597,7 @@ free_dns_query(struct dns_query *p)
 {
 	struct dns_query *next;
 
-	while (p != NULL) {
+	동안 (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p);
@@ -610,7 +610,7 @@ free_dns_rr(struct dns_rr *p)
 {
 	struct dns_rr *next;
 
-	while (p != NULL) {
+	동안 (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p->rdata);
@@ -622,8 +622,8 @@ free_dns_rr(struct dns_rr *p)
 static void
 free_dns_response(struct dns_response *p)
 {
-	if (p == NULL)
-		return;
+	만약 (p == NULL)
+		반환;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
@@ -632,18 +632,18 @@ free_dns_response(struct dns_response *p)
 	free(p);
 }
 
-static int
+static 정수
 count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	정수 n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	동안(p) {
+		만약 (p->class == class && p->type == type)
 			n++;
 		p = p->next;
 	}
 
-	return (n);
+	반환 (n);
 }
 
 #endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

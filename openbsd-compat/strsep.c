@@ -33,7 +33,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STRSEP)
+#만약 !defined(HAVE_STRSEP)
 
 #include <string.h>
 #include <stdio.h>
@@ -54,24 +54,24 @@ strsep(char **stringp, const char *delim)
 {
 	char *s;
 	const char *spanp;
-	int c, sc;
+	정수 c, sc;
 	char *tok;
 
-	if ((s = *stringp) == NULL)
-		return (NULL);
-	for (tok = s;;) {
+	만약 ((s = *stringp) == NULL)
+		반환 (NULL);
+	위해 (tok = s;;) {
 		c = *s++;
 		spanp = delim;
 		do {
-			if ((sc = *spanp++) == c) {
-				if (c == 0)
+			만약 ((sc = *spanp++) == c) {
+				만약 (c == 0)
 					s = NULL;
-				else
+				아니면
 					s[-1] = 0;
 				*stringp = s;
-				return (tok);
+				반환 (tok);
 			}
-		} while (sc != 0);
+		} 동안 (sc != 0);
 	}
 	/* NOTREACHED */
 }

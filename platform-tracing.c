@@ -20,7 +20,7 @@
 #ifdef HAVE_SYS_PROCCTL_H
 #include <sys/procctl.h>
 #endif
-#if defined(HAVE_SYS_PRCTL_H)
+#만약 defined(HAVE_SYS_PRCTL_H)
 #include <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
 #endif
 #ifdef HAVE_SYS_PTRACE_H
@@ -37,40 +37,40 @@
 #include "log.h"
 
 void
-platform_disable_tracing(int strict)
+platform_disable_tracing(정수 strict)
 {
-#if defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
+#만약 defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
 	/* On FreeBSD, we should make this process untraceable */
-	int disable_trace = PROC_TRACE_CTL_DISABLE;
+	정수 disable_trace = PROC_TRACE_CTL_DISABLE;
 
 	/*
 	 * On FreeBSD, we should make this process untraceable.
 	 * pid=0 means "this process" but some older kernels do not
 	 * understand that so retry with our own pid before failing.
 	 */
-	if (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (strict)
+	만약 (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
+		반환;
+	만약 (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
+		반환;
+	만약 (strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
 #endif
-#if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
+#만약 defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
 	/* Disable ptrace on Linux without sgid bit */
-	if (prctl(PR_SET_DUMPABLE, 0) != 0 && strict)
+	만약 (prctl(PR_SET_DUMPABLE, 0) != 0 && strict)
 		fatal("unable to make the process undumpable: %s",
 		    strerror(errno));
 #endif
-#if defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
+#만약 defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
 	/* On Solaris, we should make this process untraceable */
-	if (setpflags(__PROC_PROTECT, 1) != 0 && strict)
+	만약 (setpflags(__PROC_PROTECT, 1) != 0 && strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
 #endif
 #ifdef PT_DENY_ATTACH
 	/* Mac OS X */
-	if (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
+	만약 (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
 		fatal("unable to set PT_DENY_ATTACH: %s", strerror(errno));
 #endif
 }

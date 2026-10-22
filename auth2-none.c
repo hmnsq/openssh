@@ -48,19 +48,19 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+extern 정수 none_enabled;
 
-static int
+static 정수
 userauth_none(struct ssh *ssh, const char *method)
 {
-	int r;
+	정수 r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	만약 ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	만약 (options.permit_empty_passwd && options.password_authentication)
+		반환 mm_auth_password(ssh, "");
+	반환 (0);
 }
 
 Authmethod method_none = {

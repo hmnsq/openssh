@@ -15,7 +15,7 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
+#만약 !defined(HAVE_PPOLL) || !defined(HAVE_POLL) || defined(BROKEN_POLL)
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include "bsd-poll.h"
 
-#if !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
+#만약 !defined(HAVE_PPOLL) || defined(BROKEN_POLL)
 /*
  * A minimal implementation of ppoll(2), built on top of pselect(2).
  *
@@ -42,19 +42,19 @@
  * Supports pfd.fd = -1 meaning "unused" although it's not standard.
  */
 
-int
+정수
 ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
     const sigset_t *sigmask)
 {
 	nfds_t i;
-	int ret, fd, maxfd = 0;
+	정수 ret, fd, maxfd = 0;
 	fd_set readfds, writefds, exceptfds;
 
-	for (i = 0; i < nfds; i++) {
+	위해 (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd != -1 && fd >= FD_SETSIZE) {
+		만약 (fd != -1 && fd >= FD_SETSIZE) {
 			errno = EINVAL;
-			return -1;
+			반환 -1;
 		}
 		maxfd = MAX(maxfd, fd);
 	}
@@ -63,52 +63,52 @@ ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmoutp,
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
 	FD_ZERO(&exceptfds);
-	for (i = 0; i < nfds; i++) {
+	위해 (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
-		if (fd == -1)
+		만약 (fd == -1)
 			continue;
-		if (fds[i].events & POLLIN)
+		만약 (fds[i].events & POLLIN)
 			FD_SET(fd, &readfds);
-		if (fds[i].events & POLLOUT)
+		만약 (fds[i].events & POLLOUT)
 			FD_SET(fd, &writefds);
-		if (fds[i].events & POLLPRI)
+		만약 (fds[i].events & POLLPRI)
 			FD_SET(fd, &exceptfds);
 	}
 
 	ret = pselect(maxfd + 1, &readfds, &writefds, &exceptfds, tmoutp, sigmask);
 
 	/* scan through select results and set poll() flags */
-	for (i = 0; i < nfds; i++) {
+	위해 (i = 0; i < nfds; i++) {
 		fd = fds[i].fd;
 		fds[i].revents = 0;
-		if (fd == -1)
+		만약 (fd == -1)
 			continue;
-		if ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
+		만약 ((fds[i].events & POLLIN) && FD_ISSET(fd, &readfds))
 			fds[i].revents |= POLLIN;
-		if ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
+		만약 ((fds[i].events & POLLOUT) && FD_ISSET(fd, &writefds))
 			fds[i].revents |= POLLOUT;
-		if ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
+		만약 ((fds[i].events & POLLPRI) && FD_ISSET(fd, &exceptfds))
 			fds[i].revents |= POLLPRI;
 	}
 
-	return ret;
+	반환 ret;
 }
 #endif /* !HAVE_PPOLL || BROKEN_POLL */
 
-#if !defined(HAVE_POLL) || defined(BROKEN_POLL)
-int
-poll(struct pollfd *fds, nfds_t nfds, int timeout)
+#만약 !defined(HAVE_POLL) || defined(BROKEN_POLL)
+정수
+poll(struct pollfd *fds, nfds_t nfds, 정수 timeout)
 {
 	struct timespec ts, *tsp = NULL;
 
 	/* poll timeout is msec, ppoll is timespec (sec + nsec) */
-	if (timeout >= 0) {
+	만약 (timeout >= 0) {
 		ts.tv_sec = timeout / 1000;
 		ts.tv_nsec = (timeout % 1000) * 1000000;
 		tsp = &ts;
 	}
 
-	return ppoll(fds, nfds, tsp, NULL);
+	반환 ppoll(fds, nfds, tsp, NULL);
 }
 #endif /* !HAVE_POLL || BROKEN_POLL */
 

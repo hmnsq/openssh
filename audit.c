@@ -46,23 +46,23 @@ extern Authctxt *the_authctxt;
 ssh_audit_event_t
 audit_classify_auth(const char *method)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
+	만약 (strcmp(method, "none") == 0)
+		반환 SSH_AUTH_FAIL_NONE;
+	아니면 만약 (strcmp(method, "password") == 0)
+		반환 SSH_AUTH_FAIL_PASSWD;
+	아니면 만약 (strcmp(method, "publickey") == 0 ||
 	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
+		반환 SSH_AUTH_FAIL_PUBKEY;
+	아니면 만약 (strncmp(method, "keyboard-interactive", 20) == 0 ||
 	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
+		반환 SSH_AUTH_FAIL_KBDINT;
+	아니면 만약 (strcmp(method, "hostbased") == 0 ||
 	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+		반환 SSH_AUTH_FAIL_HOSTBASED;
+	아니면 만약 (strcmp(method, "gssapi-with-mic") == 0)
+		반환 SSH_AUTH_FAIL_GSSAPI;
+	아니면
+		반환 SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
@@ -72,17 +72,17 @@ audit_username(void)
 	static const char unknownuser[] = "(unknown user)";
 	static const char invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	만약 (the_authctxt == NULL || the_authctxt->user == NULL)
+		반환 (unknownuser);
+	만약 (!the_authctxt->valid)
+		반환 (invaliduser);
+	반환 (the_authctxt->user);
 }
 
 const char *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
+	정수 i;
 	static struct event_lookup_struct {
 		ssh_audit_event_t event;
 		const char *name;
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
+	위해 (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		만약 (event_lookup[i].event == ev)
 			break;
-	return(event_lookup[i].name);
+	반환(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -120,10 +120,10 @@ audit_event_lookup(ssh_audit_event_t ev)
  * has been attempted.
  */
 void
-audit_connection_from(const char *host, int port)
+audit_connection_from(const char *host, 정수 port)
 {
 	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	    (정수)geteuid());
 }
 
 /*

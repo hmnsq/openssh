@@ -64,26 +64,26 @@ seed_rng(void)
 	unsigned char buf[RANDOM_SEED_SIZE];
 
 	/* Initialise libcrypto */
-	if (ssh_libcrypto_init() != 1)
+	만약 (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
+	만약 (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
 	    OpenSSL_version_num()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
 		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
 		    OpenSSL_version_num());
 
 #ifndef OPENSSL_PRNG_ONLY
-	if (RAND_status() == 1)
+	만약 (RAND_status() == 1)
 		debug3("RNG is ready, skipping seeding");
-	else {
-		if (seed_from_prngd(buf, sizeof(buf)) == -1)
+	아니면 {
+		만약 (seed_from_prngd(buf, sizeof(buf)) == -1)
 			fatal("Could not obtain seed from PRNGd");
 		RAND_add(buf, sizeof(buf), sizeof(buf));
 	}
 #endif /* OPENSSL_PRNG_ONLY */
 
-	if (RAND_status() != 1)
+	만약 (RAND_status() != 1)
 		fatal("PRNG is not seeded");
 
 	/* Ensure arc4random() is primed */
@@ -91,7 +91,7 @@ seed_rng(void)
 	explicit_bzero(buf, sizeof(buf));
 }
 
-#else /* WITH_OPENSSL */
+#아니면 /* WITH_OPENSSL */
 
 #include <stdlib.h>
 #include <string.h>
@@ -123,7 +123,7 @@ reseed_prngs(void)
 #ifdef WITH_OPENSSL
 	RAND_seed(rnd, sizeof(rnd));
 	/* give libcrypto a chance to notice the PID change */
-	if ((RAND_bytes((u_char *)rnd, 1)) != 1)
+	만약 ((RAND_bytes((u_char *)rnd, 1)) != 1)
 		fatal_f("RAND_bytes failed");
 #endif
 

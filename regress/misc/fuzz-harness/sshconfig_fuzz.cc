@@ -36,9 +36,9 @@ static void init_pw(void) {
     fuzz_pw.pw_shell = fuzz_shell;
 }
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-    static int initialized = 0;
-    if (!initialized) {
+extern "C" 정수 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    static 정수 initialized = 0;
+    만약 (!initialized) {
         log_init("sshconfig_fuzz", SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_AUTH, 0);
         init_pw();
         initialized = 1;
@@ -46,14 +46,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 
     // Write fuzz input to a temp file (read_config_file requires a path)
     char tmpfile[] = "/tmp/sshconfig_fuzz_XXXXXX";
-    int fd = mkstemp(tmpfile);
-    if (fd < 0)
-        return 0;
+    정수 fd = mkstemp(tmpfile);
+    만약 (fd < 0)
+        반환 0;
 
-    if (write(fd, data, size) != (ssize_t)size) {
+    만약 (write(fd, data, size) != (ssize_t)size) {
         close(fd);
         unlink(tmpfile);
-        return 0;
+        반환 0;
     }
     close(fd);
 
@@ -69,5 +69,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     // (options cleanup is intentionally omitted; leak sanitizer disabled for fuzzing)
 
     unlink(tmpfile);
-    return 0;
+    반환 0;
 }

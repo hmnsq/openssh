@@ -24,75 +24,75 @@
 
 #include "log.h"
 
-#if !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
-int
+#만약 !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
+정수
 setresgid(gid_t rgid, gid_t egid, gid_t sgid)
 {
-	int ret = 0, saved_errno;
+	정수 ret = 0, saved_errno;
 
-	if (rgid != sgid) {
+	만약 (rgid != sgid) {
 		errno = ENOSYS;
-		return -1;
+		반환 -1;
 	}
-#if defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
-	if (setregid(rgid, egid) < 0) {
+#만약 defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
+	만약 (setregid(rgid, egid) < 0) {
 		saved_errno = errno;
 		error("setregid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
-	if (setegid(egid) < 0) {
+#아니면
+	만약 (setegid(egid) < 0) {
 		saved_errno = errno;
 		error("setegid %lu: %.100s", (u_long)egid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-	if (setgid(rgid) < 0) {
+	만약 (setgid(rgid) < 0) {
 		saved_errno = errno;
 		error("setgid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	반환 ret;
 }
 #endif
 
-#if !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
-int
+#만약 !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
+정수
 setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
-	int ret = 0, saved_errno;
+	정수 ret = 0, saved_errno;
 
-	if (ruid != suid) {
+	만약 (ruid != suid) {
 		errno = ENOSYS;
-		return -1;
+		반환 -1;
 	}
-#if defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
-	if (setreuid(ruid, euid) < 0) {
+#만약 defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
+	만약 (setreuid(ruid, euid) < 0) {
 		saved_errno = errno;
 		error("setreuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
+#아니면
 
 # ifndef SETEUID_BREAKS_SETUID
-	if (seteuid(euid) < 0) {
+	만약 (seteuid(euid) < 0) {
 		saved_errno = errno;
 		error("seteuid %lu: %.100s", (u_long)euid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 # endif
-	if (setuid(ruid) < 0) {
+	만약 (setuid(ruid) < 0) {
 		saved_errno = errno;
 		error("setuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	반환 ret;
 }
 #endif

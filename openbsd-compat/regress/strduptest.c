@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static 정수 fail = 0;
 
 void
 test(const char *a)
@@ -27,21 +27,21 @@ test(const char *a)
 	char *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	만약 (b == 0) {
 		fail = 1;
-		return;
+		반환;
 	}
-	if (strcmp(a, b) != 0)
+	만약 (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
+정수
 main(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	반환 fail;
 }

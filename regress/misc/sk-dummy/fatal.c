@@ -10,19 +10,19 @@
 #include "log.h"
 
 void
-sshlogv(const char *file, const char *func, int line, int showfunc,
+sshlogv(const char *file, const char *func, 정수 line, 정수 showfunc,
     LogLevel level, const char *suffix, const char *fmt, va_list args)
 {
-	if (showfunc)
+	만약 (showfunc)
 		fprintf(stderr, "%s: ", func);
 	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	만약 (suffix != NULL)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
 void
-sshlog(const char *file, const char *func, int line, int showfunc,
+sshlog(const char *file, const char *func, 정수 line, 정수 showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
 	va_list args;
@@ -33,7 +33,7 @@ sshlog(const char *file, const char *func, int line, int showfunc,
 }
 
 void
-sshfatal(const char *file, const char *func, int line, int showfunc,
+sshfatal(const char *file, const char *func, 정수 line, 정수 showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
 	va_list args;

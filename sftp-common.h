@@ -45,9 +45,9 @@ struct Attrib {
 void	 attrib_clear(Attrib *);
 void	 stat_to_attrib(const struct stat *, Attrib *);
 void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
+정수	 decode_attrib(struct sshbuf *, Attrib *);
+정수	 encode_attrib(struct sshbuf *, const Attrib *);
+char	*ls_file(const char *, const struct stat *, 정수, 정수,
     const char *, const char *);
 
-const char *fx2txt(int);
+const char *fx2txt(정수);

@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#만약 !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+정수
+sigaction(정수 sig, struct sigaction *sigact, struct sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	반환 sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+정수
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
 	*mask = 0;
-	return 0;
+	반환 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+정수
+sigprocmask (정수 mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
 
-	if (omask)
+	만약 (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	만약 (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	아니면 만약 (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	아니면 만약 (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	반환 0;
 }
 
-int
+정수
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
-	return sigpause(*mask);
+	반환 sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+정수
+sigdelset (sigset_t *mask, 정수 sig)
 {
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	반환 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+정수
+sigaddset (sigset_t *mask, 정수 sig)
 {
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	반환 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+정수
+sigismember (sigset_t *mask, 정수 sig)
 {
-	if (!mask) {
+	만약 (!mask) {
 		errno = EINVAL;
-		return -1;
+		반환 -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	반환 (*mask & sigmask(sig)) != 0;
 }
 
 #endif

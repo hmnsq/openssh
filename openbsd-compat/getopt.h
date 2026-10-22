@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# 만약 defined __cplusplus
 #  define __THROW throw()
-# else
+# 아니면
 #  define __THROW
 # endif
 #endif
@@ -48,7 +48,7 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
+#만약 0
 struct option {
 	/* name of long option */
 	const char *name;
@@ -56,29 +56,29 @@ struct option {
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	정수 has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	정수 *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	정수 val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+정수	 getopt_long(정수, char * const *, const char *,
+	    const struct option *, 정수 *);
+정수	 getopt_long_only(정수, char * const *, const char *,
+	    const struct option *, 정수 *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+정수	 getopt(정수, char * const *, const char *) __THROW;
+정수	 getsubopt(char **, char * const *, char **) __THROW;
 
 extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
+extern   정수 opterr;
+extern   정수 optind;
+extern   정수 optopt;
+extern   정수 optreset;
 extern   char *suboptarg;               /* getsubopt(3) external variable */
 #endif
  

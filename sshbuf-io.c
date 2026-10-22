@@ -30,38 +30,38 @@
 #include "atomicio.h"
 
 /* Load a file from a fd into a buffer */
-int
-sshbuf_load_fd(int fd, struct sshbuf **blobp)
+정수
+sshbuf_load_fd(정수 fd, struct sshbuf **blobp)
 {
 	u_char buf[4096];
 	size_t len;
 	struct stat st;
-	int r;
+	정수 r;
 	struct sshbuf *blob;
 
 	*blobp = NULL;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_INVALID_FORMAT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	for (;;) {
-		if ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
-			if (errno == EPIPE)
+	만약 (fstat(fd, &st) == -1)
+		반환 SSH_ERR_SYSTEM_ERROR;
+	만약 (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
+		반환 SSH_ERR_INVALID_FORMAT;
+	만약 ((blob = sshbuf_new()) == NULL)
+		반환 SSH_ERR_ALLOC_FAIL;
+	위해 (;;) {
+		만약 ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
+			만약 (errno == EPIPE)
 				break;
 			r = SSH_ERR_SYSTEM_ERROR;
 			goto out;
 		}
-		if ((r = sshbuf_put(blob, buf, len)) != 0)
+		만약 ((r = sshbuf_put(blob, buf, len)) != 0)
 			goto out;
-		if (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
+		만약 (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (S_ISREG(st.st_mode) != 0 &&
+	만약 (S_ISREG(st.st_mode) != 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
 		r = SSH_ERR_FILE_CHANGED;
 		goto out;
@@ -73,44 +73,44 @@ sshbuf_load_fd(int fd, struct sshbuf **blobp)
  out:
 	explicit_bzero(buf, sizeof(buf));
 	sshbuf_free(blob);
-	return r;
+	반환 r;
 }
 
-int
+정수
 sshbuf_load_file(const char *path, struct sshbuf **bufp)
 {
-	int r, fd, oerrno;
+	정수 r, fd, oerrno;
 
 	*bufp = NULL;
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, bufp)) != 0)
+	만약 ((fd = open(path, O_RDONLY)) == -1)
+		반환 SSH_ERR_SYSTEM_ERROR;
+	만약 ((r = sshbuf_load_fd(fd, bufp)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if (r != 0)
+	만약 (r != 0)
 		errno = oerrno;
-	return r;
+	반환 r;
 }
 
-int
+정수
 sshbuf_write_file(const char *path, struct sshbuf *buf)
 {
-	int fd, oerrno;
+	정수 fd, oerrno;
 
-	if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
+	만약 ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+		반환 SSH_ERR_SYSTEM_ERROR;
+	만약 (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf)) != sshbuf_len(buf) || close(fd) != 0) {
 		oerrno = errno;
 		close(fd);
 		unlink(path);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		반환 SSH_ERR_SYSTEM_ERROR;
 	}
-	return 0;
+	반환 0;
 }
 

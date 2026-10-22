@@ -34,10 +34,10 @@ void bitmap_free(struct bitmap *b);
 void bitmap_zero(struct bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+정수 bitmap_test_bit(struct bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+정수 bitmap_set_bit(struct bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
 void bitmap_clear_bit(struct bitmap *b, u_int n);
@@ -49,9 +49,9 @@ size_t bitmap_nbits(struct bitmap *b);
 size_t bitmap_nbytes(struct bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+정수 bitmap_to_string(struct bitmap *b, void *p, size_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+정수 bitmap_from_string(struct bitmap *b, const void *p, size_t l);
 
 #endif /* _BITMAP_H */

@@ -74,7 +74,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#만약 !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -112,7 +112,7 @@
 
 typedef u_short Char;
 
-#else
+#아니면
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
@@ -150,83 +150,83 @@ struct glob_path_stat {
 	struct stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
+static 정수	 compare(const void *, const void *);
+static 정수	 compare_gps(const void *, const void *);
+static 정수	 g_Ctoc(const Char *, char *, size_t);
+static 정수	 g_lstat(Char *, struct stat *, glob_t *);
 static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+static Char	*g_strchr(const Char *, 정수);
+static 정수	 g_strncmp(const Char *, const char *, size_t);
+static 정수	 g_stat(Char *, struct stat *, glob_t *);
+static 정수	 glob0(const Char *, glob_t *, struct glob_lim *);
+static 정수	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
+static 정수	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
 		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
+static 정수	 glob3(Char *, Char *, Char *, Char *, Char *,
 		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
+static 정수	 globextend(const Char *, glob_t *, struct glob_lim *,
 		    struct stat *);
 static const Char *
 		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
+static 정수	 globexp1(const Char *, glob_t *, struct glob_lim *);
+static 정수	 globexp2(const Char *, const Char *, glob_t *,
 		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+static 정수	 match(Char *, Char *, Char *);
 #ifdef DEBUG
 static void	 qprintf(const char *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+정수
+glob(const char *pattern, 정수 flags, 정수 (*errfunc)(const char *, 정수),
     glob_t *pglob)
 {
 	const u_char *patnext;
-	int c;
+	정수 c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
 	struct glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	만약 (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
 		pglob->gl_pathv = NULL;
 		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		만약 (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	만약 (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		반환(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	만약 (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		반환 GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	만약 (flags & GLOB_NOESCAPE)
+		동안 (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	아니면 {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		동안 (bufnext < bufend && (c = *patnext++) != EOS)
+			만약 (c == QUOTE) {
+				만약 ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} 아니면
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	만약 (flags & GLOB_BRACE)
+		반환 globexp1(patbuf, pglob, &limit);
+	아니면
+		반환 glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
+static 정수
 globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 {
 	const Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	만약 (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		반환 glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	만약 ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
+		반환 globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	반환 glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,53 +255,53 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
+static 정수
 globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
     struct glob_lim *limitp)
 {
-	int     i, rv;
+	정수     i, rv;
 	Char   *lm, *ls;
 	const Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	위해 (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	위해 (i = 0, pe = ++ptr; *pe; pe++)
+		만약 (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			위해 (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			만약 (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} 아니면 만약 (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
+		아니면 만약 (*pe == RBRACE) {
+			만약 (i == 0)
 				break;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	만약 (i != 0 || *pe == EOS)
+		반환 glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+	위해 (i = 0, pl = pm = ptr; pm <= pe; pm++) {
 		switch (*pm) {
 		case LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			위해 (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			만약 (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
@@ -315,24 +315,24 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 			break;
 
 		case RBRACE:
-			if (i) {
+			만약 (i) {
 				i--;
 				break;
 			}
 			/* FALLTHROUGH */
 		case COMMA:
-			if (i && *pm == COMMA)
+			만약 (i && *pm == COMMA)
 				break;
-			else {
+			아니면 {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				위해 (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				위해 (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,8 +340,8 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				만약 (rv && rv != GLOB_NOMATCH)
+					반환 rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
@@ -352,7 +352,7 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 			break;
 		}
 	}
-	return 0;
+	반환 0;
 }
 
 
@@ -368,74 +368,74 @@ globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 	const Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	만약 (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		반환 pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
+	위해 (p = pattern + 1, h = (char *) patbuf;
 	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#만약 0
+	만약 (h == (char *)eb)
+		반환 what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	만약 (((char *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#만약 0
+		만약 (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		만약 ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
+			만약 ((pwd = getpwuid(getuid())) == NULL)
+				반환 pattern;
+			아니면
 				h = pwd->pw_dir;
 		}
-	} else {
+	} 아니면 {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		만약 ((pwd = getpwnam((char*) patbuf)) == NULL)
+			반환 pattern;
+		아니면
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	위해 (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	동안 (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	반환 patbuf;
 }
 
-static int
+static 정수
 g_strncmp(const Char *s1, const char *s2, size_t n)
 {
-	int rv = 0;
+	정수 rv = 0;
 
-	while (n--) {
+	동안 (n--) {
 		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
+		만약 (rv)
 			break;
-		if (*s1++ == '\0')
+		만약 (*s1++ == '\0')
 			break;
 	}
-	return rv;
+	반환 rv;
 }
 
-static int
+static 정수
 g_charclass(const Char **patternp, Char **bufnextp)
 {
 	const Char *pattern = *patternp + 1;
@@ -444,22 +444,22 @@ g_charclass(const Char **patternp, Char **bufnextp)
 	struct cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	만약 ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
+		반환 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+	위해 (cc = cclasses; cc->name != NULL; cc++) {
+		만약 (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
 			break;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	만약 (cc->name == NULL)
+		반환 -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	반환 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
+static 정수
 glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 {
 	const Char *qpatnext;
-	int c, err;
+	정수 c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,46 +482,46 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
+	동안 ((c = *qpatnext++) != EOS) {
 		switch (c) {
 		case LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			만약 (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
+			만약 (*qpatnext == EOS ||
 			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				만약 (c == NOT)
 					--qpatnext;
 				break;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			만약 (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
 			do {
-				if (c == LBRACKET && *qpatnext == ':') {
+				만약 (c == LBRACKET && *qpatnext == ':') {
 					do {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
+						만약 (err)
 							break;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} 동안 (c == LBRACKET && *qpatnext == ':');
+					만약 (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
+						반환 GLOB_NOMATCH;
+					만약 (c == RBRACKET)
 						break;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				만약 (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} 동안 ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
 			break;
@@ -534,7 +534,7 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			만약 (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
 			break;
 		default:
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	만약 ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		반환(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	만약 (pglob->gl_pathc == oldpathc) {
+		만약 ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			반환(globextend(pattern, pglob, limitp, NULL));
+		아니면
+			반환(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	만약 (!(pglob->gl_flags & GLOB_NOSORT)) {
+		만약 ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
 			struct glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			만약 ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
+				반환 GLOB_NOSPACE;
+			위해 (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
 			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			위해 (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
 			free(path_stat);
-		} else {
+		} 아니면 {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
 			    pglob->gl_pathc - oldpathc, sizeof(char *),
 			    compare);
 		}
 	}
-	return(0);
+	반환(0);
 }
 
-static int
+static 정수
 compare(const void *p, const void *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	반환(strcmp(*(char **)p, *(char **)q));
 }
 
-static int
+static 정수
 compare_gps(const void *_p, const void *_q)
 {
 	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
 	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	반환(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
+static 정수
 glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	만약 (*pattern == EOS)
+		반환(0);
+	반환(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,82 +626,82 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+static 정수
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
 {
 	struct stat sb;
 	Char *p, *q;
-	int anymeta;
+	정수 anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	위해 (anymeta = 0;;) {
+		만약 (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			만약 ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				반환(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			만약 (g_lstat(pathbuf, &sb, pglob))
+				반환(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			만약 (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				만약 (pathend+1 > pathend_last)
+					반환 (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			반환(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		동안 (*p != EOS && *p != SEP) {
+			만약 (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			만약 (q+1 > pathend_last)
+				반환 (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		만약 (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			동안 (*pattern == SEP) {
+				만약 (pathend+1 > pathend_last)
+					반환 (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} 아니면
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			반환(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+static 정수
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
     struct glob_lim *limitp)
 {
 	struct dirent *dp;
 	DIR *dirp;
-	int err;
+	정수 err;
 	char buf[PATH_MAX];
 
 	/*
@@ -712,35 +712,35 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 */
 	struct dirent *(*readdirfunc)(void *);
 
-	if (pathend > pathend_last)
-		return (1);
+	만약 (pathend > pathend_last)
+		반환 (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	만약 ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		만약 (pglob->gl_errfunc) {
+			만약 (g_Ctoc(pathbuf, buf, sizeof(buf)))
+				반환(GLOB_ABORTED);
+			만약 (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				반환(GLOB_ABORTED);
 		}
-		return(0);
+		반환(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	만약 (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
+	아니면
 		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	동안 ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		만약 ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
@@ -750,33 +750,33 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
+		만약 (dp->d_name[0] == DOT && *pattern != DOT)
 			continue;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		동안 (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		만약 (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
 			break;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		만약 (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
 			continue;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
+		만약 (err)
 			break;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	만약 (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	아니면
 		closedir(dirp);
-	return(err);
+	반환(err);
 }
 
 
@@ -794,7 +794,7 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
+static 정수
 globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
     struct stat *sb)
 {
@@ -805,16 +805,16 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 	struct stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	만약 (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
 	    SIZE_MAX / sizeof(*pathv) <= newn ||
 	    SIZE_MAX / sizeof(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
+		위해 (i = pglob->gl_offs; i < newn - 2; i++) {
+			만약 (pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+			만약 ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
 				free(pglob->gl_statv[i]);
 		}
@@ -822,41 +822,41 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 		pglob->gl_pathv = NULL;
 		free(pglob->gl_statv);
 		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		반환(GLOB_NOSPACE);
 	}
 
 	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
+	만약 (pathv == NULL)
 		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	만약 (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
+		위해 (i = pglob->gl_offs; i > 0; i--)
 			*--pathv = NULL;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+	만약 ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
 		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
+		만약 (statv == NULL)
 			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+		만약 (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
+			위해 (i = pglob->gl_offs; i > 0; i--)
 				*--statv = NULL;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
+		만약 (sb == NULL)
 			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
+		아니면 {
 			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			만약 ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				반환(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			만약 ((statv[pglob->gl_offs + pglob->gl_pathc] =
 			    malloc(sizeof(**statv))) == NULL)
 				goto copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
@@ -865,27 +865,27 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
 		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
 	}
 
-	for (p = path; *p++;)
+	위해 (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
+	만약 ((copy = malloc(len)) != NULL) {
+		만약 (g_Ctoc(path, copy, len)) {
 			free(copy);
-			return(GLOB_NOSPACE);
+			반환(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
 	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
+	만약 ((pglob->gl_flags & GLOB_LIMIT) &&
 	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		반환(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	반환(copy == NULL ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,72 +900,72 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+static 정수
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	정수 ok, negate_range;
 	Char c, k;
 	Char *nextp = NULL;
 	Char *nextn = NULL;
 
 loop:
-	while (pat < patend) {
+	동안 (pat < patend) {
 		c = *pat++;
 		switch (c & M_MASK) {
 		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+			동안 (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			만약 (pat == patend)
+				반환(1);
+			만약 (*name == EOS)
+				반환(0);
 			nextn = name + 1;
 			nextp = pat - 1;
 			break;
 		case M_ONE:
-			if (*name++ == EOS)
+			만약 (*name++ == EOS)
 				goto fail;
 			break;
 		case M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
+			만약 ((k = *name++) == EOS)
 				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			만약 ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			동안 (((c = *pat++) & M_MASK) != M_END) {
+				만약 ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					만약 (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				만약 ((*pat & M_MASK) == M_RNG) {
+					만약 (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} 아니면 만약 (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
+			만약 (ok == negate_range)
 				goto fail;
 			break;
 		default:
-			if (*name++ != c)
+			만약 (*name++ != c)
 				goto fail;
 			break;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	만약 (*name == EOS)
+		반환(1);
 
 fail:
-	if (nextn) {
+	만약 (nextn) {
 		pat = nextp;
 		name = nextn;
 		goto loop;
 	}
-	return(0);
+	반환(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
@@ -975,15 +975,15 @@ globfree(glob_t *pglob)
 	size_t i;
 	char **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	만약 (pglob->gl_pathv != NULL) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
+		위해 (i = pglob->gl_pathc; i--; ++pp)
 			free(*pp);
 		free(pglob->gl_pathv);
 		pglob->gl_pathv = NULL;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
+	만약 (pglob->gl_statv != NULL) {
+		위해 (i = 0; i < pglob->gl_pathc; i++) {
 			free(pglob->gl_statv[i]);
 		}
 		free(pglob->gl_statv);
@@ -996,62 +996,62 @@ g_opendir(Char *str, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (!*str)
+	만약 (!*str)
 		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	아니면 {
+		만약 (g_Ctoc(str, buf, sizeof(buf)))
+			반환(NULL);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	만약 (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		반환((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	반환(opendir(buf));
 }
 
-static int
+static 정수
 g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	만약 (g_Ctoc(fn, buf, sizeof(buf)))
+		반환(-1);
+	만약 (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		반환((*pglob->gl_lstat)(buf, sb));
+	반환(lstat(buf, sb));
 }
 
-static int
+static 정수
 g_stat(Char *fn, struct stat *sb, glob_t *pglob)
 {
 	char buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	만약 (g_Ctoc(fn, buf, sizeof(buf)))
+		반환(-1);
+	만약 (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		반환((*pglob->gl_stat)(buf, sb));
+	반환(stat(buf, sb));
 }
 
 static Char *
-g_strchr(const Char *str, int ch)
+g_strchr(const Char *str, 정수 ch)
 {
 	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+		만약 (*str == ch)
+			반환 ((Char *)str);
+	} 동안 (*str++);
+	반환 (NULL);
 }
 
-static int
+static 정수
 g_Ctoc(const Char *str, char *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	동안 (len--) {
+		만약 ((*buf++ = *str++) == EOS)
+			반환 (0);
 	}
-	return (1);
+	반환 (1);
 }
 
 #ifdef DEBUG
@@ -1061,13 +1061,13 @@ qprintf(const char *str, Char *s)
 	Char *p;
 
 	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
+	위해 (p = s; *p; p++)
 		(void)printf("%c", CHAR(*p));
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	위해 (p = s; *p; p++)
 		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
 	(void)printf("\n");
-	for (p = s; *p; p++)
+	위해 (p = s; *p; p++)
 		(void)printf("%c", ismeta(*p) ? '_' : ' ');
 	(void)printf("\n");
 }

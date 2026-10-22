@@ -15,9 +15,9 @@ limitations under the License.
 
 extern "C" void fuzz_one_message(const uint8_t *data, size_t size);
 
-extern "C" int
+extern "C" 정수
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	fuzz_one_message(data, size);
-	return 0;
+	반환 0;
 }

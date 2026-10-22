@@ -35,7 +35,7 @@
 /* OPENBSD ORIGINAL: include/vis.h */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#만약 !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
@@ -81,15 +81,15 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+char	*vis(char *, 정수, 정수, 정수);
+정수	strvis(char *, const char *, 정수);
+정수	stravis(char **, const char *, 정수);
+정수	strnvis(char *, const char *, size_t, 정수)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+정수	strvisx(char *, const char *, size_t, 정수)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
+정수	strunvis(char *, const char *);
+정수	unvis(char *, char, 정수 *, 정수);
 ssize_t strnunvis(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 

@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# 만약 defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,17 +44,17 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# 만약 defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# 만약 defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# 만약 defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
@@ -75,14 +75,14 @@ pick_salt(void)
 	size_t typelen;
 	static char salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
+	만약 (salt[0] != '\0')
+		반환 salt;
 	strlcpy(salt, "xx", sizeof(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
+	동안 ((pw = getpwent()) != NULL) {
+		만약 ((passwd = shadow_pw(pw)) == NULL)
 			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+		만약 (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
 			typelen = p - passwd + 1;
 			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
 			explicit_bzero(passwd, strlen(passwd));
@@ -91,7 +91,7 @@ pick_salt(void)
 	}
  out:
 	endpwent();
-	return salt;
+	반환 salt;
 }
 
 char *
@@ -103,21 +103,21 @@ xcrypt(const char *password, const char *salt)
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	만약 (salt == NULL)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#만약 defined(__hpux) && !defined(HAVE_SECUREWARE)
+	만약 (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	아니면
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# 아니면
 	crypted = crypt(password, salt);
 #endif
 
-	return crypted;
+	반환 crypted;
 }
 
 /*
@@ -130,27 +130,27 @@ shadow_pw(struct passwd *pw)
 {
 	char *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# 만약 defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 	struct spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	만약 (spw != NULL)
 		pw_password = spw->sp_pwdp;
 # endif
 
 #ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
+	반환(get_iaf_password(pw));
 #endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# 만약 defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+	만약 (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
 	struct pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	만약 (spw != NULL)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	반환 pw_password;
 }

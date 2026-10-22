@@ -52,13 +52,13 @@ ssh_sandbox_init(struct monitor *monitor)
 	/* Start with "basic" and drop everything we don't need. */
 	box->pset = solaris_basic_privset();
 
-	if (box->pset == NULL) {
+	만약 (box->pset == NULL) {
 		free(box);
-		return NULL;
+		반환 NULL;
 	}
 
 	/* Drop everything except the ability to use already-opened files */
-	if (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
+	만약 (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
 #ifdef PRIV_NET_ACCESS
 	    priv_delset(box->pset, PRIV_NET_ACCESS) != 0 ||
 #endif
@@ -73,25 +73,25 @@ ssh_sandbox_init(struct monitor *monitor)
 	    priv_delset(box->pset, PRIV_PROC_INFO) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_SESSION) != 0) {
 		free(box);
-		return NULL;
+		반환 NULL;
 	}
 
 	/* These may not be available on older Solaris-es */
-# if defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
-	if (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
+# 만약 defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
+	만약 (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
 	    priv_delset(box->pset, PRIV_FILE_WRITE) != 0) {
 		free(box);
-		return NULL;
+		반환 NULL;
 	}
 # endif
 
-	return box;
+	반환 box;
 }
 
 void
 ssh_sandbox_child(struct ssh_sandbox *box)
 {
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, box->pset) != 0 ||
+	만약 (setppriv(PRIV_SET, PRIV_PERMITTED, box->pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_LIMIT, box->pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_INHERITABLE, box->pset) != 0)
 		fatal("setppriv: %s", strerror(errno));

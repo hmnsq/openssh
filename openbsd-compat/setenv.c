@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#만약 !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
@@ -55,71 +55,71 @@ static char **lastenv;				/* last value of environ */
  *	This routine *should* be a static; don't use it.
  */
 static char *
-__findenv(const char *name, int len, int *offset)
+__findenv(const char *name, 정수 len, 정수 *offset)
 {
 	extern char **environ;
-	int i;
+	정수 i;
 	const char *np;
 	char **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
+	만약 (name == NULL || environ == NULL)
+		반환 (NULL);
+	위해 (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		위해 (np = name, i = len; i && *cp; i--)
+			만약 (*cp++ != *np++)
 				break;
-		if (i == 0 && *cp++ == '=') {
+		만약 (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			반환 (cp);
 		}
 	}
-	return (NULL);
+	반환 (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#만약 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
+정수
 putenv(char *str)
 {
 	char **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	정수 offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	위해 (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	만약 (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		반환 (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	만약 (__findenv(str, (정수)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
+		동안 (__findenv(str, (정수)(cp - str), &offset)) {
+			위해 (P = &environ[offset];; ++P)
+				만약 (!(*P = *(P + 1)))
 					break;
 		}
-		return (0);
+		반환 (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	위해 (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
 	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
+	만약 (!P)
+		반환 (-1);
+	만약 (lastenv != environ)
 		memcpy(P, environ, cnt * sizeof(char *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	반환 (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+정수
+setenv(const char *name, const char *value, 정수 rewrite)
 {
 	char *C, **P;
 	const char *np;
-	int l_value, offset = 0;
+	정수 l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	위해 (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	만약 (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		반환 (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	만약 ((C = __findenv(name, (정수)(np - name), &offset)) != NULL) {
+		정수 tmpoff = offset + 1;
+		만약 (!rewrite)
+			반환 (0);
+#만약 0 /* XXX - existing entry may not be writable */
+		만약 (strlen(C) >= l_value) {	/* old larger; copy over */
+			동안 ((*C++ = *value++))
 				;
-			return (0);
+			반환 (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
+		동안 (__findenv(name, (정수)(np - name), &tmpoff)) {
+			위해 (P = &environ[tmpoff];; ++P)
+				만약 (!(*P = *(P + 1)))
 					break;
 		}
-	} else {					/* create new slot */
+	} 아니면 {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		위해 (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
 		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
+		만약 (!P)
+			반환 (-1);
+		만약 (lastenv != environ)
 			memcpy(P, environ, cnt * sizeof(char *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	만약 (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((정수)(np - name) + l_value + 2))))
+		반환 (-1);
+	위해 (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	위해 (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	반환 (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
+정수
 unsetenv(const char *name)
 {
 	char **P;
 	const char *np;
-	int offset = 0;
+	정수 offset = 0;
 
-	if (!name || !*name) {
+	만약 (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		반환 (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	위해 (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	만약 (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		반환 (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
+	동안 (__findenv(name, (정수)(np - name), &offset)) {
+		위해 (P = &environ[offset];; ++P)
+			만약 (!(*P = *(P + 1)))
 				break;
 	}
-	return (0);
+	반환 (0);
 }
 #endif /* HAVE_UNSETENV */
 

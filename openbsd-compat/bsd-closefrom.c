@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
+#만약 !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -31,7 +31,7 @@
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
+#아니면
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
 # ifdef HAVE_SYS_NDIR_H
@@ -44,7 +44,7 @@
 #  include <ndir.h>
 # endif
 #endif
-#if defined(HAVE_LIBPROC_H)
+#만약 defined(HAVE_LIBPROC_H)
 # include <libproc.h>
 #endif
 
@@ -52,7 +52,7 @@
 # define OPEN_MAX	256
 #endif
 
-#if 0
+#만약 0
 __unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
 #endif /* lint */
 
@@ -61,7 +61,7 @@ __unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26
  * Close all file descriptors greater than or equal to lowfd.
  */
 static void
-closefrom_fallback(int lowfd)
+closefrom_fallback(정수 lowfd)
 {
 	long fd, maxfd;
 
@@ -72,85 +72,85 @@ closefrom_fallback(int lowfd)
 	 */
 #ifdef HAVE_SYSCONF
 	maxfd = sysconf(_SC_OPEN_MAX);
-#else
+#아니면
 	maxfd = getdtablesize();
 #endif /* HAVE_SYSCONF */
-	if (maxfd < 0)
+	만약 (maxfd < 0)
 		maxfd = OPEN_MAX;
 
-	for (fd = lowfd; fd < maxfd; fd++)
-		(void) close((int) fd);
+	위해 (fd = lowfd; fd < maxfd; fd++)
+		(void) close((정수) fd);
 }
 #endif /* HAVE_FCNTL_CLOSEM */
 
 #ifdef HAVE_FCNTL_CLOSEM
 void
-closefrom(int lowfd)
+closefrom(정수 lowfd)
 {
     (void) fcntl(lowfd, F_CLOSEM, 0);
 }
 #elif defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
 void
-closefrom(int lowfd)
+closefrom(정수 lowfd)
 {
-	int i, r, sz;
+	정수 i, r, sz;
 	pid_t pid = getpid();
 	struct proc_fdinfo *fdinfo_buf = NULL;
 
 	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, NULL, 0);
-	if (sz == 0)
-		return; /* no fds, really? */
-	else if (sz == -1)
+	만약 (sz == 0)
+		반환; /* no fds, really? */
+	아니면 만약 (sz == -1)
 		goto fallback;
-	if ((fdinfo_buf = malloc(sz)) == NULL)
+	만약 ((fdinfo_buf = malloc(sz)) == NULL)
 		goto fallback;
 	r = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfo_buf, sz);
-	if (r < 0 || r > sz)
+	만약 (r < 0 || r > sz)
 		goto fallback;
-	for (i = 0; i < r / (int)PROC_PIDLISTFD_SIZE; i++) {
-		if (fdinfo_buf[i].proc_fd >= lowfd)
+	위해 (i = 0; i < r / (정수)PROC_PIDLISTFD_SIZE; i++) {
+		만약 (fdinfo_buf[i].proc_fd >= lowfd)
 			close(fdinfo_buf[i].proc_fd);
 	}
 	free(fdinfo_buf);
-	return;
+	반환;
  fallback:
 	free(fdinfo_buf);
 	closefrom_fallback(lowfd);
-	return;
+	반환;
 }
 #elif defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
 void
-closefrom(int lowfd)
+closefrom(정수 lowfd)
 {
     long fd;
     char fdpath[PATH_MAX], *endp;
     struct dirent *dent;
     DIR *dirp;
-    int len;
+    정수 len;
 
 #ifdef HAVE_CLOSE_RANGE
-	if (close_range(lowfd, INT_MAX, 0) == 0)
-		return;
+	만약 (close_range(lowfd, INT_MAX, 0) == 0)
+		반환;
 #endif
 
     /* Check for a /proc/$$/fd directory. */
     len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
-    if (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
-	while ((dent = readdir(dirp)) != NULL) {
+    만약 (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
+	동안 ((dent = readdir(dirp)) != NULL) {
 	    fd = strtol(dent->d_name, &endp, 10);
-	    if (dent->d_name != endp && *endp == '\0' &&
+	    만약 (dent->d_name != endp && *endp == '\0' &&
 		fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
-		(void) close((int) fd);
+		(void) close((정수) fd);
 	}
 	(void) closedir(dirp);
-	return;
+	반환;
     }
     /* /proc/$$/fd strategy failed, fall back to brute force closure */
     closefrom_fallback(lowfd);
 }
-#else
+#아니면
 void
-closefrom(int lowfd)
+closefrom(정수 lowfd)
 {
 	closefrom_fallback(lowfd);
 }

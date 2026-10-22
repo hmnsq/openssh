@@ -20,37 +20,37 @@
 #include "includes.h"
 
 char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+정수 seed_from_prngd(unsigned char *, size_t);
 
 #ifndef HAVE_SETSID
 #define setsid() setpgrp(0, getpid())
 #endif /* !HAVE_SETSID */
 
 #ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
+정수 setenv(const char *, const char *, 정수);
 #endif /* !HAVE_SETENV */
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *);
+정수 setlogin(const char *);
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
+정수 innetgr(const char *, const char *, const char *, const char *);
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
+#만약 !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+정수 seteuid(uid_t);
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
+#만약 !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+정수 setegid(uid_t);
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
+#만약 !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const char *strerror(정수);
 #endif
 
-#if !defined(HAVE_SETLINEBUF)
+#만약 !defined(HAVE_SETLINEBUF)
 #define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
 #endif
 
@@ -62,11 +62,11 @@ struct timeval {
 }
 #endif /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
+정수 utimes(const char *, struct timeval *);
 #endif /* HAVE_UTIMES */
 
 #ifndef HAVE_DIRFD
-int dirfd(void *);
+정수 dirfd(void *);
 #endif
 
 #ifndef AT_FDCWD
@@ -74,23 +74,23 @@ int dirfd(void *);
 #endif
 
 #ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
+정수 fchmodat(정수, const char *, mode_t, 정수);
 #endif
 
 #ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
+정수 fchownat(정수, const char *, uid_t, gid_t, 정수);
 #endif
 
 #ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
+정수 fstatat(정수, const char *, struct stat *, 정수);
 #endif
 
 #ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
+정수 unlinkat(정수, const char *, 정수);
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
+정수 truncate (const char *, off_t);
 #endif /* HAVE_TRUNCATE */
 
 #ifndef HAVE_STRUCT_TIMESPEC
@@ -100,9 +100,9 @@ struct timespec {
 };
 #endif /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#만약 !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
+정수 nanosleep(const struct timespec *, struct timespec *);
 #endif
 
 #ifndef HAVE_UTIMENSAT
@@ -111,27 +111,27 @@ int nanosleep(const struct timespec *, struct timespec *);
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
+정수 utimensat(정수, const char *, const struct timespec[2], 정수);
 #endif /* !HAVE_UTIMENSAT */
 
 #ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
+정수 usleep(unsigned 정수 useconds);
 #endif
 
 #ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
+pid_t tcgetpgrp(정수);
 #endif
 
 #ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
+정수 tcsendbreak(정수, 정수);
 #endif
 
 #ifndef HAVE_UNSETENV
-int unsetenv(const char *);
+정수 unsetenv(const char *);
 #endif
 
 #ifndef HAVE_ISBLANK
-int	isblank(int);
+정수	isblank(정수);
 #endif
 
 #ifndef HAVE_GETPGID
@@ -139,12 +139,12 @@ pid_t getpgid(pid_t);
 #endif
 
 #ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
+정수 pselect(정수, fd_set *, fd_set *, fd_set *, const struct timespec *,
     const sigset_t *);
 #endif
 
 #ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
+# define endgrent() do { } 동안(0)
 #endif
 
 #ifndef HAVE_KRB5_GET_ERROR_MESSAGE
@@ -152,23 +152,23 @@ int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
 #endif
 
 #ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
+# define krb5_free_error_message(a,b) do { } 동안(0)
 #endif
 
 #ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
+정수 pledge(const char *promises, const char *execpromises);
 #endif
 
 #ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
+정수 unveil(const char *, const char *);
 #endif
 
 /* bsd-err.h */
 #ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+void err(정수, const char *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+void errx(정수, const char *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_WARN
 void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
@@ -178,12 +178,12 @@ void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
 long long llabs(long long);
 #endif
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+#만약 defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
 void bzero(void *, size_t);
 #endif
 
 #ifndef HAVE_RAISE
-int raise(int);
+정수 raise(정수);
 #endif
 
 #ifndef HAVE_GETSID
@@ -195,7 +195,7 @@ pid_t getsid(pid_t);
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
+정수 flock(정수, 정수);
 #endif
 
 #ifdef FFLUSH_NULL_BUG
@@ -207,11 +207,11 @@ struct tm *localtime_r(const time_t *, struct tm *);
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
+typedef 정수 clockid_t;
 #ifndef CLOCK_REALTIME
 # define CLOCK_REALTIME	0
 #endif
-int clock_gettime(clockid_t, struct timespec *);
+정수 clock_gettime(clockid_t, struct timespec *);
 #endif
 
 #ifndef HAVE_REALPATH

@@ -38,20 +38,20 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	size_t oldsize, newsize;
 	void *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	만약 (ptr == NULL)
+		반환 calloc(newnmemb, size);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	만약 ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
 		errno = ENOMEM;
-		return NULL;
+		반환 NULL;
 	}
 	newsize = newnmemb * size;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	만약 ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
 		errno = EINVAL;
-		return NULL;
+		반환 NULL;
 	}
 	oldsize = oldnmemb * size;
 	
@@ -59,29 +59,29 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
+	만약 (newsize <= oldsize) {
 		size_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
+		만약 (d < oldsize / 2 && d < (size_t)getpagesize()) {
 			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+			반환 ptr;
 		}
 	}
 
 	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	만약 (newptr == NULL)
+		반환 NULL;
 
-	if (newsize > oldsize) {
+	만약 (newsize > oldsize) {
 		memcpy(newptr, ptr, oldsize);
 		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
+	} 아니면
 		memcpy(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
 	free(ptr);
 
-	return newptr;
+	반환 newptr;
 }
 /* DEF_WEAK(recallocarray); */
 

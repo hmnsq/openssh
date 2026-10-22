@@ -20,27 +20,27 @@
 struct Channel;
 struct ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#만약 defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+정수	  sys_tun_open(정수, 정수, char **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#만약 defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
+정수	 sys_tun_infilter(struct ssh *, struct Channel *, char *, 정수);
 u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#만약 defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+char *sys_get_rdomain(정수 fd);
+정수 sys_set_rdomain(정수 fd, const char *name);
+정수 sys_valid_rdomain(const char *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#만약 defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
 void sys_set_process_rdomain(const char *name);
 #endif

@@ -33,29 +33,29 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+정수
+main(정수 argc, char **argv)
 {
 	const char *base;
 	const char *tmpdir;
 	char template[PATH_MAX];
-	int r;
+	정수 r;
 	char *dir;
 
-	if (argc != 2)
+	만약 (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	만약 ((tmpdir = getenv("TMPDIR")) == NULL)
 		tmpdir = "/tmp";
 	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	만약 (r < 0 || (size_t)r >= sizeof(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	만약 (dir == NULL) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	반환 0;
 }

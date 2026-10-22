@@ -37,7 +37,7 @@
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+정수 mkstemp(char *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,19 +45,19 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
+정수
 _ssh_mkstemp(char *template)
 {
 	mode_t mask;
-	int ret;
+	정수 ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
 	(void)umask(mask);
-	return ret;
+	반환 ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#만약 !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
@@ -66,68 +66,68 @@ _ssh_mkstemp(char *template)
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 #define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+static 정수
+mktemp_internal(char *path, 정수 slen, 정수 mode)
 {
 	char *start, *cp, *ep;
 	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
+	unsigned 정수 r, tries;
 	struct stat sb;
 	size_t len;
-	int fd;
+	정수 fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	만약 (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		반환(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
+	위해 (start = ep; start > path && start[-1] == 'X'; start--) {
+		만약 (tries < INT_MAX / NUM_CHARS)
 			tries *= NUM_CHARS;
 	}
 	tries *= 2;
 
 	do {
-		for (cp = start; cp != ep; cp++) {
+		위해 (cp = start; cp != ep; cp++) {
 			r = arc4random_uniform(NUM_CHARS);
 			*cp = tempchars[r];
 		}
 
 		switch (mode) {
 		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
+			만약 (lstat(path, &sb) != 0)
+				반환(errno == ENOENT ? 0 : -1);
 			break;
 		case MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
+			만약 (fd != -1 || errno != EEXIST)
+				반환(fd);
 			break;
 		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
+			만약 (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				반환(0);
+			만약 (errno != EEXIST)
+				반환(-1);
 			break;
 		}
-	} while (--tries);
+	} 동안 (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	반환(-1);
 }
 
-#if 0
+#만약 0
 char *_mktemp(char *);
 
 char *
 _mktemp(char *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	만약 (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		반환(NULL);
+	반환(path);
 }
 
 __warn_references(mktemp,
@@ -136,29 +136,29 @@ __warn_references(mktemp,
 char *
 mktemp(char *path)
 {
-	return(_mktemp(path));
+	반환(_mktemp(path));
 }
 #endif
 
-int
+정수
 mkstemp(char *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	반환(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+정수
+mkstemps(char *path, 정수 slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	반환(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
 char *
 mkdtemp(char *path)
 {
-	int error;
+	정수 error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	반환(error ? NULL : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

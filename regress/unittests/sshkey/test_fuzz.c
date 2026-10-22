@@ -51,9 +51,9 @@ public_fuzz(struct sshkey *k)
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	만약 (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	만약 (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP | FUZZ_2_BYTE_FLIP;
 
 	ASSERT_PTR_NE(buf = sshbuf_new(), NULL);
@@ -64,8 +64,8 @@ public_fuzz(struct sshkey *k)
 	sshkey_free(k1);
 	sshbuf_free(buf);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
-		if (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
+	위해(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+		만약 (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
 			sshkey_free(k1);
 	}
 	fuzz_cleanup(fuzz);
@@ -81,9 +81,9 @@ sig_fuzz(struct sshkey *k, const char *sig_alg)
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	만약 (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_2_BYTE_FLIP;
-	if (test_is_slow())
+	만약 (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP;
 
 	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, sizeof(c),
@@ -93,9 +93,9 @@ sig_fuzz(struct sshkey *k, const char *sig_alg)
 	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, sizeof(c), NULL, 0, NULL), 0);
 	free(sig);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	위해(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
+		만약 (fuzz_matches_original(fuzz))
 			continue;
 		ASSERT_INT_NE(sshkey_verify(k, fuzz_ptr(fuzz), fuzz_len(fuzz),
 		    c, sizeof(c), NULL, 0, NULL), 0);
@@ -111,7 +111,7 @@ sshkey_fuzz_tests(void)
 	struct sshkey *k1;
 	struct sshbuf *buf, *fuzzed;
 	struct fuzz *fuzz;
-	int r, i;
+	정수 r, i;
 
 #ifdef WITH_OPENSSL
 	TEST_START("fuzz RSA private");
@@ -123,13 +123,13 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -145,13 +145,13 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -168,13 +168,13 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -190,13 +190,13 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -213,13 +213,13 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -236,16 +236,16 @@ sshkey_fuzz_tests(void)
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	위해(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		만약 (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		만약 (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
 			break;
 		/* MLDSA44_ED25519 keys are large and slow to fuzz */
-		if (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
+		만약 (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);

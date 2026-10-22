@@ -17,7 +17,7 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
+#만약 !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
 #include <sys/types.h>
 
 #include <stddef.h>
@@ -32,12 +32,12 @@ strndup(const char *str, size_t maxlen)
 
 	len = strnlen(str, maxlen);
 	copy = malloc(len + 1);
-	if (copy != NULL) {
+	만약 (copy != NULL) {
 		(void)memcpy(copy, str, len);
 		copy[len] = '\0';
 	}
 
-	return copy;
+	반환 copy;
 }
 DEF_WEAK(strndup);
 #endif  /* HAVE_STRNDUP */

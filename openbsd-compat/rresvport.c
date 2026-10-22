@@ -46,21 +46,21 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#만약 0
+정수
+rresvport(정수 *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	반환 rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+정수
+rresvport_af(정수 *alport, sa_family_t af)
 {
 	struct sockaddr_storage ss;
 	struct sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	정수 s;
 	socklen_t salen;
 
 	memset(&ss, '\0', sizeof ss);
@@ -77,32 +77,32 @@ rresvport_af(int *alport, sa_family_t af)
 		break;
 	default:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		반환 (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	만약 (s < 0)
+		반환 (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
+	만약 (*alport < IPPORT_RESERVED - 1) {
+		만약 (bind(s, sa, salen) >= 0)
+			반환 (s);
+		만약 (errno != EADDRINUSE) {
 			(void)close(s);
-			return (-1);
+			반환 (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
+	만약 (bindresvport_sa(s, sa) == -1) {
 		(void)close(s);
-		return (-1);
+		반환 (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	반환 (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

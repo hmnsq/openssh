@@ -49,15 +49,15 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_passwd;
 
-static int
+static 정수
 userauth_passwd(struct ssh *ssh, const char *method)
 {
 	char *password = NULL;
-	int authenticated = 0, r;
+	정수 authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	만약 ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
 	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
@@ -65,12 +65,12 @@ userauth_passwd(struct ssh *ssh, const char *method)
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	만약 (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	아니면 만약 (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	반환 authenticated;
 }
 
 Authmethod method_passwd = {

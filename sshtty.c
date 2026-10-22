@@ -45,35 +45,35 @@
 #include "sshpty.h"
 
 static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+static 정수 _in_raw_mode = 0;
 
 struct termios *
 get_saved_tio(void)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	반환 _in_raw_mode ? &_saved_tio : NULL;
 }
 
 void
-leave_raw_mode(int quiet)
+leave_raw_mode(정수 quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	만약 (!_in_raw_mode)
+		반환;
+	만약 (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		만약 (!quiet)
 			perror("tcsetattr");
-	} else
+	} 아니면
 		_in_raw_mode = 0;
 }
 
 void
-enter_raw_mode(int quiet)
+enter_raw_mode(정수 quiet)
 {
 	struct termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	만약 (tcgetattr(fileno(stdin), &tio) == -1) {
+		만약 (!quiet)
 			perror("tcgetattr");
-		return;
+		반환;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	만약 (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		만약 (!quiet)
 			perror("tcsetattr");
-	} else
+	} 아니면
 		_in_raw_mode = 1;
 }
