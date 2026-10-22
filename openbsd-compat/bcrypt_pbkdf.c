@@ -19,22 +19,22 @@
 
 /* This version has been modified to use SHA512 from SUPERCOP */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_BCRYPT_PBKDF
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
 #ifdef HAVE_STDLIB_H
 # include <stdlib.h>
 #endif
-#include <string.h>
+#अन्तर्भाव <string.h>
 
 #ifdef HAVE_BLF_H
 # include <blf.h>
 #endif
 
-#include "crypto_api.h"
+#अन्तर्भाव "crypto_api.h"
 #ifdef SHA512_DIGEST_LENGTH
 # undef SHA512_DIGEST_LENGTH
 #endif
@@ -66,38 +66,38 @@
  * wise caller could do; we just do it for you.
  */
 
-#define BCRYPT_WORDS 8
-#define BCRYPT_HASHSIZE (BCRYPT_WORDS * 4)
+#define BCRYPT_शब्दगण 8
+#define BCRYPT_HASHSIZE (BCRYPT_शब्दगण * 4)
 
-static void
+स्थिर शून्य
 bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
 {
 	blf_ctx state;
 	uint8_t __attribute__ ((__nonstring__)) ciphertext[BCRYPT_HASHSIZE] =
 	    "OxychromaticBlowfishSwatDynamite";
-	uint32_t cdata[BCRYPT_WORDS];
-	int i;
+	uint32_t cdata[BCRYPT_शब्दगण];
+	पूर्णाङ्क i;
 	uint16_t j;
 	size_t shalen = SHA512_DIGEST_LENGTH;
 
 	/* key expansion */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, sha2salt, shalen, sha2pass, shalen);
-	for (i = 0; i < 64; i++) {
+	प्रति (i = 0; i < 64; i++) {
 		Blowfish_expand0state(&state, sha2salt, shalen);
 		Blowfish_expand0state(&state, sha2pass, shalen);
 	}
 
 	/* encryption */
 	j = 0;
-	for (i = 0; i < BCRYPT_WORDS; i++)
-		cdata[i] = Blowfish_stream2word(ciphertext, sizeof(ciphertext),
+	प्रति (i = 0; i < BCRYPT_शब्दगण; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, परिमाण(ciphertext),
 		    &j);
-	for (i = 0; i < 64; i++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+	प्रति (i = 0; i < 64; i++)
+		blf_enc(&state, cdata, BCRYPT_शब्दगण / 2);
 
 	/* copy out */
-	for (i = 0; i < BCRYPT_WORDS; i++) {
+	प्रति (i = 0; i < BCRYPT_शब्दगण; i++) {
 		out[4 * i + 3] = (cdata[i] >> 24) & 0xff;
 		out[4 * i + 2] = (cdata[i] >> 16) & 0xff;
 		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
@@ -105,14 +105,14 @@ bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
 	}
 
 	/* zap */
-	explicit_bzero(ciphertext, sizeof(ciphertext));
-	explicit_bzero(cdata, sizeof(cdata));
-	explicit_bzero(&state, sizeof(state));
+	explicit_bzero(ciphertext, परिमाण(ciphertext));
+	explicit_bzero(cdata, परिमाण(cdata));
+	explicit_bzero(&state, परिमाण(state));
 }
 
-int
-bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds)
+पूर्णाङ्क
+bcrypt_pbkdf(ध्रुव वर्ण *pass, size_t passlen, ध्रुव uint8_t *salt, size_t saltlen,
+    uint8_t *कुंजी, size_t keylen, unsigned पूर्णाङ्क rounds)
 {
 	uint8_t sha2pass[SHA512_DIGEST_LENGTH];
 	uint8_t sha2salt[SHA512_DIGEST_LENGTH];
@@ -120,18 +120,18 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	uint8_t tmpout[BCRYPT_HASHSIZE];
 	uint8_t *countsalt;
 	size_t i, j, amt, stride;
-	uint32_t count;
+	uint32_t गिनती;
 	size_t origkeylen = keylen;
 
 	/* nothing crazy */
-	if (rounds < 1)
-		goto bad;
-	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
-	    keylen > sizeof(out) * sizeof(out) || saltlen > 1<<20)
-		goto bad;
-	if ((countsalt = calloc(1, saltlen + 4)) == NULL)
-		goto bad;
-	stride = (keylen + sizeof(out) - 1) / sizeof(out);
+	यदि (rounds < 1)
+		गच्छ bad;
+	यदि (passlen == 0 || saltlen == 0 || keylen == 0 ||
+	    keylen > परिमाण(out) * परिमाण(out) || saltlen > 1<<20)
+		गच्छ bad;
+	यदि ((countsalt = calloc(1, saltlen + 4)) == रिक्त)
+		गच्छ bad;
+	stride = (keylen + परिमाण(out) - 1) / परिमाण(out);
 	amt = (keylen + stride - 1) / stride;
 
 	memcpy(countsalt, salt, saltlen);
@@ -140,23 +140,23 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	crypto_hash_sha512(sha2pass, pass, passlen);
 
 	/* generate key, sizeof(out) at a time */
-	for (count = 1; keylen > 0; count++) {
-		countsalt[saltlen + 0] = (count >> 24) & 0xff;
-		countsalt[saltlen + 1] = (count >> 16) & 0xff;
-		countsalt[saltlen + 2] = (count >> 8) & 0xff;
-		countsalt[saltlen + 3] = count & 0xff;
+	प्रति (गिनती = 1; keylen > 0; गिनती++) {
+		countsalt[saltlen + 0] = (गिनती >> 24) & 0xff;
+		countsalt[saltlen + 1] = (गिनती >> 16) & 0xff;
+		countsalt[saltlen + 2] = (गिनती >> 8) & 0xff;
+		countsalt[saltlen + 3] = गिनती & 0xff;
 
 		/* first round, salt is salt */
 		crypto_hash_sha512(sha2salt, countsalt, saltlen + 4);
 
 		bcrypt_hash(sha2pass, sha2salt, tmpout);
-		memcpy(out, tmpout, sizeof(out));
+		memcpy(out, tmpout, परिमाण(out));
 
-		for (i = 1; i < rounds; i++) {
+		प्रति (i = 1; i < rounds; i++) {
 			/* subsequent rounds, salt is previous output */
-			crypto_hash_sha512(sha2salt, tmpout, sizeof(tmpout));
+			crypto_hash_sha512(sha2salt, tmpout, परिमाण(tmpout));
 			bcrypt_hash(sha2pass, sha2salt, tmpout);
-			for (j = 0; j < sizeof(out); j++)
+			प्रति (j = 0; j < परिमाण(out); j++)
 				out[j] ^= tmpout[j];
 		}
 
@@ -164,25 +164,25 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 		 * pbkdf2 deviation: output the key material non-linearly.
 		 */
 		amt = MINIMUM(amt, keylen);
-		for (i = 0; i < amt; i++) {
-			size_t dest = i * stride + (count - 1);
-			if (dest >= origkeylen)
-				break;
-			key[dest] = out[i];
+		प्रति (i = 0; i < amt; i++) {
+			size_t dest = i * stride + (गिनती - 1);
+			यदि (dest >= origkeylen)
+				भङ्ग;
+			कुंजी[dest] = out[i];
 		}
 		keylen -= i;
 	}
 
 	/* zap */
 	freezero(countsalt, saltlen + 4);
-	explicit_bzero(out, sizeof(out));
-	explicit_bzero(tmpout, sizeof(tmpout));
+	explicit_bzero(out, परिमाण(out));
+	explicit_bzero(tmpout, परिमाण(tmpout));
 
-	return 0;
+	प्रत्यागम 0;
 
 bad:
 	/* overwrite with random in case caller doesn't check return code */
-	arc4random_buf(key, keylen);
-	return -1;
+	arc4random_buf(कुंजी, keylen);
+	प्रत्यागम -1;
 }
 #endif /* HAVE_BCRYPT_PBKDF */

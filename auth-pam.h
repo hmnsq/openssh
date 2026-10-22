@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifdef USE_PAM
 
-struct ssh;
+संरचना ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+शून्य start_pam(संरचना ssh *);
+शून्य finish_pam(शून्य);
+u_int do_pam_account(शून्य);
+शून्य do_pam_session(संरचना ssh *);
+शून्य do_pam_setcred(शून्य);
+पूर्णाङ्क do_pam_putenv(वर्ण *, वर्ण *);
+वर्ण ** fetch_pam_environment(शून्य);
+वर्ण ** fetch_pam_child_environment(शून्य);
+शून्य free_pam_environment(वर्ण **);
+शून्य sshpam_thread_cleanup(शून्य);
+शून्य sshpam_cleanup(शून्य);
+पूर्णाङ्क sshpam_auth_passwd(Authctxt *, ध्रुव वर्ण *);
+पूर्णाङ्क sshpam_get_maxtries_reached(शून्य);
+शून्य sshpam_set_maxtries_reached(पूर्णाङ्क);
+पूर्णाङ्क is_pam_session_open(शून्य);
+पूर्णाङ्क sshpam_priv_kbdint_authdone(शून्य *ctxtp);
 
 #endif /* USE_PAM */
