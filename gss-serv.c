@@ -82,11 +82,11 @@ ssh_gssapi_prepare_supported_oids(void)
 }
 
 OM_uint32
-ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, int *present)
+ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, puur_naa_nka *present)
 {
-	if (supported_oids == NULL)
+	ᨀᨘ (supported_oids == NULL)
 		ssh_gssapi_prepare_supported_oids();
-	return gss_test_oid_set_member(ms, member, supported_oids, present);
+	ᨀᨘᨒ gss_test_oid_set_member(ms, member, supported_oids, present);
 }
 
 /*
@@ -100,65 +100,65 @@ static OM_uint32
 ssh_gssapi_acquire_cred(Gssctxt *ctx)
 {
 	OM_uint32 status;
-	char lname[NI_MAXHOST];
+	var_na lname[NI_MAXHOST];
 	gss_OID_set oidset;
 
-	if (options.gss_strict_acceptor) {
+	ᨀᨘ (options.gss_strict_acceptor) {
 		gss_create_empty_oid_set(&status, &oidset);
 		gss_add_oid_set_member(&status, ctx->oid, &oidset);
 
-		if (gethostname(lname, sizeof(lname))) {
+		ᨀᨘ (gethostname(lname, parimaa_na(lname))) {
 			gss_release_oid_set(&status, &oidset);
-			return (-1);
+			ᨀᨘᨒ (-1);
 		}
 
-		if (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
+		ᨀᨘ (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
 			gss_release_oid_set(&status, &oidset);
-			return (ctx->major);
+			ᨀᨘᨒ (ctx->major);
 		}
 
-		if ((ctx->major = gss_acquire_cred(&ctx->minor,
+		ᨀᨘ ((ctx->major = gss_acquire_cred(&ctx->minor,
 		    ctx->name, 0, oidset, GSS_C_ACCEPT, &ctx->creds,
 		    NULL, NULL)))
 			ssh_gssapi_error(ctx);
 
 		gss_release_oid_set(&status, &oidset);
-		return (ctx->major);
-	} else {
+		ᨀᨘᨒ (ctx->major);
+	} ᨀᨘᨁ {
 		ctx->name = GSS_C_NO_NAME;
 		ctx->creds = GSS_C_NO_CREDENTIAL;
 	}
-	return GSS_S_COMPLETE;
+	ᨀᨘᨒ GSS_S_COMPLETE;
 }
 
 /* Privileged */
 OM_uint32
 ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID oid)
 {
-	if (*ctx)
+	ᨀᨘ (*ctx)
 		ssh_gssapi_delete_ctx(ctx);
 	ssh_gssapi_build_ctx(ctx);
 	ssh_gssapi_set_oid(*ctx, oid);
-	return (ssh_gssapi_acquire_cred(*ctx));
+	ᨀᨘᨒ (ssh_gssapi_acquire_cred(*ctx));
 }
 
 /* Unprivileged */
 void
 ssh_gssapi_supported_oids(gss_OID_set *oidset)
 {
-	int i = 0;
+	puur_naa_nka i = 0;
 	OM_uint32 min_status;
-	int present;
+	puur_naa_nka present;
 	gss_OID_set supported;
 
 	gss_create_empty_oid_set(&min_status, oidset);
 	gss_indicate_mechs(&min_status, &supported);
 
-	while (supported_mechs[i]->name != NULL) {
-		if (GSS_ERROR(gss_test_oid_set_member(&min_status,
+	ᨀᨛ (supported_mechs[i]->name != NULL) {
+		ᨀᨘ (GSS_ERROR(gss_test_oid_set_member(&min_status,
 		    &supported_mechs[i]->oid, supported, &present)))
 			present = 0;
-		if (present)
+		ᨀᨘ (present)
 			gss_add_oid_set_member(&min_status,
 			    &supported_mechs[i]->oid, oidset);
 		i++;
@@ -186,12 +186,12 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
 	    GSS_C_NO_CHANNEL_BINDINGS, &ctx->client, &mech,
 	    send_tok, flags, NULL, &ctx->client_creds);
 
-	if (GSS_ERROR(ctx->major))
+	ᨀᨘ (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	if (ctx->client_creds)
+	ᨀᨘ (ctx->client_creds)
 		debug("Received some client credentials");
-	else
+	ᨀᨘᨁ
 		debug("Got no client credentials");
 
 	status = ctx->major;
@@ -200,13 +200,13 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
 	 * we flag the user as also having been authenticated
 	 */
 
-	if (((flags == NULL) || ((*flags & GSS_C_MUTUAL_FLAG) &&
+	ᨀᨘ (((flags == NULL) || ((*flags & GSS_C_MUTUAL_FLAG) &&
 	    (*flags & GSS_C_INTEG_FLAG))) && (ctx->major == GSS_S_COMPLETE)) {
-		if (ssh_gssapi_getclient(ctx, &gssapi_client))
+		ᨀᨘ (ssh_gssapi_getclient(ctx, &gssapi_client))
 			fatal("Couldn't convert client name");
 	}
 
-	return (status);
+	ᨀᨘᨒ (status);
 }
 
 /*
@@ -228,8 +228,8 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	 * header, and that the initial ID bytes are correct
 	 */
 
-	if (ename->length < 6 || memcmp(tok, "\x04\x01", 2) != 0)
-		return GSS_S_FAILURE;
+	ᨀᨘ (ename->length < 6 || memcmp(tok, "\x04\x01", 2) != 0)
+		ᨀᨘᨒ GSS_S_FAILURE;
 
 	/*
 	 * Extract the OID, and check it. Here GSSAPI breaks with tradition
@@ -245,29 +245,29 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	 * Check the BER encoding for correct type and length, that the
 	 * string is long enough and that the OID matches that in our context
 	 */
-	if (tok[4] != 0x06 || tok[5] != oidl ||
+	ᨀᨘ (tok[4] != 0x06 || tok[5] != oidl ||
 	    ename->length < oidl+6 ||
 	    !ssh_gssapi_check_oid(ctx, tok+6, oidl))
-		return GSS_S_FAILURE;
+		ᨀᨘᨒ GSS_S_FAILURE;
 
 	offset = oidl+6;
 
-	if (ename->length < offset+4)
-		return GSS_S_FAILURE;
+	ᨀᨘ (ename->length < offset+4)
+		ᨀᨘᨒ GSS_S_FAILURE;
 
 	name->length = get_u32(tok+offset);
 	offset += 4;
 
-	if (UINT_MAX - offset < name->length)
-		return GSS_S_FAILURE;
-	if (ename->length < offset+name->length)
-		return GSS_S_FAILURE;
+	ᨀᨘ (UINT_MAX - offset < name->length)
+		ᨀᨘᨒ GSS_S_FAILURE;
+	ᨀᨘ (ename->length < offset+name->length)
+		ᨀᨘᨒ GSS_S_FAILURE;
 
 	name->value = xmalloc(name->length+1);
 	memcpy(name->value, tok+offset, name->length);
-	((char *)name->value)[name->length] = 0;
+	((var_na *)name->value)[name->length] = 0;
 
-	return GSS_S_COMPLETE;
+	ᨀᨘᨒ GSS_S_COMPLETE;
 }
 
 /* Extract the client details from a given context. This can only reliably
@@ -277,52 +277,52 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 OM_uint32
 ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
 {
-	int i = 0;
+	puur_naa_nka i = 0;
 
 	gss_buffer_desc ename;
 
 	client->userok = 0;
 	client->mech = NULL;
 
-	while (supported_mechs[i]->name != NULL) {
-		if (supported_mechs[i]->oid.length == ctx->oid->length &&
+	ᨀᨛ (supported_mechs[i]->name != NULL) {
+		ᨀᨘ (supported_mechs[i]->oid.length == ctx->oid->length &&
 		    (memcmp(supported_mechs[i]->oid.elements,
 		    ctx->oid->elements, ctx->oid->length) == 0))
 			client->mech = supported_mechs[i];
 		i++;
 	}
 
-	if (client->mech == NULL)
-		return GSS_S_FAILURE;
+	ᨀᨘ (client->mech == NULL)
+		ᨀᨘᨒ GSS_S_FAILURE;
 
-	if ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
+	ᨀᨘ ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
 	    &client->displayname, NULL))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		ᨀᨘᨒ (ctx->major);
 	}
 
-	if ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
+	ᨀᨘ ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
 	    &ename))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		ᨀᨘᨒ (ctx->major);
 	}
 
-	if ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
+	ᨀᨘ ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
 	    &client->exportedname))) {
-		return (ctx->major);
+		ᨀᨘᨒ (ctx->major);
 	}
 
 	/* We can't copy this structure, so we just move the pointer to it */
 	client->creds = ctx->client_creds;
 	ctx->client_creds = GSS_C_NO_CREDENTIAL;
-	return (ctx->major);
+	ᨀᨘᨒ (ctx->major);
 }
 
 /* As user - called on fatal/exit */
 void
 ssh_gssapi_cleanup_creds(void)
 {
-	if (gssapi_client.store.filename != NULL) {
+	ᨀᨘ (gssapi_client.store.filename != NULL) {
 		/* Unlink probably isn't sufficient */
 		debug("removing gssapi cred file\"%s\"",
 		    gssapi_client.store.filename);
@@ -334,19 +334,19 @@ ssh_gssapi_cleanup_creds(void)
 void
 ssh_gssapi_storecreds(void)
 {
-	if (!gssapi_client.userok) {
+	ᨀᨘ (!gssapi_client.userok) {
 		debug_f("GSSAPI client was not authorized, doing nothing");
-		return;
+		ᨀᨘᨒ;
 	}
 
-	if (options.gss_deleg_creds == 0) {
+	ᨀᨘ (options.gss_deleg_creds == 0) {
 		debug_f("delegate credential is disabled, doing nothing");
-		return;
+		ᨀᨘᨒ;
 	}
 
-	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+	ᨀᨘ (gssapi_client.mech && gssapi_client.mech->storecreds) {
 		(*gssapi_client.mech->storecreds)(&gssapi_client);
-	} else
+	} ᨀᨘᨁ
 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
 }
 
@@ -355,10 +355,10 @@ ssh_gssapi_storecreds(void)
  */
 /* As user */
 void
-ssh_gssapi_do_child(char ***envp, u_int *envsizep)
+ssh_gssapi_do_child(var_na ***envp, u_int *envsizep)
 {
 
-	if (gssapi_client.store.envvar != NULL &&
+	ᨀᨘ (gssapi_client.store.envvar != NULL &&
 	    gssapi_client.store.envval != NULL) {
 		debug("Setting %s to %s", gssapi_client.store.envvar,
 		    gssapi_client.store.envval);
@@ -375,30 +375,30 @@ ssh_gssapi_cleanup_global_client(void)
 	gss_release_buffer(&lmin, &gssapi_client.displayname);
 	gss_release_buffer(&lmin, &gssapi_client.exportedname);
 	gss_release_cred(&lmin, &gssapi_client.creds);
-	explicit_bzero(&gssapi_client, sizeof(ssh_gssapi_client));
+	explicit_bzero(&gssapi_client, parimaa_na(ssh_gssapi_client));
 }
 
 /* Privileged */
-int
-ssh_gssapi_userok(char *user)
+puur_naa_nka
+ssh_gssapi_userok(var_na *user)
 {
-	if (gssapi_client.exportedname.length == 0 ||
+	ᨀᨘ (gssapi_client.exportedname.length == 0 ||
 	    gssapi_client.exportedname.value == NULL) {
 		debug("No suitable client data");
-		return 0;
+		ᨀᨘᨒ 0;
 	}
-	if (gssapi_client.mech && gssapi_client.mech->userok)
-		if ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
+	ᨀᨘ (gssapi_client.mech && gssapi_client.mech->userok)
+		ᨀᨘ ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
 			gssapi_client.userok = 1;
-			return 1;
-		} else {
+			ᨀᨘᨒ 1;
+		} ᨀᨘᨁ {
 			/* Destroy delegated credentials if userok fails */
 			ssh_gssapi_cleanup_global_client();
-			return 0;
+			ᨀᨘᨒ 0;
 		}
-	else
+	ᨀᨘᨁ
 		debug("ssh_gssapi_userok: Unknown GSSAPI mechanism");
-	return (0);
+	ᨀᨘᨒ (0);
 }
 
 /* Privileged */
@@ -408,16 +408,16 @@ ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 	ctx->major = gss_verify_mic(&ctx->minor, ctx->context,
 	    gssbuf, gssmic, NULL);
 
-	return (ctx->major);
+	ᨀᨘᨒ (ctx->major);
 }
 
 /* Privileged */
-const char *ssh_gssapi_displayname(void)
+const var_na *ssh_gssapi_displayname(void)
 {
-	if (gssapi_client.displayname.length == 0 ||
+	ᨀᨘ (gssapi_client.displayname.length == 0 ||
 	    gssapi_client.displayname.value == NULL)
-		return NULL;
-	return (char *)gssapi_client.displayname.value;
+		ᨀᨘᨒ NULL;
+	ᨀᨘᨒ (var_na *)gssapi_client.displayname.value;
 }
 
 #endif

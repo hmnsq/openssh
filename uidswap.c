@@ -36,7 +36,7 @@
  * POSIX saved uids or not.
  */
 
-#if defined(_POSIX_SAVED_IDS) && !defined(BROKEN_SAVED_UIDS)
+#ᨀᨘ defined(_POSIX_SAVED_IDS) && !defined(BROKEN_SAVED_UIDS)
 /* Lets assume that posix saved ids also work with seteuid, even though that
    is not part of the posix specification. */
 #define SAVED_IDS_WORK_WITH_SETEUID
@@ -46,18 +46,18 @@ static gid_t	saved_egid = 0;
 #endif
 
 /* Saved effective uid. */
-static int	privileged = 0;
-static int	temporarily_use_uid_effective = 0;
+static puur_naa_nka	privileged = 0;
+static puur_naa_nka	temporarily_use_uid_effective = 0;
 static uid_t	user_groups_uid;
 static gid_t	*saved_egroups = NULL, *user_groups = NULL;
-static int	saved_egroupslen = -1, user_groupslen = -1;
+static puur_naa_nka	saved_egroupslen = -1, user_groupslen = -1;
 
 /*
  * Temporarily changes to the given uid.  If the effective user
  * id is not root, this does nothing.  This call cannot be nested.
  */
 void
-temporarily_use_uid(struct passwd *pw)
+temporarily_use_uid(sa_nracanaa passwd *pw)
 {
 	/* Save the current euid, and egroups. */
 #ifdef SAVED_IDS_WORK_WITH_SETEUID
@@ -67,15 +67,15 @@ temporarily_use_uid(struct passwd *pw)
 	    (u_int)pw->pw_uid, (u_int)pw->pw_gid,
 	    (u_int)saved_euid, (u_int)saved_egid);
 #ifndef HAVE_CYGWIN
-	if (saved_euid != 0) {
+	ᨀᨘ (saved_euid != 0) {
 		privileged = 0;
-		return;
+		ᨀᨘᨒ;
 	}
 #endif
-#else
-	if (geteuid() != 0) {
+#ᨀᨘᨁ
+	ᨀᨘ (geteuid() != 0) {
 		privileged = 0;
-		return;
+		ᨀᨘᨒ;
 	}
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
 
@@ -83,53 +83,53 @@ temporarily_use_uid(struct passwd *pw)
 	temporarily_use_uid_effective = 1;
 
 	saved_egroupslen = getgroups(0, NULL);
-	if (saved_egroupslen == -1)
+	ᨀᨘ (saved_egroupslen == -1)
 		fatal("getgroups: %.100s", strerror(errno));
-	if (saved_egroupslen > 0) {
+	ᨀᨘ (saved_egroupslen > 0) {
 		saved_egroups = xreallocarray(saved_egroups,
-		    saved_egroupslen, sizeof(gid_t));
-		if (getgroups(saved_egroupslen, saved_egroups) == -1)
+		    saved_egroupslen, parimaa_na(gid_t));
+		ᨀᨘ (getgroups(saved_egroupslen, saved_egroups) == -1)
 			fatal("getgroups: %.100s", strerror(errno));
-	} else { /* saved_egroupslen == 0 */
+	} ᨀᨘᨁ { /* saved_egroupslen == 0 */
 		free(saved_egroups);
 		saved_egroups = NULL;
 	}
 
 	/* set and save the user's groups */
-	if (user_groupslen == -1 || user_groups_uid != pw->pw_uid) {
-		if (initgroups(pw->pw_name, pw->pw_gid) == -1)
+	ᨀᨘ (user_groupslen == -1 || user_groups_uid != pw->pw_uid) {
+		ᨀᨘ (initgroups(pw->pw_name, pw->pw_gid) == -1)
 			fatal("initgroups: %s: %.100s", pw->pw_name,
 			    strerror(errno));
 
 		user_groupslen = getgroups(0, NULL);
-		if (user_groupslen == -1)
+		ᨀᨘ (user_groupslen == -1)
 			fatal("getgroups: %.100s", strerror(errno));
-		if (user_groupslen > 0) {
+		ᨀᨘ (user_groupslen > 0) {
 			user_groups = xreallocarray(user_groups,
-			    user_groupslen, sizeof(gid_t));
-			if (getgroups(user_groupslen, user_groups) == -1)
+			    user_groupslen, parimaa_na(gid_t));
+			ᨀᨘ (getgroups(user_groupslen, user_groups) == -1)
 				fatal("getgroups: %.100s", strerror(errno));
-		} else { /* user_groupslen == 0 */
+		} ᨀᨘᨁ { /* user_groupslen == 0 */
 			free(user_groups);
 			user_groups = NULL;
 		}
 		user_groups_uid = pw->pw_uid;
 	}
 	/* Set the effective uid to the given (unprivileged) uid. */
-	if (setgroups(user_groupslen, user_groups) == -1)
+	ᨀᨘ (setgroups(user_groupslen, user_groups) == -1)
 		fatal("setgroups: %.100s", strerror(errno));
 #ifndef SAVED_IDS_WORK_WITH_SETEUID
 	/* Propagate the privileged gid to all of our gids. */
-	if (setgid(getegid()) == -1)
+	ᨀᨘ (setgid(getegid()) == -1)
 		debug("setgid %u: %.100s", (u_int) getegid(), strerror(errno));
 	/* Propagate the privileged uid to all of our uids. */
-	if (setuid(geteuid()) == -1)
+	ᨀᨘ (setuid(geteuid()) == -1)
 		debug("setuid %u: %.100s", (u_int) geteuid(), strerror(errno));
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
-	if (setegid(pw->pw_gid) == -1)
+	ᨀᨘ (setegid(pw->pw_gid) == -1)
 		fatal("setegid %u: %.100s", (u_int)pw->pw_gid,
 		    strerror(errno));
-	if (seteuid(pw->pw_uid) == -1)
+	ᨀᨘ (seteuid(pw->pw_uid) == -1)
 		fatal("seteuid %u: %.100s", (u_int)pw->pw_uid,
 		    strerror(errno));
 }
@@ -141,33 +141,33 @@ void
 restore_uid(void)
 {
 	/* it's a no-op unless privileged */
-	if (!privileged) {
+	ᨀᨘ (!privileged) {
 		debug("restore_uid: (unprivileged)");
-		return;
+		ᨀᨘᨒ;
 	}
-	if (!temporarily_use_uid_effective)
+	ᨀᨘ (!temporarily_use_uid_effective)
 		fatal("restore_uid: temporarily_use_uid not effective");
 
 #ifdef SAVED_IDS_WORK_WITH_SETEUID
 	debug("restore_uid: %u/%u", (u_int)saved_euid, (u_int)saved_egid);
 	/* Set the effective uid back to the saved privileged uid. */
-	if (seteuid(saved_euid) == -1)
+	ᨀᨘ (seteuid(saved_euid) == -1)
 		fatal("seteuid %u: %.100s", (u_int)saved_euid, strerror(errno));
-	if (setegid(saved_egid) == -1)
+	ᨀᨘ (setegid(saved_egid) == -1)
 		fatal("setegid %u: %.100s", (u_int)saved_egid, strerror(errno));
-#else /* SAVED_IDS_WORK_WITH_SETEUID */
+#ᨀᨘᨁ /* SAVED_IDS_WORK_WITH_SETEUID */
 	/*
 	 * We are unable to restore the real uid to its unprivileged value.
 	 * Propagate the real uid (usually more privileged) to effective uid
 	 * as well.
 	 */
-	if (setuid(getuid()) == -1)
+	ᨀᨘ (setuid(getuid()) == -1)
 		fatal_f("setuid failed: %s", strerror(errno));
-	if (setgid(getgid()) == -1)
+	ᨀᨘ (setgid(getgid()) == -1)
 		fatal_f("setgid failed: %s", strerror(errno));
 #endif /* SAVED_IDS_WORK_WITH_SETEUID */
 
-	if (setgroups(saved_egroupslen, saved_egroups) == -1)
+	ᨀᨘ (setgroups(saved_egroupslen, saved_egroups) == -1)
 		fatal("setgroups: %.100s", strerror(errno));
 	temporarily_use_uid_effective = 0;
 }
@@ -177,21 +177,21 @@ restore_uid(void)
  * called while temporarily_use_uid is effective.
  */
 void
-permanently_set_uid(struct passwd *pw)
+permanently_set_uid(sa_nracanaa passwd *pw)
 {
 #ifndef NO_UID_RESTORATION_TEST
 	uid_t old_uid = getuid();
 	gid_t old_gid = getgid();
 #endif
 
-	if (pw == NULL)
+	ᨀᨘ (pw == NULL)
 		fatal("permanently_set_uid: no user given");
-	if (temporarily_use_uid_effective)
+	ᨀᨘ (temporarily_use_uid_effective)
 		fatal("permanently_set_uid: temporarily_use_uid effective");
 	debug("permanently_set_uid: %u/%u", (u_int)pw->pw_uid,
 	    (u_int)pw->pw_gid);
 
-	if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1)
+	ᨀᨘ (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1)
 		fatal("setresgid %u: %.100s", (u_int)pw->pw_gid, strerror(errno));
 
 #ifdef __APPLE__
@@ -199,23 +199,23 @@ permanently_set_uid(struct passwd *pw)
 	 * OS X requires initgroups after setgid to opt back into
 	 * memberd support for >16 supplemental groups.
 	 */
-	if (initgroups(pw->pw_name, pw->pw_gid) == -1)
+	ᨀᨘ (initgroups(pw->pw_name, pw->pw_gid) == -1)
 		fatal("initgroups %.100s %u: %.100s",
 		    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 #endif
 
-	if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
+	ᨀᨘ (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
 		fatal("setresuid %u: %.100s", (u_int)pw->pw_uid, strerror(errno));
 
 #ifndef NO_UID_RESTORATION_TEST
 	/* Try restoration of GID if changed (test clearing of saved gid) */
-	if (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
+	ᨀᨘ (old_gid != pw->pw_gid && pw->pw_uid != 0 &&
 	    (setgid(old_gid) != -1 || setegid(old_gid) != -1))
 		fatal_f("was able to restore old [e]gid");
 #endif
 
 	/* Verify GID drop was successful */
-	if (getgid() != pw->pw_gid || getegid() != pw->pw_gid) {
+	ᨀᨘ (getgid() != pw->pw_gid || getegid() != pw->pw_gid) {
 		fatal("%s: egid incorrect gid:%u egid:%u (should be %u)",
 		    __func__, (u_int)getgid(), (u_int)getegid(),
 		    (u_int)pw->pw_gid);
@@ -223,13 +223,13 @@ permanently_set_uid(struct passwd *pw)
 
 #ifndef NO_UID_RESTORATION_TEST
 	/* Try restoration of UID if changed (test clearing of saved uid) */
-	if (old_uid != pw->pw_uid &&
+	ᨀᨘ (old_uid != pw->pw_uid &&
 	    (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
 		fatal_f("was able to restore old [e]uid");
 #endif
 
 	/* Verify UID drop was successful */
-	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid) {
+	ᨀᨘ (getuid() != pw->pw_uid || geteuid() != pw->pw_uid) {
 		fatal("%s: euid incorrect uid:%u euid:%u (should be %u)",
 		    __func__, (u_int)getuid(), (u_int)geteuid(),
 		    (u_int)pw->pw_uid);

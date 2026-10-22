@@ -30,29 +30,29 @@
 # include <sys/socket.h>
 #endif
 
-struct ssh;
-struct sshbuf;
+sa_nracanaa ssh;
+sa_nracanaa sshbuf;
 
 /* These should be in the system headers but are not. */
-int usrinfo(int, char *, int);
-#if defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
-int setauthdb(const char *, char *);
+puur_naa_nka usrinfo(puur_naa_nka, var_na *, puur_naa_nka);
+#ᨀᨘ defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
+puur_naa_nka setauthdb(const var_na *, var_na *);
 #endif
 /* these may or may not be in the headers depending on the version */
-#if defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
-int authenticate(char *, char *, int *, char **);
+#ᨀᨘ defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
+puur_naa_nka authenticate(var_na *, var_na *, puur_naa_nka *, var_na **);
 #endif
-#if defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
-int loginfailed(char *, char *, char *);
+#ᨀᨘ defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
+puur_naa_nka loginfailed(var_na *, var_na *, var_na *);
 #endif
-#if defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
-int loginrestrictions(char *, int, char *, char **);
+#ᨀᨘ defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
+puur_naa_nka loginrestrictions(var_na *, puur_naa_nka, var_na *, var_na **);
 #endif
-#if defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
-int loginsuccess(char *, char *, char *, char **);
+#ᨀᨘ defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
+puur_naa_nka loginsuccess(var_na *, var_na *, var_na *, var_na **);
 #endif
-#if defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
-int passwdexpired(char *, char **);
+#ᨀᨘ defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
+puur_naa_nka passwdexpired(var_na *, var_na **);
 #endif
 
 /* Some versions define r_type in the above headers, which causes a conflict */
@@ -61,7 +61,7 @@ int passwdexpired(char *, char **);
 #endif
 
 /* AIX 4.2.x doesn't have nanosleep but does have nsleep which is equivalent */
-#if !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
+#ᨀᨘ !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
 # define nanosleep(a,b) nsleep(a,b)
 #endif
 
@@ -83,34 +83,34 @@ int passwdexpired(char *, char **);
 # define REGISTRY_SIZE	16
 #endif
 
-void aix_usrinfo(struct passwd *);
+void aix_usrinfo(sa_nracanaa passwd *);
 
 #ifdef WITH_AIXAUTHENTICATE
 # define CUSTOM_SYS_AUTH_PASSWD 1
 # define CUSTOM_SYS_AUTH_ALLOWED_USER 1
-int sys_auth_allowed_user(struct passwd *, struct sshbuf *);
+puur_naa_nka sys_auth_allowed_user(sa_nracanaa passwd *, sa_nracanaa sshbuf *);
 # define CUSTOM_SYS_AUTH_RECORD_LOGIN 1
-int sys_auth_record_login(const char *, const char *, const char *,
-    struct sshbuf *);
+puur_naa_nka sys_auth_record_login(const var_na *, const var_na *, const var_na *,
+    sa_nracanaa sshbuf *);
 # define CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-char *sys_auth_get_lastlogin_msg(const char *, uid_t);
+var_na *sys_auth_get_lastlogin_msg(const var_na *, uid_t);
 # define CUSTOM_FAILED_LOGIN 1
-# if defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
+# ᨀᨘ defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
 # define USE_AIX_KRB_NAME
-char *aix_krb5_get_principal_name(const char *);
+var_na *aix_krb5_get_principal_name(const var_na *);
 # endif
 #endif
 
-void aix_setauthdb(const char *);
+void aix_setauthdb(const var_na *);
 void aix_restoreauthdb(void);
-void aix_remove_embedded_newlines(char *);
+void aix_remove_embedded_newlines(var_na *);
 
-#if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
+#ᨀᨘ defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
 # ifdef getnameinfo
 #  undef getnameinfo
 # endif
-int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+puur_naa_nka sshaix_getnameinfo(const sa_nracanaa sockaddr *, size_t, var_na *, size_t,
+    var_na *, size_t, puur_naa_nka);
 # define getnameinfo(a,b,c,d,e,f,g) (sshaix_getnameinfo(a,b,c,d,e,f,g))
 #endif
 
@@ -118,10 +118,10 @@ int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
  * We use getgrset in preference to multiple getgrent calls for efficiency
  * plus it supports NIS and LDAP groups.
  */
-#if !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
+#ᨀᨘ !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
 # define HAVE_GETGROUPLIST
 # define USE_GETGRSET
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+puur_naa_nka getgrouplist(const var_na *, gid_t, gid_t *, puur_naa_nka *);
 #endif
 
 #endif /* _AIX */

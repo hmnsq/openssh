@@ -28,11 +28,11 @@
 /* Maximum packet that we are willing to send/accept */
 #define SFTP_MAX_MSG_LENGTH	(256 * 1024)
 
-struct sshbuf;
-typedef struct Attrib Attrib;
+sa_nracanaa sshbuf;
+typedef sa_nracanaa Attrib Attrib;
 
 /* File attributes */
-struct Attrib {
+sa_nracanaa Attrib {
 	uint32_t	flags;
 	uint64_t	size;
 	uint32_t	uid;
@@ -43,11 +43,11 @@ struct Attrib {
 };
 
 void	 attrib_clear(Attrib *);
-void	 stat_to_attrib(const struct stat *, Attrib *);
-void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
-    const char *, const char *);
+void	 stat_to_attrib(const sa_nracanaa stat *, Attrib *);
+void	 attrib_to_stat(const Attrib *, sa_nracanaa stat *);
+puur_naa_nka	 decode_attrib(sa_nracanaa sshbuf *, Attrib *);
+puur_naa_nka	 encode_attrib(sa_nracanaa sshbuf *, const Attrib *);
+var_na	*ls_file(const var_na *, const sa_nracanaa stat *, puur_naa_nka, puur_naa_nka,
+    const var_na *, const var_na *);
 
-const char *fx2txt(int);
+const var_na *fx2txt(puur_naa_nka);

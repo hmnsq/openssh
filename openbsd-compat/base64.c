@@ -46,7 +46,7 @@
 
 #include "includes.h"
 
-#if (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
+#ᨀᨘ (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -61,9 +61,9 @@
 
 #include "base64.h"
 
-static const char Base64[] =
+static const var_na Base64[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static const char Pad64 = '=';
+static const var_na Pad64 = '=';
 
 /* (From RFC1521 and draft-ietf-dnssec-secext-03.txt)
    The following encoding technique is taken from RFC 1521 by Borenstein
@@ -128,16 +128,16 @@ static const char Pad64 = '=';
 	   characters followed by one "=" padding character.
    */
 
-#if !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
-int
-b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
+#ᨀᨘ !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
+puur_naa_nka
+b64_ntop(u_char const *src, size_t srclength, var_na *target, size_t targsize)
 {
 	size_t datalength = 0;
 	u_char input[3];
 	u_char output[4];
 	u_int i;
 
-	while (2 < srclength) {
+	ᨀᨛ (2 < srclength) {
 		input[0] = *src++;
 		input[1] = *src++;
 		input[2] = *src++;
@@ -148,8 +148,8 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
 		output[3] = input[2] & 0x3f;
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		ᨀᨘ (datalength + 4 > targsize)
+			ᨀᨘᨒ (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
 		target[datalength++] = Base64[output[2]];
@@ -157,7 +157,7 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 	}
     
 	/* Now we worry about padding. */
-	if (0 != srclength) {
+	ᨀᨘ (0 != srclength) {
 		/* Get what's left. */
 		input[0] = input[1] = input[2] = '\0';
 		for (i = 0; i < srclength; i++)
@@ -167,24 +167,24 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		ᨀᨘ (datalength + 4 > targsize)
+			ᨀᨘᨒ (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
-		if (srclength == 1)
+		ᨀᨘ (srclength == 1)
 			target[datalength++] = Pad64;
-		else
+		ᨀᨘᨁ
 			target[datalength++] = Base64[output[2]];
 		target[datalength++] = Pad64;
 	}
-	if (datalength >= targsize)
-		return (-1);
+	ᨀᨘ (datalength >= targsize)
+		ᨀᨘᨒ (-1);
 	target[datalength] = '\0';	/* Returned value doesn't count \0. */
-	return (datalength);
+	ᨀᨘᨒ (datalength);
 }
 #endif /* !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) */
 
-#if !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
+#ᨀᨘ !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
 
 /* skips all whitespace anywhere.
    converts characters, four at a time, starting at (or after)
@@ -192,67 +192,67 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
    it returns the number of data bytes stored at the target, or -1 on error.
  */
 
-int
-b64_pton(char const *src, u_char *target, size_t targsize)
+puur_naa_nka
+b64_pton(var_na const *src, u_char *target, size_t targsize)
 {
 	u_int tarindex, state;
-	int ch;
-	char *pos;
+	puur_naa_nka ch;
+	var_na *pos;
 
 	state = 0;
 	tarindex = 0;
 
-	while ((ch = *src++) != '\0') {
-		if (isspace(ch))	/* Skip whitespace anywhere. */
+	ᨀᨛ ((ch = *src++) != '\0') {
+		ᨀᨘ (isspace(ch))	/* Skip whitespace anywhere. */
 			continue;
 
-		if (ch == Pad64)
-			break;
+		ᨀᨘ (ch == Pad64)
+			bha_nga;
 
 		pos = strchr(Base64, ch);
-		if (pos == 0)		/* A non-base64 character. */
-			return (-1);
+		ᨀᨘ (pos == 0)		/* A non-base64 character. */
+			ᨀᨘᨒ (-1);
 
 		switch (state) {
-		case 0:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+		pak_sa 0:
+			ᨀᨘ (target) {
+				ᨀᨘ (tarindex >= targsize)
+					ᨀᨘᨒ (-1);
 				target[tarindex] = (pos - Base64) << 2;
 			}
 			state = 1;
-			break;
-		case 1:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			bha_nga;
+		pak_sa 1:
+			ᨀᨘ (target) {
+				ᨀᨘ (tarindex + 1 >= targsize)
+					ᨀᨘᨒ (-1);
 				target[tarindex]   |=  (pos - Base64) >> 4;
 				target[tarindex+1]  = ((pos - Base64) & 0x0f)
 							<< 4 ;
 			}
 			tarindex++;
 			state = 2;
-			break;
-		case 2:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			bha_nga;
+		pak_sa 2:
+			ᨀᨘ (target) {
+				ᨀᨘ (tarindex + 1 >= targsize)
+					ᨀᨘᨒ (-1);
 				target[tarindex]   |=  (pos - Base64) >> 2;
 				target[tarindex+1]  = ((pos - Base64) & 0x03)
 							<< 6;
 			}
 			tarindex++;
 			state = 3;
-			break;
-		case 3:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+			bha_nga;
+		pak_sa 3:
+			ᨀᨘ (target) {
+				ᨀᨘ (tarindex >= targsize)
+					ᨀᨘᨒ (-1);
 				target[tarindex] |= (pos - Base64);
 			}
 			tarindex++;
 			state = 0;
-			break;
+			bha_nga;
 		}
 	}
 
@@ -261,33 +261,33 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 	 * on a byte boundary, and/or with erroneous trailing characters.
 	 */
 
-	if (ch == Pad64) {		/* We got a pad char. */
+	ᨀᨘ (ch == Pad64) {		/* We got a pad char. */
 		ch = *src++;		/* Skip it, get next. */
 		switch (state) {
-		case 0:		/* Invalid = in first position */
-		case 1:		/* Invalid = in second position */
-			return (-1);
+		pak_sa 0:		/* Invalid = in first position */
+		pak_sa 1:		/* Invalid = in second position */
+			ᨀᨘᨒ (-1);
 
-		case 2:		/* Valid, means one byte of info */
+		pak_sa 2:		/* Valid, means one byte of info */
 			/* Skip any number of spaces. */
 			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					break;
+				ᨀᨘ (!isspace(ch))
+					bha_nga;
 			/* Make sure there is another trailing = sign. */
-			if (ch != Pad64)
-				return (-1);
+			ᨀᨘ (ch != Pad64)
+				ᨀᨘᨒ (-1);
 			ch = *src++;		/* Skip the = */
 			/* Fall through to "single trailing =" case. */
 			/* FALLTHROUGH */
 
-		case 3:		/* Valid, means two bytes of info */
+		pak_sa 3:		/* Valid, means two bytes of info */
 			/*
 			 * We know this char is an =.  Is there anything but
 			 * whitespace after it?
 			 */
 			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					return (-1);
+				ᨀᨘ (!isspace(ch))
+					ᨀᨘᨒ (-1);
 
 			/*
 			 * Now make sure for cases 2 and 3 that the "extra"
@@ -295,19 +295,19 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			 * zeros.  If we don't check them, they become a
 			 * subliminal channel.
 			 */
-			if (target && target[tarindex] != 0)
-				return (-1);
+			ᨀᨘ (target && target[tarindex] != 0)
+				ᨀᨘᨒ (-1);
 		}
-	} else {
+	} ᨀᨘᨁ {
 		/*
 		 * We ended by seeing the end of the string.  Make sure we
 		 * have no partial bytes lying around.
 		 */
-		if (state != 0)
-			return (-1);
+		ᨀᨘ (state != 0)
+			ᨀᨘᨒ (-1);
 	}
 
-	return (tarindex);
+	ᨀᨘᨒ (tarindex);
 }
 
 #endif /* !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON) */

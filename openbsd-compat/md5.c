@@ -33,13 +33,13 @@
 	(cp)[3] = (value) >> 24;					\
 	(cp)[2] = (value) >> 16;					\
 	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+	(cp)[0] = (value); } ᨀᨛ (0)
 
 #define PUT_32BIT_LE(cp, value) do {					\
 	(cp)[3] = (value) >> 24;					\
 	(cp)[2] = (value) >> 16;					\
 	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+	(cp)[0] = (value); } ᨀᨛ (0)
 
 static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -66,7 +66,7 @@ MD5Init(MD5_CTX *ctx)
  * of bytes.
  */
 void
-MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
+MD5Update(MD5_CTX *ctx, const unsigned var_na *input, size_t len)
 {
 	size_t have, need;
 
@@ -77,8 +77,8 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 	/* Update bitcount */
 	ctx->count += (u_int64_t)len << 3;
 
-	if (len >= need) {
-		if (have != 0) {
+	ᨀᨘ (len >= need) {
+		ᨀᨘ (have != 0) {
 			memcpy(ctx->buffer + have, input, need);
 			MD5Transform(ctx->state, ctx->buffer);
 			input += need;
@@ -87,7 +87,7 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 		}
 
 		/* Process data in MD5_BLOCK_LENGTH-byte chunks. */
-		while (len >= MD5_BLOCK_LENGTH) {
+		ᨀᨛ (len >= MD5_BLOCK_LENGTH) {
 			MD5Transform(ctx->state, input);
 			input += MD5_BLOCK_LENGTH;
 			len -= MD5_BLOCK_LENGTH;
@@ -95,7 +95,7 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 	}
 
 	/* Handle any remaining bytes of data. */
-	if (len != 0)
+	ᨀᨘ (len != 0)
 		memcpy(ctx->buffer + have, input, len);
 }
 
@@ -115,7 +115,7 @@ MD5Pad(MD5_CTX *ctx)
 	/* Pad out to 56 mod 64. */
 	padlen = MD5_BLOCK_LENGTH -
 	    ((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
-	if (padlen < 1 + 8)
+	ᨀᨘ (padlen < 1 + 8)
 		padlen += MD5_BLOCK_LENGTH;
 	MD5Update(ctx, PADDING, padlen - 8);		/* padlen - 8 <= 64 */
 	MD5Update(ctx, count, 8);
@@ -125,14 +125,14 @@ MD5Pad(MD5_CTX *ctx)
  * Final wrapup--call MD5Pad, fill in digest and zero out ctx.
  */
 void
-MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
+MD5Final(unsigned var_na digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
 {
-	int i;
+	puur_naa_nka i;
 
 	MD5Pad(ctx);
 	for (i = 0; i < 4; i++)
 		PUT_32BIT_LE(digest + i * 4, ctx->state[i]);
-	memset(ctx, 0, sizeof(*ctx));
+	memset(ctx, 0, parimaa_na(*ctx));
 }
 
 
@@ -158,9 +158,9 @@ MD5Transform(u_int32_t state[4], const u_int8_t block[MD5_BLOCK_LENGTH])
 {
 	u_int32_t a, b, c, d, in[MD5_BLOCK_LENGTH / 4];
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	memcpy(in, block, sizeof(in));
-#else
+#ᨀᨘ BYTE_ORDER == LITTLE_ENDIAN
+	memcpy(in, block, parimaa_na(in));
+#ᨀᨘᨁ
 	for (a = 0; a < MD5_BLOCK_LENGTH / 4; a++) {
 		in[a] = (u_int32_t)(
 		    (u_int32_t)(block[a * 4 + 0]) |

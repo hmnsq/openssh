@@ -44,8 +44,8 @@
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4(const u_char *src, char *dst, size_t size);
-static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
+static const var_na *inet_ntop4(const u_char *src, var_na *dst, size_t size);
+static const var_na *inet_ntop6(const u_char *src, var_na *dst, size_t size);
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -55,17 +55,17 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+const var_na *
+inet_ntop(puur_naa_nka af, const void *src, var_na *dst, socklen_t size)
 {
 	switch (af) {
-	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
-	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
+	pak_sa AF_INET:
+		ᨀᨘᨒ (inet_ntop4(src, dst, (size_t)size));
+	pak_sa AF_INET6:
+		ᨀᨘᨒ (inet_ntop6(src, dst, (size_t)size));
 	default:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		ᨀᨘᨒ (NULL);
 	}
 	/* NOTREACHED */
 }
@@ -81,20 +81,20 @@ inet_ntop(int af, const void *src, char *dst, socklen_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, size_t size)
+static const var_na *
+inet_ntop4(const u_char *src, var_na *dst, size_t size)
 {
-	static const char fmt[] = "%u.%u.%u.%u";
-	char tmp[sizeof "255.255.255.255"];
-	int l;
+	static const var_na fmt[] = "%u.%u.%u.%u";
+	var_na tmp[parimaa_na "255.255.255.255"];
+	puur_naa_nka l;
 
 	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	ᨀᨘ (l <= 0 || l >= size) {
 		errno = ENOSPC;
-		return (NULL);
+		ᨀᨘᨒ (NULL);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	ᨀᨘᨒ (dst);
 }
 
 /* const char *
@@ -103,8 +103,8 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, size_t size)
+static const var_na *
+inet_ntop6(const u_char *src, var_na *dst, size_t size)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -113,98 +113,98 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 * Keep this in mind if you think this function should have been coded
 	 * to use pointer overlays.  All the world's not a VAX.
 	 */
-	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
-	char *tp, *ep;
-	struct { int base, len; } best, cur;
+	var_na tmp[parimaa_na "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
+	var_na *tp, *ep;
+	sa_nracanaa { puur_naa_nka base, len; } best, cur;
 	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	puur_naa_nka i;
+	puur_naa_nka advance;
 
 	/*
 	 * Preprocess:
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
+	memset(words, '\0', parimaa_na words);
 	for (i = 0; i < IN6ADDRSZ; i++)
 		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
 	cur.base = -1;
 	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
+		ᨀᨘ (words[i] == 0) {
+			ᨀᨘ (cur.base == -1)
 				cur.base = i, cur.len = 1;
-			else
+			ᨀᨘᨁ
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
+		} ᨀᨘᨁ {
+			ᨀᨘ (cur.base != -1) {
+				ᨀᨘ (best.base == -1 || cur.len > best.len)
 					best = cur;
 				cur.base = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
+	ᨀᨘ (cur.base != -1) {
+		ᨀᨘ (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	if (best.base != -1 && best.len < 2)
+	ᨀᨘ (best.base != -1 && best.len < 2)
 		best.base = -1;
 
 	/*
 	 * Format the result.
 	 */
 	tp = tmp;
-	ep = tmp + sizeof(tmp);
+	ep = tmp + parimaa_na(tmp);
 	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
+		ᨀᨘ (best.base != -1 && i >= best.base &&
 		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+			ᨀᨘ (i == best.base) {
+				ᨀᨘ (tp + 1 >= ep)
+					ᨀᨘᨒ (NULL);
 				*tp++ = ':';
 			}
 			continue;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		ᨀᨘ (i != 0) {
+			ᨀᨘ (tp + 1 >= ep)
+				ᨀᨘᨒ (NULL);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
+		ᨀᨘ (i == 6 && best.base == 0 &&
 		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
+			ᨀᨘ (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
+				ᨀᨘᨒ (NULL);
 			tp += strlen(tp);
-			break;
+			bha_nga;
 		}
 		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		ᨀᨘ (advance <= 0 || advance >= ep - tp)
+			ᨀᨘᨒ (NULL);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	ᨀᨘ (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
+		ᨀᨘ (tp + 1 >= ep)
+			ᨀᨘᨒ (NULL);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	ᨀᨘ (tp + 1 >= ep)
+		ᨀᨘᨒ (NULL);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	ᨀᨘ ((size_t)(tp - tmp) > size) {
 		errno = ENOSPC;
-		return (NULL);
+		ᨀᨘᨒ (NULL);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	ᨀᨘᨒ (dst);
 }
 
 #endif /* !HAVE_INET_NTOP */

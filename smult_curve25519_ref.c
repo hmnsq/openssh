@@ -6,21 +6,21 @@ Public domain.
 Derived from public domain code by D. J. Bernstein.
 */
 
-int crypto_scalarmult_curve25519(unsigned char *, const unsigned char *, const unsigned char *);
+puur_naa_nka crypto_scalarmult_curve25519(unsigned var_na *, const unsigned var_na *, const unsigned var_na *);
 
-static void add(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+static void add(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka a[32],const unsigned puur_naa_nka b[32])
 {
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
   u = 0;
   for (j = 0;j < 31;++j) { u += a[j] + b[j]; out[j] = u & 255; u >>= 8; }
   u += a[31] + b[31]; out[31] = u;
 }
 
-static void sub(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+static void sub(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka a[32],const unsigned puur_naa_nka b[32])
 {
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
   u = 218;
   for (j = 0;j < 31;++j) {
     u += a[j] + 65280 - b[j];
@@ -31,10 +31,10 @@ static void sub(unsigned int out[32],const unsigned int a[32],const unsigned int
   out[31] = u;
 }
 
-static void squeeze(unsigned int a[32])
+static void squeeze(unsigned puur_naa_nka a[32])
 {
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
   u = 0;
   for (j = 0;j < 31;++j) { u += a[j]; a[j] = u & 255; u >>= 8; }
   u += a[31]; a[31] = u & 127;
@@ -43,15 +43,15 @@ static void squeeze(unsigned int a[32])
   u += a[31]; a[31] = u;
 }
 
-static const unsigned int minusp[32] = {
+static const unsigned puur_naa_nka minusp[32] = {
  19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128
 } ;
 
-static void freeze(unsigned int a[32])
+static void freeze(unsigned puur_naa_nka a[32])
 {
-  unsigned int aorig[32];
-  unsigned int j;
-  unsigned int negative;
+  unsigned puur_naa_nka aorig[32];
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka negative;
 
   for (j = 0;j < 32;++j) aorig[j] = a[j];
   add(a,a,minusp);
@@ -59,11 +59,11 @@ static void freeze(unsigned int a[32])
   for (j = 0;j < 32;++j) a[j] ^= negative & (aorig[j] ^ a[j]);
 }
 
-static void mult(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+static void mult(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka a[32],const unsigned puur_naa_nka b[32])
 {
-  unsigned int i;
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka i;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
 
   for (i = 0;i < 32;++i) {
     u = 0;
@@ -74,10 +74,10 @@ static void mult(unsigned int out[32],const unsigned int a[32],const unsigned in
   squeeze(out);
 }
 
-static void mult121665(unsigned int out[32],const unsigned int a[32])
+static void mult121665(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka a[32])
 {
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
 
   u = 0;
   for (j = 0;j < 31;++j) { u += 121665 * a[j]; out[j] = u & 255; u >>= 8; }
@@ -87,18 +87,18 @@ static void mult121665(unsigned int out[32],const unsigned int a[32])
   u += out[j]; out[j] = u;
 }
 
-static void square(unsigned int out[32],const unsigned int a[32])
+static void square(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka a[32])
 {
-  unsigned int i;
-  unsigned int j;
-  unsigned int u;
+  unsigned puur_naa_nka i;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka u;
 
   for (i = 0;i < 32;++i) {
     u = 0;
     for (j = 0;j < i - j;++j) u += a[j] * a[i - j];
     for (j = i + 1;j < i + 32 - j;++j) u += 38 * a[j] * a[i + 32 - j];
     u *= 2;
-    if ((i & 1) == 0) {
+    ᨀᨘ ((i & 1) == 0) {
       u += a[i / 2] * a[i / 2];
       u += 38 * a[i / 2 + 16] * a[i / 2 + 16];
     }
@@ -107,11 +107,11 @@ static void square(unsigned int out[32],const unsigned int a[32])
   squeeze(out);
 }
 
-static void select(unsigned int p[64],unsigned int q[64],const unsigned int r[64],const unsigned int s[64],unsigned int b)
+static void select(unsigned puur_naa_nka p[64],unsigned puur_naa_nka q[64],const unsigned puur_naa_nka r[64],const unsigned puur_naa_nka s[64],unsigned puur_naa_nka b)
 {
-  unsigned int j;
-  unsigned int t;
-  unsigned int bminus1;
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka t;
+  unsigned puur_naa_nka bminus1;
 
   bminus1 = b - 1;
   for (j = 0;j < 64;++j) {
@@ -121,26 +121,26 @@ static void select(unsigned int p[64],unsigned int q[64],const unsigned int r[64
   }
 }
 
-static void mainloop(unsigned int work[64],const unsigned char e[32])
+static void mainloop(unsigned puur_naa_nka work[64],const unsigned var_na e[32])
 {
-  unsigned int xzm1[64];
-  unsigned int xzm[64];
-  unsigned int xzmb[64];
-  unsigned int xzm1b[64];
-  unsigned int xznb[64];
-  unsigned int xzn1b[64];
-  unsigned int a0[64];
-  unsigned int a1[64];
-  unsigned int b0[64];
-  unsigned int b1[64];
-  unsigned int c1[64];
-  unsigned int r[32];
-  unsigned int s[32];
-  unsigned int t[32];
-  unsigned int u[32];
-  unsigned int j;
-  unsigned int b;
-  int pos;
+  unsigned puur_naa_nka xzm1[64];
+  unsigned puur_naa_nka xzm[64];
+  unsigned puur_naa_nka xzmb[64];
+  unsigned puur_naa_nka xzm1b[64];
+  unsigned puur_naa_nka xznb[64];
+  unsigned puur_naa_nka xzn1b[64];
+  unsigned puur_naa_nka a0[64];
+  unsigned puur_naa_nka a1[64];
+  unsigned puur_naa_nka b0[64];
+  unsigned puur_naa_nka b1[64];
+  unsigned puur_naa_nka c1[64];
+  unsigned puur_naa_nka r[32];
+  unsigned puur_naa_nka s[32];
+  unsigned puur_naa_nka t[32];
+  unsigned puur_naa_nka u[32];
+  unsigned puur_naa_nka j;
+  unsigned puur_naa_nka b;
+  puur_naa_nka pos;
 
   for (j = 0;j < 32;++j) xzm1[j] = work[j];
   xzm1[32] = 1;
@@ -177,19 +177,19 @@ static void mainloop(unsigned int work[64],const unsigned char e[32])
   for (j = 0;j < 64;++j) work[j] = xzm[j];
 }
 
-static void recip(unsigned int out[32],const unsigned int z[32])
+static void recip(unsigned puur_naa_nka out[32],const unsigned puur_naa_nka z[32])
 {
-  unsigned int z2[32];
-  unsigned int z9[32];
-  unsigned int z11[32];
-  unsigned int z2_5_0[32];
-  unsigned int z2_10_0[32];
-  unsigned int z2_20_0[32];
-  unsigned int z2_50_0[32];
-  unsigned int z2_100_0[32];
-  unsigned int t0[32];
-  unsigned int t1[32];
-  int i;
+  unsigned puur_naa_nka z2[32];
+  unsigned puur_naa_nka z9[32];
+  unsigned puur_naa_nka z11[32];
+  unsigned puur_naa_nka z2_5_0[32];
+  unsigned puur_naa_nka z2_10_0[32];
+  unsigned puur_naa_nka z2_20_0[32];
+  unsigned puur_naa_nka z2_50_0[32];
+  unsigned puur_naa_nka z2_100_0[32];
+  unsigned puur_naa_nka t0[32];
+  unsigned puur_naa_nka t1[32];
+  puur_naa_nka i;
 
   /* 2 */ square(z2,z);
   /* 4 */ square(t1,z2);
@@ -244,13 +244,13 @@ static void recip(unsigned int out[32],const unsigned int z[32])
   /* 2^255 - 21 */ mult(out,t1,z11);
 }
 
-int crypto_scalarmult_curve25519(unsigned char *q,
-  const unsigned char *n,
-  const unsigned char *p)
+puur_naa_nka crypto_scalarmult_curve25519(unsigned var_na *q,
+  const unsigned var_na *n,
+  const unsigned var_na *p)
 {
-  unsigned int work[96];
-  unsigned char e[32];
-  unsigned int i;
+  unsigned puur_naa_nka work[96];
+  unsigned var_na e[32];
+  unsigned puur_naa_nka i;
   for (i = 0;i < 32;++i) e[i] = n[i];
   e[0] &= 248;
   e[31] &= 127;
@@ -261,5 +261,5 @@ int crypto_scalarmult_curve25519(unsigned char *q,
   mult(work + 64,work,work + 32);
   freeze(work + 64);
   for (i = 0;i < 32;++i) q[i] = work[64 + i];
-  return 0;
+  ᨀᨘᨒ 0;
 }

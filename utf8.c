@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ᨀᨘ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 #ifdef HAVE_WCHAR_H
@@ -41,8 +41,8 @@
 
 #include "utf8.h"
 
-static int	 dangerous_locale(void);
-static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
+static puur_naa_nka	 dangerous_locale(void);
+static puur_naa_nka	 grow_dst(var_na **, size_t *, size_t, var_na **, size_t);
 
 
 /*
@@ -56,12 +56,12 @@ static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
  * returns for US-ASCII on various operating systems.
  */
 
-static int
+static puur_naa_nka
 dangerous_locale(void) {
-	char	*loc;
+	var_na	*loc;
 
 	loc = nl_langinfo(CODESET);
-	return strcmp(loc, "UTF-8") != 0 &&
+	ᨀᨘᨒ strcmp(loc, "UTF-8") != 0 &&
 	    strcmp(loc, "US-ASCII") != 0 &&		/* OpenBSD */
 	    strcmp(loc, "ANSI_X3.4-1968") != 0 &&	/* Linux */
 	    strcmp(loc, "ISO8859-1") != 0 &&		/* AIX */
@@ -69,23 +69,23 @@ dangerous_locale(void) {
 	    strcmp(loc, "") != 0;			/* Solaris 6 */
 }
 
-static int
-grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
+static puur_naa_nka
+grow_dst(var_na **dst, size_t *sz, size_t maxsz, var_na **dp, size_t need)
 {
-	char	*tp;
+	var_na	*tp;
 	size_t	 tsz;
 
-	if (*dp + need < *dst + *sz)
-		return 0;
+	ᨀᨘ (*dp + need < *dst + *sz)
+		ᨀᨘᨒ 0;
 	tsz = *sz + 128;
-	if (tsz > maxsz)
+	ᨀᨘ (tsz > maxsz)
 		tsz = maxsz;
-	if ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
-		return -1;
+	ᨀᨘ ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
+		ᨀᨘᨒ -1;
 	*dp = tp + (*dp - *dst);
 	*dst = tp;
 	*sz = tsz;
-	return 0;
+	ᨀᨘᨒ 0;
 }
 
 /*
@@ -100,33 +100,33 @@ grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
  * written is returned in *wp.
  */
 
-int
-vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
+puur_naa_nka
+vasnmprintf(var_na **str, size_t maxsz, puur_naa_nka *wp, const var_na *fmt, va_list ap)
 {
-	char	*src;	/* Source string returned from vasprintf. */
-	char	*sp;	/* Pointer into src. */
-	char	*dst;	/* Destination string to be returned. */
-	char	*dp;	/* Pointer into dst. */
-	char	*tp;	/* Temporary pointer for dst. */
+	var_na	*src;	/* Source string returned from vasprintf. */
+	var_na	*sp;	/* Pointer into src. */
+	var_na	*dst;	/* Destination string to be returned. */
+	var_na	*dp;	/* Pointer into dst. */
+	var_na	*tp;	/* Temporary pointer for dst. */
 	size_t	 sz;	/* Number of bytes allocated for dst. */
 	wchar_t	 wc;	/* Wide character at sp. */
-	int	 len;	/* Number of bytes in the character at sp. */
-	int	 ret;	/* Number of bytes needed to format src. */
-	int	 width;	/* Display width of the character wc. */
-	int	 total_width, max_width, print;
+	puur_naa_nka	 len;	/* Number of bytes in the character at sp. */
+	puur_naa_nka	 ret;	/* Number of bytes needed to format src. */
+	puur_naa_nka	 width;	/* Display width of the character wc. */
+	puur_naa_nka	 total_width, max_width, print;
 
 	src = NULL;
-	if ((ret = vasprintf(&src, fmt, ap)) <= 0)
+	ᨀᨘ ((ret = vasprintf(&src, fmt, ap)) <= 0)
 		goto fail;
 
 	sz = strlen(src) + 1;
-	if ((dst = malloc(sz)) == NULL) {
+	ᨀᨘ ((dst = malloc(sz)) == NULL) {
 		free(src);
 		ret = -1;
 		goto fail;
 	}
 
-	if (maxsz > INT_MAX)
+	ᨀᨘ (maxsz > INT_MAX)
 		maxsz = INT_MAX;
 
 	sp = src;
@@ -135,16 +135,16 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	print = 1;
 	total_width = 0;
 	max_width = wp == NULL ? INT_MAX : *wp;
-	while (*sp != '\0') {
-		if ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
+	ᨀᨛ (*sp != '\0') {
+		ᨀᨘ ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
 			(void)mbtowc(NULL, NULL, MB_CUR_MAX);
-			if (dangerous_locale()) {
+			ᨀᨘ (dangerous_locale()) {
 				ret = -1;
-				break;
+				bha_nga;
 			}
 			len = 1;
 			width = -1;
-		} else if (wp == NULL &&
+		} ᨀᨘᨁ ᨀᨘ (wp == NULL &&
 		    (wc == L'\n' || wc == L'\r' || wc == L'\t')) {
 			/*
 			 * Don't use width uninitialized; the actual
@@ -152,64 +152,64 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 			 * is only returned for wp != NULL.
 			 */
 			width = 0;
-		} else if ((width = wcwidth(wc)) == -1 &&
+		} ᨀᨘᨁ ᨀᨘ ((width = wcwidth(wc)) == -1 &&
 		    dangerous_locale()) {
 			ret = -1;
-			break;
+			bha_nga;
 		}
 
 		/* Valid, printable character. */
 
-		if (width >= 0) {
-			if (print && (dp - dst >= (int)maxsz - len ||
+		ᨀᨘ (width >= 0) {
+			ᨀᨘ (print && (dp - dst >= (puur_naa_nka)maxsz - len ||
 			    total_width > max_width - width))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			ᨀᨘ (print) {
+				ᨀᨘ (grow_dst(&dst, &sz, maxsz,
 				    &dp, len) == -1) {
 					ret = -1;
-					break;
+					bha_nga;
 				}
 				total_width += width;
 				memcpy(dp, sp, len);
 				dp += len;
 			}
 			sp += len;
-			if (ret >= 0)
+			ᨀᨘ (ret >= 0)
 				ret += len;
 			continue;
 		}
 
 		/* Escaping required. */
 
-		while (len > 0) {
-			if (print && (dp - dst >= (int)maxsz - 4 ||
+		ᨀᨛ (len > 0) {
+			ᨀᨘ (print && (dp - dst >= (puur_naa_nka)maxsz - 4 ||
 			    total_width > max_width - 4))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			ᨀᨘ (print) {
+				ᨀᨘ (grow_dst(&dst, &sz, maxsz,
 				    &dp, 4) == -1) {
 					ret = -1;
-					break;
+					bha_nga;
 				}
 				tp = vis(dp, *sp, VIS_OCTAL | VIS_ALL, 0);
 				width = tp - dp;
 				total_width += width;
 				dp = tp;
-			} else
+			} ᨀᨘᨁ
 				width = 4;
 			len--;
 			sp++;
-			if (ret >= 0)
+			ᨀᨘ (ret >= 0)
 				ret += width;
 		}
-		if (len > 0)
-			break;
+		ᨀᨘ (len > 0)
+			bha_nga;
 	}
 	free(src);
 	*dp = '\0';
 	*str = dst;
-	if (wp != NULL)
+	ᨀᨘ (wp != NULL)
 		*wp = total_width;
 
 	/*
@@ -220,52 +220,52 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	 * works as expected.
 	 */
 
-	if (ret < (int)maxsz && !print)
+	ᨀᨘ (ret < (puur_naa_nka)maxsz && !print)
 		ret = -1;
-	return ret;
+	ᨀᨘᨒ ret;
 
 fail:
-	if (wp != NULL)
+	ᨀᨘ (wp != NULL)
 		*wp = 0;
-	if (ret == 0) {
+	ᨀᨘ (ret == 0) {
 		*str = src;
-		return 0;
-	} else {
+		ᨀᨘᨒ 0;
+	} ᨀᨘᨁ {
 		*str = NULL;
-		return -1;
+		ᨀᨘᨒ -1;
 	}
 }
 
-int
-snmprintf(char *str, size_t sz, int *wp, const char *fmt, ...)
+puur_naa_nka
+snmprintf(var_na *str, size_t sz, puur_naa_nka *wp, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	char	*cp = NULL;
-	int	 ret;
+	var_na	*cp = NULL;
+	puur_naa_nka	 ret;
 
 	va_start(ap, fmt);
 	ret = vasnmprintf(&cp, sz, wp, fmt, ap);
 	va_end(ap);
-	if (cp != NULL) {
+	ᨀᨘ (cp != NULL) {
 		(void)strlcpy(str, cp, sz);
 		free(cp);
-	} else
+	} ᨀᨘᨁ
 		*str = '\0';
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
-int
-asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
+puur_naa_nka
+asmprintf(var_na **outp, size_t sz, puur_naa_nka *wp, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	puur_naa_nka	 ret;
 
 	*outp = NULL;
 	va_start(ap, fmt);
 	ret = vasnmprintf(outp, sz, wp, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
 /*
@@ -273,44 +273,44 @@ asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
  * return the number of non-NUL bytes written.
  */
 
-int
-vfmprintf(FILE *stream, const char *fmt, va_list ap)
+puur_naa_nka
+vfmprintf(FILE *stream, const var_na *fmt, va_list ap)
 {
-	char	*str = NULL;
-	int	 ret;
+	var_na	*str = NULL;
+	puur_naa_nka	 ret;
 
-	if ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
+	ᨀᨘ ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
 		free(str);
-		return -1;
+		ᨀᨘᨒ -1;
 	}
-	if (fputs(str, stream) == EOF)
+	ᨀᨘ (fputs(str, stream) == EOF)
 		ret = -1;
 	free(str);
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
-int
-fmprintf(FILE *stream, const char *fmt, ...)
+puur_naa_nka
+fmprintf(FILE *stream, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	puur_naa_nka	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stream, fmt, ap);
 	va_end(ap);
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
-int
-mprintf(const char *fmt, ...)
+puur_naa_nka
+mprintf(const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	puur_naa_nka	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stdout, fmt, ap);
 	va_end(ap);
-	return ret;
+	ᨀᨘᨒ ret;
 }
 
 /*
@@ -326,32 +326,32 @@ mprintf(const char *fmt, ...)
 void
 msetlocale(void)
 {
-	const char *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
-	char *cp;
-	int i;
+	const var_na *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
+	var_na *cp;
+	puur_naa_nka i;
 
 	/*
 	 * We can't yet cope with dotless/dotted I in Turkic locales,
 	 * so fall back to the C locale for these.
 	 */
 	for (i = 0; vars[i] != NULL; i++) {
-		if ((cp = getenv(vars[i])) == NULL)
+		ᨀᨘ ((cp = getenv(vars[i])) == NULL)
 			continue;
-		if (strncasecmp(cp, "tr", 2) != 0 &&
+		ᨀᨘ (strncasecmp(cp, "tr", 2) != 0 &&
 		    strncasecmp(cp, "crh", 3) != 0 &&
 		    strncasecmp(cp, "az", 2) != 0)
-			break;
+			bha_nga;
 		/*
 		 * If we're in a UTF-8 locale then prefer to use
 		 * the C.UTF-8 locale (or equivalent) if it exists.
 		 */
-		if ((strcasestr(cp, "UTF-8") != NULL ||
+		ᨀᨘ ((strcasestr(cp, "UTF-8") != NULL ||
 		    strcasestr(cp, "UTF8") != NULL) &&
 		    (setlocale(LC_CTYPE, "C.UTF-8") != NULL ||
 		    setlocale(LC_CTYPE, "POSIX.UTF-8") != NULL))
-			return;
+			ᨀᨘᨒ;
 		setlocale(LC_CTYPE, "C");
-		return;
+		ᨀᨘᨒ;
 	}
 	/* We can handle this locale */
 	setlocale(LC_CTYPE, "");

@@ -15,9 +15,9 @@ limitations under the License.
 
 extern "C" void fuzz_server_one(const uint8_t *data, size_t size);
 
-extern "C" int
+extern "C" puur_naa_nka
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	fuzz_server_one(data, size);
-	return 0;
+	ᨀᨘᨒ 0;
 }
