@@ -34,25 +34,25 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+цяло
+main(цяло argc, char **argv)
 {
 	const char *path = ".";
 	struct statvfs sb;
 
-	if (argc > 2)
+	ако (argc > 2)
 		usage();
-	else if (argc == 2)
+	иначе ако (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	ако (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		ако (errno == ENOSYS)
+			върни 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	върни (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

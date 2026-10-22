@@ -47,7 +47,7 @@
 
 #include "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#ако !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
 #include <stdlib.h>
 #include <string.h>
@@ -57,8 +57,8 @@
 
 #include "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+#ако defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+extern цяло h_errno;
 #endif
 
 /* We don't need multithread support here */
@@ -113,7 +113,7 @@ struct __res_state _res;
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#ако !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -133,7 +133,7 @@ _getshort(const u_char *msgp)
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	върни (u);
 }
 
 static u_int32_t
@@ -142,7 +142,7 @@ _getlong(const u_char *msgp)
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	върни (u);
 }
 #endif /* missing _getshort/_getlong */
 
@@ -175,53 +175,53 @@ struct dns_response {
 	struct dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+static struct dns_response *parse_dns_response(const u_char *, цяло);
+static struct dns_query *parse_dns_qsection(const u_char *, цяло,
+    const u_char **, цяло);
+static struct dns_rr *parse_dns_rrsection(const u_char *, цяло, const u_char **,
+    цяло);
 
 static void free_dns_query(struct dns_query *);
 static void free_dns_rr(struct dns_rr *);
 static void free_dns_response(struct dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+static цяло count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
+цяло
+getrrsetbyname(const char *hostname, unsigned цяло rdclass,
+    unsigned цяло rdtype, unsigned цяло flags,
     struct rrsetinfo **res)
 {
 	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
+	цяло result;
 	struct rrsetinfo *rrset = NULL;
 	struct dns_response *response = NULL;
 	struct dns_rr *rr;
 	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
+	цяло length;
+	unsigned цяло index_ans, index_sig;
 	u_char answer[ANSWER_BUFFER_SIZE];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	ако (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	ако (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	ако (flags) {
 		result = ERRSET_INVAL;
 		goto fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+	ако ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
@@ -232,14 +232,14 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	ако (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
 #endif /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
+	length = res_query(hostname, (signed цяло) rdclass, (signed цяло) rdtype,
 	    answer, sizeof(answer));
-	if (length < 0) {
+	ако (length < 0) {
 		switch(h_errno) {
 		case HOST_NOT_FOUND:
 			result = ERRSET_NONAME;
@@ -255,19 +255,19 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 	/* parse result */
 	response = parse_dns_response(answer, length);
-	if (response == NULL) {
+	ако (response == NULL) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
-	if (response->header.qdcount != 1) {
+	ако (response->header.qdcount != 1) {
 		result = ERRSET_FAIL;
 		goto fail;
 	}
 
 	/* initialize rrset */
 	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	ако (rrset == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -278,13 +278,13 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef HAVE_HEADER_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	ако (response->header.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
 #endif
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
+	ако (rrset->rri_name == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
@@ -298,39 +298,39 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
 	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
+	ако (rrset->rri_rdatas == NULL) {
 		result = ERRSET_NOMEMORY;
 		goto fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	ако (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
+		ако (rrset->rri_sigs == NULL) {
 			result = ERRSET_NOMEMORY;
 			goto fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
+	за (rr = response->answer, index_ans = 0, index_sig = 0;
 	    rr; rr = rr->next) {
 
 		rdata = NULL;
 
-		if (rr->class == rrset->rri_rdclass &&
+		ако (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
 			rdata = &rrset->rri_rdatas[index_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		ако (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
 			rdata = &rrset->rri_sigs[index_sig++];
 
-		if (rdata) {
+		ако (rdata) {
 			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
+			ако (rr->size != 0) {
 				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
+				ако (rdata->rdi_data == NULL) {
 					result = ERRSET_NOMEMORY;
 					goto fail;
 				}
@@ -341,14 +341,14 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	върни (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	ако (rrset != NULL)
 		freerrset(rrset);
-	if (response != NULL)
+	ако (response != NULL)
 		free_dns_response(response);
-	return (result);
+	върни (result);
 }
 
 void
@@ -356,28 +356,28 @@ freerrset(struct rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	ако (rrset == NULL)
+		върни;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
+	ако (rrset->rri_rdatas) {
+		за (i = 0; i < rrset->rri_nrdatas; i++) {
+			ако (rrset->rri_rdatas[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_rdatas[i].rdi_data);
 		}
 		free(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
+	ако (rrset->rri_sigs) {
+		за (i = 0; i < rrset->rri_nsigs; i++) {
+			ако (rrset->rri_sigs[i].rdi_data == NULL)
 				break;
 			free(rrset->rri_sigs[i].rdi_data);
 		}
 		free(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
+	ако (rrset->rri_name)
 		free(rrset->rri_name);
 	free(rrset);
 }
@@ -386,18 +386,18 @@ freerrset(struct rrsetinfo *rrset)
  * DNS response parsing routines
  */
 static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+parse_dns_response(const u_char *answer, цяло size)
 {
 	struct dns_response *resp;
 	const u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	ако (size < HFIXEDSZ)
+		върни (NULL);
 
 	/* allocate memory for the response */
 	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	ако (resp == NULL)
+		върни (NULL);
 
 	/* initialize current pointer */
 	cp = answer;
@@ -413,85 +413,85 @@ parse_dns_response(const u_char *answer, int size)
 	resp->header.arcount = ntohs(resp->header.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	ако (resp->header.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		върни (NULL);
 	}
 
 	/* parse query section */
 	resp->query = parse_dns_qsection(answer, size, &cp,
 	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	ако (resp->header.qdcount && resp->query == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		върни (NULL);
 	}
 
 	/* parse answer section */
 	resp->answer = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	ако (resp->header.ancount && resp->answer == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		върни (NULL);
 	}
 
 	/* parse authority section */
 	resp->authority = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	ако (resp->header.nscount && resp->authority == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		върни (NULL);
 	}
 
 	/* parse additional section */
 	resp->additional = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	ако (resp->header.arcount && resp->additional == NULL) {
 		free_dns_response(resp);
-		return (NULL);
+		върни (NULL);
 	}
 
-	return (resp);
+	върни (resp);
 }
 
 static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+parse_dns_qsection(const u_char *answer, цяло size, const u_char **cp, цяло count)
 {
 	struct dns_query *head, *curr, *prev;
-	int i, length;
+	цяло i, length;
 	char name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		ако (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} докато (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	за (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		ако (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
-			return (NULL);
+			върни (NULL);
 		}
 		/* allocate and initialize struct */
 		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
+		ако (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		ако (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		ако (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
 		    sizeof(name));
-		if (length < 0) {
+		ако (length < 0) {
 			free_dns_query(head);
-			return (NULL);
+			върни (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ако (curr->name == NULL) {
 			free_dns_query(head);
-			return (NULL);
+			върни (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -508,50 +508,50 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 	}
 #undef NEED
 
-	return (head);
+	върни (head);
 }
 
 static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+parse_dns_rrsection(const u_char *answer, цяло size, const u_char **cp,
+    цяло count)
 {
 	struct dns_rr *head, *curr, *prev;
-	int i, length;
+	цяло i, length;
 	char name[MAXDNAME];
 
 #define NEED(need) \
 	do { \
-		if (*cp + need > answer + size) \
+		ако (*cp + need > answer + size) \
 			goto fail; \
-	} while (0)
+	} докато (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	за (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+		ако (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
-			return (NULL);
+			върни (NULL);
 		}
 
 		/* allocate and initialize struct */
 		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
+		ако (curr == NULL)
 			goto fail;
-		if (head == NULL)
+		ако (head == NULL)
 			head = curr;
-		if (prev != NULL)
+		ако (prev != NULL)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
 		    sizeof(name));
-		if (length < 0) {
+		ако (length < 0) {
 			free_dns_rr(head);
-			return (NULL);
+			върни (NULL);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ако (curr->name == NULL) {
 			free_dns_rr(head);
-			return (NULL);
+			върни (NULL);
 		}
 		NEED(length);
 		*cp += length;
@@ -578,10 +578,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata itself */
 		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
+		ако (curr->size != 0) {
+			ако ((curr->rdata = malloc(curr->size)) == NULL) {
 				free_dns_rr(head);
-				return (NULL);
+				върни (NULL);
 			}
 			memcpy(curr->rdata, *cp, curr->size);
 		}
@@ -589,7 +589,7 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 	}
 #undef NEED
 
-	return (head);
+	върни (head);
 }
 
 static void
@@ -597,7 +597,7 @@ free_dns_query(struct dns_query *p)
 {
 	struct dns_query *next;
 
-	while (p != NULL) {
+	докато (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p);
@@ -610,7 +610,7 @@ free_dns_rr(struct dns_rr *p)
 {
 	struct dns_rr *next;
 
-	while (p != NULL) {
+	докато (p != NULL) {
 		next = p->next;
 		free(p->name);
 		free(p->rdata);
@@ -622,8 +622,8 @@ free_dns_rr(struct dns_rr *p)
 static void
 free_dns_response(struct dns_response *p)
 {
-	if (p == NULL)
-		return;
+	ако (p == NULL)
+		върни;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
@@ -632,18 +632,18 @@ free_dns_response(struct dns_response *p)
 	free(p);
 }
 
-static int
+static цяло
 count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	цяло n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	докато(p) {
+		ако (p->class == class && p->type == type)
 			n++;
 		p = p->next;
 	}
 
-	return (n);
+	върни (n);
 }
 
 #endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

@@ -29,7 +29,7 @@ struct sshkey;
 typedef struct Sensitive Sensitive;
 struct Sensitive {
 	struct sshkey	**keys;
-	int		nkeys;
+	цяло		nkeys;
 };
 
 struct ssh_conn_info {
@@ -70,16 +70,16 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
+цяло	 ssh_connect(struct ssh *, const char *, const char *,
 	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
+	    цяло, цяло *, цяло);
 void	 ssh_kill_proxy_command(void);
 
 void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
+    struct sockaddr_storage *, u_short, struct passwd *, цяло,
     const struct ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
+цяло	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
     const struct ssh_conn_info *);
 
 void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
@@ -93,7 +93,7 @@ void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
 
 void	 pubkey_dump(struct ssh *);
 
-int	 ssh_local_cmd(const char *);
+цяло	 ssh_local_cmd(const char *);
 
 void	 maybe_add_key_to_agent(const char *, struct sshkey *,
     const char *, const char *);
@@ -102,7 +102,7 @@ void	 load_hostkeys_command(struct hostkeys *, const char *,
     const char *, const struct ssh_conn_info *,
     const struct sshkey *, const char *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+цяло hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
 
 void ssh_conn_info_free(struct ssh_conn_info *);
 struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);

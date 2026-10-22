@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static цяло fail = 0;
 
 void
 test(const char *a)
@@ -27,21 +27,21 @@ test(const char *a)
 	char *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	ако (b == 0) {
 		fail = 1;
-		return;
+		върни;
 	}
-	if (strcmp(a, b) != 0)
+	ако (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
+цяло
 main(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	върни fail;
 }

@@ -35,7 +35,7 @@
 
 #ifndef HAVE_STRUCT_POLLFD_FD
 typedef struct pollfd {
-	int	fd;
+	цяло	fd;
 	short	events;
 	short	revents;
 } pollfd_t;
@@ -59,7 +59,7 @@ typedef struct pollfd {
 # define POLLNVAL	0x0020
 #endif
 
-#if 0
+#ако 0
 /* the following are currently not implemented */
 #define	POLLRDNORM	0x0040
 #define POLLNORM	POLLRDNORM
@@ -74,17 +74,17 @@ typedef struct pollfd {
 #ifndef HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
 typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+# иначе
+typedef unsigned цяло	nfds_t;
 # endif
 #endif
 
 #ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
+цяло   poll(struct pollfd *, nfds_t, цяло);
 #endif
 
 #ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
+цяло   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
 #endif
 
 #endif /* !_COMPAT_POLL_H_ */

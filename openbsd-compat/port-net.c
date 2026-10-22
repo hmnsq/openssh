@@ -42,76 +42,76 @@
  * including tun/tap forwarding and routing domains.
  */
 
-#if defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
+#ако defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
 #include <linux/if.h>
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#ако defined(SYS_RDOMAIN_LINUX)
 char *
-sys_get_rdomain(int fd)
+sys_get_rdomain(цяло fd)
 {
 	char dev[IFNAMSIZ + 1];
 	socklen_t len = sizeof(dev) - 1;
 
-	if (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
+	ако (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
 		error("%s: cannot determine VRF for fd=%d : %s",
 		    __func__, fd, strerror(errno));
-		return NULL;
+		върни NULL;
 	}
 	dev[len] = '\0';
-	return strdup(dev);
+	върни strdup(dev);
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+цяло
+sys_set_rdomain(цяло fd, const char *name)
 {
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	ако (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		error("%s: setsockopt(%d, SO_BINDTODEVICE, %s): %s",
 		    __func__, fd, name, strerror(errno));
-		return -1;
+		върни -1;
 	}
-	return 0;
+	върни 0;
 }
 
-int
+цяло
 sys_valid_rdomain(const char *name)
 {
-	int fd;
+	цяло fd;
 
 	/*
 	 * This is a pretty crappy way to test. It would be better to
 	 * check whether "name" represents a VRF device, but apparently
 	 * that requires an rtnetlink transaction.
 	 */
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-		return 0;
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	ако ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		върни 0;
+	ако (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		close(fd);
-		return 0;
+		върни 0;
 	}
 	close(fd);
-	return 1;
+	върни 1;
 }
 #elif defined(SYS_RDOMAIN_XXX)
 /* XXX examples */
 char *
-sys_get_rdomain(int fd)
+sys_get_rdomain(цяло fd)
 {
-	return NULL;
+	върни NULL;
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+цяло
+sys_set_rdomain(цяло fd, const char *name)
 {
-	return -1;
+	върни -1;
 }
 
-int
+цяло
 valid_rdomain(const char *name)
 {
-	return 0;
+	върни 0;
 }
 
 void
@@ -136,38 +136,38 @@ sys_set_process_rdomain(const char *name)
  * System-specific tunnel open function
  */
 
-#if defined(SSH_TUN_LINUX)
+#ако defined(SSH_TUN_LINUX)
 #include <linux/if_tun.h>
 #define TUN_CTRL_DEV "/dev/net/tun"
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+цяло
+sys_tun_open(цяло tun, цяло mode, char **ifname)
 {
 	struct ifreq ifr;
-	int fd = -1;
+	цяло fd = -1;
 	const char *name = NULL;
 
-	if (ifname != NULL)
+	ако (ifname != NULL)
 		*ifname = NULL;
-	if ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
+	ако ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
 		debug("%s: failed to open tunnel control device \"%s\": %s",
 		    __func__, TUN_CTRL_DEV, strerror(errno));
-		return (-1);
+		върни (-1);
 	}
 
 	bzero(&ifr, sizeof(ifr));
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	ако (mode == SSH_TUNMODE_ETHERNET) {
 		ifr.ifr_flags = IFF_TAP;
 		name = "tap%d";
-	} else {
+	} иначе {
 		ifr.ifr_flags = IFF_TUN;
 		name = "tun%d";
 	}
 	ifr.ifr_flags |= IFF_NO_PI;
 
-	if (tun != SSH_TUNID_ANY) {
-		if (tun > SSH_TUNID_MAX) {
+	ако (tun != SSH_TUNID_ANY) {
+		ако (tun > SSH_TUNID_MAX) {
 			debug("%s: invalid tunnel id %x: %s", __func__,
 			    tun, strerror(errno));
 			goto failed;
@@ -175,25 +175,25 @@ sys_tun_open(int tun, int mode, char **ifname)
 		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), name, tun);
 	}
 
-	if (ioctl(fd, TUNSETIFF, &ifr) == -1) {
+	ако (ioctl(fd, TUNSETIFF, &ifr) == -1) {
 		debug("%s: failed to configure tunnel (mode %d): %s", __func__,
 		    mode, strerror(errno));
 		goto failed;
 	}
 
-	if (tun == SSH_TUNID_ANY)
+	ако (tun == SSH_TUNID_ANY)
 		debug("%s: tunnel mode %d fd %d", __func__, mode, fd);
-	else
+	иначе
 		debug("%s: %s mode %d fd %d", __func__, ifr.ifr_name, mode, fd);
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	ако (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
-	return (fd);
+	върни (fd);
 
  failed:
 	close(fd);
-	return (-1);
+	върни (-1);
 }
 #endif /* SSH_TUN_LINUX */
 
@@ -205,55 +205,55 @@ sys_tun_open(int tun, int mode, char **ifname)
 #include <net/if_tun.h>
 #endif
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+цяло
+sys_tun_open(цяло tun, цяло mode, char **ifname)
 {
 	struct ifreq ifr;
 	char name[100];
-	int fd = -1, sock;
+	цяло fd = -1, sock;
 	const char *tunbase = "tun";
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
-	int flag;
+#ако defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+	цяло flag;
 #endif
 
-	if (ifname != NULL)
+	ако (ifname != NULL)
 		*ifname = NULL;
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	ако (mode == SSH_TUNMODE_ETHERNET) {
 #ifdef SSH_TUN_NO_L2
 		debug("%s: no layer 2 tunnelling support", __func__);
-		return (-1);
-#else
+		върни (-1);
+#иначе
 		tunbase = "tap";
 #endif
 	}
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
+	ако (tun <= SSH_TUNID_MAX) {
 		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
+	} иначе ако (tun == SSH_TUNID_ANY) {
+		за (tun = 100; tun >= 0; tun--) {
 			snprintf(name, sizeof(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
+			ако ((fd = open(name, O_RDWR)) >= 0)
 				break;
 		}
-	} else {
+	} иначе {
 		debug("%s: invalid tunnel %u\n", __func__, tun);
-		return (-1);
+		върни (-1);
 	}
 
-	if (fd < 0) {
+	ако (fd < 0) {
 		debug("%s: %s open failed: %s", __func__, name,
 		    strerror(errno));
-		return (-1);
+		върни (-1);
 	}
 
 	/* Turn on tunnel headers */
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+#ако defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
 	flag = 1;
-	if (mode != SSH_TUNMODE_ETHERNET &&
+	ако (mode != SSH_TUNMODE_ETHERNET &&
 	    ioctl(fd, TUNSIFHEAD, &flag) == -1) {
 		debug("%s: ioctl(%d, TUNSIFHEAD, 1): %s", __func__, fd,
 		    strerror(errno));
@@ -265,31 +265,31 @@ sys_tun_open(int tun, int mode, char **ifname)
 
 	/* Set the tunnel device operation mode */
 	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+	ако ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
 		goto failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
+	ако (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
 		goto failed;
-	if ((ifr.ifr_flags & IFF_UP) == 0) {
+	ако ((ifr.ifr_flags & IFF_UP) == 0) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
+		ако (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
 			goto failed;
 	}
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	ако (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
 	close(sock);
-	return (fd);
+	върни (fd);
 
  failed:
-	if (fd >= 0)
+	ако (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	ако (sock >= 0)
 		close(sock);
 	debug("%s: failed to set %s mode %d: %s", __func__, name,
 	    mode, strerror(errno));
-	return (-1);
+	върни (-1);
 }
 #endif /* SSH_TUN_FREEBSD */
 
@@ -297,7 +297,7 @@ sys_tun_open(int tun, int mode, char **ifname)
  * System-specific channel filters
  */
 
-#if defined(SSH_TUN_FILTER)
+#ако defined(SSH_TUN_FILTER)
 /*
  * The tunnel forwarding protocol prepends the address family of forwarded
  * IP packets using OpenBSD's numbers.
@@ -305,28 +305,28 @@ sys_tun_open(int tun, int mode, char **ifname)
 #define OPENBSD_AF_INET		2
 #define OPENBSD_AF_INET6	24
 
-int
-sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
+цяло
+sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, цяло _len)
 {
-	int r;
+	цяло r;
 	size_t len;
 	char *ptr = buf;
-#if defined(SSH_TUN_PREPEND_AF)
+#ако defined(SSH_TUN_PREPEND_AF)
 	char rbuf[CHAN_RBUF];
 	struct ip iph;
 #endif
-#if defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
+#ако defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
 	u_int32_t af;
 #endif
 
 	/* XXX update channel input filter API to use unsigned length */
-	if (_len < 0)
-		return -1;
+	ако (_len < 0)
+		върни -1;
 	len = _len;
 
-#if defined(SSH_TUN_PREPEND_AF)
-	if (len <= sizeof(iph) || len > sizeof(rbuf) - 4)
-		return -1;
+#ако defined(SSH_TUN_PREPEND_AF)
+	ако (len <= sizeof(iph) || len > sizeof(rbuf) - 4)
+		върни -1;
 	/* Determine address family from packet IP header. */
 	memcpy(&iph, buf, sizeof(iph));
 	af = iph.ip_v == 6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET;
@@ -337,16 +337,16 @@ sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
 	ptr = rbuf;
 #elif defined(SSH_TUN_COMPAT_AF)
 	/* Convert existing address family header to OpenBSD value */
-	if (len <= 4)
-		return -1;
+	ако (len <= 4)
+		върни -1;
 	af = PEEK_U32(buf);
 	/* Put it back */
 	POKE_U32(buf, af == AF_INET6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET);
 #endif
 
-	if ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
+	ако ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	return (0);
+	върни (0);
 }
 
 u_char *
@@ -355,16 +355,16 @@ sys_tun_outfilter(struct ssh *ssh, struct Channel *c,
 {
 	u_char *buf;
 	u_int32_t af;
-	int r;
+	цяло r;
 
 	/* XXX new API is incompatible with this signature. */
-	if ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
+	ако ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	if (*dlen < sizeof(af))
-		return (NULL);
+	ако (*dlen < sizeof(af))
+		върни (NULL);
 	buf = *data;
 
-#if defined(SSH_TUN_PREPEND_AF)
+#ако defined(SSH_TUN_PREPEND_AF)
 	/* skip address family */
 	*dlen -= sizeof(af);
 	buf = *data + sizeof(af);
@@ -373,6 +373,6 @@ sys_tun_outfilter(struct ssh *ssh, struct Channel *c,
 	af = (PEEK_U32(buf) == OPENBSD_AF_INET6) ? AF_INET6 : AF_INET;
 	POKE_U32(buf, af);
 #endif
-	return (buf);
+	върни (buf);
 }
 #endif /* SSH_TUN_FILTER */

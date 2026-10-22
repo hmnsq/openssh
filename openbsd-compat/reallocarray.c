@@ -34,11 +34,11 @@
 void *
 reallocarray(void *optr, size_t nmemb, size_t size)
 {
-	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	ако ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    nmemb > 0 && SIZE_MAX / nmemb < size) {
 		errno = ENOMEM;
-		return NULL;
+		върни NULL;
 	}
-	return realloc(optr, size * nmemb);
+	върни realloc(optr, size * nmemb);
 }
 #endif /* HAVE_REALLOCARRAY */

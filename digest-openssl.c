@@ -43,12 +43,12 @@
 #endif
 
 struct ssh_digest_ctx {
-	int alg;
+	цяло alg;
 	EVP_MD_CTX *mdctx;
 };
 
 struct ssh_digest {
-	int id;
+	цяло id;
 	const char *name;
 	size_t digest_len;
 	const EVP_MD *(*mdfunc)(void);
@@ -65,143 +65,143 @@ const struct ssh_digest digests[] = {
 };
 
 static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+ssh_digest_by_alg(цяло alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	ако (alg < 0 || alg >= SSH_DIGEST_MAX)
+		върни NULL;
+	ако (digests[alg].id != alg) /* sanity */
+		върни NULL;
+	ако (digests[alg].mdfunc == NULL)
+		върни NULL;
+	върни &(digests[alg]);
 }
 
-int
+цяло
 ssh_digest_alg_by_name(const char *name)
 {
-	int alg;
+	цяло alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	за (alg = 0; digests[alg].id != -1; alg++) {
+		ако (strcasecmp(name, digests[alg].name) == 0)
+			върни digests[alg].id;
 	}
-	return -1;
+	върни -1;
 }
 
 const char *
-ssh_digest_alg_name(int alg)
+ssh_digest_alg_name(цяло alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
+	върни digest == NULL ? NULL : digest->name;
 }
 
 size_t
-ssh_digest_bytes(int alg)
+ssh_digest_bytes(цяло alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->digest_len;
+	върни digest == NULL ? 0 : digest->digest_len;
 }
 
 size_t
 ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	върни EVP_MD_CTX_block_size(ctx->mdctx);
 }
 
 struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+ssh_digest_start(цяло alg)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 	struct ssh_digest_ctx *ret;
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+	ако (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
+		върни NULL;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
+	ако ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
 		free(ret);
-		return NULL;
+		върни NULL;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	ако (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		върни NULL;
 	}
-	return ret;
+	върни ret;
 }
 
-int
+цяло
 ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ако (from->alg != to->alg)
+		върни SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ако (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		върни SSH_ERR_LIBCRYPTO_ERROR;
+	върни 0;
 }
 
-int
+цяло
 ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ако (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		върни SSH_ERR_LIBCRYPTO_ERROR;
+	върни 0;
 }
 
-int
+цяло
 ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	върни ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
+цяло
 ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	ако (digest == NULL || dlen > UINT_MAX)
+		върни SSH_ERR_INVALID_ARGUMENT;
+	ако (dlen < digest->digest_len) /* No truncation allowed */
+		върни SSH_ERR_INVALID_ARGUMENT;
+	ако (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		върни SSH_ERR_LIBCRYPTO_ERROR;
+	ако (l != digest->digest_len) /* sanity */
+		върни SSH_ERR_INTERNAL_ERROR;
+	върни 0;
 }
 
 void
 ssh_digest_free(struct ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	ако (ctx == NULL)
+		върни;
 	EVP_MD_CTX_free(ctx->mdctx);
 	freezero(ctx, sizeof(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+цяло
+ssh_digest_memory(цяло alg, const void *m, size_t mlen, u_char *d, size_t dlen)
 {
 	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ако (digest == NULL)
+		върни SSH_ERR_INVALID_ARGUMENT;
+	ако (dlen > UINT_MAX)
+		върни SSH_ERR_INVALID_ARGUMENT;
+	ако (dlen < digest->digest_len)
+		върни SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ако (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
+		върни SSH_ERR_LIBCRYPTO_ERROR;
+	върни 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+цяло
+ssh_digest_buffer(цяло alg, const struct sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	върни ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

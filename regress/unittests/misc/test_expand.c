@@ -23,7 +23,7 @@ void test_expand(void);
 void
 test_expand(void)
 {
-	int parseerr;
+	цяло parseerr;
 	char *ret;
 
 	TEST_START("dollar_expand");
@@ -34,7 +34,7 @@ test_expand(void)
 	char *str = dollar_expand(NULL, (x)); \
 	ASSERT_STRING_EQ(str, (y)); \
 	free(str); \
-} while(0)
+} докато(0)
 	ASSERT_DOLLAR_EQ("${FOO}", "bar");
 	ASSERT_DOLLAR_EQ(" ${FOO}", " bar");
 	ASSERT_DOLLAR_EQ("${FOO} ", "bar ");

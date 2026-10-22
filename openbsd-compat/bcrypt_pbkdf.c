@@ -76,28 +76,28 @@ bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
 	uint8_t __attribute__ ((__nonstring__)) ciphertext[BCRYPT_HASHSIZE] =
 	    "OxychromaticBlowfishSwatDynamite";
 	uint32_t cdata[BCRYPT_WORDS];
-	int i;
+	цяло i;
 	uint16_t j;
 	size_t shalen = SHA512_DIGEST_LENGTH;
 
 	/* key expansion */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, sha2salt, shalen, sha2pass, shalen);
-	for (i = 0; i < 64; i++) {
+	за (i = 0; i < 64; i++) {
 		Blowfish_expand0state(&state, sha2salt, shalen);
 		Blowfish_expand0state(&state, sha2pass, shalen);
 	}
 
 	/* encryption */
 	j = 0;
-	for (i = 0; i < BCRYPT_WORDS; i++)
+	за (i = 0; i < BCRYPT_WORDS; i++)
 		cdata[i] = Blowfish_stream2word(ciphertext, sizeof(ciphertext),
 		    &j);
-	for (i = 0; i < 64; i++)
+	за (i = 0; i < 64; i++)
 		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
 
 	/* copy out */
-	for (i = 0; i < BCRYPT_WORDS; i++) {
+	за (i = 0; i < BCRYPT_WORDS; i++) {
 		out[4 * i + 3] = (cdata[i] >> 24) & 0xff;
 		out[4 * i + 2] = (cdata[i] >> 16) & 0xff;
 		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
@@ -110,9 +110,9 @@ bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
 	explicit_bzero(&state, sizeof(state));
 }
 
-int
+цяло
 bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds)
+    uint8_t *key, size_t keylen, unsigned цяло rounds)
 {
 	uint8_t sha2pass[SHA512_DIGEST_LENGTH];
 	uint8_t sha2salt[SHA512_DIGEST_LENGTH];
@@ -124,12 +124,12 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	size_t origkeylen = keylen;
 
 	/* nothing crazy */
-	if (rounds < 1)
+	ако (rounds < 1)
 		goto bad;
-	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
+	ако (passlen == 0 || saltlen == 0 || keylen == 0 ||
 	    keylen > sizeof(out) * sizeof(out) || saltlen > 1<<20)
 		goto bad;
-	if ((countsalt = calloc(1, saltlen + 4)) == NULL)
+	ако ((countsalt = calloc(1, saltlen + 4)) == NULL)
 		goto bad;
 	stride = (keylen + sizeof(out) - 1) / sizeof(out);
 	amt = (keylen + stride - 1) / stride;
@@ -140,7 +140,7 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	crypto_hash_sha512(sha2pass, pass, passlen);
 
 	/* generate key, sizeof(out) at a time */
-	for (count = 1; keylen > 0; count++) {
+	за (count = 1; keylen > 0; count++) {
 		countsalt[saltlen + 0] = (count >> 24) & 0xff;
 		countsalt[saltlen + 1] = (count >> 16) & 0xff;
 		countsalt[saltlen + 2] = (count >> 8) & 0xff;
@@ -152,11 +152,11 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 		bcrypt_hash(sha2pass, sha2salt, tmpout);
 		memcpy(out, tmpout, sizeof(out));
 
-		for (i = 1; i < rounds; i++) {
+		за (i = 1; i < rounds; i++) {
 			/* subsequent rounds, salt is previous output */
 			crypto_hash_sha512(sha2salt, tmpout, sizeof(tmpout));
 			bcrypt_hash(sha2pass, sha2salt, tmpout);
-			for (j = 0; j < sizeof(out); j++)
+			за (j = 0; j < sizeof(out); j++)
 				out[j] ^= tmpout[j];
 		}
 
@@ -164,9 +164,9 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 		 * pbkdf2 deviation: output the key material non-linearly.
 		 */
 		amt = MINIMUM(amt, keylen);
-		for (i = 0; i < amt; i++) {
+		за (i = 0; i < amt; i++) {
 			size_t dest = i * stride + (count - 1);
-			if (dest >= origkeylen)
+			ако (dest >= origkeylen)
 				break;
 			key[dest] = out[i];
 		}
@@ -178,11 +178,11 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltl
 	explicit_bzero(out, sizeof(out));
 	explicit_bzero(tmpout, sizeof(tmpout));
 
-	return 0;
+	върни 0;
 
 bad:
 	/* overwrite with random in case caller doesn't check return code */
 	arc4random_buf(key, keylen);
-	return -1;
+	върни -1;
 }
 #endif /* HAVE_BCRYPT_PBKDF */

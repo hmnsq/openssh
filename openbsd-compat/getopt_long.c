@@ -52,7 +52,7 @@
 /* OPENBSD ORIGINAL: lib/libc/stdlib/getopt_long.c */
 #include "includes.h"
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+#ако !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
 
 /*
  * Some defines to make it easier to keep the code in sync with upstream.
@@ -61,7 +61,7 @@
  */
 #define warnx		logit
 
-#if 0
+#ако 0
 #include <err.h>
 #include <getopt.h>
 #endif
@@ -79,17 +79,17 @@ struct option {
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	цяло has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	цяло *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	цяло val;
 };
 
-int	opterr = 1;		/* if error message should be printed */
-int	optind = 1;		/* index into parent argv vector */
-int	optopt = '?';		/* character checked for validity */
-int	optreset;		/* reset getopt */
+цяло	opterr = 1;		/* if error message should be printed */
+цяло	optind = 1;		/* index into parent argv vector */
+цяло	optopt = '?';		/* character checked for validity */
+цяло	optreset;		/* reset getopt */
 char    *optarg;		/* argument associated with option */
 
 #define PRINT_ERROR	((opterr) && (*options != ':'))
@@ -99,24 +99,24 @@ char    *optarg;		/* argument associated with option */
 #define FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
 
 /* return values */
-#define	BADCH		(int)'?'
-#define	BADARG		((*options == ':') ? (int)':' : (int)'?')
-#define	INORDER		(int)1
+#define	BADCH		(цяло)'?'
+#define	BADARG		((*options == ':') ? (цяло)':' : (цяло)'?')
+#define	INORDER		(цяло)1
 
 #define	EMSG		""
 
-static int getopt_internal(int, char * const *, const char *,
-			   const struct option *, int *, int);
-static int parse_long_options(char * const *, const char *,
-			      const struct option *, int *, int);
-static int gcd(int, int);
-static void permute_args(int, int, int, char * const *);
+static цяло getopt_internal(цяло, char * const *, const char *,
+			   const struct option *, цяло *, цяло);
+static цяло parse_long_options(char * const *, const char *,
+			      const struct option *, цяло *, цяло);
+static цяло gcd(цяло, цяло);
+static void permute_args(цяло, цяло, цяло, char * const *);
 
 static char *place = EMSG; /* option letter processing */
 
 /* XXX: set optreset to 1 rather than these two */
-static int nonopt_start = -1; /* first non option argument (for permute) */
-static int nonopt_end = -1;   /* first option after non options (for permute) */
+static цяло nonopt_start = -1; /* first non option argument (for permute) */
+static цяло nonopt_end = -1;   /* first option after non options (for permute) */
 
 /* Error messages */
 static const char recargchar[] = "option requires an argument -- %c";
@@ -129,19 +129,19 @@ static const char illoptstring[] = "unknown option -- %s";
 /*
  * Compute the greatest common divisor of a and b.
  */
-static int
-gcd(int a, int b)
+static цяло
+gcd(цяло a, цяло b)
 {
-	int c;
+	цяло c;
 
 	c = a % b;
-	while (c != 0) {
+	докато (c != 0) {
 		a = b;
 		b = c;
 		c = a % b;
 	}
 
-	return (b);
+	върни (b);
 }
 
 /*
@@ -150,10 +150,10 @@ gcd(int a, int b)
  * in each block).
  */
 static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end,
+permute_args(цяло panonopt_start, цяло panonopt_end, цяло opt_end,
 	char * const *nargv)
 {
-	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
+	цяло cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
 	char *swap;
 
 	/*
@@ -164,13 +164,13 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
 	ncycle = gcd(nnonopts, nopts);
 	cyclelen = (opt_end - panonopt_start) / ncycle;
 
-	for (i = 0; i < ncycle; i++) {
+	за (i = 0; i < ncycle; i++) {
 		cstart = panonopt_end+i;
 		pos = cstart;
-		for (j = 0; j < cyclelen; j++) {
-			if (pos >= panonopt_end)
+		за (j = 0; j < cyclelen; j++) {
+			ако (pos >= panonopt_end)
 				pos -= nnonopts;
-			else
+			иначе
 				pos += nopts;
 			swap = nargv[pos];
 			/* LINTED const cast */
@@ -186,33 +186,33 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
  *	Parse long options in argc/argv argument vector.
  * Returns -1 if short_too is set and the option does not match long_options.
  */
-static int
+static цяло
 parse_long_options(char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int short_too)
+	const struct option *long_options, цяло *idx, цяло short_too)
 {
 	char *current_argv, *has_equal;
 	size_t current_argv_len;
-	int i, match;
+	цяло i, match;
 
 	current_argv = place;
 	match = -1;
 
 	optind++;
 
-	if ((has_equal = strchr(current_argv, '=')) != NULL) {
+	ако ((has_equal = strchr(current_argv, '=')) != NULL) {
 		/* argument found (--option=arg) */
 		current_argv_len = has_equal - current_argv;
 		has_equal++;
-	} else
+	} иначе
 		current_argv_len = strlen(current_argv);
 
-	for (i = 0; long_options[i].name; i++) {
+	за (i = 0; long_options[i].name; i++) {
 		/* find matching long option */
-		if (strncmp(current_argv, long_options[i].name,
+		ако (strncmp(current_argv, long_options[i].name,
 		    current_argv_len))
 			continue;
 
-		if (strlen(long_options[i].name) == current_argv_len) {
+		ако (strlen(long_options[i].name) == current_argv_len) {
 			/* exact match */
 			match = i;
 			break;
@@ -221,40 +221,40 @@ parse_long_options(char * const *nargv, const char *options,
 		 * If this is a known short option, don't allow
 		 * a partial match of a single character.
 		 */
-		if (short_too && current_argv_len == 1)
+		ако (short_too && current_argv_len == 1)
 			continue;
 
-		if (match == -1)	/* partial match */
+		ако (match == -1)	/* partial match */
 			match = i;
-		else {
+		иначе {
 			/* ambiguous abbreviation */
-			if (PRINT_ERROR)
-				warnx(ambig, (int)current_argv_len,
+			ако (PRINT_ERROR)
+				warnx(ambig, (цяло)current_argv_len,
 				     current_argv);
 			optopt = 0;
-			return (BADCH);
+			върни (BADCH);
 		}
 	}
-	if (match != -1) {		/* option found */
-		if (long_options[match].has_arg == no_argument
+	ако (match != -1) {		/* option found */
+		ако (long_options[match].has_arg == no_argument
 		    && has_equal) {
-			if (PRINT_ERROR)
-				warnx(noarg, (int)current_argv_len,
+			ако (PRINT_ERROR)
+				warnx(noarg, (цяло)current_argv_len,
 				     current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			ако (long_options[match].flag == NULL)
 				optopt = long_options[match].val;
-			else
+			иначе
 				optopt = 0;
-			return (BADARG);
+			върни (BADARG);
 		}
-		if (long_options[match].has_arg == required_argument ||
+		ако (long_options[match].has_arg == required_argument ||
 		    long_options[match].has_arg == optional_argument) {
-			if (has_equal)
+			ако (has_equal)
 				optarg = has_equal;
-			else if (long_options[match].has_arg ==
+			иначе ако (long_options[match].has_arg ==
 			    required_argument) {
 				/*
 				 * optional argument doesn't use next nargv
@@ -262,94 +262,94 @@ parse_long_options(char * const *nargv, const char *options,
 				optarg = nargv[optind++];
 			}
 		}
-		if ((long_options[match].has_arg == required_argument)
+		ако ((long_options[match].has_arg == required_argument)
 		    && (optarg == NULL)) {
 			/*
 			 * Missing argument; leading ':' indicates no error
 			 * should be generated.
 			 */
-			if (PRINT_ERROR)
+			ако (PRINT_ERROR)
 				warnx(recargstring,
 				    current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			ако (long_options[match].flag == NULL)
 				optopt = long_options[match].val;
-			else
+			иначе
 				optopt = 0;
 			--optind;
-			return (BADARG);
+			върни (BADARG);
 		}
-	} else {			/* unknown option */
-		if (short_too) {
+	} иначе {			/* unknown option */
+		ако (short_too) {
 			--optind;
-			return (-1);
+			върни (-1);
 		}
-		if (PRINT_ERROR)
+		ако (PRINT_ERROR)
 			warnx(illoptstring, current_argv);
 		optopt = 0;
-		return (BADCH);
+		върни (BADCH);
 	}
-	if (idx)
+	ако (idx)
 		*idx = match;
-	if (long_options[match].flag) {
+	ако (long_options[match].flag) {
 		*long_options[match].flag = long_options[match].val;
-		return (0);
-	} else
-		return (long_options[match].val);
+		върни (0);
+	} иначе
+		върни (long_options[match].val);
 }
 
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
  */
-static int
-getopt_internal(int nargc, char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int flags)
+static цяло
+getopt_internal(цяло nargc, char * const *nargv, const char *options,
+	const struct option *long_options, цяло *idx, цяло flags)
 {
 	char *oli;				/* option letter list index */
-	int optchar, short_too;
-	static int posixly_correct = -1;
+	цяло optchar, short_too;
+	static цяло posixly_correct = -1;
 
-	if (options == NULL)
-		return (-1);
+	ако (options == NULL)
+		върни (-1);
 
 	/*
 	 * XXX Some GNU programs (like cvs) set optind to 0 instead of
 	 * XXX using optreset.  Work around this braindamage.
 	 */
-	if (optind == 0)
+	ако (optind == 0)
 		optind = optreset = 1;
 
 	/*
 	 * Disable GNU extensions if POSIXLY_CORRECT is set or options
 	 * string begins with a '+'.
 	 */
-	if (posixly_correct == -1 || optreset)
+	ако (posixly_correct == -1 || optreset)
 		posixly_correct = (getenv("POSIXLY_CORRECT") != NULL);
-	if (*options == '-')
+	ако (*options == '-')
 		flags |= FLAG_ALLARGS;
-	else if (posixly_correct || *options == '+')
+	иначе ако (posixly_correct || *options == '+')
 		flags &= ~FLAG_PERMUTE;
-	if (*options == '+' || *options == '-')
+	ако (*options == '+' || *options == '-')
 		options++;
 
 	optarg = NULL;
-	if (optreset)
+	ако (optreset)
 		nonopt_start = nonopt_end = -1;
 start:
-	if (optreset || !*place) {		/* update scanning pointer */
+	ако (optreset || !*place) {		/* update scanning pointer */
 		optreset = 0;
-		if (optind >= nargc) {          /* end of argument vector */
+		ако (optind >= nargc) {          /* end of argument vector */
 			place = EMSG;
-			if (nonopt_end != -1) {
+			ако (nonopt_end != -1) {
 				/* do permutation, if we have to */
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
-			else if (nonopt_start != -1) {
+			иначе ако (nonopt_start != -1) {
 				/*
 				 * If we skipped non-options, set optind
 				 * to the first of them.
@@ -357,30 +357,30 @@ start:
 				optind = nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			върни (-1);
 		}
-		if (*(place = nargv[optind]) != '-' ||
+		ако (*(place = nargv[optind]) != '-' ||
 		    (place[1] == '\0' && strchr(options, '-') == NULL)) {
 			place = EMSG;		/* found non-option */
-			if (flags & FLAG_ALLARGS) {
+			ако (flags & FLAG_ALLARGS) {
 				/*
 				 * GNU extension:
 				 * return non-option as argument to option 1
 				 */
 				optarg = nargv[optind++];
-				return (INORDER);
+				върни (INORDER);
 			}
-			if (!(flags & FLAG_PERMUTE)) {
+			ако (!(flags & FLAG_PERMUTE)) {
 				/*
 				 * If no permutation wanted, stop parsing
 				 * at first non-option.
 				 */
-				return (-1);
+				върни (-1);
 			}
 			/* do permutation */
-			if (nonopt_start == -1)
+			ако (nonopt_start == -1)
 				nonopt_start = optind;
-			else if (nonopt_end != -1) {
+			иначе ако (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				nonopt_start = optind -
@@ -391,26 +391,26 @@ start:
 			/* process next argument */
 			goto start;
 		}
-		if (nonopt_start != -1 && nonopt_end == -1)
+		ако (nonopt_start != -1 && nonopt_end == -1)
 			nonopt_end = optind;
 
 		/*
 		 * If we have "-" do nothing, if "--" we are done.
 		 */
-		if (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
+		ако (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
 			optind++;
 			place = EMSG;
 			/*
 			 * We found an option (--), so if we skipped
 			 * non-options, we have to permute.
 			 */
-			if (nonopt_end != -1) {
+			ако (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			върни (-1);
 		}
 	}
 
@@ -420,78 +420,78 @@ start:
 	 *  2) the arg is not just "-"
 	 *  3) either the arg starts with -- we are getopt_long_only()
 	 */
-	if (long_options != NULL && place != nargv[optind] &&
+	ако (long_options != NULL && place != nargv[optind] &&
 	    (*place == '-' || (flags & FLAG_LONGONLY))) {
 		short_too = 0;
-		if (*place == '-')
+		ако (*place == '-')
 			place++;		/* --foo long option */
-		else if (*place != ':' && strchr(options, *place) != NULL)
+		иначе ако (*place != ':' && strchr(options, *place) != NULL)
 			short_too = 1;		/* could be short option too */
 
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, short_too);
-		if (optchar != -1) {
+		ако (optchar != -1) {
 			place = EMSG;
-			return (optchar);
+			върни (optchar);
 		}
 	}
 
-	if ((optchar = (int)*place++) == (int)':' ||
-	    (optchar == (int)'-' && *place != '\0') ||
+	ако ((optchar = (цяло)*place++) == (цяло)':' ||
+	    (optchar == (цяло)'-' && *place != '\0') ||
 	    (oli = strchr(options, optchar)) == NULL) {
 		/*
 		 * If the user specified "-" and  '-' isn't listed in
 		 * options, return -1 (non-option) as per POSIX.
 		 * Otherwise, it is an unknown option character (or ':').
 		 */
-		if (optchar == (int)'-' && *place == '\0')
-			return (-1);
-		if (!*place)
+		ако (optchar == (цяло)'-' && *place == '\0')
+			върни (-1);
+		ако (!*place)
 			++optind;
-		if (PRINT_ERROR)
+		ако (PRINT_ERROR)
 			warnx(illoptchar, optchar);
 		optopt = optchar;
-		return (BADCH);
+		върни (BADCH);
 	}
-	if (long_options != NULL && optchar == 'W' && oli[1] == ';') {
+	ако (long_options != NULL && optchar == 'W' && oli[1] == ';') {
 		/* -W long-option */
-		if (*place)			/* no space */
+		ако (*place)			/* no space */
 			/* NOTHING */;
-		else if (++optind >= nargc) {	/* no arg */
+		иначе ако (++optind >= nargc) {	/* no arg */
 			place = EMSG;
-			if (PRINT_ERROR)
+			ако (PRINT_ERROR)
 				warnx(recargchar, optchar);
 			optopt = optchar;
-			return (BADARG);
-		} else				/* white space */
+			върни (BADARG);
+		} иначе				/* white space */
 			place = nargv[optind];
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, 0);
 		place = EMSG;
-		return (optchar);
+		върни (optchar);
 	}
-	if (*++oli != ':') {			/* doesn't take argument */
-		if (!*place)
+	ако (*++oli != ':') {			/* doesn't take argument */
+		ако (!*place)
 			++optind;
-	} else {				/* takes (optional) argument */
+	} иначе {				/* takes (optional) argument */
 		optarg = NULL;
-		if (*place)			/* no white space */
+		ако (*place)			/* no white space */
 			optarg = place;
-		else if (oli[1] != ':') {	/* arg not optional */
-			if (++optind >= nargc) {	/* no arg */
+		иначе ако (oli[1] != ':') {	/* arg not optional */
+			ако (++optind >= nargc) {	/* no arg */
 				place = EMSG;
-				if (PRINT_ERROR)
+				ако (PRINT_ERROR)
 					warnx(recargchar, optchar);
 				optopt = optchar;
-				return (BADARG);
-			} else
+				върни (BADARG);
+			} иначе
 				optarg = nargv[optind];
 		}
 		place = EMSG;
 		++optind;
 	}
 	/* dump back option letter */
-	return (optchar);
+	върни (optchar);
 }
 
 /*
@@ -500,8 +500,8 @@ start:
  *
  * [eventually this will replace the BSD getopt]
  */
-int
-getopt(int nargc, char * const *nargv, const char *options)
+цяло
+getopt(цяло nargc, char * const *nargv, const char *options)
 {
 
 	/*
@@ -512,20 +512,20 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 * before dropping privileges it makes sense to keep things
 	 * as simple (and bug-free) as possible.
 	 */
-	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
+	върни (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
 }
 
-#if 0
+#ако 0
 /*
  * getopt_long --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+цяло
+getopt_long(цяло nargc, char * const *nargv, const char *options,
+    const struct option *long_options, цяло *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	върни (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE));
 }
 
@@ -533,12 +533,12 @@ getopt_long(int nargc, char * const *nargv, const char *options,
  * getopt_long_only --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long_only(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+цяло
+getopt_long_only(цяло nargc, char * const *nargv, const char *options,
+    const struct option *long_options, цяло *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	върни (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE|FLAG_LONGONLY));
 }
 #endif

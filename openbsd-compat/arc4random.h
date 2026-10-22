@@ -54,38 +54,38 @@ _rs_forkdetect(void)
 	static pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	ако (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
+		ако (rs)
 			memset(rs, 0, sizeof(*rs));
 	}
 }
 
-static inline int
+static inline цяло
 _rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#ако defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	ако ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		върни (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	ако ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
 		munmap(*rsp, sizeof(**rsp));
 		*rsp = NULL;
-		return (-1);
+		върни (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
+#иначе
+	ако ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
+		върни (-1);
+	ако ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
 		free(*rsp);
 		*rsp = NULL;
-		return (-1);
+		върни (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	върни (0);
 }

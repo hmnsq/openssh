@@ -33,7 +33,7 @@ sshbuf_tests(void)
 	const u_char *cdp;
 	u_char *dp;
 	size_t sz;
-	int r;
+	цяло r;
 
 	TEST_START("allocate sshbuf");
 	p1 = sshbuf_new();

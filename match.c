@@ -63,8 +63,8 @@ epsilon_closure(char *states, const char *pattern, size_t M)
 	size_t i;
 
 	/* only need a forward pass as there are no back jumps in our grammar */
-	for (i = 0; i < M; i++) {
-		if (!states[i] || pattern[i] != '*')
+	за (i = 0; i < M; i++) {
+		ако (!states[i] || pattern[i] != '*')
 			continue;
 		/*
 		 * State i is active, and pattern[i] is '*', so we can
@@ -78,17 +78,17 @@ epsilon_closure(char *states, const char *pattern, size_t M)
  * Returns true if the given string matches the pattern (which may contain ?
  * and * as wildcards), and zero if it does not match. Uses an NFA internally.
  */
-int
+цяло
 match_pattern(const char *s, const char *pattern)
 {
 	size_t M;
 	size_t i;
 	char *states, *next_states, *tmp;
-	int active, matched = 0;
+	цяло active, matched = 0;
 
 	/* trivial case: empty pattern vs empty input */
-	if ((M = strlen(pattern)) == 0)
-		return *s == '\0';
+	ако ((M = strlen(pattern)) == 0)
+		върни *s == '\0';
 
 	/* A state for each pattern character, plus one final accepting state */
 	states = xcalloc(M + 1, sizeof(*states));
@@ -99,20 +99,20 @@ match_pattern(const char *s, const char *pattern)
 	/* Other states might be reachable now if the pattern starts with '*' */
 	epsilon_closure(states, pattern, M);
 
-	for (; *s; s++) {
+	за (; *s; s++) {
 		memset(next_states, 0, M + 1);
 
 		/* Calculate the reachable next states given the input char */
-		for (i = 0; i < M; i++) {
-			if (!states[i])
+		за (i = 0; i < M; i++) {
+			ако (!states[i])
 				continue;
-			if (pattern[i] == '*') {
+			ако (pattern[i] == '*') {
 				/*
 				 * '*' matches any character, so we can
 				 * stay in state i
 				 */
 				next_states[i] = 1;
-			} else if (pattern[i] == '?' || pattern[i] == *s) {
+			} иначе ако (pattern[i] == '?' || pattern[i] == *s) {
 				/*
 				 * '?' matches any character, or we have
 				 * a literal match.
@@ -131,13 +131,13 @@ match_pattern(const char *s, const char *pattern)
 
 		/* Check if we have any active pattern states left */
 		active = 0;
-		for (i = 0; i <= M; i++) {
-			if (states[i]) {
+		за (i = 0; i <= M; i++) {
+			ако (states[i]) {
 				active = 1;
 				break;
 			}
 		}
-		if (!active)
+		ако (!active)
 			goto out; /* No active states, fail early */
 	}
 	/*
@@ -148,7 +148,7 @@ match_pattern(const char *s, const char *pattern)
  out:
 	free(states);
 	free(next_states);
-	return matched;
+	върни matched;
 }
 
 /*
@@ -157,48 +157,48 @@ match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_pattern_list(const char *string, const char *pattern, int dolower)
+цяло
+match_pattern_list(const char *string, const char *pattern, цяло dolower)
 {
 	char sub[1024];
-	int negated;
-	int got_positive;
+	цяло negated;
+	цяло got_positive;
 	u_int i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	за (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ако (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} иначе
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
+		за (subi = 0;
 		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = dolower && isupper((u_char)pattern[i]) ?
 			    tolower((u_char)pattern[i]) : pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ако (subi >= sizeof(sub) - 1)
+			върни 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ако (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		ако (match_pattern(string, sub)) {
+			ако (negated)
+				върни -1;		/* Negative */
+			иначе
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -207,19 +207,19 @@ match_pattern_list(const char *string, const char *pattern, int dolower)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	върни got_positive;
 }
 
 /* Match a list representing users or groups. */
-int
+цяло
 match_usergroup_pattern_list(const char *string, const char *pattern)
 {
 #ifdef HAVE_CYGWIN
 	/* Windows usernames may be Unicode and are not case sensitive */
-	return cygwin_ug_match_pattern_list(string, pattern);
-#else
+	върни cygwin_ug_match_pattern_list(string, pattern);
+#иначе
 	/* Case sensitive match */
-	return match_pattern_list(string, pattern, 0);
+	върни match_pattern_list(string, pattern, 0);
 #endif
 }
 
@@ -229,16 +229,16 @@ match_usergroup_pattern_list(const char *string, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
+цяло
 match_hostname(const char *host, const char *pattern)
 {
 	char *hostcopy = xstrdup(host);
-	int r;
+	цяло r;
 
 	lowercase(hostcopy);
 	r = match_pattern_list(hostcopy, pattern, 1);
 	free(hostcopy);
-	return r;
+	върни r;
 }
 
 /*
@@ -246,24 +246,24 @@ match_hostname(const char *host, const char *pattern)
  * or if we get no match at all.  returns -1 on error, or 1 on
  * successful match.
  */
-int
+цяло
 match_host_and_ip(const char *host, const char *ipaddr,
     const char *patterns)
 {
-	int mhost, mip;
+	цяло mhost, mip;
 
-	if ((mip = addr_match_list(ipaddr, patterns)) == -2)
-		return -1; /* error in ipaddr match */
-	else if (host == NULL || ipaddr == NULL || mip == -1)
-		return 0; /* negative ip address match, or testing pattern */
+	ако ((mip = addr_match_list(ipaddr, patterns)) == -2)
+		върни -1; /* error in ipaddr match */
+	иначе ако (host == NULL || ipaddr == NULL || mip == -1)
+		върни 0; /* negative ip address match, or testing pattern */
 
 	/* negative hostname match */
-	if ((mhost = match_hostname(host, patterns)) == -1)
-		return 0;
+	ако ((mhost = match_hostname(host, patterns)) == -1)
+		върни 0;
 	/* no match at all */
-	if (mhost == 0 && mip == 0)
-		return 0;
-	return 1;
+	ако (mhost == 0 && mip == 0)
+		върни 0;
+	върни 1;
 }
 
 /*
@@ -271,36 +271,36 @@ match_host_and_ip(const char *host, const char *ipaddr,
  * If user, host and ipaddr are all NULL then validate pattern/
  * Returns -1 on invalid pattern, 0 on no match, 1 on match.
  */
-int
+цяло
 match_user(const char *user, const char *host, const char *ipaddr,
     const char *pattern)
 {
 	char *p, *pat;
-	int ret;
+	цяло ret;
 
 	/* test mode */
-	if (user == NULL && host == NULL && ipaddr == NULL) {
-		if ((p = strrchr(pattern, '@')) != NULL &&
+	ако (user == NULL && host == NULL && ipaddr == NULL) {
+		ако ((p = strrchr(pattern, '@')) != NULL &&
 		    match_host_and_ip(NULL, NULL, p + 1) < 0)
-			return -1;
-		return 0;
+			върни -1;
+		върни 0;
 	}
 
-	if (user == NULL)
-		return 0; /* shouldn't happen */
+	ако (user == NULL)
+		върни 0; /* shouldn't happen */
 
-	if (strrchr(pattern, '@') == NULL)
-		return match_pattern(user, pattern);
+	ако (strrchr(pattern, '@') == NULL)
+		върни match_pattern(user, pattern);
 
 	pat = xstrdup(pattern);
 	p = strrchr(pat, '@');
 	*p++ = '\0';
 
-	if ((ret = match_pattern(user, pat)) == 1)
+	ако ((ret = match_pattern(user, pat)) == 1)
 		ret = match_host_and_ip(host, ipaddr, p);
 	free(pat);
 
-	return ret;
+	върни ret;
 }
 
 /*
@@ -314,39 +314,39 @@ match_list(const char *client, const char *server, u_int *next)
 {
 	char *sproposals[MAX_PROP];
 	char *c, *s, *p, *ret, *cp, *sp;
-	int i, j, nproposals;
+	цяло i, j, nproposals;
 
 	c = cp = xstrdup(client);
 	s = sp = xstrdup(server);
 
-	for ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
+	за ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&sp, SEP)), i++) {
-		if (i < MAX_PROP)
+		ако (i < MAX_PROP)
 			sproposals[i] = p;
-		else
+		иначе
 			break;
 	}
 	nproposals = i;
 
-	for ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
+	за ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&cp, SEP)), i++) {
-		for (j = 0; j < nproposals; j++) {
-			if (strcmp(p, sproposals[j]) == 0) {
+		за (j = 0; j < nproposals; j++) {
+			ако (strcmp(p, sproposals[j]) == 0) {
 				ret = xstrdup(p);
-				if (next != NULL)
+				ако (next != NULL)
 					*next = (cp == NULL) ?
 					    strlen(c) : (u_int)(cp - c);
 				free(c);
 				free(s);
-				return ret;
+				върни ret;
 			}
 		}
 	}
-	if (next != NULL)
+	ако (next != NULL)
 		*next = strlen(c);
 	free(c);
 	free(s);
-	return NULL;
+	върни NULL;
 }
 
 /*
@@ -357,32 +357,32 @@ match_list(const char *client, const char *server, u_int *next)
  * returns NULL on allocation error, otherwise caller must free result.
  */
 static char *
-filter_list(const char *proposal, const char *filter, int denylist)
+filter_list(const char *proposal, const char *filter, цяло denylist)
 {
 	size_t len = strlen(proposal) + 1;
 	char *fix_prop = malloc(len);
 	char *orig_prop = strdup(proposal);
 	char *cp, *tmp;
-	int r;
+	цяло r;
 
-	if (fix_prop == NULL || orig_prop == NULL) {
+	ако (fix_prop == NULL || orig_prop == NULL) {
 		free(orig_prop);
 		free(fix_prop);
-		return NULL;
+		върни NULL;
 	}
 
 	tmp = orig_prop;
 	*fix_prop = '\0';
-	while ((cp = strsep(&tmp, ",")) != NULL) {
+	докато ((cp = strsep(&tmp, ",")) != NULL) {
 		r = match_pattern_list(cp, filter, 0);
-		if ((denylist && r != 1) || (!denylist && r == 1)) {
-			if (*fix_prop != '\0')
+		ако ((denylist && r != 1) || (!denylist && r == 1)) {
+			ако (*fix_prop != '\0')
 				strlcat(fix_prop, ",", len);
 			strlcat(fix_prop, cp, len);
 		}
 	}
 	free(orig_prop);
-	return fix_prop;
+	върни fix_prop;
 }
 
 /*
@@ -392,7 +392,7 @@ filter_list(const char *proposal, const char *filter, int denylist)
 char *
 match_filter_denylist(const char *proposal, const char *filter)
 {
-	return filter_list(proposal, filter, 1);
+	върни filter_list(proposal, filter, 1);
 }
 
 /*
@@ -402,5 +402,5 @@ match_filter_denylist(const char *proposal, const char *filter)
 char *
 match_filter_allowlist(const char *proposal, const char *filter)
 {
-	return filter_list(proposal, filter, 0);
+	върни filter_list(proposal, filter, 0);
 }

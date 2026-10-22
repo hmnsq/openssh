@@ -33,7 +33,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STRSEP)
+#ако !defined(HAVE_STRSEP)
 
 #include <string.h>
 #include <stdio.h>
@@ -54,24 +54,24 @@ strsep(char **stringp, const char *delim)
 {
 	char *s;
 	const char *spanp;
-	int c, sc;
+	цяло c, sc;
 	char *tok;
 
-	if ((s = *stringp) == NULL)
-		return (NULL);
-	for (tok = s;;) {
+	ако ((s = *stringp) == NULL)
+		върни (NULL);
+	за (tok = s;;) {
 		c = *s++;
 		spanp = delim;
 		do {
-			if ((sc = *spanp++) == c) {
-				if (c == 0)
+			ако ((sc = *spanp++) == c) {
+				ако (c == 0)
 					s = NULL;
-				else
+				иначе
 					s[-1] = 0;
 				*stringp = s;
-				return (tok);
+				върни (tok);
 			}
-		} while (sc != 0);
+		} докато (sc != 0);
 	}
 	/* NOTREACHED */
 }

@@ -29,24 +29,24 @@
 #ifdef WITH_OPENSSL
 
 struct dhgroup {
-	int size;
+	цяло size;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
+DH	*choose_dh(цяло, цяло, цяло);
 DH	*dh_new_group_asc(const char *, const char *);
 DH	*dh_new_group(BIGNUM *, BIGNUM *);
 DH	*dh_new_group1(void);
 DH	*dh_new_group14(void);
 DH	*dh_new_group16(void);
 DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*dh_new_group_fallback(цяло);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+цяло	 dh_gen_key(DH *, цяло);
+цяло	 dh_pub_is_valid(const DH *, const BIGNUM *);
 
-u_int	 dh_estimate(int);
+u_int	 dh_estimate(цяло);
 void	 dh_set_moduli_file(const char *);
 
 /*

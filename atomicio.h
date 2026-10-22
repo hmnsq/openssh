@@ -35,19 +35,19 @@ struct iovec;
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+atomicio6(ssize_t (*f) (цяло, void *, size_t), цяло fd, void *_s, size_t n,
+    цяло (*cb)(void *, size_t), void *);
+size_t	atomicio(ssize_t (*)(цяло, void *, size_t), цяло, void *, size_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(цяло, void *, size_t))write
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+atomiciov6(ssize_t (*f) (цяло, const struct iovec *, цяло), цяло fd,
+    const struct iovec *_iov, цяло iovcnt, цяло (*cb)(void *, size_t), void *);
+size_t	atomiciov(ssize_t (*)(цяло, const struct iovec *, цяло),
+    цяло, const struct iovec *, цяло);
 
 #endif /* _ATOMICIO_H */

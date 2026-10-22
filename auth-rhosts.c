@@ -51,7 +51,7 @@ extern ServerOptions options;
  * based on the file, and returns zero otherwise.
  */
 
-static int
+static цяло
 check_rhosts_file(const char *filename, const char *hostname,
 		  const char *ipaddr, const char *client_user,
 		  const char *server_user)
@@ -59,43 +59,43 @@ check_rhosts_file(const char *filename, const char *hostname,
 	FILE *f;
 #define RBUFLN 1024
 	char buf[RBUFLN];/* Must not be larger than host, user, dummy below. */
-	int fd;
+	цяло fd;
 	struct stat st;
 
 	/* Open the .rhosts file, deny if unreadable */
-	if ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
-		return 0;
-	if (fstat(fd, &st) == -1) {
+	ако ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
+		върни 0;
+	ако (fstat(fd, &st) == -1) {
 		close(fd);
-		return 0;
+		върни 0;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	ако (!S_ISREG(st.st_mode)) {
 		logit("User %s hosts file %s is not a regular file",
 		    server_user, filename);
 		close(fd);
-		return 0;
+		върни 0;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	ако ((f = fdopen(fd, "r")) == NULL) {
 		close(fd);
-		return 0;
+		върни 0;
 	}
-	while (fgets(buf, sizeof(buf), f)) {
+	докато (fgets(buf, sizeof(buf), f)) {
 		/* All three must have length >= buf to avoid overflows. */
 		char hostbuf[RBUFLN], userbuf[RBUFLN], dummy[RBUFLN];
 		char *host, *user, *cp;
-		int negated;
+		цяло negated;
 
-		for (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
+		за (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp == '#' || *cp == '\n' || !*cp)
+		ако (*cp == '#' || *cp == '\n' || !*cp)
 			continue;
 
 		/*
 		 * NO_PLUS is supported at least on OSF/1.  We skip it (we
 		 * don't ever support the plus syntax).
 		 */
-		if (strncmp(cp, "NO_PLUS", 7) == 0)
+		ако (strncmp(cp, "NO_PLUS", 7) == 0)
 			continue;
 
 		/*
@@ -127,57 +127,57 @@ check_rhosts_file(const char *filename, const char *hostname,
 		negated = 0;
 
 		/* Process negated host names, or positive netgroups. */
-		if (host[0] == '-') {
+		ако (host[0] == '-') {
 			negated = 1;
 			host++;
-		} else if (host[0] == '+')
+		} иначе ако (host[0] == '+')
 			host++;
 
-		if (user[0] == '-') {
+		ако (user[0] == '-') {
 			negated = 1;
 			user++;
-		} else if (user[0] == '+')
+		} иначе ако (user[0] == '+')
 			user++;
 
 		/* Check for empty host/user names (particularly '+'). */
-		if (!host[0] || !user[0]) {
+		ако (!host[0] || !user[0]) {
 			/* We come here if either was '+' or '-'. */
 			auth_debug_add("Ignoring wild host/user names "
 			    "in %.100s.", filename);
 			continue;
 		}
 		/* Verify that host name matches. */
-		if (host[0] == '@') {
-			if (!innetgr(host + 1, hostname, NULL, NULL) &&
+		ако (host[0] == '@') {
+			ако (!innetgr(host + 1, hostname, NULL, NULL) &&
 			    !innetgr(host + 1, ipaddr, NULL, NULL))
 				continue;
-		} else if (strcasecmp(host, hostname) &&
+		} иначе ако (strcasecmp(host, hostname) &&
 		    strcmp(host, ipaddr) != 0)
 			continue;	/* Different hostname. */
 
 		/* Verify that user name matches. */
-		if (user[0] == '@') {
-			if (!innetgr(user + 1, NULL, client_user, NULL))
+		ако (user[0] == '@') {
+			ако (!innetgr(user + 1, NULL, client_user, NULL))
 				continue;
-		} else if (strcmp(user, client_user) != 0)
+		} иначе ако (strcmp(user, client_user) != 0)
 			continue;	/* Different username. */
 
 		/* Found the user and host. */
 		fclose(f);
 
 		/* If the entry was negated, deny access. */
-		if (negated) {
+		ако (negated) {
 			auth_debug_add("Matched negative entry in %.100s.",
 			    filename);
-			return 0;
+			върни 0;
 		}
 		/* Accept authentication. */
-		return 1;
+		върни 1;
 	}
 
 	/* Authentication using this file denied. */
 	fclose(f);
-	return 0;
+	върни 0;
 }
 
 /*
@@ -185,7 +185,7 @@ check_rhosts_file(const char *filename, const char *hostname,
  * true if authentication succeeds.  If ignore_rhosts is true, only
  * /etc/hosts.equiv will be considered (.rhosts and .shosts are ignored).
  */
-int
+цяло
 auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
     const char *ipaddr)
 {
@@ -193,7 +193,7 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	struct stat st;
 	static const char * const rhosts_files[] = {".shosts", ".rhosts", NULL};
 	u_int rhosts_file_index;
-	int r;
+	цяло r;
 
 	debug2_f("clientuser %s hostname %s ipaddr %s",
 	    client_user, hostname, ipaddr);
@@ -206,14 +206,14 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * failure immediately without doing costly lookups from name
 	 * servers.
 	 */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
+	за (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
 	    rhosts_file_index++) {
 		/* Check users .rhosts or .shosts. */
 		xasprintf(&path, "%s/%s",
 		    pw->pw_dir, rhosts_files[rhosts_file_index]);
 		r = stat(path, &st);
 		free(path);
-		if (r >= 0)
+		ако (r >= 0)
 			break;
 	}
 	/* Switch back to privileged uid. */
@@ -223,31 +223,31 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Deny if The user has no .shosts or .rhosts file and there
 	 * are no system-wide files.
 	 */
-	if (!rhosts_files[rhosts_file_index] &&
+	ако (!rhosts_files[rhosts_file_index] &&
 	    stat(_PATH_RHOSTS_EQUIV, &st) == -1 &&
 	    stat(_PATH_SSH_HOSTS_EQUIV, &st) == -1) {
 		debug3_f("no hosts access files exist");
-		return 0;
+		върни 0;
 	}
 
 	/*
 	 * If not logging in as superuser, try /etc/hosts.equiv and
 	 * shosts.equiv.
 	 */
-	if (pw->pw_uid == 0)
+	ако (pw->pw_uid == 0)
 		debug3_f("root user, ignoring system hosts files");
-	else {
-		if (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,
+	иначе {
+		ако (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted for %.100s [%.100s] by "
 			    "/etc/hosts.equiv.", hostname, ipaddr);
-			return 1;
+			върни 1;
 		}
-		if (check_rhosts_file(_PATH_SSH_HOSTS_EQUIV, hostname, ipaddr,
+		ако (check_rhosts_file(_PATH_SSH_HOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted for %.100s [%.100s] by "
 			    "%.100s.", hostname, ipaddr, _PATH_SSH_HOSTS_EQUIV);
-			return 1;
+			върни 1;
 		}
 	}
 
@@ -255,32 +255,32 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Check that the home directory is owned by root or the user, and is
 	 * not group or world writable.
 	 */
-	if (stat(pw->pw_dir, &st) == -1) {
+	ако (stat(pw->pw_dir, &st) == -1) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
 		auth_debug_add("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
-		return 0;
+		върни 0;
 	}
-	if (options.strict_modes &&
+	ако (options.strict_modes &&
 	    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 	    (st.st_mode & 022) != 0)) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
 		auth_debug_add("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
-		return 0;
+		върни 0;
 	}
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	/* Check all .rhosts files (currently .shosts and .rhosts). */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
+	за (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
 	    rhosts_file_index++) {
 		/* Check users .rhosts or .shosts. */
 		xasprintf(&path, "%s/%s",
 		    pw->pw_dir, rhosts_files[rhosts_file_index]);
-		if (stat(path, &st) == -1) {
+		ако (stat(path, &st) == -1) {
 			debug3_f("stat %s: %s", path, strerror(errno));
 			free(path);
 			continue;
@@ -292,7 +292,7 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 		 * owner.  This is to help avoid novices accidentally
 		 * allowing access to their account by anyone.
 		 */
-		if (options.strict_modes &&
+		ако (options.strict_modes &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
 			logit("Rhosts authentication refused for %.100s: "
@@ -305,7 +305,7 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 		 * Check if we have been configured to ignore .rhosts
 		 * and .shosts files.
 		 */
-		if (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
+		ако (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
 		    (options.ignore_rhosts == IGNORE_RHOSTS_SHOSTS &&
 		    strcmp(rhosts_files[rhosts_file_index], ".shosts") != 0)) {
 			auth_debug_add("Server has been configured to "
@@ -314,7 +314,7 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 			continue;
 		}
 		/* Check if authentication is permitted by the file. */
-		if (check_rhosts_file(path, hostname, ipaddr,
+		ако (check_rhosts_file(path, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted by %.100s.",
 			    rhosts_files[rhosts_file_index]);
@@ -324,12 +324,12 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 			    "%s server_user %s", hostname, ipaddr,
 			    client_user, pw->pw_name);
 			free(path);
-			return 1;
+			върни 1;
 		}
 		free(path);
 	}
 
 	/* Restore the privileged uid. */
 	restore_uid();
-	return 0;
+	върни 0;
 }

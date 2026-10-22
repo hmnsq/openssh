@@ -40,7 +40,7 @@
 
 #include "includes.h"
 #include <sys/types.h>
-#if defined(HAVE_NETDB_H)
+#ако defined(HAVE_NETDB_H)
 # include <netdb.h>
 #endif
 
@@ -136,10 +136,10 @@ struct sockaddr_in6 {
 
 #ifndef HAVE_STRUCT_ADDRINFO
 struct addrinfo {
-	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
-	int	ai_family;	/* PF_xxx */
-	int	ai_socktype;	/* SOCK_xxx */
-	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+	цяло	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+	цяло	ai_family;	/* PF_xxx */
+	цяло	ai_socktype;	/* SOCK_xxx */
+	цяло	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
 	size_t	ai_addrlen;	/* length of ai_addr */
 	char	*ai_canonname;	/* canonical name for hostname */
 	struct sockaddr *ai_addr;	/* binary address */
@@ -152,13 +152,13 @@ struct addrinfo {
 # undef getaddrinfo
 #endif
 #define getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
-int getaddrinfo(const char *, const char *,
+цяло getaddrinfo(const char *, const char *,
     const struct addrinfo *, struct addrinfo **);
 #endif /* !HAVE_GETADDRINFO */
 
-#if !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
+#ако !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
 #define gai_strerror(a)		(_ssh_compat_gai_strerror(a))
-char *gai_strerror(int);
+char *gai_strerror(цяло);
 #endif /* !HAVE_GAI_STRERROR */
 
 #ifndef HAVE_FREEADDRINFO
@@ -168,8 +168,8 @@ void freeaddrinfo(struct addrinfo *);
 
 #ifndef HAVE_GETNAMEINFO
 #define getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
-int getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+цяло getnameinfo(const struct sockaddr *, size_t, char *, size_t,
+    char *, size_t, цяло);
 #endif /* !HAVE_GETNAMEINFO */
 
 #endif /* !_FAKE_RFC2553_H */

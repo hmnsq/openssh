@@ -105,41 +105,41 @@ static struct sshbuf *child_state;
 
 /* Functions on the monitor that answer unprivileged requests */
 
-int mm_answer_moduli(struct ssh *, int, struct sshbuf *);
-int mm_answer_setcompat(struct ssh *, int, struct sshbuf *);
-int mm_answer_sign(struct ssh *, int, struct sshbuf *);
-int mm_answer_pwnamallow(struct ssh *, int, struct sshbuf *);
-int mm_answer_auth2_read_banner(struct ssh *, int, struct sshbuf *);
-int mm_answer_authserv(struct ssh *, int, struct sshbuf *);
-int mm_answer_authpassword(struct ssh *, int, struct sshbuf *);
-int mm_answer_bsdauthquery(struct ssh *, int, struct sshbuf *);
-int mm_answer_bsdauthrespond(struct ssh *, int, struct sshbuf *);
-int mm_answer_keyallowed(struct ssh *, int, struct sshbuf *);
-int mm_answer_keyverify(struct ssh *, int, struct sshbuf *);
-int mm_answer_pty(struct ssh *, int, struct sshbuf *);
-int mm_answer_pty_cleanup(struct ssh *, int, struct sshbuf *);
-int mm_answer_term(struct ssh *, int, struct sshbuf *);
-int mm_answer_state(struct ssh *, int, struct sshbuf *);
+цяло mm_answer_moduli(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_setcompat(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_sign(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pwnamallow(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_auth2_read_banner(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_authserv(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_authpassword(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_bsdauthquery(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_bsdauthrespond(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_keyallowed(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_keyverify(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pty(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pty_cleanup(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_term(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_state(struct ssh *, цяло, struct sshbuf *);
 
 #ifdef USE_PAM
-int mm_answer_pam_start(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_account(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_init_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_query(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_respond(struct ssh *, int, struct sshbuf *);
-int mm_answer_pam_free_ctx(struct ssh *, int, struct sshbuf *);
+цяло mm_answer_pam_start(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pam_account(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pam_init_ctx(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pam_query(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pam_respond(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_pam_free_ctx(struct ssh *, цяло, struct sshbuf *);
 #endif
 
 #ifdef GSSAPI
-int mm_answer_gss_setup_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_accept_ctx(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_userok(struct ssh *, int, struct sshbuf *);
-int mm_answer_gss_checkmic(struct ssh *, int, struct sshbuf *);
+цяло mm_answer_gss_setup_ctx(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_gss_accept_ctx(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_gss_userok(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_gss_checkmic(struct ssh *, цяло, struct sshbuf *);
 #endif
 
 #ifdef SSH_AUDIT_EVENTS
-int mm_answer_audit_event(struct ssh *, int, struct sshbuf *);
-int mm_answer_audit_command(struct ssh *, int, struct sshbuf *);
+цяло mm_answer_audit_event(struct ssh *, цяло, struct sshbuf *);
+цяло mm_answer_audit_command(struct ssh *, цяло, struct sshbuf *);
 #endif
 
 static Authctxt *authctxt;
@@ -156,14 +156,14 @@ static char *auth_submethod = NULL;
 static u_int session_id2_len = 0;
 static u_char *session_id2 = NULL;
 static pid_t monitor_child_pid;
-static int auth_attempted = 0;
-static int invalid_user = 0;
-static int compat_set = 0;
+static цяло auth_attempted = 0;
+static цяло invalid_user = 0;
+static цяло compat_set = 0;
 
 struct mon_table {
 	enum monitor_reqtype type;
-	int flags;
-	int (*f)(struct ssh *, int, struct sshbuf *);
+	цяло flags;
+	цяло (*f)(struct ssh *, цяло, struct sshbuf *);
 };
 
 #define MON_ISAUTH	0x0004	/* Required for Authentication */
@@ -175,9 +175,9 @@ struct mon_table {
 
 #define MON_PERMIT	0x1000	/* Request is permitted */
 
-static int monitor_read(struct ssh *, struct monitor *, struct mon_table *,
+static цяло monitor_read(struct ssh *, struct monitor *, struct mon_table *,
     struct mon_table **);
-static int monitor_read_log(struct monitor *);
+static цяло monitor_read_log(struct monitor *);
 
 struct mon_table mon_dispatch_proto20[] = {
     {MONITOR_REQ_STATE, MON_ONCE, mm_answer_state},
@@ -236,25 +236,25 @@ struct mon_table *mon_dispatch;
 
 /* Specifies if a certain message is allowed at the moment */
 static void
-monitor_permit(struct mon_table *ent, enum monitor_reqtype type, int permit)
+monitor_permit(struct mon_table *ent, enum monitor_reqtype type, цяло permit)
 {
-	while (ent->f != NULL) {
-		if (ent->type == type) {
+	докато (ent->f != NULL) {
+		ако (ent->type == type) {
 			ent->flags &= ~MON_PERMIT;
 			ent->flags |= permit ? MON_PERMIT : 0;
-			return;
+			върни;
 		}
 		ent++;
 	}
 }
 
 static void
-monitor_permit_authentications(int permit)
+monitor_permit_authentications(цяло permit)
 {
 	struct mon_table *ent = mon_dispatch;
 
-	while (ent->f != NULL) {
-		if (ent->flags & MON_AUTH) {
+	докато (ent->f != NULL) {
+		ако (ent->flags & MON_AUTH) {
 			ent->flags &= ~MON_PERMIT;
 			ent->flags |= permit ? MON_PERMIT : 0;
 		}
@@ -266,13 +266,13 @@ void
 monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 {
 	struct mon_table *ent;
-	int status, authenticated = 0, partial = 0;
+	цяло status, authenticated = 0, partial = 0;
 
 	debug3("preauth child monitor started");
 
-	if (pmonitor->m_recvfd >= 0)
+	ако (pmonitor->m_recvfd >= 0)
 		close(pmonitor->m_recvfd);
-	if (pmonitor->m_log_sendfd >= 0)
+	ако (pmonitor->m_log_sendfd >= 0)
 		close(pmonitor->m_log_sendfd);
 	pmonitor->m_log_sendfd = pmonitor->m_recvfd = -1;
 
@@ -290,7 +290,7 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 	monitor_permit(mon_dispatch, MONITOR_REQ_SIGN, 1);
 
 	/* The first few requests do not require asynchronous access */
-	while (!authenticated) {
+	докато (!authenticated) {
 		partial = 0;
 		auth_method = "unknown";
 		auth_submethod = NULL;
@@ -300,12 +300,12 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 		    mon_dispatch, &ent) == 1);
 
 		/* Record that auth was attempted to set exit status later */
-		if ((ent->flags & MON_AUTH) != 0)
+		ако ((ent->flags & MON_AUTH) != 0)
 			auth_attempted = 1;
 
 		/* Special handling for multiple required authentications */
-		if (options.num_auth_methods != 0) {
-			if (authenticated &&
+		ако (options.num_auth_methods != 0) {
+			ако (authenticated &&
 			    !auth2_update_methods_lists(authctxt,
 			    auth_method, auth_submethod)) {
 				debug3_f("method %s: partial", auth_method);
@@ -314,19 +314,19 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 			}
 		}
 
-		if (authenticated) {
-			if (!(ent->flags & MON_AUTHDECIDE))
+		ако (authenticated) {
+			ако (!(ent->flags & MON_AUTHDECIDE))
 				fatal_f("unexpected authentication from %d",
 				    ent->type);
-			if (authctxt->pw->pw_uid == 0 &&
+			ако (authctxt->pw->pw_uid == 0 &&
 			    !auth_root_allowed(ssh, auth_method))
 				authenticated = 0;
 #ifdef USE_PAM
 			/* PAM needs to perform account checks after auth */
-			if (options.use_pam && authenticated) {
+			ако (options.use_pam && authenticated) {
 				struct sshbuf *m;
 
-				if ((m = sshbuf_new()) == NULL)
+				ако ((m = sshbuf_new()) == NULL)
 					fatal("%s: sshbuf_new failed",
 					    __func__);
 				mm_request_receive_expect(pmonitor->m_sendfd,
@@ -337,26 +337,26 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 			}
 #endif
 		}
-		if (ent->flags & (MON_AUTHDECIDE|MON_ALOG)) {
+		ако (ent->flags & (MON_AUTHDECIDE|MON_ALOG)) {
 			auth_log(ssh, authenticated, partial,
 			    auth_method, auth_submethod);
-			if (!partial && !authenticated)
+			ако (!partial && !authenticated)
 				authctxt->failures++;
-			if (authenticated || partial) {
+			ако (authenticated || partial) {
 				auth2_update_session_info(authctxt,
 				    auth_method, auth_submethod);
 			}
 		}
-		if (authctxt->failures > options.max_authtries) {
+		ако (authctxt->failures > options.max_authtries) {
 			/* Shouldn't happen */
 			fatal_f("privsep child made too many authentication "
 			    "attempts");
 		}
 	}
 
-	if (!authctxt->valid)
+	ако (!authctxt->valid)
 		fatal_f("authenticated invalid user");
-	if (strcmp(auth_method, "unknown") == 0)
+	ако (strcmp(auth_method, "unknown") == 0)
 		fatal_f("authentication method name unknown");
 
 	debug_f("user %s authenticated by privileged process", authctxt->user);
@@ -367,29 +367,29 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 	mm_get_keystate(ssh, pmonitor);
 
 	/* Drain any buffered messages from the child */
-	while (pmonitor->m_log_recvfd != -1 && monitor_read_log(pmonitor) == 0)
+	докато (pmonitor->m_log_recvfd != -1 && monitor_read_log(pmonitor) == 0)
 		;
 
 	/* Wait for the child's exit status */
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
+	докато (waitpid(pmonitor->m_pid, &status, 0) == -1) {
+		ако (errno == EINTR)
 			continue;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0)
+	ако (WIFEXITED(status)) {
+		ако (WEXITSTATUS(status) != 0)
 			fatal_f("preauth child %ld exited with status %d",
 			    (long)pmonitor->m_pid, WEXITSTATUS(status));
-	} else if (WIFSIGNALED(status)) {
+	} иначе ако (WIFSIGNALED(status)) {
 		fatal_f("preauth child %ld terminated by signal %d",
 		    (long)pmonitor->m_pid, WTERMSIG(status));
 	}
 	debug3_f("preauth child %ld terminated successfully",
 	    (long)pmonitor->m_pid);
 
-	if (pmonitor->m_recvfd >= 0)
+	ако (pmonitor->m_recvfd >= 0)
 		close(pmonitor->m_recvfd);
-	if (pmonitor->m_log_sendfd >= 0)
+	ако (pmonitor->m_log_sendfd >= 0)
 		close(pmonitor->m_log_sendfd);
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_pid = -1;
@@ -402,7 +402,7 @@ monitor_set_child_handler(pid_t pid)
 }
 
 static void
-monitor_child_handler(int sig)
+monitor_child_handler(цяло sig)
 {
 	kill(monitor_child_pid, sig);
 }
@@ -429,58 +429,58 @@ monitor_child_postauth(struct ssh *ssh, struct monitor *pmonitor)
 	monitor_permit(mon_dispatch, MONITOR_REQ_SIGN, 1);
 	monitor_permit(mon_dispatch, MONITOR_REQ_TERM, 1);
 
-	if (auth_opts->permit_pty_flag) {
+	ако (auth_opts->permit_pty_flag) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_PTY, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_PTYCLEANUP, 1);
 	}
 
-	for (;;)
+	за (;;)
 		monitor_read(ssh, pmonitor, mon_dispatch, NULL);
 }
 
-static int
+static цяло
 monitor_read_log(struct monitor *pmonitor)
 {
 	struct sshbuf *logmsg;
 	u_int len, level, forced;
 	char *msg;
 	u_char *p;
-	int r;
+	цяло r;
 
-	if ((logmsg = sshbuf_new()) == NULL)
+	ако ((logmsg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
 
 	/* Read length */
-	if ((r = sshbuf_reserve(logmsg, 4, &p)) != 0)
+	ако ((r = sshbuf_reserve(logmsg, 4, &p)) != 0)
 		fatal_fr(r, "reserve len");
-	if (atomicio(read, pmonitor->m_log_recvfd, p, 4) != 4) {
-		if (errno == EPIPE) {
+	ако (atomicio(read, pmonitor->m_log_recvfd, p, 4) != 4) {
+		ако (errno == EPIPE) {
 			sshbuf_free(logmsg);
 			debug_f("child log fd closed");
 			close(pmonitor->m_log_recvfd);
 			pmonitor->m_log_recvfd = -1;
-			return -1;
+			върни -1;
 		}
 		fatal_f("log fd read: %s", strerror(errno));
 	}
-	if ((r = sshbuf_get_u32(logmsg, &len)) != 0)
+	ако ((r = sshbuf_get_u32(logmsg, &len)) != 0)
 		fatal_fr(r, "parse len");
-	if (len <= 4 || len > 8192)
+	ако (len <= 4 || len > 8192)
 		fatal_f("invalid log message length %u", len);
 
 	/* Read severity, message */
 	sshbuf_reset(logmsg);
-	if ((r = sshbuf_reserve(logmsg, len, &p)) != 0)
+	ако ((r = sshbuf_reserve(logmsg, len, &p)) != 0)
 		fatal_fr(r, "reserve msg");
-	if (atomicio(read, pmonitor->m_log_recvfd, p, len) != len)
+	ако (atomicio(read, pmonitor->m_log_recvfd, p, len) != len)
 		fatal_f("log fd read: %s", strerror(errno));
-	if ((r = sshbuf_get_u32(logmsg, &level)) != 0 ||
+	ако ((r = sshbuf_get_u32(logmsg, &level)) != 0 ||
 	    (r = sshbuf_get_u32(logmsg, &forced)) != 0 ||
 	    (r = sshbuf_get_cstring(logmsg, &msg, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	/* Log it */
-	if (log_level_name(level) == NULL)
+	ако (log_level_name(level) == NULL)
 		fatal_f("invalid log level %u (corrupted message?)", level);
 	sshlogdirect(level, forced, "%s [%s]", msg,
 	    mon_dispatch == mon_dispatch_postauth20 ? "postauth" : "preauth");
@@ -488,30 +488,30 @@ monitor_read_log(struct monitor *pmonitor)
 	sshbuf_free(logmsg);
 	free(msg);
 
-	return 0;
+	върни 0;
 }
 
-static int
+static цяло
 monitor_read(struct ssh *ssh, struct monitor *pmonitor, struct mon_table *ent,
     struct mon_table **pent)
 {
 	struct sshbuf *m;
-	int r, ret;
+	цяло r, ret;
 	u_char type;
 	struct pollfd pfd[2];
 
-	for (;;) {
+	за (;;) {
 		memset(&pfd, 0, sizeof(pfd));
 		pfd[0].fd = pmonitor->m_sendfd;
 		pfd[0].events = POLLIN;
 		pfd[1].fd = pmonitor->m_log_recvfd;
 		pfd[1].events = pfd[1].fd == -1 ? 0 : POLLIN;
-		if (poll(pfd, pfd[1].fd == -1 ? 1 : 2, -1) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
+		ако (poll(pfd, pfd[1].fd == -1 ? 1 : 2, -1) == -1) {
+			ако (errno == EINTR || errno == EAGAIN)
 				continue;
 			fatal_f("poll: %s", strerror(errno));
 		}
-		if (pfd[1].revents) {
+		ако (pfd[1].revents) {
 			/*
 			 * Drain all log messages before processing next
 			 * monitor request.
@@ -519,58 +519,58 @@ monitor_read(struct ssh *ssh, struct monitor *pmonitor, struct mon_table *ent,
 			monitor_read_log(pmonitor);
 			continue;
 		}
-		if (pfd[0].revents)
+		ако (pfd[0].revents)
 			break;  /* Continues below */
 	}
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
 
 	mm_request_receive(pmonitor->m_sendfd, m);
-	if ((r = sshbuf_get_u8(m, &type)) != 0)
+	ако ((r = sshbuf_get_u8(m, &type)) != 0)
 		fatal_fr(r, "parse type");
 
 	debug3_f("checking request %d", type);
 
-	while (ent->f != NULL) {
-		if (ent->type == type)
+	докато (ent->f != NULL) {
+		ако (ent->type == type)
 			break;
 		ent++;
 	}
 
-	if (ent->f != NULL) {
-		if (!(ent->flags & MON_PERMIT))
+	ако (ent->f != NULL) {
+		ако (!(ent->flags & MON_PERMIT))
 			fatal_f("unpermitted request %d", type);
 		ret = (*ent->f)(ssh, pmonitor->m_sendfd, m);
 		sshbuf_free(m);
 
 		/* The child may use this request only once, disable it */
-		if (ent->flags & MON_ONCE) {
+		ако (ent->flags & MON_ONCE) {
 			debug2_f("%d used once, disabling now", type);
 			ent->flags &= ~MON_PERMIT;
 		}
 
-		if (pent != NULL)
+		ако (pent != NULL)
 			*pent = ent;
 
-		return ret;
+		върни ret;
 	}
 
 	fatal_f("unsupported request: %d", type);
 
 	/* NOTREACHED */
-	return (-1);
+	върни (-1);
 }
 
 /* allowed key state */
-static int
+static цяло
 monitor_allowed_key(const u_char *blob, u_int bloblen)
 {
 	/* make sure key is allowed */
-	if (key_blob == NULL || key_bloblen != bloblen ||
+	ако (key_blob == NULL || key_bloblen != bloblen ||
 	    timingsafe_bcmp(key_blob, blob, key_bloblen))
-		return (0);
-	return (1);
+		върни (0);
+	върни (1);
 }
 
 static void
@@ -589,24 +589,24 @@ monitor_reset_key_state(void)
 	hostbased_chost = NULL;
 }
 
-int
-mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
+цяло
+mm_answer_state(struct ssh *ssh, цяло sock, struct sshbuf *unused)
 {
 	struct sshbuf *m = NULL, *config = NULL, *hostkeys = NULL;
 	struct sshbuf *opts = NULL, *confdata = NULL;
-	int postauth;
-	int r;
+	цяло postauth;
+	цяло r;
 
 	debug_f("config len %zu", sshbuf_len(cfg));
 
-	if ((m = sshbuf_new()) == NULL ||
+	ако ((m = sshbuf_new()) == NULL ||
 	    (config = sshbuf_new()) == NULL ||
 	    (opts = sshbuf_new()) == NULL ||
 	    (confdata = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	hostkeys = pack_hostkeys();
-	if ((r = serialise_server_options(&options, &config)) != 0)
+	ако ((r = serialise_server_options(&options, &config)) != 0)
 		fatal_fr(r, "serialise_server_options");
 
 	/*
@@ -625,7 +625,7 @@ mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
 	 *	string  session_info (postauth)
 	 *	string  authopts (postauth)
 	 */
-	if ((r = sshbuf_put_stringb(m, config)) != 0 ||
+	ако ((r = sshbuf_put_stringb(m, config)) != 0 ||
 	    (r = sshbuf_put_u64(m, options.timing_secret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, hostkeys)) != 0 ||
 	    (r = sshbuf_put_stringb(m, ssh->kex->server_version)) != 0 ||
@@ -633,7 +633,7 @@ mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
 		fatal_fr(r, "compose config");
 
 	postauth = (authctxt && authctxt->pw && authctxt->authenticated);
-	if (postauth) {
+	ако (postauth) {
 		/* XXX shouldn't be reachable */
 		fatal_f("internal error: called in postauth");
 	}
@@ -647,38 +647,38 @@ mm_answer_state(struct ssh *ssh, int sock, struct sshbuf *unused)
 	sshbuf_free(m);
 	debug3_f("done");
 
-	return (0);
+	върни (0);
 }
 
 #ifdef WITH_OPENSSL
-int
-mm_answer_moduli(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_moduli(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	DH *dh;
 	const BIGNUM *dh_p, *dh_g;
-	int r;
+	цяло r;
 	u_int min, want, max;
 
-	if ((r = sshbuf_get_u32(m, &min)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &min)) != 0 ||
 	    (r = sshbuf_get_u32(m, &want)) != 0 ||
 	    (r = sshbuf_get_u32(m, &max)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3_f("got parameters: %d %d %d", min, want, max);
 	/* We need to check here, too, in case the child got corrupted */
-	if (max < min || want < min || max < want)
+	ако (max < min || want < min || max < want)
 		fatal_f("bad parameters: %d %d %d", min, want, max);
 
 	sshbuf_reset(m);
 
 	dh = choose_dh(min, want, max);
-	if (dh == NULL) {
-		if ((r = sshbuf_put_u8(m, 0)) != 0)
+	ако (dh == NULL) {
+		ако ((r = sshbuf_put_u8(m, 0)) != 0)
 			fatal_fr(r, "assemble empty");
-	} else {
+	} иначе {
 		/* Send first bignum */
 		DH_get0_pqg(dh, &dh_p, NULL, &dh_g);
-		if ((r = sshbuf_put_u8(m, 1)) != 0 ||
+		ако ((r = sshbuf_put_u8(m, 1)) != 0 ||
 		    (r = sshbuf_put_bignum2(m, dh_p)) != 0 ||
 		    (r = sshbuf_put_bignum2(m, dh_g)) != 0)
 			fatal_fr(r, "assemble");
@@ -686,51 +686,51 @@ mm_answer_moduli(struct ssh *ssh, int sock, struct sshbuf *m)
 		DH_free(dh);
 	}
 	mm_request_send(sock, MONITOR_ANS_MODULI, m);
-	return (0);
+	върни (0);
 }
 #endif
 
-int
-mm_answer_setcompat(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_setcompat(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	int r;
+	цяло r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_u32(m, &ssh->compat)) != 0)
+	ако ((r = sshbuf_get_u32(m, &ssh->compat)) != 0)
 		fatal_fr(r, "parse");
 	compat_set = 1;
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_sign(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	extern int auth_sock;			/* XXX move to state struct? */
+	extern цяло auth_sock;			/* XXX move to state struct? */
 	struct sshkey *pubkey, *key;
 	struct sshbuf *sigbuf = NULL;
 	u_char *p = NULL, *signature = NULL;
 	char *alg = NULL;
 	size_t datlen, siglen;
-	int r, is_proof = 0, keyid;
+	цяло r, is_proof = 0, keyid;
 	u_int compat;
 	const char proof_req[] = "hostkeys-prove-00@openssh.com";
-	static int nhostkey_proofs_done, *hostkey_proofs_done;
+	static цяло nhostkey_proofs_done, *hostkey_proofs_done;
 
 	debug3_f("entering");
 
 	/* Make sure the unpriv process sent the compat bits already */
-	if (!compat_set)
+	ако (!compat_set)
 		fatal_f("state error: setcompat never called");
 
-	if ((r = sshkey_froms(m, &pubkey)) != 0 ||
+	ако ((r = sshkey_froms(m, &pubkey)) != 0 ||
 	    (r = sshbuf_get_string(m, &p, &datlen)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &alg, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(m, &compat)) != 0)
 		fatal_fr(r, "parse");
 
-	if ((keyid = get_hostkey_index(pubkey, 1, ssh)) == -1)
+	ако ((keyid = get_hostkey_index(pubkey, 1, ssh)) == -1)
 		fatal_f("unknown hostkey");
 	debug_f("hostkey %s index %d", sshkey_ssh_name(pubkey), keyid);
 	sshkey_free(pubkey);
@@ -746,34 +746,34 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 	 * it's not trivial, since what is signed is the hash, rather
 	 * than the full kex structure...
 	 */
-	if (datlen != 20 && datlen != 32 && datlen != 48 && datlen != 64) {
+	ако (datlen != 20 && datlen != 32 && datlen != 48 && datlen != 64) {
 		/*
 		 * Construct expected hostkey proof and compare it to what
 		 * the client sent us.
 		 */
-		if (session_id2_len == 0) /* hostkeys is never first */
+		ако (session_id2_len == 0) /* hostkeys is never first */
 			fatal_f("bad data length: %zu", datlen);
-		if ((key = get_hostkey_public_by_index(keyid, ssh)) == NULL)
+		ако ((key = get_hostkey_public_by_index(keyid, ssh)) == NULL)
 			fatal_f("no hostkey for index %d", keyid);
-		if (keyid >= nhostkey_proofs_done) {
+		ако (keyid >= nhostkey_proofs_done) {
 			hostkey_proofs_done = xrecallocarray(
 			    hostkey_proofs_done, nhostkey_proofs_done,
 			    keyid + 1, sizeof(*hostkey_proofs_done));
 			nhostkey_proofs_done = keyid + 1;
 		}
-		if (hostkey_proofs_done[keyid]) {
+		ако (hostkey_proofs_done[keyid]) {
 			fatal_f("hostkeys proof requested for %s key %d "
 			    "multiple times", sshkey_type(key), keyid);
 		}
 		hostkey_proofs_done[keyid] = 1;
-		if ((sigbuf = sshbuf_new()) == NULL)
+		ако ((sigbuf = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new");
-		if ((r = sshbuf_put_cstring(sigbuf, proof_req)) != 0 ||
+		ако ((r = sshbuf_put_cstring(sigbuf, proof_req)) != 0 ||
 		    (r = sshbuf_put_string(sigbuf, session_id2,
 		    session_id2_len)) != 0 ||
 		    (r = sshkey_puts(key, sigbuf)) != 0)
 			fatal_fr(r, "assemble private key proof");
-		if (datlen != sshbuf_len(sigbuf) ||
+		ако (datlen != sshbuf_len(sigbuf) ||
 		    memcmp(p, sshbuf_ptr(sigbuf), sshbuf_len(sigbuf)) != 0)
 			fatal_f("bad data length: %zu, hostkey proof len %zu",
 			    datlen, sshbuf_len(sigbuf));
@@ -782,29 +782,29 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 	}
 
 	/* save session id, it will be passed on the first call */
-	if (session_id2_len == 0) {
+	ако (session_id2_len == 0) {
 		session_id2_len = datlen;
 		session_id2 = xmalloc(session_id2_len);
 		memcpy(session_id2, p, session_id2_len);
 	}
 
-	if ((key = get_hostkey_by_index(keyid)) != NULL) {
-		if ((r = sshkey_sign(key, &signature, &siglen, p, datlen, alg,
+	ако ((key = get_hostkey_by_index(keyid)) != NULL) {
+		ако ((r = sshkey_sign(key, &signature, &siglen, p, datlen, alg,
 		    options.sk_provider, NULL, compat)) != 0)
 			fatal_fr(r, "sign");
-	} else if ((key = get_hostkey_public_by_index(keyid, ssh)) != NULL &&
+	} иначе ако ((key = get_hostkey_public_by_index(keyid, ssh)) != NULL &&
 	    auth_sock > 0) {
-		if ((r = ssh_agent_sign(auth_sock, key, &signature, &siglen,
+		ако ((r = ssh_agent_sign(auth_sock, key, &signature, &siglen,
 		    p, datlen, alg, compat)) != 0)
 			fatal_fr(r, "agent sign");
-	} else
+	} иначе
 		fatal_f("no hostkey from index %d", keyid);
 
 	debug3_f("%s %s signature len=%zu", alg,
 	    is_proof ? "hostkey proof" : "KEX", siglen);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_string(m, signature, siglen)) != 0)
+	ако ((r = sshbuf_put_string(m, signature, siglen)) != 0)
 		fatal_fr(r, "assemble");
 
 	free(alg);
@@ -816,48 +816,48 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 	/* Turn on permissions for getpwnam */
 	monitor_permit(mon_dispatch, MONITOR_REQ_PWNAM, 1);
 
-	return (0);
+	върни (0);
 }
 
 #define PUTPW(b, id) \
 	do { \
-		if ((r = sshbuf_put_string(b, \
+		ако ((r = sshbuf_put_string(b, \
 		    &pwent->id, sizeof(pwent->id))) != 0) \
 			fatal_fr(r, "assemble %s", #id); \
-	} while (0)
+	} докато (0)
 
 void
 mm_encode_server_options(struct sshbuf *m)
 {
-	int r;
+	цяло r;
 	struct sshbuf *config;
 
-	if ((config = sshbuf_new()) == NULL)
+	ако ((config = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = serialise_server_options(&options, &config)) != 0)
+	ако ((r = serialise_server_options(&options, &config)) != 0)
 		fatal_fr(r, "serialise_server_options");
-	if ((r = sshbuf_put_stringb(m, config)) != 0)
+	ако ((r = sshbuf_put_stringb(m, config)) != 0)
 		fatal_fr(r, "assemble options");
 	sshbuf_free(config);
 }
 
 /* Retrieves the password entry and also checks if the user is permitted */
-int
-mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pwnamallow(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	struct passwd *pwent;
-	int r, allowed = 0;
+	цяло r, allowed = 0;
 
 	debug3_f("entering");
 
 	/* Make sure the unpriv process sent the compat bits already */
-	if (!compat_set)
+	ако (!compat_set)
 		fatal_f("state error: setcompat never called");
 
-	if (authctxt->attempt++ != 0)
+	ако (authctxt->attempt++ != 0)
 		fatal_f("multiple attempts for getpwnam");
 
-	if ((r = sshbuf_get_cstring(m, &authctxt->user, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &authctxt->user, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	pwent = getpwnamallow(ssh, authctxt->user);
@@ -866,9 +866,9 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	sshbuf_reset(m);
 
-	if (pwent == NULL) {
+	ако (pwent == NULL) {
 		invalid_user = 1;
-		if ((r = sshbuf_put_u8(m, 0)) != 0)
+		ако ((r = sshbuf_put_u8(m, 0)) != 0)
 			fatal_fr(r, "assemble fakepw");
 		authctxt->pw = fakepw();
 		goto out;
@@ -879,7 +879,7 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	authctxt->valid = 1;
 
 	/* XXX send fake class/dir/shell, etc. */
-	if ((r = sshbuf_put_u8(m, 1)) != 0)
+	ако ((r = sshbuf_put_u8(m, 1)) != 0)
 		fatal_fr(r, "assemble ok");
 	PUTPW(m, pw_uid);
 	PUTPW(m, pw_gid);
@@ -889,7 +889,7 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 #ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 	PUTPW(m, pw_expire);
 #endif
-	if ((r = sshbuf_put_cstring(m, pwent->pw_name)) != 0 ||
+	ако ((r = sshbuf_put_cstring(m, pwent->pw_name)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "*")) != 0 ||
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
 	    (r = sshbuf_put_cstring(m, pwent->pw_gecos)) != 0 ||
@@ -905,7 +905,7 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	ssh_packet_set_log_preamble(ssh, "%suser %s",
 	    authctxt->valid ? "authenticating" : "invalid ", authctxt->user);
 
-	if (options.refuse_connection) {
+	ако (options.refuse_connection) {
 		logit("administratively prohibited connection for "
 		    "%s%s from %.128s port %d",
 		    authctxt->valid ? "" : "invalid user ",
@@ -918,7 +918,7 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	mm_encode_server_options(m);
 
 	/* Create valid auth method lists */
-	if (auth2_setup_methods_lists(authctxt) != 0) {
+	ако (auth2_setup_methods_lists(authctxt) != 0) {
 		/*
 		 * The monitor will continue long enough to let the child
 		 * run to its packet_disconnect(), but it must not allow any
@@ -935,46 +935,46 @@ mm_answer_pwnamallow(struct ssh *ssh, int sock, struct sshbuf *m)
 	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
 
 #ifdef USE_PAM
-	if (options.use_pam)
+	ако (options.use_pam)
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_START, 1);
 #endif
 
-	return (0);
+	върни (0);
 }
 
-int mm_answer_auth2_read_banner(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло mm_answer_auth2_read_banner(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	char *banner;
-	int r;
+	цяло r;
 
 	sshbuf_reset(m);
 	banner = auth2_read_banner();
-	if ((r = sshbuf_put_cstring(m, banner != NULL ? banner : "")) != 0)
+	ако ((r = sshbuf_put_cstring(m, banner != NULL ? banner : "")) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(sock, MONITOR_ANS_AUTH2_READ_BANNER, m);
 	free(banner);
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_authserv(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	int r;
+	цяло r;
 
 	monitor_permit_authentications(1);
 
-	if ((r = sshbuf_get_cstring(m, &authctxt->service, NULL)) != 0 ||
+	ако ((r = sshbuf_get_cstring(m, &authctxt->service, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &authctxt->style, NULL)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("service=%s, style=%s", authctxt->service, authctxt->style);
 
-	if (strlen(authctxt->style) == 0) {
+	ако (strlen(authctxt->style) == 0) {
 		free(authctxt->style);
 		authctxt->style = NULL;
 	}
 
-	return (0);
+	върни (0);
 }
 
 /*
@@ -983,40 +983,40 @@ mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  * performed in the unprivileged authentication code).
  * Returns 1 on success, 0 otherwise.
  */
-static int
+static цяло
 key_base_type_match(const char *method, const struct sshkey *key,
     const char *list)
 {
 	char *s, *l, *ol = xstrdup(list);
-	int found = 0;
+	цяло found = 0;
 
 	l = ol;
-	for ((s = strsep(&l, ",")); s && *s != '\0'; (s = strsep(&l, ","))) {
-		if (sshkey_type_from_name(s) == key->type) {
+	за ((s = strsep(&l, ",")); s && *s != '\0'; (s = strsep(&l, ","))) {
+		ако (sshkey_type_from_name(s) == key->type) {
 			found = 1;
 			break;
 		}
 	}
-	if (!found) {
+	ако (!found) {
 		error("%s key type %s is not in permitted list %s", method,
 		    sshkey_ssh_name(key), list);
 	}
 
 	free(ol);
-	return found;
+	върни found;
 }
 
-int
-mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_authpassword(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	static int call_count;
+	static цяло call_count;
 	char *passwd;
-	int r, authenticated;
+	цяло r, authenticated;
 	size_t plen;
 
-	if (!options.password_authentication)
+	ако (!options.password_authentication)
 		fatal_f("password authentication not enabled");
-	if ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &passwd, &plen)) != 0)
 		fatal_fr(r, "parse");
 	/* Only authenticate if the context is valid */
 	authenticated = options.password_authentication &&
@@ -1024,10 +1024,10 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
 	freezero(passwd, plen);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authenticated)) != 0)
+	ако ((r = sshbuf_put_u32(m, authenticated)) != 0)
 		fatal_fr(r, "assemble");
 #ifdef USE_PAM
-	if ((r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0)
+	ако ((r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0)
 		fatal_fr(r, "assemble PAM");
 #endif
 
@@ -1035,62 +1035,62 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
 	mm_request_send(sock, MONITOR_ANS_AUTHPASSWORD, m);
 
 	call_count++;
-	if (plen == 0 && call_count == 1)
+	ако (plen == 0 && call_count == 1)
 		auth_method = "none";
-	else
+	иначе
 		auth_method = "password";
 
 	/* Causes monitor loop to terminate if authenticated */
-	return (authenticated);
+	върни (authenticated);
 }
 
 #ifdef BSD_AUTH
-int
-mm_answer_bsdauthquery(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_bsdauthquery(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	char *name, *infotxt;
 	u_int numprompts, *echo_on, success;
 	char **prompts;
-	int r;
+	цяло r;
 
-	if (!options.kbd_interactive_authentication)
+	ако (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
 	success = bsdauth_query(authctxt, &name, &infotxt, &numprompts,
 	    &prompts, &echo_on) < 0 ? 0 : 1;
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, success)) != 0)
+	ако ((r = sshbuf_put_u32(m, success)) != 0)
 		fatal_fr(r, "assemble");
-	if (success) {
-		if ((r = sshbuf_put_cstring(m, prompts[0])) != 0)
+	ако (success) {
+		ако ((r = sshbuf_put_cstring(m, prompts[0])) != 0)
 			fatal_fr(r, "assemble prompt");
 	}
 
 	debug3_f("sending challenge success: %u", success);
 	mm_request_send(sock, MONITOR_ANS_BSDAUTHQUERY, m);
 
-	if (success) {
+	ако (success) {
 		free(name);
 		free(infotxt);
 		free(prompts);
 		free(echo_on);
 	}
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_bsdauthrespond(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_bsdauthrespond(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	char *response;
-	int r, authok;
+	цяло r, authok;
 
-	if (!options.kbd_interactive_authentication)
+	ако (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
-	if (authctxt->as == NULL)
+	ако (authctxt->as == NULL)
 		fatal_f("no bsd auth session");
 
-	if ((r = sshbuf_get_cstring(m, &response, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &response, NULL)) != 0)
 		fatal_fr(r, "parse");
 	authok = options.kbd_interactive_authentication &&
 	    auth_userresponse(authctxt->as, response, 0);
@@ -1099,7 +1099,7 @@ mm_answer_bsdauthrespond(struct ssh *ssh, int sock, struct sshbuf *m)
 	free(response);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authok)) != 0)
+	ако ((r = sshbuf_put_u32(m, authok)) != 0)
 		fatal_fr(r, "assemble");
 
 	debug3_f("sending authenticated: %d", authok);
@@ -1108,95 +1108,95 @@ mm_answer_bsdauthrespond(struct ssh *ssh, int sock, struct sshbuf *m)
 	auth_method = "keyboard-interactive";
 	auth_submethod = "bsdauth";
 
-	return (authok != 0);
+	върни (authok != 0);
 }
 #endif
 
 #ifdef USE_PAM
-int
-mm_answer_pam_start(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_start(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	if (!options.use_pam)
+	ако (!options.use_pam)
 		fatal_f("UsePAM not set, but ended up in %s anyway", __func__);
 
 	start_pam(ssh);
 
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_ACCOUNT, 1);
-	if (options.kbd_interactive_authentication)
+	ако (options.kbd_interactive_authentication)
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_INIT_CTX, 1);
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_pam_account(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_account(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	u_int ret;
-	int r;
+	цяло r;
 
-	if (!options.use_pam)
+	ако (!options.use_pam)
 		fatal_f("PAM not enabled");
 
 	ret = do_pam_account();
 
-	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, ret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, loginmsg)) != 0)
 		fatal_fr(r, "buffer error");
 	sshbuf_reset(loginmsg);
 
 	mm_request_send(sock, MONITOR_ANS_PAM_ACCOUNT, m);
 
-	return (ret);
+	върни (ret);
 }
 
 static void *sshpam_ctxt, *sshpam_authok;
 extern KbdintDevice sshpam_device;
 
-int
-mm_answer_pam_init_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_init_ctx(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	u_int ok = 0;
-	int r;
+	цяло r;
 
 	debug3_f("entering");
-	if (!options.kbd_interactive_authentication)
+	ако (!options.kbd_interactive_authentication)
 		fatal_f("kbd-int authentication not enabled");
-	if (sshpam_ctxt != NULL)
+	ако (sshpam_ctxt != NULL)
 		fatal_f("already called");
 	sshpam_ctxt = (sshpam_device.init_ctx)(authctxt);
 	sshpam_authok = NULL;
 	sshbuf_reset(m);
-	if (sshpam_ctxt != NULL) {
+	ако (sshpam_ctxt != NULL) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_FREE_CTX, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_PAM_QUERY, 1);
 		ok = 1;
 	}
-	if ((r = sshbuf_put_u32(m, ok)) != 0)
+	ако ((r = sshbuf_put_u32(m, ok)) != 0)
 		fatal_fr(r, "buffer error");
 	mm_request_send(sock, MONITOR_ANS_PAM_INIT_CTX, m);
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_query(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	char *name = NULL, *info = NULL, **prompts = NULL;
 	u_int i, num = 0, *echo_on = 0;
-	int r, ret;
+	цяло r, ret;
 
 	debug3_f("entering");
 	sshpam_authok = NULL;
-	if (sshpam_ctxt == NULL)
+	ако (sshpam_ctxt == NULL)
 		fatal_f("no context");
 	ret = (sshpam_device.query)(sshpam_ctxt, &name, &info,
 	    &num, &prompts, &echo_on);
-	if (ret == 0 && num == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
+	ако (ret == 0 && num == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
 		sshpam_authok = sshpam_ctxt;
-	if (num > 1 || name == NULL || info == NULL)
+	ако (num > 1 || name == NULL || info == NULL)
 		fatal("sshpam_device.query failed");
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_RESPOND, 1);
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, ret)) != 0 ||
 	    (r = sshbuf_put_cstring(m, name)) != 0 ||
 	    (r = sshbuf_put_cstring(m, info)) != 0 ||
 	    (r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0 ||
@@ -1204,8 +1204,8 @@ mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
 		fatal_fr(r, "buffer error");
 	free(name);
 	free(info);
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, prompts[i])) != 0 ||
+	за (i = 0; i < num; ++i) {
+		ако ((r = sshbuf_put_cstring(m, prompts[i])) != 0 ||
 		    (r = sshbuf_put_u32(m, echo_on[i])) != 0)
 			fatal_fr(r, "buffer error");
 		free(prompts[i]);
@@ -1215,58 +1215,58 @@ mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
 	auth_method = "keyboard-interactive";
 	auth_submethod = "pam";
 	mm_request_send(sock, MONITOR_ANS_PAM_QUERY, m);
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_pam_respond(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_respond(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	char **resp;
 	u_int i, num;
-	int r, ret;
+	цяло r, ret;
 
 	debug3_f("entering");
-	if (sshpam_ctxt == NULL)
+	ако (sshpam_ctxt == NULL)
 		fatal_f("no context");
 	sshpam_authok = NULL;
-	if ((r = sshbuf_get_u32(m, &num)) != 0)
+	ако ((r = sshbuf_get_u32(m, &num)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num > PAM_MAX_NUM_MSG) {
+	ако (num > PAM_MAX_NUM_MSG) {
 		fatal_f("Too many PAM messages, got %u, expected <= %u",
 		    num, (unsigned)PAM_MAX_NUM_MSG);
 	}
-	if (num > 0) {
+	ако (num > 0) {
 		resp = xcalloc(num, sizeof(char *));
-		for (i = 0; i < num; ++i) {
-			if ((r = sshbuf_get_cstring(m, &(resp[i]), NULL)) != 0)
+		за (i = 0; i < num; ++i) {
+			ако ((r = sshbuf_get_cstring(m, &(resp[i]), NULL)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 		}
 		ret = (sshpam_device.respond)(sshpam_ctxt, num, resp);
-		for (i = 0; i < num; ++i)
+		за (i = 0; i < num; ++i)
 			free(resp[i]);
 		free(resp);
-	} else {
+	} иначе {
 		ret = (sshpam_device.respond)(sshpam_ctxt, num, NULL);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0)
+	ако ((r = sshbuf_put_u32(m, ret)) != 0)
 		fatal_fr(r, "buffer error");
 	mm_request_send(sock, MONITOR_ANS_PAM_RESPOND, m);
 	auth_method = "keyboard-interactive";
 	auth_submethod = "pam";
-	if (ret == 0)
+	ако (ret == 0)
 		sshpam_authok = sshpam_ctxt;
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_pam_free_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pam_free_ctx(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	int r = sshpam_authok != NULL && sshpam_authok == sshpam_ctxt;
+	цяло r = sshpam_authok != NULL && sshpam_authok == sshpam_ctxt;
 
 	debug3_f("entering");
-	if (sshpam_ctxt == NULL)
+	ако (sshpam_ctxt == NULL)
 		fatal_f("no context");
 	(sshpam_device.free_ctx)(sshpam_ctxt);
 	sshpam_ctxt = sshpam_authok = NULL;
@@ -1276,37 +1276,37 @@ mm_answer_pam_free_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_INIT_CTX, 1);
 	auth_method = "keyboard-interactive";
 	auth_submethod = "pam";
-	return r;
+	върни r;
 }
 #endif
 
-int
-mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_keyallowed(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	struct sshkey *key = NULL;
 	char *cuser, *chost;
 	u_int pubkey_auth_attempt;
 	u_int type = 0;
-	int r, allowed = 0;
+	цяло r, allowed = 0;
 	struct sshauthopt *opts = NULL;
 
 	debug3_f("entering");
-	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &cuser, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &chost, NULL)) != 0 ||
 	    (r = sshkey_froms(m, &key)) != 0 ||
 	    (r = sshbuf_get_u32(m, &pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "parse");
 
-	if (key != NULL && authctxt->valid) {
+	ако (key != NULL && authctxt->valid) {
 		switch (type) {
 		case MM_USERKEY:
 			auth_method = "publickey";
-			if (!options.pubkey_authentication)
+			ако (!options.pubkey_authentication)
 				break;
-			if (auth2_key_already_used(authctxt, key))
+			ако (auth2_key_already_used(authctxt, key))
 				break;
-			if (!key_base_type_match(auth_method, key,
+			ако (!key_base_type_match(auth_method, key,
 			    options.pubkey_accepted_algos))
 				break;
 			allowed = user_key_allowed(ssh, authctxt->pw, key,
@@ -1314,11 +1314,11 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 			break;
 		case MM_HOSTKEY:
 			auth_method = "hostbased";
-			if (!options.hostbased_authentication)
+			ако (!options.hostbased_authentication)
 				break;
-			if (auth2_key_already_used(authctxt, key))
+			ако (auth2_key_already_used(authctxt, key))
 				break;
-			if (!key_base_type_match(auth_method, key,
+			ако (!key_base_type_match(auth_method, key,
 			    options.hostbased_accepted_algos))
 				break;
 			allowed = hostbased_key_allowed(ssh, authctxt->pw,
@@ -1343,15 +1343,15 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 	/* clear temporarily storage (used by verify) */
 	monitor_reset_key_state();
 
-	if (allowed) {
+	ако (allowed) {
 		/* Save temporarily for comparison in verify */
-		if ((r = sshkey_to_blob(key, &key_blob, &key_bloblen)) != 0)
+		ако ((r = sshkey_to_blob(key, &key_blob, &key_bloblen)) != 0)
 			fatal_fr(r, "sshkey_to_blob");
 		key_blobtype = type;
 		key_opts = opts;
 		hostbased_cuser = cuser;
 		hostbased_chost = chost;
-	} else {
+	} иначе {
 		/* Log failed attempt */
 		auth_log(ssh, 0, 0, auth_method, NULL);
 		free(cuser);
@@ -1360,19 +1360,19 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 	sshkey_free(key);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, allowed)) != 0)
+	ако ((r = sshbuf_put_u32(m, allowed)) != 0)
 		fatal_fr(r, "assemble");
-	if (opts != NULL && (r = sshauthopt_serialise(opts, m, 1)) != 0)
+	ако (opts != NULL && (r = sshauthopt_serialise(opts, m, 1)) != 0)
 		fatal_fr(r, "sshauthopt_serialise");
 	mm_request_send(sock, MONITOR_ANS_KEYALLOWED, m);
 
-	if (!allowed)
+	ако (!allowed)
 		sshauthopt_free(opts);
 
-	return (0);
+	върни (0);
 }
 
-static int
+static цяло
 monitor_valid_userblob(struct ssh *ssh, const u_char *data, u_int datalen)
 {
 	struct sshbuf *b;
@@ -1381,68 +1381,68 @@ monitor_valid_userblob(struct ssh *ssh, const u_char *data, u_int datalen)
 	char *userstyle, *cp;
 	size_t len;
 	u_char type;
-	int hostbound = 0, r, fail = 0;
+	цяло hostbound = 0, r, fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	ако ((b = sshbuf_from(data, datalen)) == NULL)
 		fatal_f("sshbuf_from");
 
-	if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
+	ако ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
 		fatal_fr(r, "parse sessionid");
-	if ((session_id2 == NULL) ||
+	ако ((session_id2 == NULL) ||
 	    (len != session_id2_len) ||
 	    (timingsafe_bcmp(p, session_id2, session_id2_len) != 0))
 		fail++;
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	ако ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	ако (type != SSH2_MSG_USERAUTH_REQUEST)
 		fail++;
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse userstyle");
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	ако (strcmp(userstyle, cp) != 0) {
 		logit("wrong user name passed to monitor: "
 		    "expected %s != %.100s", userstyle, cp);
 		fail++;
 	}
 	free(userstyle);
 	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
+	ако ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
 	    (r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("publickey", cp) != 0) {
-		if (strcmp("publickey-hostbound-v00@openssh.com", cp) == 0)
+	ако (strcmp("publickey", cp) != 0) {
+		ако (strcmp("publickey-hostbound-v00@openssh.com", cp) == 0)
 			hostbound = 1;
-		else
+		иначе
 			fail++;
 	}
 	free(cp);
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	ако ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse pktype");
-	if (type == 0)
+	ако (type == 0)
 		fail++;
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
+	ако ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
 	    (r = sshbuf_skip_string(b)) != 0 ||	/* pkblob */
 	    (hostbound && (r = sshkey_froms(b, &hostkey)) != 0))
 		fatal_fr(r, "parse pk");
-	if (sshbuf_len(b) != 0)
+	ако (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
-	if (hostkey != NULL) {
+	ако (hostkey != NULL) {
 		/*
 		 * Ensure this is actually one of our hostkeys; unfortunately
 		 * can't check ssh->kex->initial_hostkey directly at this point
 		 * as packet state has not yet been exported to monitor.
 		 */
-		if (get_hostkey_index(hostkey, 1, ssh) == -1)
+		ако (get_hostkey_index(hostkey, 1, ssh) == -1)
 			fatal_f("hostbound hostkey does not match");
 		sshkey_free(hostkey);
 	}
-	return (fail == 0);
+	върни (fail == 0);
 }
 
-static int
+static цяло
 monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
     const char *cuser, const char *chost)
 {
@@ -1450,96 +1450,96 @@ monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
 	const u_char *p;
 	char *cp, *userstyle;
 	size_t len;
-	int r, fail = 0;
+	цяло r, fail = 0;
 	u_char type;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	ако ((b = sshbuf_from(data, datalen)) == NULL)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
+	ако ((r = sshbuf_get_string_direct(b, &p, &len)) != 0)
 		fatal_fr(r, "parse sessionid");
 
-	if ((session_id2 == NULL) ||
+	ако ((session_id2 == NULL) ||
 	    (len != session_id2_len) ||
 	    (timingsafe_bcmp(p, session_id2, session_id2_len) != 0))
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	ако ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	ако (type != SSH2_MSG_USERAUTH_REQUEST)
 		fail++;
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse userstyle");
 	xasprintf(&userstyle, "%s%s%s", authctxt->user,
 	    authctxt->style ? ":" : "",
 	    authctxt->style ? authctxt->style : "");
-	if (strcmp(userstyle, cp) != 0) {
+	ако (strcmp(userstyle, cp) != 0) {
 		logit("wrong user name passed to monitor: "
 		    "expected %s != %.100s", userstyle, cp);
 		fail++;
 	}
 	free(userstyle);
 	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
+	ако ((r = sshbuf_skip_string(b)) != 0 ||	/* service */
 	    (r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp(cp, "hostbased") != 0)
+	ако (strcmp(cp, "hostbased") != 0)
 		fail++;
 	free(cp);
-	if ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
+	ако ((r = sshbuf_skip_string(b)) != 0 ||	/* pkalg */
 	    (r = sshbuf_skip_string(b)) != 0)	/* pkblob */
 		fatal_fr(r, "parse pk");
 
 	/* verify client host, strip trailing dot if necessary */
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse host");
-	if (((len = strlen(cp)) > 0) && cp[len - 1] == '.')
+	ако (((len = strlen(cp)) > 0) && cp[len - 1] == '.')
 		cp[len - 1] = '\0';
-	if (strcmp(cp, chost) != 0)
+	ако (strcmp(cp, chost) != 0)
 		fail++;
 	free(cp);
 
 	/* verify client user */
-	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse ruser");
-	if (strcmp(cp, cuser) != 0)
+	ако (strcmp(cp, cuser) != 0)
 		fail++;
 	free(cp);
 
-	if (sshbuf_len(b) != 0)
+	ако (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
-	return (fail == 0);
+	върни (fail == 0);
 }
 
-int
-mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_keyverify(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	struct sshkey *key;
 	const u_char *signature, *data, *blob;
 	char *sigalg = NULL, *fp = NULL;
 	size_t signaturelen, datalen, bloblen;
-	int r, ret, req_presence = 0, req_verify = 0, valid_data = 0;
-	int encoded_ret;
+	цяло r, ret, req_presence = 0, req_verify = 0, valid_data = 0;
+	цяло encoded_ret;
 	struct sshkey_sig_details *sig_details = NULL;
 
-	if ((r = sshbuf_get_string_direct(m, &blob, &bloblen)) != 0 ||
+	ако ((r = sshbuf_get_string_direct(m, &blob, &bloblen)) != 0 ||
 	    (r = sshbuf_get_string_direct(m, &signature, &signaturelen)) != 0 ||
 	    (r = sshbuf_get_string_direct(m, &data, &datalen)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &sigalg, NULL)) != 0)
 		fatal_fr(r, "parse");
 
-	if (hostbased_cuser == NULL || hostbased_chost == NULL ||
+	ако (hostbased_cuser == NULL || hostbased_chost == NULL ||
 	  !monitor_allowed_key(blob, bloblen))
 		fatal_f("bad key, not previously allowed");
 
 	/* Empty signature algorithm means NULL. */
-	if (*sigalg == '\0') {
+	ако (*sigalg == '\0') {
 		free(sigalg);
 		sigalg = NULL;
 	}
 
 	/* XXX use sshkey_froms here; need to change key_blob, etc. */
-	if ((r = sshkey_from_blob(blob, bloblen, &key)) != 0)
+	ако ((r = sshkey_from_blob(blob, bloblen, &key)) != 0)
 		fatal_fr(r, "parse key");
 
 	switch (key_blobtype) {
@@ -1556,12 +1556,12 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 		valid_data = 0;
 		break;
 	}
-	if (!valid_data)
+	ако (!valid_data)
 		fatal_f("bad %s signature data blob",
 		    key_blobtype == MM_USERKEY ? "userkey" :
 		    (key_blobtype == MM_HOSTKEY ? "hostkey" : "unknown"));
 
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	ако ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("sshkey_fingerprint failed");
 
@@ -1572,11 +1572,11 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 	    (ret == 0) ? "verified" : "unverified",
 	    (ret != 0) ? ": " : "", (ret != 0) ? ssh_err(ret) : "");
 
-	if (ret == 0 && key_blobtype == MM_USERKEY && sig_details != NULL) {
+	ако (ret == 0 && key_blobtype == MM_USERKEY && sig_details != NULL) {
 		req_presence = (options.pubkey_auth_options &
 		    PUBKEYAUTH_TOUCH_REQUIRED) ||
 		    !key_opts->no_require_user_presence;
-		if (req_presence &&
+		ако (req_presence &&
 		    (sig_details->sk_flags & SSH_SK_USER_PRESENCE_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user presence "
@@ -1589,7 +1589,7 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 		}
 		req_verify = (options.pubkey_auth_options &
 		    PUBKEYAUTH_VERIFY_REQUIRED) || key_opts->require_verify;
-		if (req_verify &&
+		ако (req_verify &&
 		    (sig_details->sk_flags & SSH_SK_USER_VERIFICATION_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user verification requirement "
@@ -1602,7 +1602,7 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 	}
 	auth2_record_key(authctxt, ret == 0, key);
 
-	if (key_blobtype == MM_USERKEY && ret == 0)
+	ако (key_blobtype == MM_USERKEY && ret == 0)
 		auth_activate_options(ssh, key_opts);
 	monitor_reset_key_state();
 
@@ -1610,11 +1610,11 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	/* encode ret != 0 as positive integer, since we're sending u32 */
 	encoded_ret = (ret != 0);
-	if ((r = sshbuf_put_u32(m, encoded_ret)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, encoded_ret)) != 0 ||
 	    (r = sshbuf_put_u8(m, sig_details != NULL)) != 0)
 		fatal_fr(r, "assemble");
-	if (sig_details != NULL) {
-		if ((r = sshbuf_put_u32(m, sig_details->sk_counter)) != 0 ||
+	ако (sig_details != NULL) {
+		ако ((r = sshbuf_put_u32(m, sig_details->sk_counter)) != 0 ||
 		    (r = sshbuf_put_u8(m, sig_details->sk_flags)) != 0)
 			fatal_fr(r, "assemble sk");
 	}
@@ -1625,7 +1625,7 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 	free(fp);
 	sshkey_free(key);
 
-	return ret == 0;
+	върни ret == 0;
 }
 
 static void
@@ -1640,8 +1640,8 @@ mm_record_login(struct ssh *ssh, Session *s, struct passwd *pw)
 	 */
 	memset(&from, 0, sizeof(from));
 	fromlen = sizeof(from);
-	if (ssh_packet_connection_is_on_socket(ssh)) {
-		if (getpeername(ssh_packet_get_connection_in(ssh),
+	ако (ssh_packet_connection_is_on_socket(ssh)) {
+		ако (getpeername(ssh_packet_get_connection_in(ssh),
 		    (struct sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername: %.100s", strerror(errno));
 			cleanup_exit(255);
@@ -1657,40 +1657,40 @@ static void
 mm_session_close(Session *s)
 {
 	debug3_f("session %d pid %ld", s->self, (long)s->pid);
-	if (s->ttyfd != -1) {
+	ако (s->ttyfd != -1) {
 		debug3_f("tty %s ptyfd %d", s->tty, s->ptyfd);
 		session_pty_cleanup2(s);
 	}
 	session_unused(s->self);
 }
 
-int
-mm_answer_pty(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pty(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	extern struct monitor *pmonitor;
 	Session *s;
-	int r, res, fd0;
+	цяло r, res, fd0;
 
 	debug3_f("entering");
 
 	sshbuf_reset(m);
 	s = session_new();
-	if (s == NULL)
+	ако (s == NULL)
 		goto error;
 	s->authctxt = authctxt;
 	s->pw = authctxt->pw;
 	s->pid = pmonitor->m_pid;
 	res = pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, sizeof(s->tty));
-	if (res == 0)
+	ако (res == 0)
 		goto error;
 	pty_setowner(authctxt->pw, s->tty);
 
-	if ((r = sshbuf_put_u32(m, 1)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, 1)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assemble");
 
 	/* We need to trick ttyslot */
-	if (dup2(s->ttyfd, 0) == -1)
+	ако (dup2(s->ttyfd, 0) == -1)
 		fatal_f("dup2");
 
 	mm_record_login(ssh, s, authctxt->pw);
@@ -1699,20 +1699,20 @@ mm_answer_pty(struct ssh *ssh, int sock, struct sshbuf *m)
 	close(0);
 
 	/* send messages generated by record_login */
-	if ((r = sshbuf_put_stringb(m, loginmsg)) != 0)
+	ако ((r = sshbuf_put_stringb(m, loginmsg)) != 0)
 		fatal_fr(r, "assemble loginmsg");
 	sshbuf_reset(loginmsg);
 
 	mm_request_send(sock, MONITOR_ANS_PTY, m);
 
-	if (mm_send_fd(sock, s->ptyfd) == -1 ||
+	ако (mm_send_fd(sock, s->ptyfd) == -1 ||
 	    mm_send_fd(sock, s->ttyfd) == -1)
 		fatal_f("send fds failed");
 
 	/* make sure nothing uses fd 0 */
-	if ((fd0 = open(_PATH_DEVNULL, O_RDONLY)) == -1)
+	ако ((fd0 = open(_PATH_DEVNULL, O_RDONLY)) == -1)
 		fatal_f("open(/dev/null): %s", strerror(errno));
-	if (fd0 != 0)
+	ако (fd0 != 0)
 		error_f("fd0 %d != 0", fd0);
 
 	/* slave side of pty is not needed */
@@ -1723,40 +1723,40 @@ mm_answer_pty(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	debug3_f("tty %s ptyfd %d", s->tty, s->ttyfd);
 
-	return (0);
+	върни (0);
 
  error:
-	if (s != NULL)
+	ако (s != NULL)
 		mm_session_close(s);
-	if ((r = sshbuf_put_u32(m, 0)) != 0)
+	ако ((r = sshbuf_put_u32(m, 0)) != 0)
 		fatal_fr(r, "assemble 0");
 	mm_request_send(sock, MONITOR_ANS_PTY, m);
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_pty_cleanup(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_pty_cleanup(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	Session *s;
 	char *tty;
-	int r;
+	цяло r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_cstring(m, &tty, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &tty, NULL)) != 0)
 		fatal_fr(r, "parse tty");
-	if ((s = session_by_tty(tty)) != NULL)
+	ако ((s = session_by_tty(tty)) != NULL)
 		mm_session_close(s);
 	sshbuf_reset(m);
 	free(tty);
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_term(struct ssh *ssh, int sock, struct sshbuf *req)
+цяло
+mm_answer_term(struct ssh *ssh, цяло sock, struct sshbuf *req)
 {
 	extern struct monitor *pmonitor;
-	int res, status;
+	цяло res, status;
 
 	debug3_f("tearing down sessions");
 
@@ -1764,12 +1764,12 @@ mm_answer_term(struct ssh *ssh, int sock, struct sshbuf *req)
 	session_destroy_all(ssh, &mm_session_close);
 
 #ifdef USE_PAM
-	if (options.use_pam)
+	ако (options.use_pam)
 		sshpam_cleanup();
 #endif
 
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1)
-		if (errno != EINTR)
+	докато (waitpid(pmonitor->m_pid, &status, 0) == -1)
+		ако (errno != EINTR)
 			exit(1);
 
 	res = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
@@ -1780,16 +1780,16 @@ mm_answer_term(struct ssh *ssh, int sock, struct sshbuf *req)
 
 #ifdef SSH_AUDIT_EVENTS
 /* Report that an audit event occurred */
-int
-mm_answer_audit_event(struct ssh *ssh, int socket, struct sshbuf *m)
+цяло
+mm_answer_audit_event(struct ssh *ssh, цяло socket, struct sshbuf *m)
 {
 	u_int n;
 	ssh_audit_event_t event;
-	int r;
+	цяло r;
 
 	debug3_f("entering");
 
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	ако ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
 	event = (ssh_audit_event_t)n;
 	switch (event) {
@@ -1806,22 +1806,22 @@ mm_answer_audit_event(struct ssh *ssh, int socket, struct sshbuf *m)
 		fatal("Audit event type %d not permitted", event);
 	}
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_audit_command(struct ssh *ssh, int socket, struct sshbuf *m)
+цяло
+mm_answer_audit_command(struct ssh *ssh, цяло socket, struct sshbuf *m)
 {
 	char *cmd;
-	int r;
+	цяло r;
 
 	debug3_f("entering");
-	if ((r = sshbuf_get_cstring(m, &cmd, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &cmd, NULL)) != 0)
 		fatal_fr(r, "buffer error");
 	/* sanity check command, if so how? */
 	audit_run_command(cmd);
 	free(cmd);
-	return (0);
+	върни (0);
 }
 #endif /* SSH_AUDIT_EVENTS */
 
@@ -1838,20 +1838,20 @@ void
 monitor_apply_keystate(struct ssh *ssh, struct monitor *pmonitor)
 {
 	struct kex *kex;
-	int r;
+	цяло r;
 
 	debug3_f("packet_set_state");
-	if ((r = ssh_packet_set_state(ssh, child_state)) != 0)
+	ако ((r = ssh_packet_set_state(ssh, child_state)) != 0)
 		fatal_fr(r, "packet_set_state");
 	sshbuf_free(child_state);
 	child_state = NULL;
-	if ((kex = ssh->kex) == NULL)
+	ако ((kex = ssh->kex) == NULL)
 		fatal_f("internal error: ssh->kex == NULL");
-	if (session_id2_len != sshbuf_len(ssh->kex->session_id)) {
+	ако (session_id2_len != sshbuf_len(ssh->kex->session_id)) {
 		fatal_f("incorrect session id length %zu (expected %u)",
 		    sshbuf_len(ssh->kex->session_id), session_id2_len);
 	}
-	if (memcmp(sshbuf_ptr(ssh->kex->session_id), session_id2,
+	ако (memcmp(sshbuf_ptr(ssh->kex->session_id), session_id2,
 	    session_id2_len) != 0)
 		fatal_f("session ID mismatch");
 	/* XXX set callbacks */
@@ -1882,7 +1882,7 @@ mm_get_keystate(struct ssh *ssh, struct monitor *pmonitor)
 {
 	debug3_f("Waiting for new keys");
 
-	if ((child_state = sshbuf_new()) == NULL)
+	ако ((child_state = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_receive_expect(pmonitor->m_sendfd, MONITOR_REQ_KEYEXPORT,
 	    child_state);
@@ -1893,19 +1893,19 @@ mm_get_keystate(struct ssh *ssh, struct monitor *pmonitor)
 /* XXX */
 
 static void
-monitor_openfds(struct monitor *mon, int do_logfds)
+monitor_openfds(struct monitor *mon, цяло do_logfds)
 {
-	int pair[2];
+	цяло pair[2];
 #ifdef SO_ZEROIZE
-	int on = 1;
+	цяло on = 1;
 #endif
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
+	ако (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1)
 		fatal_f("socketpair: %s", strerror(errno));
 #ifdef SO_ZEROIZE
-	if (setsockopt(pair[0], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
+	ако (setsockopt(pair[0], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
 		error("setsockopt SO_ZEROIZE(0): %.100s", strerror(errno));
-	if (setsockopt(pair[1], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
+	ако (setsockopt(pair[1], SOL_SOCKET, SO_ZEROIZE, &on, sizeof(on)) == -1)
 		error("setsockopt SO_ZEROIZE(1): %.100s", strerror(errno));
 #endif
 	FD_CLOSEONEXEC(pair[0]);
@@ -1913,14 +1913,14 @@ monitor_openfds(struct monitor *mon, int do_logfds)
 	mon->m_recvfd = pair[0];
 	mon->m_sendfd = pair[1];
 
-	if (do_logfds) {
-		if (pipe(pair) == -1)
+	ако (do_logfds) {
+		ако (pipe(pair) == -1)
 			fatal_f("pipe: %s", strerror(errno));
 		FD_CLOSEONEXEC(pair[0]);
 		FD_CLOSEONEXEC(pair[1]);
 		mon->m_log_recvfd = pair[0];
 		mon->m_log_sendfd = pair[1];
-	} else
+	} иначе
 		mon->m_log_recvfd = mon->m_log_sendfd = -1;
 }
 
@@ -1932,7 +1932,7 @@ monitor_init(void)
 	mon = xcalloc(1, sizeof(*mon));
 	monitor_openfds(mon, 1);
 
-	return mon;
+	върни mon;
 }
 
 void
@@ -1941,34 +1941,34 @@ monitor_reinit(struct monitor *mon)
 	monitor_openfds(mon, 0);
 }
 
-int
+цяло
 monitor_auth_attempted(void)
 {
-	return auth_attempted;
+	върни auth_attempted;
 }
 
-int
+цяло
 monitor_invalid_user(void)
 {
-	return invalid_user;
+	върни invalid_user;
 }
 
 #ifdef GSSAPI
-int
-mm_answer_gss_setup_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_gss_setup_ctx(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	gss_OID_desc goid;
 	OM_uint32 major;
 	size_t len;
 	u_char *p;
-	int r;
+	цяло r;
 
-	if (!options.gss_authentication)
+	ако (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
 	ssh_gssapi_cleanup_global_client();
 
-	if ((r = sshbuf_get_string(m, &p, &len)) != 0)
+	ако ((r = sshbuf_get_string(m, &p, &len)) != 0)
 		fatal_fr(r, "parse");
 	goid.elements = p;
 	goid.length = len;
@@ -1978,7 +1978,7 @@ mm_answer_gss_setup_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 	free(goid.elements);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, major)) != 0)
+	ако ((r = sshbuf_put_u32(m, major)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(sock, MONITOR_ANS_GSSSETUP, m);
@@ -1986,28 +1986,28 @@ mm_answer_gss_setup_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 	/* Now we have a context, enable the step */
 	monitor_permit(mon_dispatch, MONITOR_REQ_GSSSTEP, 1);
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_gss_accept_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_gss_accept_ctx(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	gss_buffer_desc in;
 	gss_buffer_desc out = GSS_C_EMPTY_BUFFER;
 	OM_uint32 major, minor;
 	OM_uint32 flags = 0; /* GSI needs this */
-	int r;
+	цяло r;
 
-	if (!options.gss_authentication)
+	ако (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
-	if ((r = ssh_gssapi_get_buffer_desc(m, &in)) != 0)
+	ако ((r = ssh_gssapi_get_buffer_desc(m, &in)) != 0)
 		fatal_fr(r, "ssh_gssapi_get_buffer_desc");
 	major = ssh_gssapi_accept_ctx(gsscontext, &in, &out, &flags);
 	free(in.value);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, major)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, major)) != 0 ||
 	    (r = sshbuf_put_string(m, out.value, out.length)) != 0 ||
 	    (r = sshbuf_put_u32(m, flags)) != 0)
 		fatal_fr(r, "assemble");
@@ -2015,25 +2015,25 @@ mm_answer_gss_accept_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	gss_release_buffer(&minor, &out);
 
-	if (major == GSS_S_COMPLETE) {
+	ако (major == GSS_S_COMPLETE) {
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSSTEP, 0);
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSUSEROK, 1);
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSCHECKMIC, 1);
 	}
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_gss_checkmic(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_gss_checkmic(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
 	gss_buffer_desc gssbuf, mic;
 	OM_uint32 ret;
-	int r;
+	цяло r;
 
-	if (!options.gss_authentication)
+	ако (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
-	if ((r = ssh_gssapi_get_buffer_desc(m, &gssbuf)) != 0 ||
+	ако ((r = ssh_gssapi_get_buffer_desc(m, &gssbuf)) != 0 ||
 	    (r = ssh_gssapi_get_buffer_desc(m, &mic)) != 0)
 		fatal_fr(r, "ssh_gssapi_get_buffer_desc");
 
@@ -2043,30 +2043,30 @@ mm_answer_gss_checkmic(struct ssh *ssh, int sock, struct sshbuf *m)
 	free(mic.value);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, ret)) != 0)
+	ако ((r = sshbuf_put_u32(m, ret)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(sock, MONITOR_ANS_GSSCHECKMIC, m);
 
-	if (!GSS_ERROR(ret))
+	ако (!GSS_ERROR(ret))
 		monitor_permit(mon_dispatch, MONITOR_REQ_GSSUSEROK, 1);
 
-	return (0);
+	върни (0);
 }
 
-int
-mm_answer_gss_userok(struct ssh *ssh, int sock, struct sshbuf *m)
+цяло
+mm_answer_gss_userok(struct ssh *ssh, цяло sock, struct sshbuf *m)
 {
-	int r, authenticated;
+	цяло r, authenticated;
 	const char *displayname;
 
-	if (!options.gss_authentication)
+	ако (!options.gss_authentication)
 		fatal_f("GSSAPI authentication not enabled");
 
 	authenticated = authctxt->valid && ssh_gssapi_userok(authctxt->user);
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_put_u32(m, authenticated)) != 0)
+	ако ((r = sshbuf_put_u32(m, authenticated)) != 0)
 		fatal_fr(r, "assemble");
 
 	debug3_f("sending result %d", authenticated);
@@ -2074,11 +2074,11 @@ mm_answer_gss_userok(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	auth_method = "gssapi-with-mic";
 
-	if ((displayname = ssh_gssapi_displayname()) != NULL)
+	ако ((displayname = ssh_gssapi_displayname()) != NULL)
 		auth2_record_info(authctxt, "%s", displayname);
 
 	/* Monitor loop will terminate if authenticated */
-	return (authenticated);
+	върни (authenticated);
 }
 #endif /* GSSAPI */
 

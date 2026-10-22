@@ -46,17 +46,17 @@ struct arena_node {
 };
 
 static struct arena_node *arena_head;
-static int tracking;
+static цяло tracking;
 
 static inline void
 arena_track(void *p)
 {
 	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
+	ако (!tracking || p == NULL)
+		върни;
 	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	ако (n == NULL)
+		върни;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
@@ -66,14 +66,14 @@ static inline void
 arena_untrack(void *p)
 {
 	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
+	ако (p == NULL)
+		върни;
+	за (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
+		ако ((*pp)->ptr == p) {
 			struct arena_node *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			върни;
 		}
 	}
 }
@@ -83,7 +83,7 @@ __wrap_malloc(size_t size)
 {
 	void *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	върни p;
 }
 
 void *
@@ -91,7 +91,7 @@ __wrap_calloc(size_t nmemb, size_t size)
 {
 	void *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	върни p;
 }
 
 void *
@@ -100,7 +100,7 @@ __wrap_realloc(void *ptr, size_t size)
 	arena_untrack(ptr);
 	void *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	върни p;
 }
 
 void
@@ -115,15 +115,15 @@ __wrap_strdup(const char *s)
 {
 	size_t len;
 	char *p;
-	if (s == NULL)
-		return NULL;
+	ако (s == NULL)
+		върни NULL;
 	len = strlen(s) + 1;
 	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	ако (p == NULL)
+		върни NULL;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	върни p;
 }
 
 void
@@ -137,7 +137,7 @@ fuzz_arena_release(void)
 {
 	struct arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	докато (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
@@ -149,7 +149,7 @@ fuzz_arena_cleanup(void)
 {
 	struct arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	докато (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

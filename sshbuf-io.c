@@ -30,38 +30,38 @@
 #include "atomicio.h"
 
 /* Load a file from a fd into a buffer */
-int
-sshbuf_load_fd(int fd, struct sshbuf **blobp)
+цяло
+sshbuf_load_fd(цяло fd, struct sshbuf **blobp)
 {
 	u_char buf[4096];
 	size_t len;
 	struct stat st;
-	int r;
+	цяло r;
 	struct sshbuf *blob;
 
 	*blobp = NULL;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_INVALID_FORMAT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	for (;;) {
-		if ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
-			if (errno == EPIPE)
+	ако (fstat(fd, &st) == -1)
+		върни SSH_ERR_SYSTEM_ERROR;
+	ако (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
+		върни SSH_ERR_INVALID_FORMAT;
+	ако ((blob = sshbuf_new()) == NULL)
+		върни SSH_ERR_ALLOC_FAIL;
+	за (;;) {
+		ако ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
+			ако (errno == EPIPE)
 				break;
 			r = SSH_ERR_SYSTEM_ERROR;
 			goto out;
 		}
-		if ((r = sshbuf_put(blob, buf, len)) != 0)
+		ако ((r = sshbuf_put(blob, buf, len)) != 0)
 			goto out;
-		if (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
+		ако (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (S_ISREG(st.st_mode) != 0 &&
+	ако (S_ISREG(st.st_mode) != 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
 		r = SSH_ERR_FILE_CHANGED;
 		goto out;
@@ -73,44 +73,44 @@ sshbuf_load_fd(int fd, struct sshbuf **blobp)
  out:
 	explicit_bzero(buf, sizeof(buf));
 	sshbuf_free(blob);
-	return r;
+	върни r;
 }
 
-int
+цяло
 sshbuf_load_file(const char *path, struct sshbuf **bufp)
 {
-	int r, fd, oerrno;
+	цяло r, fd, oerrno;
 
 	*bufp = NULL;
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, bufp)) != 0)
+	ако ((fd = open(path, O_RDONLY)) == -1)
+		върни SSH_ERR_SYSTEM_ERROR;
+	ако ((r = sshbuf_load_fd(fd, bufp)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if (r != 0)
+	ако (r != 0)
 		errno = oerrno;
-	return r;
+	върни r;
 }
 
-int
+цяло
 sshbuf_write_file(const char *path, struct sshbuf *buf)
 {
-	int fd, oerrno;
+	цяло fd, oerrno;
 
-	if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
+	ако ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+		върни SSH_ERR_SYSTEM_ERROR;
+	ако (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf)) != sshbuf_len(buf) || close(fd) != 0) {
 		oerrno = errno;
 		close(fd);
 		unlink(path);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		върни SSH_ERR_SYSTEM_ERROR;
 	}
-	return 0;
+	върни 0;
 }
 

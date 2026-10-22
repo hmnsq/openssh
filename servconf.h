@@ -53,7 +53,7 @@ struct sshbuf;
 #define SSHD_DEFAULT_X11_DISPLAY_OFFSET	10
 #ifdef WITH_ZLIB
 #define SSHD_DEFAULT_COMPRESSION	COMP_DELAYED
-#else
+#иначе
 #define SSHD_DEFAULT_COMPRESSION	COMP_NONE
 #endif
 
@@ -71,7 +71,7 @@ struct ssh;
  */
 struct queued_listenaddr {
 	char *addr;
-	int port; /* <=0 if unspecified */
+	цяло port; /* <=0 if unspecified */
 	char *rdomain;
 };
 
@@ -84,11 +84,11 @@ struct listenaddr {
 #define PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL	1
 #define PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE	2
 struct per_source_penalty {
-	int	enabled;
-	int	max_sources4;
-	int	max_sources6;
-	int	overflow_mode;
-	int	overflow_mode6;
+	цяло	enabled;
+	цяло	max_sources4;
+	цяло	max_sources6;
+	цяло	overflow_mode;
+	цяло	overflow_mode6;
 	double	penalty_crash;
 	double	penalty_grace;
 	double	penalty_authfail;
@@ -281,7 +281,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH)
-#else
+#иначе
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
 SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
@@ -290,7 +290,7 @@ SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
 #ifdef DISABLE_LASTLOG
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_UNSUPPORTED_INT(print_lastlog, PrintLastLog, SSHCFG_GLOBAL)
-#else
+#иначе
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #endif
@@ -301,7 +301,7 @@ SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #ifdef USE_AFS
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_INTFLAG(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE)
-#else /* USE_AFS */
+#иначе /* USE_AFS */
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL)
 #endif /* USE_AFS */
@@ -311,7 +311,7 @@ SSHCONF_INTFLAG(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL, 0, 
 SSHCONF_INTFLAG(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(kerberos_ticket_cleanup, KerberosTicketCleanup, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHD_CONFIG_KRB5_AFS
-#else /* KRB5 */
+#иначе /* KRB5 */
 #define SSHD_CONFIG_ENTRIES_KRB5 \
 SSHCONF_UNSUPPORTED_INT(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL) \
@@ -325,7 +325,7 @@ SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_
 SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
-#else /* GSSAPI */
+#иначе /* GSSAPI */
 #define SSHD_CONFIG_ENTRIES_GSS \
 SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
@@ -339,8 +339,8 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
 	SSHD_CONFIG_ENTRIES_GSS \
 
 /* Macros to declare ServerOptions member variables */
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	int var;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	int var;
+#define SSHCONF_INT(var, conf, flags, ms, def, cp)	цяло var;
+#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	цяло var;
 #define SSHCONF_STRING(var, conf, flags, cp)		char *var;
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	\
 	char **var; \
@@ -348,7 +348,7 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* empty */
 #define SSHCONF_NONCONF(funcsuffix)			/* empty */
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	int var;
+#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	цяло var;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	char *var;
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
@@ -357,7 +357,7 @@ typedef struct ServerOptions {
 	/* Ports */
 	u_int	num_ports;
 	u_int	ports_from_cmdline;
-	int	ports[MAX_PORTS];	/* Port number to listen on. */
+	цяло	ports[MAX_PORTS];	/* Port number to listen on. */
 	/* ListenAddress */
 	struct queued_listenaddr *queued_listen_addrs;
 	u_int	num_queued_listens;
@@ -365,11 +365,11 @@ typedef struct ServerOptions {
 	u_int	num_listen_addrs;
 	/* HostKey */
 	char   **host_key_files;	/* Files containing host keys. */
-	int	*host_key_file_userprovided; /* Key was specified by user. */
+	цяло	*host_key_file_userprovided; /* Key was specified by user. */
 	u_int	num_host_key_files;     /* Number of files for host keys. */
 	/* IPQoS */
-	int	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
-	int	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
+	цяло	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
+	цяло	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
 	/* GatewayPorts, StreamLocalBindMask, StreamLocalBindUnlink */
 	struct ForwardOptions fwd_opts;	/* forwarding options */
 	/* LogFacility */
@@ -377,7 +377,7 @@ typedef struct ServerOptions {
 	/* LogLevel */
 	LogLevel log_level;	/* Level for system logging. */
 	/* PermitUserEnvironment */
-	int     permit_user_env;	/* If true, read ~/.ssh/environment */
+	цяло     permit_user_env;	/* If true, read ~/.ssh/environment */
 	char   *permit_user_env_allowlist; /* pattern-list of allowed env names */
 	/* Subsystem */
 	u_int num_subsystems;
@@ -385,20 +385,20 @@ typedef struct ServerOptions {
 	char   **subsystem_command;
 	char   **subsystem_args;
 	/* MaxStartups */
-	int	max_startups_begin;
-	int	max_startups_rate;
-	int	max_startups;
+	цяло	max_startups_begin;
+	цяло	max_startups_rate;
+	цяло	max_startups;
 	/* PerSourceNetBlockSize */
-	int	per_source_masklen_ipv4;
-	int	per_source_masklen_ipv6;
+	цяло	per_source_masklen_ipv4;
+	цяло	per_source_masklen_ipv6;
 	/* PerSourcePenalties */
 	struct per_source_penalty per_source_penalty;
 	/* RekeyLimit */
 	int64_t rekey_limit;
-	int	rekey_interval;
+	цяло	rekey_interval;
 	/* PubkeyAuthOptions */
-	int	pubkey_auth_options;
-	int	max_pubkey_ok;
+	цяло	pubkey_auth_options;
+	цяло	max_pubkey_ok;
 	/* Passed by config but not keyword for this */
 	uint64_t timing_secret;
 }       ServerOptions;
@@ -416,13 +416,13 @@ typedef struct ServerOptions {
 /* Information about the incoming connection as used by Match */
 struct connection_info {
 	const char *user;
-	int user_invalid;
+	цяло user_invalid;
 	const char *host;	/* possibly resolved hostname */
 	const char *address;	/* remote address */
 	const char *laddress;	/* local address */
-	int lport;		/* local port */
+	цяло lport;		/* local port */
 	const char *rdomain;	/* routing domain if available */
-	int test;		/* test mode, allow some attributes to be
+	цяло test;		/* test mode, allow some attributes to be
 				 * unspecified */
 };
 
@@ -437,25 +437,25 @@ TAILQ_HEAD(include_list, include_item);
 
 void	 initialize_server_options(ServerOptions *);
 void	 fill_default_server_options(ServerOptions *);
-int	 process_server_config_line(ServerOptions *, char *, const char *, int,
-	    int *, struct connection_info *, struct include_list *includes);
+цяло	 process_server_config_line(ServerOptions *, char *, const char *, цяло,
+	    цяло *, struct connection_info *, struct include_list *includes);
 void	 load_server_config(const char *, struct sshbuf *);
 void	 parse_server_config(ServerOptions *, const char *, struct sshbuf *,
-	    struct include_list *includes, struct connection_info *, int);
+	    struct include_list *includes, struct connection_info *, цяло);
 void	 parse_server_match_config(ServerOptions *,
 	    struct include_list *includes, struct connection_info *);
-int	 parse_server_match_testspec(struct connection_info *, char *);
+цяло	 parse_server_match_testspec(struct connection_info *, char *);
 void	 servconf_merge_subsystems(ServerOptions *, ServerOptions *);
-void	 copy_set_server_options(ServerOptions *, ServerOptions *, int);
+void	 copy_set_server_options(ServerOptions *, ServerOptions *, цяло);
 void	 dump_config(ServerOptions *);
 char	*derelativise_path(const char *);
-void	 servconf_add_hostkey(const char *, const int,
-	    ServerOptions *, const char *path, int);
-void	 servconf_add_hostcert(const char *, const int,
+void	 servconf_add_hostkey(const char *, const цяло,
+	    ServerOptions *, const char *path, цяло);
+void	 servconf_add_hostcert(const char *, const цяло,
 	    ServerOptions *, const char *path);
 
-int	 serialise_server_options(const ServerOptions *, struct sshbuf **);
-int	 deserialise_server_options(struct sshbuf *, ServerOptions *);
+цяло	 serialise_server_options(const ServerOptions *, struct sshbuf **);
+цяло	 deserialise_server_options(struct sshbuf *, ServerOptions *);
 void	 free_server_options(ServerOptions *);
 
 #endif				/* SERVCONF_H */
