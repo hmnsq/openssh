@@ -15,80 +15,80 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSHERR_H
-#define _SSHERR_H
+#यदि_अपरिभाषितम् _SSHERR_H
+#परिभाषय _SSHERR_H
 
 /* XXX are these too granular? not granular enough? I can't decide - djm */
 
 /* Error codes */
-#define SSH_ERR_SUCCESS				0
-#define SSH_ERR_INTERNAL_ERROR			-1
-#define SSH_ERR_ALLOC_FAIL			-2
-#define SSH_ERR_MESSAGE_INCOMPLETE		-3
-#define SSH_ERR_INVALID_FORMAT			-4
-#define SSH_ERR_BIGNUM_IS_NEGATIVE		-5
-#define SSH_ERR_STRING_TOO_LARGE		-6
-#define SSH_ERR_BIGNUM_TOO_LARGE		-7
-#define SSH_ERR_ECPOINT_TOO_LARGE		-8
-#define SSH_ERR_NO_BUFFER_SPACE			-9
-#define SSH_ERR_INVALID_ARGUMENT		-10
-#define SSH_ERR_KEY_BITS_MISMATCH		-11
-#define SSH_ERR_EC_CURVE_INVALID		-12
-#define SSH_ERR_KEY_TYPE_MISMATCH		-13
-#define SSH_ERR_KEY_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
-#define SSH_ERR_EC_CURVE_MISMATCH		-15
-#define SSH_ERR_EXPECTED_CERT			-16
-#define SSH_ERR_KEY_LACKS_CERTBLOB		-17
-#define SSH_ERR_KEY_CERT_UNKNOWN_TYPE		-18
-#define SSH_ERR_KEY_CERT_INVALID_SIGN_KEY	-19
-#define SSH_ERR_KEY_INVALID_EC_VALUE		-20
-#define SSH_ERR_SIGNATURE_INVALID		-21
-#define SSH_ERR_LIBCRYPTO_ERROR			-22
-#define SSH_ERR_UNEXPECTED_TRAILING_DATA	-23
-#define SSH_ERR_SYSTEM_ERROR			-24
-#define SSH_ERR_KEY_CERT_INVALID		-25
-#define SSH_ERR_AGENT_COMMUNICATION		-26
-#define SSH_ERR_AGENT_FAILURE			-27
-#define SSH_ERR_DH_GEX_OUT_OF_RANGE		-28
-#define SSH_ERR_DISCONNECTED			-29
-#define SSH_ERR_MAC_INVALID			-30
-#define SSH_ERR_NO_CIPHER_ALG_MATCH		-31
-#define SSH_ERR_NO_MAC_ALG_MATCH		-32
-#define SSH_ERR_NO_COMPRESS_ALG_MATCH		-33
-#define SSH_ERR_NO_KEX_ALG_MATCH		-34
-#define SSH_ERR_NO_HOSTKEY_ALG_MATCH		-35
-#define SSH_ERR_NO_HOSTKEY_LOADED		-36
-#define SSH_ERR_PROTOCOL_MISMATCH		-37
-#define SSH_ERR_NO_PROTOCOL_VERSION		-38
-#define SSH_ERR_NEED_REKEY			-39
-#define SSH_ERR_PASSPHRASE_TOO_SHORT		-40
-#define SSH_ERR_FILE_CHANGED			-41
-#define SSH_ERR_KEY_UNKNOWN_CIPHER		-42
-#define SSH_ERR_KEY_WRONG_PASSPHRASE		-43
-#define SSH_ERR_KEY_BAD_PERMISSIONS		-44
-#define SSH_ERR_KEY_CERT_MISMATCH		-45
-#define SSH_ERR_KEY_NOT_FOUND			-46
-#define SSH_ERR_AGENT_NOT_PRESENT		-47
-#define SSH_ERR_AGENT_NO_IDENTITIES		-48
-#define SSH_ERR_BUFFER_READ_ONLY		-49
-#define SSH_ERR_KRL_BAD_MAGIC			-50
-#define SSH_ERR_KEY_REVOKED			-51
-#define SSH_ERR_CONN_CLOSED			-52
-#define SSH_ERR_CONN_TIMEOUT			-53
-#define SSH_ERR_CONN_CORRUPT			-54
-#define SSH_ERR_PROTOCOL_ERROR			-55
-#define SSH_ERR_KEY_LENGTH			-56
-#define SSH_ERR_NUMBER_TOO_LARGE		-57
-#define SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
-#define SSH_ERR_FEATURE_UNSUPPORTED		-59
-#define SSH_ERR_DEVICE_NOT_FOUND		-60
-#define SSH_ERR_CRYPTO_ERROR			-61
-#define SSH_ERR_INTERNAL_CRYPTO_ERROR		-62
-#define SSH_ERR_KEY_ALG_UNSUPPORTED		-63
+#परिभाषय SSH_ERR_SUCCESS				0
+#परिभाषय SSH_ERR_आन्तरिकम्_ERROR			-1
+#परिभाषय SSH_ERR_ALLOC_FAIL			-2
+#परिभाषय SSH_ERR_सन्देशः_INCOMPLETE		-3
+#परिभाषय SSH_ERR_INVALID_FORMAT			-4
+#परिभाषय SSH_ERR_BIGNUM_IS_NEGATIVE		-5
+#परिभाषय SSH_ERR_STRING_TOO_LARGE		-6
+#परिभाषय SSH_ERR_BIGNUM_TOO_LARGE		-7
+#परिभाषय SSH_ERR_ECPOINT_TOO_LARGE		-8
+#परिभाषय SSH_ERR_NO_बफर_SPACE			-9
+#परिभाषय SSH_ERR_INVALID_तर्कः		-10
+#परिभाषय SSH_ERR_कुञ्चिका_द्वयङ्काः_MISMATCH		-11
+#परिभाषय SSH_ERR_EC_वक्रम्_INVALID		-12
+#परिभाषय SSH_ERR_कुञ्चिका_TYPE_MISMATCH		-13
+#परिभाषय SSH_ERR_कुञ्चिका_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
+#परिभाषय SSH_ERR_EC_वक्रम्_MISMATCH		-15
+#परिभाषय SSH_ERR_EXPECTED_CERT			-16
+#परिभाषय SSH_ERR_कुञ्चिका_LACKS_CERTBLOB		-17
+#परिभाषय SSH_ERR_कुञ्चिका_CERT_UNKNOWN_TYPE		-18
+#परिभाषय SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका	-19
+#परिभाषय SSH_ERR_कुञ्चिका_INVALID_EC_मानम्		-20
+#परिभाषय SSH_ERR_SIGNATURE_INVALID		-21
+#परिभाषय SSH_ERR_LIBCRYPTO_ERROR			-22
+#परिभाषय SSH_ERR_UNEXPECTED_TRAILING_दत्त	-23
+#परिभाषय SSH_ERR_SYSTEM_ERROR			-24
+#परिभाषय SSH_ERR_कुञ्चिका_CERT_INVALID		-25
+#परिभाषय SSH_ERR_AGENT_COMMUNICATION		-26
+#परिभाषय SSH_ERR_AGENT_FAILURE			-27
+#परिभाषय SSH_ERR_DH_GEX_बहिर्गमनम्_सम्बन्धि_RANGE		-28
+#परिभाषय SSH_ERR_DISCONNECTED			-29
+#परिभाषय SSH_ERR_MAC_INVALID			-30
+#परिभाषय SSH_ERR_NO_CIPHER_ALG_मेलनम्		-31
+#परिभाषय SSH_ERR_NO_MAC_ALG_मेलनम्		-32
+#परिभाषय SSH_ERR_NO_COMPRESS_ALG_मेलनम्		-33
+#परिभाषय SSH_ERR_NO_KEX_ALG_मेलनम्		-34
+#परिभाषय SSH_ERR_NO_HOSTKEY_ALG_मेलनम्		-35
+#परिभाषय SSH_ERR_NO_HOSTKEY_LOADED		-36
+#परिभाषय SSH_ERR_PROTOCOL_MISMATCH		-37
+#परिभाषय SSH_ERR_NO_PROTOCOL_संस्करणम्		-38
+#परिभाषय SSH_ERR_NEED_REKEY			-39
+#परिभाषय SSH_ERR_PASSPHRASE_TOO_SHORT		-40
+#परिभाषय SSH_ERR_FILE_परिवर्तितम्			-41
+#परिभाषय SSH_ERR_कुञ्चिका_UNKNOWN_CIPHER		-42
+#परिभाषय SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE		-43
+#परिभाषय SSH_ERR_कुञ्चिका_BAD_PERMISSIONS		-44
+#परिभाषय SSH_ERR_कुञ्चिका_CERT_MISMATCH		-45
+#परिभाषय SSH_ERR_कुञ्चिका_NOT_प्राप्तम्			-46
+#परिभाषय SSH_ERR_AGENT_NOT_PRESENT		-47
+#परिभाषय SSH_ERR_AGENT_NO_IDENTITIES		-48
+#परिभाषय SSH_ERR_बफर_READ_ONLY		-49
+#परिभाषय SSH_ERR_KRL_BAD_MAGIC			-50
+#परिभाषय SSH_ERR_कुञ्चिका_REVOKED			-51
+#परिभाषय SSH_ERR_CONN_CLOSED			-52
+#परिभाषय SSH_ERR_CONN_TIMEOUT			-53
+#परिभाषय SSH_ERR_CONN_CORRUPT			-54
+#परिभाषय SSH_ERR_PROTOCOL_ERROR			-55
+#परिभाषय SSH_ERR_कुञ्चिका_दीर्घता			-56
+#परिभाषय SSH_ERR_सङ्ख्या_TOO_LARGE		-57
+#परिभाषय SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
+#परिभाषय SSH_ERR_FEATURE_UNSUPPORTED		-59
+#परिभाषय SSH_ERR_DEVICE_NOT_प्राप्तम्		-60
+#परिभाषय SSH_ERR_CRYPTO_ERROR			-61
+#परिभाषय SSH_ERR_आन्तरिकम्_CRYPTO_ERROR		-62
+#परिभाषय SSH_ERR_कुञ्चिका_ALG_UNSUPPORTED		-63
 
 /* Translate a numeric error code to a human-readable error string */
-const char *ssh_err(int n);
+ध्रुव वर्ण *ssh_err(पूर्णाङ्क n);
 /* Return most recent error from libcrypto. */
-const char *ssherr_libcrypto(void);
+ध्रुव वर्ण *ssherr_libcrypto(शून्य);
 
-#endif /* _SSHERR_H */
+#यदि_अन्तः /* _SSHERR_H */

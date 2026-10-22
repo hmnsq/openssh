@@ -5,206 +5,206 @@
  * Placed in the public domain.
  */
 
-#ifndef crypto_api_h
-#define crypto_api_h
+#यदि_अपरिभाषितम् crypto_api_h
+#परिभाषय crypto_api_h
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
 
-typedef int8_t crypto_int8;
-typedef uint8_t crypto_uint8;
-typedef int16_t crypto_int16;
-typedef uint16_t crypto_uint16;
-typedef int32_t crypto_int32;
-typedef uint32_t crypto_uint32;
-typedef int64_t crypto_int64;
-typedef uint64_t crypto_uint64;
+प्रकारनिर्देश int8_t crypto_int8;
+प्रकारनिर्देश uint8_t crypto_uint8;
+प्रकारनिर्देश int16_t crypto_int16;
+प्रकारनिर्देश uint16_t crypto_uint16;
+प्रकारनिर्देश int32_t crypto_int32;
+प्रकारनिर्देश uint32_t crypto_uint32;
+प्रकारनिर्देश int64_t crypto_int64;
+प्रकारनिर्देश uint64_t crypto_uint64;
 
-#define randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
-#define small_random32() arc4random()
+#परिभाषय randombytes(buf, buf_len) arc4random_buf((buf), (buf_len))
+#परिभाषय small_random32() arc4random()
 
-#define crypto_hash_sha512_BYTES 64U
+#परिभाषय crypto_hash_sha512_अष्टकानि 64U
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+#यदि_परिभाषितम् WITH_OPENSSL
+#अन्तर्भाव <openssl/evp.h>
+स्थिर अन्तःस्थ पूर्णाङ्क
+crypto_hash_sha512(अचिह्नित वर्ण *बहिर्गमनम्, ध्रुव अचिह्नित वर्ण *अन्तर्,
+    अचिह्नित दीर्घ दीर्घ inlen)
 {
 
-	if (!EVP_Digest(in, inlen, out, NULL, EVP_sha512(), NULL))
-		return -1;
-	return 0;
+	यदि (!EVP_Digest(अन्तर्, inlen, बहिर्गमनम्, रिक्त, EVP_sha512(), रिक्त))
+		प्रत्यागम -1;
+	प्रत्यागम 0;
 }
-#else /* WITH_OPENSSL */
+#अन्यथा /* WITH_OPENSSL */
 # ifdef HAVE_SHA2_H
 #  include <sha2.h>
 # endif
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
-    unsigned long long inlen)
+स्थिर अन्तःस्थ पूर्णाङ्क
+crypto_hash_sha512(अचिह्नित वर्ण *बहिर्गमनम्, ध्रुव अचिह्नित वर्ण *अन्तर्,
+    अचिह्नित दीर्घ दीर्घ inlen)
 {
 
 	SHA2_CTX ctx;
 
 	SHA512Init(&ctx);
-	SHA512Update(&ctx, in, inlen);
-	SHA512Final(out, &ctx);
-	return 0;
+	SHA512Update(&ctx, अन्तर्, inlen);
+	SHA512Final(बहिर्गमनम्, &ctx);
+	प्रत्यागम 0;
 }
-#endif /* WITH_OPENSSL */
+#यदि_अन्तः /* WITH_OPENSSL */
 
-#define crypto_sign_ed25519_SECRETKEYBYTES 64U
-#define crypto_sign_ed25519_PUBLICKEYBYTES 32U
-#define crypto_sign_ed25519_SEEDBYTES 32U
-#define crypto_sign_ed25519_BYTES 64U
+#परिभाषय crypto_sign_ed25519_SECRETKEYBYTES 64U
+#परिभाषय crypto_sign_ed25519_PUBLICKEYBYTES 32U
+#परिभाषय crypto_sign_ed25519_SEEDBYTES 32U
+#परिभाषय crypto_sign_ed25519_अष्टकानि 64U
 
-int	crypto_sign_ed25519_detached(unsigned char *, unsigned long long *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_verify_detached(const unsigned char *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_keypair(unsigned char *, unsigned char *);
-int	crypto_sign_ed25519_seed_keypair(unsigned char *, unsigned char *,
-    const unsigned char *);
+पूर्णाङ्क	crypto_sign_ed25519_detached(अचिह्नित वर्ण *, अचिह्नित दीर्घ दीर्घ *,
+    ध्रुव अचिह्नित वर्ण *, अचिह्नित दीर्घ दीर्घ, ध्रुव अचिह्नित वर्ण *);
+पूर्णाङ्क	crypto_sign_ed25519_verify_detached(ध्रुव अचिह्नित वर्ण *,
+    ध्रुव अचिह्नित वर्ण *, अचिह्नित दीर्घ दीर्घ, ध्रुव अचिह्नित वर्ण *);
+पूर्णाङ्क	crypto_sign_ed25519_keypair(अचिह्नित वर्ण *, अचिह्नित वर्ण *);
+पूर्णाङ्क	crypto_sign_ed25519_बीजम्_keypair(अचिह्नित वर्ण *, अचिह्नित वर्ण *,
+    ध्रुव अचिह्नित वर्ण *);
 
-#define crypto_kem_sntrup761_PUBLICKEYBYTES 1158
-#define crypto_kem_sntrup761_SECRETKEYBYTES 1763
-#define crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
-#define crypto_kem_sntrup761_BYTES 32
+#परिभाषय crypto_kem_sntrup761_PUBLICKEYBYTES 1158
+#परिभाषय crypto_kem_sntrup761_SECRETKEYBYTES 1763
+#परिभाषय crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
+#परिभाषय crypto_kem_sntrup761_अष्टकानि 32
 
-int	crypto_kem_sntrup761_enc(unsigned char *cstr, unsigned char *k,
-    const unsigned char *pk);
-int	crypto_kem_sntrup761_dec(unsigned char *k,
-    const unsigned char *cstr, const unsigned char *sk);
-int	crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk);
+पूर्णाङ्क	crypto_kem_sntrup761_enc(अचिह्नित वर्ण *cstr, अचिह्नित वर्ण *k,
+    ध्रुव अचिह्नित वर्ण *pk);
+पूर्णाङ्क	crypto_kem_sntrup761_dec(अचिह्नित वर्ण *k,
+    ध्रुव अचिह्नित वर्ण *cstr, ध्रुव अचिह्नित वर्ण *sk);
+पूर्णाङ्क	crypto_kem_sntrup761_keypair(अचिह्नित वर्ण *pk, अचिह्नित वर्ण *sk);
 
 /* ML-KEM-768 */
-#define crypto_kem_mlkem768_PUBLICKEYBYTES 1184
-#define crypto_kem_mlkem768_SECRETKEYBYTES 2400
-#define crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
-#define crypto_kem_mlkem768_BYTES 32
-#define crypto_kem_mlkem768_ENCSEEDBYTES 32
-#define crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
+#परिभाषय crypto_kem_mlkem768_PUBLICKEYBYTES 1184
+#परिभाषय crypto_kem_mlkem768_SECRETKEYBYTES 2400
+#परिभाषय crypto_kem_mlkem768_CIPHERTEXTBYTES 1088
+#परिभाषय crypto_kem_mlkem768_अष्टकानि 32
+#परिभाषय crypto_kem_mlkem768_ENCSEEDBYTES 32
+#परिभाषय crypto_kem_mlkem768_KEYPAIRSEEDBYTES 64
 
 /* Aliases for MLKEM768 */
-#define MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
-#define MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
-#define MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
-#define MLKEM768_BYTES crypto_kem_mlkem768_BYTES
+#परिभाषय MLKEM768_PUBLICKEYBYTES crypto_kem_mlkem768_PUBLICKEYBYTES
+#परिभाषय MLKEM768_SECRETKEYBYTES crypto_kem_mlkem768_SECRETKEYBYTES
+#परिभाषय MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
+#परिभाषय MLKEM768_अष्टकानि crypto_kem_mlkem768_अष्टकानि
 
-int crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+पूर्णाङ्क crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
-int crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    const uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], const uint8_t seed[64]);
-int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
-    uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
-    const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
-    const uint8_t seed[32]);
+पूर्णाङ्क crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_अष्टकानि],
+    ध्रुव uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
+पूर्णाङ्क crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_अष्टकानि],
+    ध्रुव uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    ध्रुव uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
+पूर्णाङ्क crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], ध्रुव uint8_t बीजम्[64]);
+पूर्णाङ्क crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+    uint8_t shared_secret[crypto_kem_mlkem768_अष्टकानि],
+    ध्रुव uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+    ध्रुव uint8_t बीजम्[32]);
 
 /* ML-DSA-44 */
-#define MLDSA44_PUBLICKEYBYTES 1312
-#define MLDSA44_SECRETKEYBYTES 2560
-#define MLDSA44_SIGBYTES 2420
-#define MLDSA44_SEEDBYTES 32
+#परिभाषय MLDSA44_PUBLICKEYBYTES 1312
+#परिभाषय MLDSA44_SECRETKEYBYTES 2560
+#परिभाषय MLDSA44_SIGBYTES 2420
+#परिभाषय MLDSA44_SEEDBYTES 32
 
-int crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+पूर्णाङ्क crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
-int crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES]);
-int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA44_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA44_SECRETKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa44_verify(ध्रुव uint8_t sig[MLDSA44_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA44_SECRETKEYBYTES], ध्रुव uint8_t बीजम्[MLDSA44_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA44_SECRETKEYBYTES],
+    ध्रुव uint8_t बीजम्[MLDSA44_SEEDBYTES]);
 
 /* ML-DSA-65 */
-#define MLDSA65_PUBLICKEYBYTES 1952
-#define MLDSA65_SECRETKEYBYTES 4032
-#define MLDSA65_SIGBYTES 3309
-#define MLDSA65_SEEDBYTES 32
+#परिभाषय MLDSA65_PUBLICKEYBYTES 1952
+#परिभाषय MLDSA65_SECRETKEYBYTES 4032
+#परिभाषय MLDSA65_SIGBYTES 3309
+#परिभाषय MLDSA65_SEEDBYTES 32
 
-#if 0
-int crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+#यदि 0
+पूर्णाङ्क crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
-int crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES]);
-int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA65_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA65_SEEDBYTES]);
-#endif
+पूर्णाङ्क crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA65_SECRETKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa65_verify(ध्रुव uint8_t sig[MLDSA65_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA65_SECRETKEYBYTES], ध्रुव uint8_t बीजम्[MLDSA65_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA65_SECRETKEYBYTES],
+    ध्रुव uint8_t बीजम्[MLDSA65_SEEDBYTES]);
+#यदि_अन्तः
 
 /* ML-DSA-87 */
-#define MLDSA87_PUBLICKEYBYTES 2592
-#define MLDSA87_SECRETKEYBYTES 4896
-#define MLDSA87_SIGBYTES 4627
-#define MLDSA87_SEEDBYTES 32
+#परिभाषय MLDSA87_PUBLICKEYBYTES 2592
+#परिभाषय MLDSA87_SECRETKEYBYTES 4896
+#परिभाषय MLDSA87_SIGBYTES 4627
+#परिभाषय MLDSA87_SEEDBYTES 32
 
-int crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+पूर्णाङ्क crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
-int crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
-    uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES]);
-int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA87_SECRETKEYBYTES],
-    const uint8_t seed[MLDSA87_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA87_SECRETKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa87_verify(ध्रुव uint8_t sig[MLDSA87_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
+पूर्णाङ्क crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+    uint8_t sk[MLDSA87_SECRETKEYBYTES], ध्रुव uint8_t बीजम्[MLDSA87_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA87_SECRETKEYBYTES],
+    ध्रुव uint8_t बीजम्[MLDSA87_SEEDBYTES]);
 
 /* MLDSA44-Ed25519-SHA512 */
-#define MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
-#define MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
-#define MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_BYTES)
+#परिभाषय MLDSA44_ED25519_PK_SZ (MLDSA44_PUBLICKEYBYTES + crypto_sign_ed25519_PUBLICKEYBYTES)
+#परिभाषय MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
+#परिभाषय MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_अष्टकानि)
 
-int crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+पूर्णाङ्क crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+पूर्णाङ्क crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES]);
-int crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ]);
+    ध्रुव uint8_t mldsa_बीजम्[MLDSA44_SEEDBYTES],
+    ध्रुव uint8_t ed25519_बीजम्[crypto_sign_ed25519_SEEDBYTES]);
+पूर्णाङ्क crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t sk[MLDSA44_ED25519_SK_SZ]);
+पूर्णाङ्क crypto_sign_mldsa44_ed25519_verify(ध्रुव uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    ध्रुव uint8_t *सन्देशः, आकार_t msglen,
+    ध्रुव uint8_t *ctx, आकार_t ctxlen,
+    ध्रुव uint8_t pk[MLDSA44_ED25519_PK_SZ]);
 
 /* Utility */
-void sha3_256(uint8_t digest[32], const uint8_t *data, size_t len);
-void sha3_512(uint8_t digest[64], const uint8_t *data, size_t len);
+शून्य sha3_256(uint8_t digest[32], ध्रुव uint8_t *दत्त, आकार_t len);
+शून्य sha3_512(uint8_t digest[64], ध्रुव uint8_t *दत्त, आकार_t len);
 
-#endif /* crypto_api_h */
+#यदि_अन्तः /* crypto_api_h */

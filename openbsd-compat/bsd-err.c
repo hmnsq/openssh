@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#यदि_अपरिभाषितम् HAVE_ERR
+शून्य
+err(पूर्णाङ्क r, ध्रुव वर्ण *fmt, ...)
 {
-	va_list args;
+	va_list तर्काः;
 
-	va_start(args, fmt);
+	va_start(तर्काः, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, तर्काः);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(तर्काः);
+	निर्गच्छ(r);
 }
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#यदि_अपरिभाषितम् HAVE_ERRX
+शून्य
+errx(पूर्णाङ्क r, ध्रुव वर्ण *fmt, ...)
 {
-	va_list args;
+	va_list तर्काः;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(तर्काः, fmt);
+	vfprintf(stderr, fmt, तर्काः);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(तर्काः);
+	निर्गच्छ(r);
 }
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#यदि_अपरिभाषितम् HAVE_WARN
+शून्य
+warn(ध्रुव वर्ण *fmt, ...)
 {
-	va_list args;
+	va_list तर्काः;
 
-	va_start(args, fmt);
+	va_start(तर्काः, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, तर्काः);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(तर्काः);
 }
-#endif
+#यदि_अन्तः

@@ -10,571 +10,571 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#ifdef __OpenBSD__
-#include <sys/sysctl.h>
-#endif
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/socket.h>
+#अन्तर्भाव <sys/queue.h>
+#अन्तर्भाव <sys/stat.h>
+#यदि_परिभाषितम् __OpenBSD__
+#अन्तर्भाव <sys/sysctl.h>
+#यदि_अन्तः
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#ifdef HAVE_NET_ROUTE_H
-#include <net/route.h>
-#endif
+#अन्तर्भाव <netinet/in.h>
+#अन्तर्भाव <netinet/ip.h>
+#यदि_परिभाषितम् HAVE_NET_ROUTE_H
+#अन्तर्भाव <net/route.h>
+#यदि_अन्तः
 
-#include <ctype.h>
-#include <glob.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <util.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <glob.h>
+#अन्तर्भाव <netdb.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <util.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "pathnames.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "channels.h"
-#include "groupaccess.h"
-#include "canohost.h"
-#include "packet.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "pathnames.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "mac.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "channels.h"
+#अन्तर्भाव "groupaccess.h"
+#अन्तर्भाव "canohost.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "myproposal.h"
+#अन्तर्भाव "digest.h"
+#अन्तर्भाव "version.h"
 
-#define SSHD_CONFIG_BLOB_VERSION	1
+#परिभाषय SSHD_CONFIG_BLOB_संस्करणम्	1
 
-#if !defined(SSHD_PAM_SERVICE)
+#यदि !defined(SSHD_PAM_SERVICE)
 # define SSHD_PAM_SERVICE		"sshd"
-#endif
+#यदि_अन्तः
 
-static void add_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void add_one_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void parse_server_config_depth(ServerOptions *options,
-    const char *filename, struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth);
+स्थिर शून्य सङ्कलय_listen_addr(ServerOptions *, ध्रुव वर्ण *,
+    ध्रुव वर्ण *, पूर्णाङ्क);
+स्थिर शून्य सङ्कलय_one_listen_addr(ServerOptions *, ध्रुव वर्ण *,
+    ध्रुव वर्ण *, पूर्णाङ्क);
+स्थिर शून्य parse_server_config_गभीरता(ServerOptions *options,
+    ध्रुव वर्ण *filename, संरचना sshbuf *conf, संरचना include_list *includes,
+    संरचना connection_info *connectinfo, पूर्णाङ्क flags, पूर्णाङ्क *activep, पूर्णाङ्क गभीरता);
 
-extern struct sshbuf *cfg;
+बाह्य संरचना sshbuf *cfg;
 
 /* Initializes the server options to their default values. */
 
-void
+शून्य
 initialize_server_options(ServerOptions *options)
 {
-	memset(options, 0, sizeof(*options));
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
-#define SSHCONF_STRING(var, conf, flags, cp)		options->var = NULL;
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	स्मृतिं_पूरय(options, 0, परिमाण(*options));
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp)		options->var = रिक्त;
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	options->nvar = 0; \
-	options->var = NULL;
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	options->var = रिक्त;
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	init_##funcsuffix(options)
-#define SSHCONF_NONCONF(funcsuffix) \
+#परिभाषय SSHCONF_NONCONF(funcsuffix) \
 	init_##funcsuffix(options)
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = NULL;
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = रिक्त;
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 	/* Using macros for these is a bit overkill but forces consistency */
-#define init_hostkeyfile(options) \
-	options->host_key_files = 0; \
-	options->num_host_key_files = 0; \
-	options->host_key_file_userprovided = NULL;
-#define init_ipqos(options) \
+#परिभाषय init_hostkeyfile(options) \
+	options->host_कुञ्चिका_files = 0; \
+	options->अङ्कः_host_कुञ्चिका_files = 0; \
+	options->host_कुञ्चिका_file_userprovided = रिक्त;
+#परिभाषय init_ipqos(options) \
 	options->ip_qos_interactive = -1; \
 	options->ip_qos_bulk = -1;
-#define init_listenaddress(options) \
-	options->queued_listen_addrs = NULL; \
-	options->num_queued_listens = 0; \
-	options->listen_addrs = NULL; \
-	options->num_listen_addrs = 0;
-#define init_logfacility(options) \
-	options->log_facility = SYSLOG_FACILITY_NOT_SET;
-#define init_loglevel(options) \
-	options->log_level = SYSLOG_LEVEL_NOT_SET;
-#define init_port(options) \
-	options->num_ports = 0; \
+#परिभाषय init_listenaddress(options) \
+	options->queued_listen_addrs = रिक्त; \
+	options->अङ्कः_queued_listens = 0; \
+	options->listen_addrs = रिक्त; \
+	options->अङ्कः_listen_addrs = 0;
+#परिभाषय init_logfacility(options) \
+	options->log_facility = SYSLOG_FACILITY_NOT_समुच्चयः;
+#परिभाषय init_loglevel(options) \
+	options->log_level = SYSLOG_LEVEL_NOT_समुच्चयः;
+#परिभाषय init_पत्तनम्(options) \
+	options->अङ्कः_ports = 0; \
 	options->ports_from_cmdline = 0;
-#define init_gatewayports(options) \
+#परिभाषय init_gatewayports(options) \
 	options->fwd_opts.gateway_ports = -1;
-#define init_streamlocalbindmask(options) \
-	options->fwd_opts.streamlocal_bind_mask = (mode_t)-1;
-#define init_streamlocalbindunlink(options) \
+#परिभाषय init_streamlocalbindmask(options) \
+	options->fwd_opts.streamlocal_bind_आवरणम् = (बहुलकम्_t)-1;
+#परिभाषय init_streamlocalbindunlink(options) \
 	options->fwd_opts.streamlocal_bind_unlink = -1;
-#define init_maxstartups(options) \
+#परिभाषय init_maxstartups(options) \
 	options->max_startups_begin = -1; \
-	options->max_startups_rate = -1; \
+	options->max_startups_दरः = -1; \
 	options->max_startups = -1;
-#define init_permituserenv(options) \
+#परिभाषय init_permituserenv(options) \
 	options->permit_user_env = -1; \
-	options->permit_user_env_allowlist = NULL;
-#define init_persourcenetblocksize(options) \
-	options->per_source_masklen_ipv4 = -1; \
-	options->per_source_masklen_ipv6 = -1;
-#define init_persourcepenalties(options) \
-	options->per_source_penalty_exempt = NULL; \
-	options->per_source_penalty.enabled = -1; \
-	options->per_source_penalty.max_sources4 = -1; \
-	options->per_source_penalty.max_sources6 = -1; \
-	options->per_source_penalty.overflow_mode = -1; \
-	options->per_source_penalty.overflow_mode6 = -1; \
-	options->per_source_penalty.penalty_crash = -1.0; \
-	options->per_source_penalty.penalty_authfail = -1.0; \
-	options->per_source_penalty.penalty_invaliduser = -1.0; \
-	options->per_source_penalty.penalty_noauth = -1.0; \
-	options->per_source_penalty.penalty_grace = -1.0; \
-	options->per_source_penalty.penalty_refuseconnection = -1.0; \
-	options->per_source_penalty.penalty_max = -1.0; \
-	options->per_source_penalty.penalty_min = -1.0;
-#define init_rekeylimit(options) \
-	options->rekey_limit = -1; \
+	options->permit_user_env_allowlist = रिक्त;
+#परिभाषय init_persourcenetblocksize(options) \
+	options->प्रत्येकम्_source_masklen_ipv4 = -1; \
+	options->प्रत्येकम्_source_masklen_ipv6 = -1;
+#परिभाषय init_persourcepenalties(options) \
+	options->प्रत्येकम्_source_penalty_exempt = रिक्त; \
+	options->प्रत्येकम्_source_penalty.enabled = -1; \
+	options->प्रत्येकम्_source_penalty.max_sources4 = -1; \
+	options->प्रत्येकम्_source_penalty.max_sources6 = -1; \
+	options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम् = -1; \
+	options->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6 = -1; \
+	options->प्रत्येकम्_source_penalty.penalty_crash = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_authfail = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_invaliduser = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_noauth = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_grace = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_refuseconnection = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_max = -1.0; \
+	options->प्रत्येकम्_source_penalty.penalty_min = -1.0;
+#परिभाषय init_rekeylimit(options) \
+	options->rekey_सीमा = -1; \
 	options->rekey_interval = -1;
-#define init_subsystem(options) \
-	options->num_subsystems = 0; \
-	options->subsystem_name = NULL; \
-	options->subsystem_command = NULL; \
-	options->subsystem_args = NULL;
-#define init_pubkey_auth_options(options) \
+#परिभाषय init_subsystem(options) \
+	options->अङ्कः_subsystems = 0; \
+	options->subsystem_name = रिक्त; \
+	options->subsystem_command = रिक्त; \
+	options->subsystem_तर्काः = रिक्त;
+#परिभाषय init_pubkey_auth_options(options) \
 	options->pubkey_auth_options = -1; \
 	options->max_pubkey_ok = -1;
-#define init_timingsecret(options) \
+#परिभाषय init_timingsecret(options) \
 	options->timing_secret = 0;
 
 	SSHD_CONFIG_ENTRIES
 
-#undef init_hostkeyfile
-#undef init_ipqos
-#undef init_listenaddress
-#undef init_logfacility
-#undef init_loglevel
-#undef init_port
-#undef init_gatewayports
-#undef init_streamlocalbindmask
-#undef init_streamlocalbindunlink
-#undef init_maxstartups
-#undef init_permituserenv
-#undef init_persourcenetblocksize
-#undef init_persourcepenalties
-#undef init_rekeylimit
-#undef init_subsystem
-#undef init_timingsecret
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय init_hostkeyfile
+#अपरिभाषय init_ipqos
+#अपरिभाषय init_listenaddress
+#अपरिभाषय init_logfacility
+#अपरिभाषय init_loglevel
+#अपरिभाषय init_पत्तनम्
+#अपरिभाषय init_gatewayports
+#अपरिभाषय init_streamlocalbindmask
+#अपरिभाषय init_streamlocalbindunlink
+#अपरिभाषय init_maxstartups
+#अपरिभाषय init_permituserenv
+#अपरिभाषय init_persourcenetblocksize
+#अपरिभाषय init_persourcepenalties
+#अपरिभाषय init_rekeylimit
+#अपरिभाषय init_subsystem
+#अपरिभाषय init_timingsecret
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-static int
-option_clear_or_none(const char *o)
+स्थिर पूर्णाङ्क
+option_clear_or_none(ध्रुव वर्ण *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	प्रत्यागम o == रिक्त || strcasecmp(o, "none") == 0;
 }
 
-static void
+स्थिर शून्य
 assemble_algorithms(ServerOptions *o)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int r;
+	वर्ण *all_cipher, *all_mac, *all_kex, *all_कुञ्चिका, *all_sig;
+	वर्ण *def_cipher, *def_mac, *def_kex, *def_कुञ्चिका, *def_sig;
+	पूर्णाङ्क r;
 
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_कुञ्चिका = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
-	def_cipher = match_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
-	def_mac = match_filter_allowlist(KEX_SERVER_MAC, all_mac);
-	def_kex = match_filter_allowlist(KEX_SERVER_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
-#define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
+	def_cipher = मेलनम्_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
+	def_mac = मेलनम्_filter_allowlist(KEX_SERVER_MAC, all_mac);
+	def_kex = मेलनम्_filter_allowlist(KEX_SERVER_KEX, all_kex);
+	def_कुञ्चिका = मेलनम्_filter_allowlist(KEX_DEFAULT_PK_ALG, all_कुञ्चिका);
+	def_sig = मेलनम्_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
+#परिभाषय ASSEMBLE(what, defaults, all) \
+	कुरु { \
+		यदि ((r = kex_assemble_नामानि(&o->what, defaults, all)) != 0) \
 			fatal_fr(r, "%s", #what); \
-	} while (0)
+	} यावत् (0)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostkeyalgorithms, def_key, all_key);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostkeyalgorithms, def_कुञ्चिका, all_कुञ्चिका);
+	ASSEMBLE(hostbased_accepted_algos, def_कुञ्चिका, all_कुञ्चिका);
+	ASSEMBLE(pubkey_accepted_algos, def_कुञ्चिका, all_कुञ्चिका);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
-#undef ASSEMBLE
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
+#अपरिभाषय ASSEMBLE
+	मुक्त(all_cipher);
+	मुक्त(all_mac);
+	मुक्त(all_kex);
+	मुक्त(all_कुञ्चिका);
+	मुक्त(all_sig);
+	मुक्त(def_cipher);
+	मुक्त(def_mac);
+	मुक्त(def_kex);
+	मुक्त(def_कुञ्चिका);
+	मुक्त(def_sig);
 }
 
-void
-servconf_add_hostkey(const char *file, const int line,
-    ServerOptions *options, const char *path, int userprovided)
+शून्य
+servconf_सङ्कलय_hostkey(ध्रुव वर्ण *file, ध्रुव पूर्णाङ्क पङ्क्तिः,
+    ServerOptions *options, ध्रुव वर्ण *मार्गः, पूर्णाङ्क userprovided)
 {
-	char *apath = derelativise_path(path);
+	वर्ण *apath = derelativise_मार्गः(मार्गः);
 
-	opt_array_append2(file, line, "HostKey",
-	    &options->host_key_files, &options->host_key_file_userprovided,
-	    &options->num_host_key_files, apath, userprovided);
-	free(apath);
+	opt_array_append2(file, पङ्क्तिः, "HostKey",
+	    &options->host_कुञ्चिका_files, &options->host_कुञ्चिका_file_userprovided,
+	    &options->अङ्कः_host_कुञ्चिका_files, apath, userprovided);
+	मुक्त(apath);
 }
 
-void
-servconf_add_hostcert(const char *file, const int line,
-    ServerOptions *options, const char *path)
+शून्य
+servconf_सङ्कलय_hostcert(ध्रुव वर्ण *file, ध्रुव पूर्णाङ्क पङ्क्तिः,
+    ServerOptions *options, ध्रुव वर्ण *मार्गः)
 {
-	char *apath = derelativise_path(path);
+	वर्ण *apath = derelativise_मार्गः(मार्गः);
 
-	opt_array_append(file, line, "HostCertificate",
-	    &options->host_cert_files, &options->num_host_cert_files, apath);
-	free(apath);
+	opt_array_append(file, पङ्क्तिः, "HostCertificate",
+	    &options->host_cert_files, &options->अङ्कः_host_cert_files, apath);
+	मुक्त(apath);
 }
 
-void
+शून्य
 fill_default_server_options(ServerOptions *options)
 {
 	u_int i;
 
 	/* Portable-specific overrides */
-#ifdef SKIP_PRIVDROP
-	if (options->allow_streamlocal_forwarding != -1 &&
+#यदि_परिभाषितम् SKIP_PRIVDROP
+	यदि (options->allow_streamlocal_forwarding != -1 &&
 	    options->allow_streamlocal_forwarding != FORWARD_DENY)
 		logit("StreamlocalForwarding is not supported on this system");
 	options->allow_streamlocal_forwarding = 0;
-	if (options->fwd_opts.gateway_ports != -1 &&
+	यदि (options->fwd_opts.gateway_ports != -1 &&
 	    options->fwd_opts.gateway_ports != 0)
 		logit("GatewayPorts is not supported on this system");
 	options->fwd_opts.gateway_ports = 0;
-#endif
+#यदि_अन्तः
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if (options->var == -1) \
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	यदि (options->var == -1) \
 		options->var = def;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if (options->var == -1) \
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	यदि (options->var == -1) \
 		options->var = def;
-#define SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* done manually */
-#define SSHCONF_NONCONF(funcsuffix)			/* done manually */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* done manually */
+#परिभाषय SSHCONF_NONCONF(funcsuffix)			/* done manually */
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	कुरु { \
+		मुक्त(options->var); \
+		options->var = रिक्त; \
+	} यावत् (0);
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 	/* XXX maybe use macros here too to force consistency? */
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
-#ifdef USE_PAM
-	if (options->pam_service_name == NULL)
+#यदि_परिभाषितम् USE_PAM
+	यदि (options->pam_service_name == रिक्त)
 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
-#endif
+#यदि_अन्तः
 
-	if (options->num_host_key_files == 0) {
+	यदि (options->अङ्कः_host_कुञ्चिका_files == 0) {
 		/* fill default hostkeys */
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_RSA_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ECDSA_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ED25519_KEY_FILE, 0);
-		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_MLDSA44_ED25519_KEY_FILE, 0);
+		servconf_सङ्कलय_hostkey("[default]", 0, options,
+		    मार्गः_HOST_RSA_कुञ्चिका_FILE, 0);
+		servconf_सङ्कलय_hostkey("[default]", 0, options,
+		    मार्गः_HOST_ECDSA_कुञ्चिका_FILE, 0);
+		servconf_सङ्कलय_hostkey("[default]", 0, options,
+		    मार्गः_HOST_ED25519_कुञ्चिका_FILE, 0);
+		servconf_सङ्कलय_hostkey("[default]", 0, options,
+		    मार्गः_HOST_MLDSA44_ED25519_कुञ्चिका_FILE, 0);
 	}
 	/* No certificates by default */
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->listen_addrs == NULL)
-		add_listen_addr(options, NULL, NULL, 0);
-	if (options->pid_file == NULL)
-		options->pid_file = xstrdup(_PATH_SSH_DAEMON_PID_FILE);
-	if (options->moduli_file == NULL)
-		options->moduli_file = xstrdup(_PATH_DH_MODULI);
-	if (options->xauth_location == NULL)
-		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	यदि (options->अङ्कः_ports == 0)
+		options->ports[options->अङ्कः_ports++] = SSH_DEFAULT_पत्तनम्;
+	यदि (options->listen_addrs == रिक्त)
+		सङ्कलय_listen_addr(options, रिक्त, रिक्त, 0);
+	यदि (options->pid_file == रिक्त)
+		options->pid_file = xstrdup(मार्गः_SSH_DAEMON_PID_FILE);
+	यदि (options->moduli_file == रिक्त)
+		options->moduli_file = xstrdup(मार्गः_DH_MODULI);
+	यदि (options->xauth_location == रिक्त)
+		options->xauth_location = xstrdup(मार्गः_XAUTH);
+	यदि (options->log_facility == SYSLOG_FACILITY_NOT_समुच्चयः)
 		options->log_facility = SYSLOG_FACILITY_AUTH;
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	यदि (options->log_level == SYSLOG_LEVEL_NOT_समुच्चयः)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->permit_user_env == -1) {
+	यदि (options->permit_user_env == -1) {
 		options->permit_user_env = 0;
-		options->permit_user_env_allowlist = NULL;
+		options->permit_user_env_allowlist = रिक्त;
 	}
-	if (options->rekey_limit == -1)
-		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	यदि (options->rekey_सीमा == -1)
+		options->rekey_सीमा = 0;
+	यदि (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->fwd_opts.gateway_ports == -1)
+	यदि (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->max_startups == -1)
+	यदि (options->max_startups == -1)
 		options->max_startups = 100;
-	if (options->max_startups_rate == -1)
-		options->max_startups_rate = 30;		/* 30% */
-	if (options->max_startups_begin == -1)
+	यदि (options->max_startups_दरः == -1)
+		options->max_startups_दरः = 30;		/* 30% */
+	यदि (options->max_startups_begin == -1)
 		options->max_startups_begin = 10;
-	if (options->per_source_masklen_ipv4 == -1)
-		options->per_source_masklen_ipv4 = 32;
-	if (options->per_source_masklen_ipv6 == -1)
-		options->per_source_masklen_ipv6 = 128;
-	if (options->per_source_penalty.enabled == -1)
-		options->per_source_penalty.enabled = 1;
-	if (options->per_source_penalty.max_sources4 == -1)
-		options->per_source_penalty.max_sources4 = 65536;
-	if (options->per_source_penalty.max_sources6 == -1)
-		options->per_source_penalty.max_sources6 = 65536;
-	if (options->per_source_penalty.overflow_mode == -1)
-		options->per_source_penalty.overflow_mode = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-	if (options->per_source_penalty.overflow_mode6 == -1)
-		options->per_source_penalty.overflow_mode6 = options->per_source_penalty.overflow_mode;
-	if (options->per_source_penalty.penalty_crash < 0.0)
-		options->per_source_penalty.penalty_crash = 90.0;
-	if (options->per_source_penalty.penalty_grace < 0.0)
-		options->per_source_penalty.penalty_grace = 10.0;
-	if (options->per_source_penalty.penalty_authfail < 0.0)
-		options->per_source_penalty.penalty_authfail = 5.0;
-	if (options->per_source_penalty.penalty_invaliduser < 0.0)
-		options->per_source_penalty.penalty_invaliduser = 5.0;
-	if (options->per_source_penalty.penalty_noauth < 0.0)
-		options->per_source_penalty.penalty_noauth = 1.0;
-	if (options->per_source_penalty.penalty_refuseconnection < 0.0)
-		options->per_source_penalty.penalty_refuseconnection = 10.0;
-	if (options->per_source_penalty.penalty_min < 0.0)
-		options->per_source_penalty.penalty_min = 15.0;
-	if (options->per_source_penalty.penalty_max < 0.0)
-		options->per_source_penalty.penalty_max = 600.0;
-	if (options->num_authkeys_files == 0) {
+	यदि (options->प्रत्येकम्_source_masklen_ipv4 == -1)
+		options->प्रत्येकम्_source_masklen_ipv4 = 32;
+	यदि (options->प्रत्येकम्_source_masklen_ipv6 == -1)
+		options->प्रत्येकम्_source_masklen_ipv6 = 128;
+	यदि (options->प्रत्येकम्_source_penalty.enabled == -1)
+		options->प्रत्येकम्_source_penalty.enabled = 1;
+	यदि (options->प्रत्येकम्_source_penalty.max_sources4 == -1)
+		options->प्रत्येकम्_source_penalty.max_sources4 = 65536;
+	यदि (options->प्रत्येकम्_source_penalty.max_sources6 == -1)
+		options->प्रत्येकम्_source_penalty.max_sources6 = 65536;
+	यदि (options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम् == -1)
+		options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम् = प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_PERMISSIVE;
+	यदि (options->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6 == -1)
+		options->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6 = options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम्;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_crash < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_crash = 90.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_grace < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_grace = 10.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_authfail < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_authfail = 5.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_invaliduser < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_invaliduser = 5.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_noauth < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_noauth = 1.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_refuseconnection < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_refuseconnection = 10.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_min < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_min = 15.0;
+	यदि (options->प्रत्येकम्_source_penalty.penalty_max < 0.0)
+		options->प्रत्येकम्_source_penalty.penalty_max = 600.0;
+	यदि (options->अङ्कः_authkeys_files == 0) {
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS);
+		    &options->authorized_कुञ्चिकाः_files,
+		    &options->अङ्कः_authkeys_files,
+		    मार्गः_SSH_USER_PERMITTED_कुञ्चिकाः);
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS2);
+		    &options->authorized_कुञ्चिकाः_files,
+		    &options->अङ्कः_authkeys_files,
+		    मार्गः_SSH_USER_PERMITTED_KEYS2);
 	}
-	if (options->ip_qos_interactive == -1)
+	यदि (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	यदि (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->version_addendum == NULL)
-		options->version_addendum = xstrdup("");
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	यदि (options->संस्करणम्_addendum == रिक्त)
+		options->संस्करणम्_addendum = xstrdup("");
+	यदि (options->fwd_opts.streamlocal_bind_आवरणम् == (बहुलकम्_t)-1)
+		options->fwd_opts.streamlocal_bind_आवरणम् = 0177;
+	यदि (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->sk_provider == NULL)
+	यदि (options->sk_provider == रिक्त)
 		options->sk_provider = xstrdup("internal");
-	if (options->sshd_session_path == NULL)
-		options->sshd_session_path = xstrdup(_PATH_SSHD_SESSION);
-	if (options->sshd_auth_path == NULL)
-		options->sshd_auth_path = xstrdup(_PATH_SSHD_AUTH);
-	if (options->pubkey_auth_options == -1) {
+	यदि (options->sshd_session_मार्गः == रिक्त)
+		options->sshd_session_मार्गः = xstrdup(मार्गः_SSHD_SESSION);
+	यदि (options->sshd_auth_मार्गः == रिक्त)
+		options->sshd_auth_मार्गः = xstrdup(मार्गः_SSHD_AUTH);
+	यदि (options->pubkey_auth_options == -1) {
 		options->pubkey_auth_options = 0;
 		options->max_pubkey_ok = DEFAULT_AUTH_FAIL_MAX;
 	}
-	if (options->agent_socket_path == NULL)
-		options->agent_socket_path = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
+	यदि (options->agent_socket_मार्गः == रिक्त)
+		options->agent_socket_मार्गः = xstrdup(मार्गः_SSH_AGENT_SOCKET_DIR);
 
 	assemble_algorithms(options);
 
-#define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+#परिभाषय CLEAR_ON_NONE(v) \
+	कुरु { \
+		यदि (option_clear_or_none(v)) { \
+			मुक्त(v); \
+			v = रिक्त; \
 		} \
-	} while(0)
-#define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	} यावत्(0)
+#परिभाषय CLEAR_ON_NONE_ARRAY(v, nv, none) \
+	कुरु { \
+		यदि (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			मुक्त(options->v[0]); \
+			मुक्त(options->v); \
+			options->v = रिक्त; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} यावत् (0)
 	CLEAR_ON_NONE(options->pid_file);
 	CLEAR_ON_NONE(options->xauth_location);
 	CLEAR_ON_NONE(options->banner);
-	CLEAR_ON_NONE(options->trusted_user_ca_keys);
+	CLEAR_ON_NONE(options->trusted_user_ca_कुञ्चिकाः);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->authorized_principals_file);
 	CLEAR_ON_NONE(options->adm_forced_command);
 	CLEAR_ON_NONE(options->chroot_directory);
 	CLEAR_ON_NONE(options->routing_domain);
-	CLEAR_ON_NONE(options->host_key_agent);
-	CLEAR_ON_NONE(options->per_source_penalty_exempt);
-	CLEAR_ON_NONE(options->agent_socket_path);
+	CLEAR_ON_NONE(options->host_कुञ्चिका_agent);
+	CLEAR_ON_NONE(options->प्रत्येकम्_source_penalty_exempt);
+	CLEAR_ON_NONE(options->agent_socket_मार्गः);
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		CLEAR_ON_NONE(options->host_key_files[i]);
-	for (i = 0; i < options->num_host_cert_files; i++)
+	प्रति (i = 0; i < options->अङ्कः_host_कुञ्चिका_files; i++)
+		CLEAR_ON_NONE(options->host_कुञ्चिका_files[i]);
+	प्रति (i = 0; i < options->अङ्कः_host_cert_files; i++)
 		CLEAR_ON_NONE(options->host_cert_files[i]);
 
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(auth_methods, num_auth_methods, "any");
-	CLEAR_ON_NONE_ARRAY(revoked_keys_files, num_revoked_keys_files, "none");
-	CLEAR_ON_NONE_ARRAY(authorized_keys_files, num_authkeys_files, "none");
-#undef CLEAR_ON_NONE
-#undef CLEAR_ON_NONE_ARRAY
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, अङ्कः_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(auth_methods, अङ्कः_auth_methods, "any");
+	CLEAR_ON_NONE_ARRAY(revoked_कुञ्चिकाः_files, अङ्कः_revoked_कुञ्चिकाः_files, "none");
+	CLEAR_ON_NONE_ARRAY(authorized_कुञ्चिकाः_files, अङ्कः_authkeys_files, "none");
+#अपरिभाषय CLEAR_ON_NONE
+#अपरिभाषय CLEAR_ON_NONE_ARRAY
 }
 
 /* Macros to declare ServerOpCodes enum values */
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	s##conf,
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	s##conf,
-#define SSHCONF_STRING(var, conf, flags, cp)		s##conf,
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	s##conf,
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	s##conf,
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp)	s##conf,
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp)	s##conf,
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp)		s##conf,
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	s##conf,
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	s##conf,
+#परिभाषय SSHCONF_NONCONF(funcsuffix)			/*रिक्तानि*/
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/*रिक्तानि*/
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 /* Keyword tokens. */
-typedef enum {
+प्रकारनिर्देश गणना {
 	sBadOption,		/* == unknown option */
 	SSHD_CONFIG_ENTRIES
-	sMatch, sInclude,
+	s_मेलनम्, sInclude,
 	sDeprecated, sIgnore, sUnsupported
 } ServerOpCodes;
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
-#define SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
-#define SSHCFG_MATCH		0x02	/* allowed inside a Match section */
-#define SSHCFG_ALL		(SSHCFG_GLOBAL|SSHCFG_MATCH)
-#define SSHCFG_NEVERMATCH	0x04  /* Match never matches; internal only */
-#define SSHCFG_MATCH_ONLY	0x08  /* Match only in conditional blocks; internal only */
+#परिभाषय SSHCFG_GLOBAL		0x01	/* allowed in main section of config */
+#परिभाषय SSHCFG_मेलनम्		0x02	/* allowed inside a Match section */
+#परिभाषय SSHCFG_ALL		(SSHCFG_GLOBAL|SSHCFG_मेलनम्)
+#परिभाषय SSHCFG_NEVERMATCH	0x04  /* Match never matches; internal only */
+#परिभाषय SSHCFG_मेलनम्_ONLY	0x08  /* Match only in conditional blocks; internal only */
 
 /* Macros to define keywords[] entries */
-#define SSHCONF_KW(conf, flags)		{ #conf, s##conf, flags },
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_STRING(var, conf, flags, cp)		SSHCONF_KW(conf, flags)
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	SSHCONF_KW(conf, flags)
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATED				sDeprecated
-#define SSHCONF_IGNORE					sIgnore
-#define SSHCONF_DEPRECATE(conf, flags, opcode) \
+#परिभाषय SSHCONF_KW(conf, flags)		{ #conf, s##conf, flags },
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp)	SSHCONF_KW(conf, flags)
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp)	SSHCONF_KW(conf, flags)
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp)		SSHCONF_KW(conf, flags)
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	SSHCONF_KW(conf, flags)
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	SSHCONF_KW(conf, flags)
+#परिभाषय SSHCONF_NONCONF(funcsuffix)			/*रिक्तानि*/
+#परिभाषय SSHCONF_DEPRECATED				sDeprecated
+#परिभाषय SSHCONF_IGNORE					sIgnore
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode) \
 	{ #conf, opcode, flags },
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags) \
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags) \
 	{ #conf, sUnsupported, flags },
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
 	{ #conf, sUnsupported, flags },
-#define SSHCONF_ALIAS(old, conf, flags) \
+#परिभाषय SSHCONF_ALIAS(old, conf, flags) \
 	{ #old, s##conf, flags },
 
 /* Textual representation of the tokens. */
-static struct {
-	const char *name;
+स्थिर संरचना {
+	ध्रुव वर्ण *name;
 	ServerOpCodes opcode;
 	u_int flags;
 } keywords[] = {
 	SSHD_CONFIG_ENTRIES
-	{ "match", sMatch, SSHCFG_ALL },
+	{ "match", s_मेलनम्, SSHCFG_ALL },
 	{ "include", sInclude, SSHCFG_ALL },
-	{ NULL, sBadOption, 0 }
+	{ रिक्त, sBadOption, 0 }
 };
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATED
-#undef SSHCONF_IGNORE
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATED
+#अपरिभाषय SSHCONF_IGNORE
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
-static struct {
-	int val;
-	char *text;
+स्थिर संरचना {
+	पूर्णाङ्क val;
+	वर्ण *text;
 } tunmode_desc[] = {
 	{ SSH_TUNMODE_NO, "no" },
 	{ SSH_TUNMODE_POINTOPOINT, "point-to-point" },
 	{ SSH_TUNMODE_ETHERNET, "ethernet" },
 	{ SSH_TUNMODE_YES, "yes" },
-	{ -1, NULL }
+	{ -1, रिक्त }
 };
 
 /* Returns an opcode name from its number */
 
-static const char *
-lookup_opcode_name(ServerOpCodes code)
+स्थिर ध्रुव वर्ण *
+lookup_opcode_name(ServerOpCodes संहिता)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	प्रति (i = 0; keywords[i].name != रिक्त; i++)
+		यदि (keywords[i].opcode == संहिता)
+			प्रत्यागम(keywords[i].name);
+	प्रत्यागम "UNKNOWN";
 }
 
 
@@ -582,181 +582,181 @@ lookup_opcode_name(ServerOpCodes code)
  * Returns the number of the token pointed to by cp or sBadOption.
  */
 
-static ServerOpCodes
-parse_token(const char *cp, const char *filename,
-	    int linenum, u_int *flags)
+स्थिर ServerOpCodes
+parse_token(ध्रुव वर्ण *cp, ध्रुव वर्ण *filename,
+	    पूर्णाङ्क linenum, u_int *flags)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcasecmp(cp, keywords[i].name) == 0) {
+	प्रति (i = 0; keywords[i].name; i++)
+		यदि (strcasecmp(cp, keywords[i].name) == 0) {
 			*flags = keywords[i].flags;
-			return keywords[i].opcode;
+			प्रत्यागम keywords[i].opcode;
 		}
 
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return sBadOption;
+	प्रत्यागम sBadOption;
 }
 
-char *
-derelativise_path(const char *path)
+वर्ण *
+derelativise_मार्गः(ध्रुव वर्ण *मार्गः)
 {
-	char *expanded, *ret, cwd[PATH_MAX];
+	वर्ण *expanded, *ret, cwd[PATH_MAX];
 
-	if (strcasecmp(path, "none") == 0)
-		return xstrdup("none");
-	expanded = tilde_expand_filename(path, getuid());
-	if (path_absolute(expanded))
-		return expanded;
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	यदि (strcasecmp(मार्गः, "none") == 0)
+		प्रत्यागम xstrdup("none");
+	expanded = tilde_expand_filename(मार्गः, getuid());
+	यदि (मार्गः_absolute(expanded))
+		प्रत्यागम expanded;
+	यदि (getcwd(cwd, परिमाण(cwd)) == रिक्त)
 		fatal_f("getcwd: %s", strerror(errno));
 	xasprintf(&ret, "%s/%s", cwd, expanded);
-	free(expanded);
-	return ret;
+	मुक्त(expanded);
+	प्रत्यागम ret;
 }
 
-static void
-add_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+स्थिर शून्य
+सङ्कलय_listen_addr(ServerOptions *options, ध्रुव वर्ण *addr,
+    ध्रुव वर्ण *rdomain, पूर्णाङ्क पत्तनम्)
 {
 	u_int i;
 
-	if (port > 0)
-		add_one_listen_addr(options, addr, rdomain, port);
-	else {
-		for (i = 0; i < options->num_ports; i++) {
-			add_one_listen_addr(options, addr, rdomain,
+	यदि (पत्तनम् > 0)
+		सङ्कलय_one_listen_addr(options, addr, rdomain, पत्तनम्);
+	अन्यथा {
+		प्रति (i = 0; i < options->अङ्कः_ports; i++) {
+			सङ्कलय_one_listen_addr(options, addr, rdomain,
 			    options->ports[i]);
 		}
 	}
 }
 
-static void
-add_one_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+स्थिर शून्य
+सङ्कलय_one_listen_addr(ServerOptions *options, ध्रुव वर्ण *addr,
+    ध्रुव वर्ण *rdomain, पूर्णाङ्क पत्तनम्)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr;
+	संरचना addrinfo hints, *ai, *aitop;
+	वर्ण strport[NI_MAXSERV];
+	पूर्णाङ्क gaierr;
 	u_int i;
 
 	/* Find listen_addrs entry for this rdomain */
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		if (rdomain == NULL && options->listen_addrs[i].rdomain == NULL)
-			break;
-		if (rdomain == NULL || options->listen_addrs[i].rdomain == NULL)
-			continue;
-		if (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
-			break;
+	प्रति (i = 0; i < options->अङ्कः_listen_addrs; i++) {
+		यदि (rdomain == रिक्त && options->listen_addrs[i].rdomain == रिक्त)
+			भङ्ग;
+		यदि (rdomain == रिक्त || options->listen_addrs[i].rdomain == रिक्त)
+			अनुवर्त;
+		यदि (वाक्यं_तुलय(rdomain, options->listen_addrs[i].rdomain) == 0)
+			भङ्ग;
 	}
-	if (i >= options->num_listen_addrs) {
+	यदि (i >= options->अङ्कः_listen_addrs) {
 		/* No entry for this rdomain; allocate one */
-		if (i >= INT_MAX)
+		यदि (i >= अधिकतम_पूर्णाङ्कः)
 			fatal_f("too many listen addresses");
 		options->listen_addrs = xrecallocarray(options->listen_addrs,
-		    options->num_listen_addrs, options->num_listen_addrs + 1,
-		    sizeof(*options->listen_addrs));
-		i = options->num_listen_addrs++;
-		if (rdomain != NULL)
+		    options->अङ्कः_listen_addrs, options->अङ्कः_listen_addrs + 1,
+		    परिमाण(*options->listen_addrs));
+		i = options->अङ्कः_listen_addrs++;
+		यदि (rdomain != रिक्त)
 			options->listen_addrs[i].rdomain = xstrdup(rdomain);
 	}
 	/* options->listen_addrs[i] points to the addresses for this rdomain */
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = options->address_family;
+	स्मृतिं_पूरय(&hints, 0, परिमाण(hints));
+	hints.ai_family = options->स्थानाङ्कः_family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = (addr == NULL) ? AI_PASSIVE : 0;
-	snprintf(strport, sizeof strport, "%d", port);
-	if ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
+	hints.ai_flags = (addr == रिक्त) ? AI_PASSIVE : 0;
+	snprintf(strport, परिमाण strport, "%d", पत्तनम्);
+	यदि ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
 		fatal("bad addr or host: %s (%s)",
 		    addr ? addr : "<NULL>",
 		    ssh_gai_strerror(gaierr));
-	for (ai = aitop; ai->ai_next; ai = ai->ai_next)
+	प्रति (ai = aitop; ai->ai_next; ai = ai->ai_next)
 		;
 	ai->ai_next = options->listen_addrs[i].addrs;
 	options->listen_addrs[i].addrs = aitop;
 }
 
 /* Returns nonzero if the routing domain name is valid */
-static int
-valid_rdomain(const char *name)
+स्थिर पूर्णाङ्क
+valid_rdomain(ध्रुव वर्ण *name)
 {
-#if defined(HAVE_SYS_VALID_RDOMAIN)
-	return sys_valid_rdomain(name);
-#elif defined(__OpenBSD__)
-	const char *errstr;
-	long long num;
-	struct rt_tableinfo info;
-	int mib[6];
-	size_t miblen = sizeof(mib);
+#यदि defined(HAVE_SYS_VALID_RDOMAIN)
+	प्रत्यागम sys_valid_rdomain(name);
+#नोचेद्यदि defined(__OpenBSD__)
+	ध्रुव वर्ण *errstr;
+	दीर्घ दीर्घ अङ्कः;
+	संरचना rt_tableinfo info;
+	पूर्णाङ्क mib[6];
+	आकार_t miblen = परिमाण(mib);
 
-	if (name == NULL)
-		return 1;
+	यदि (name == रिक्त)
+		प्रत्यागम 1;
 
-	num = strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL)
-		return 0;
+	अङ्कः = strtonum(name, 0, 255, &errstr);
+	यदि (errstr != रिक्त)
+		प्रत्यागम 0;
 
 	/* Check whether the table actually exists */
-	memset(mib, 0, sizeof(mib));
+	स्मृतिं_पूरय(mib, 0, परिमाण(mib));
 	mib[0] = CTL_NET;
 	mib[1] = PF_ROUTE;
-	mib[4] = NET_RT_TABLE;
-	mib[5] = (int)num;
-	if (sysctl(mib, 6, &info, &miblen, NULL, 0) == -1)
-		return 0;
+	mib[4] = NET_RT_सारणी;
+	mib[5] = (पूर्णाङ्क)अङ्कः;
+	यदि (sysctl(mib, 6, &info, &miblen, रिक्त, 0) == -1)
+		प्रत्यागम 0;
 
-	return 1;
-#else /* defined(__OpenBSD__) */
+	प्रत्यागम 1;
+#अन्यथा /* defined(__OpenBSD__) */
 	error("Routing domains are not supported on this platform");
-	return 0;
-#endif
+	प्रत्यागम 0;
+#यदि_अन्तः
 }
 
 /*
  * Queue a ListenAddress to be processed once we have all of the Ports
  * and AddressFamily options.
  */
-static void
-queue_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+स्थिर शून्य
+queue_listen_addr(ServerOptions *options, ध्रुव वर्ण *addr,
+    ध्रुव वर्ण *rdomain, पूर्णाङ्क पत्तनम्)
 {
-	struct queued_listenaddr *qla;
+	संरचना queued_listenaddr *qla;
 
 	options->queued_listen_addrs = xrecallocarray(
 	    options->queued_listen_addrs,
-	    options->num_queued_listens, options->num_queued_listens + 1,
-	    sizeof(*options->queued_listen_addrs));
-	qla = &options->queued_listen_addrs[options->num_queued_listens++];
+	    options->अङ्कः_queued_listens, options->अङ्कः_queued_listens + 1,
+	    परिमाण(*options->queued_listen_addrs));
+	qla = &options->queued_listen_addrs[options->अङ्कः_queued_listens++];
 	qla->addr = xstrdup(addr);
-	qla->port = port;
-	qla->rdomain = rdomain == NULL ? NULL : xstrdup(rdomain);
+	qla->पत्तनम् = पत्तनम्;
+	qla->rdomain = rdomain == रिक्त ? रिक्त : xstrdup(rdomain);
 }
 
 /*
  * Process queued (text) ListenAddress entries.
  */
-static void
+स्थिर शून्य
 process_queued_listen_addrs(ServerOptions *options)
 {
 	u_int i;
-	struct queued_listenaddr *qla;
+	संरचना queued_listenaddr *qla;
 
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->address_family == -1)
-		options->address_family = AF_UNSPEC;
+	यदि (options->अङ्कः_ports == 0)
+		options->ports[options->अङ्कः_ports++] = SSH_DEFAULT_पत्तनम्;
+	यदि (options->स्थानाङ्कः_family == -1)
+		options->स्थानाङ्कः_family = AF_UNSPEC;
 
-	for (i = 0; i < options->num_queued_listens; i++) {
+	प्रति (i = 0; i < options->अङ्कः_queued_listens; i++) {
 		qla = &options->queued_listen_addrs[i];
-		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
-		free(qla->addr);
-		free(qla->rdomain);
+		सङ्कलय_listen_addr(options, qla->addr, qla->rdomain, qla->पत्तनम्);
+		मुक्त(qla->addr);
+		मुक्त(qla->rdomain);
 	}
-	free(options->queued_listen_addrs);
-	options->queued_listen_addrs = NULL;
-	options->num_queued_listens = 0;
+	मुक्त(options->queued_listen_addrs);
+	options->queued_listen_addrs = रिक्त;
+	options->अङ्कः_queued_listens = 0;
 }
 
 /*
@@ -792,36 +792,36 @@ process_queued_listen_addrs(ServerOptions *options)
  *		PermittedChannelRequests session,forwarded-tcpip
  */
 
-static int
-match_cfg_line_group(const char *grps, int line, const char *user)
+स्थिर पूर्णाङ्क
+मेलनम्_cfg_पङ्क्तिः_गणः(ध्रुव वर्ण *grps, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *user)
 {
-	int result = 0;
-	struct passwd *pw;
+	पूर्णाङ्क परिणाम = 0;
+	संरचना passwd *pw;
 
-	if (user == NULL)
-		goto out;
+	यदि (user == रिक्त)
+		गच्छ बहिर्गमनम्;
 
-	if ((pw = getpwnam(user)) == NULL) {
+	यदि ((pw = getpwnam(user)) == रिक्त) {
 		debug("Can't match group at line %d because user %.100s does "
-		    "not exist", line, user);
-	} else if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		    "not exist", पङ्क्तिः, user);
+	} अन्यथा यदि (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 		debug("Can't Match group because user %.100s not in any group "
-		    "at line %d", user, line);
-	} else if (ga_match_pattern_list(grps) != 1) {
+		    "at line %d", user, पङ्क्तिः);
+	} अन्यथा यदि (ga_मेलनम्_आदर्शः_list(grps) != 1) {
 		debug("user %.100s does not match group list %.100s at line %d",
-		    user, grps, line);
-	} else {
+		    user, grps, पङ्क्तिः);
+	} अन्यथा {
 		debug("user %.100s matched group list %.100s at line %d", user,
-		    grps, line);
-		result = 1;
+		    grps, पङ्क्तिः);
+		परिणाम = 1;
 	}
-out:
+बहिर्गमनम्:
 	ga_free();
-	return result;
+	प्रत्यागम परिणाम;
 }
 
-static void
-match_test_missing_fatal(const char *criteria, const char *attrib)
+स्थिर शून्य
+मेलनम्_test_missing_fatal(ध्रुव वर्ण *criteria, ध्रुव वर्ण *attrib)
 {
 	fatal("'Match %s' in configuration but '%s' not in connection "
 	    "test specification.", criteria, attrib);
@@ -832,1221 +832,1221 @@ match_test_missing_fatal(const char *criteria, const char *attrib)
  * to check every attribute and set the result to zero if any attribute does
  * not match.
  */
-static int
-match_cfg_line(const char *full_line, int *acp, char ***avp,
-    int line, struct connection_info *ci)
+स्थिर पूर्णाङ्क
+मेलनम्_cfg_पङ्क्तिः(ध्रुव वर्ण *पूर्णम्_पङ्क्तिः, पूर्णाङ्क *acp, वर्ण ***avp,
+    पूर्णाङ्क पङ्क्तिः, संरचना connection_info *ci)
 {
-	int result = 1, attributes = 0, port;
-	char *arg, *attrib = NULL, *oattrib;
+	पूर्णाङ्क परिणाम = 1, गुणाः = 0, पत्तनम्;
+	वर्ण *arg, *attrib = रिक्त, *oattrib;
 
-	if (ci == NULL) {
+	यदि (ci == रिक्त) {
 		debug3("checking syntax for 'Match %s' on line %d",
-		    full_line, line);
-	} else {
+		    पूर्णम्_पङ्क्तिः, पङ्क्तिः);
+	} अन्यथा {
 		debug3("checking match for '%s' user %s%s host %s addr %s "
-		    "laddr %s lport %d rdomain %s on line %d", full_line,
+		    "laddr %s lport %d rdomain %s on line %d", पूर्णम्_पङ्क्तिः,
 		    ci->user ? ci->user : "(null)",
 		    ci->user_invalid ? " (invalid)" : "",
 		    ci->host ? ci->host : "(null)",
-		    ci->address ? ci->address : "(null)",
+		    ci->स्थानाङ्कः ? ci->स्थानाङ्कः : "(null)",
 		    ci->laddress ? ci->laddress : "(null)", ci->lport,
-		    ci->rdomain ? ci->rdomain : "(null)", line);
+		    ci->rdomain ? ci->rdomain : "(null)", पङ्क्तिः);
 	}
 
-	while ((oattrib = argv_next(acp, avp)) != NULL) {
+	यावत् ((oattrib = argv_अग्र(acp, avp)) != रिक्त) {
 		/* Terminate on comment */
-		if (*oattrib == '#') {
+		यदि (*oattrib == '#') {
 			argv_consume(acp); /* mark all arguments consumed */
-			break;
+			भङ्ग;
 		}
 		attrib = xstrdup(oattrib);
-		arg = NULL;
-		attributes++;
+		arg = रिक्त;
+		गुणाः++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		यदि (strcasecmp(attrib, "all") == 0) {
+			यदि (गुणाः > 1 ||
+			    ((arg = argv_अग्र(acp, avp)) != रिक्त &&
 			    *arg != '\0' && *arg != '#')) {
 				error("'all' cannot be combined with other "
 				    "Match attributes");
-				result = -1;
-				goto out;
+				परिणाम = -1;
+				गच्छ बहिर्गमनम्;
 			}
-			if (arg != NULL && *arg == '#')
+			यदि (arg != रिक्त && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			result = 1;
-			goto out;
+			परिणाम = 1;
+			गच्छ बहिर्गमनम्;
 		}
 		/* Criterion "invalid-user" also has no argument */
-		if (strcasecmp(attrib, "invalid-user") == 0) {
-			if (ci == NULL) {
-				result = 0;
-				goto next;
+		यदि (strcasecmp(attrib, "invalid-user") == 0) {
+			यदि (ci == रिक्त) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->user_invalid == 0)
-				result = 0;
-			else
-				debug("matched invalid-user at line %d", line);
-			goto next;
+			यदि (ci->user_invalid == 0)
+				परिणाम = 0;
+			अन्यथा
+				debug("matched invalid-user at line %d", पङ्क्तिः);
+			गच्छ अग्र;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "group=", 1) != NULL ||
-		    strprefix(attrib, "host=", 1) != NULL ||
-		    strprefix(attrib, "address=", 1) != NULL ||
-		    strprefix(attrib, "localaddress=", 1) != NULL ||
-		    strprefix(attrib, "localport=", 1) != NULL ||
-		    strprefix(attrib, "rdomain=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL) {
+		यदि (strprefix(attrib, "user=", 1) != रिक्त ||
+		    strprefix(attrib, "group=", 1) != रिक्त ||
+		    strprefix(attrib, "host=", 1) != रिक्त ||
+		    strprefix(attrib, "address=", 1) != रिक्त ||
+		    strprefix(attrib, "localaddress=", 1) != रिक्त ||
+		    strprefix(attrib, "localport=", 1) != रिक्त ||
+		    strprefix(attrib, "rdomain=", 1) != रिक्त ||
+		    strprefix(attrib, "version=", 1) != रिक्त) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else {
-			arg = argv_next(acp, avp);
+		} अन्यथा {
+			arg = argv_अग्र(acp, avp);
 		}
 
 		/* All other criteria require an argument */
-		if (arg == NULL || *arg == '\0' || *arg == '#') {
+		यदि (arg == रिक्त || *arg == '\0' || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
-			result = -1;
-			goto out;
+			परिणाम = -1;
+			गच्छ बहिर्गमनम्;
 		}
-		if (strcasecmp(attrib, "user") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
-				result = 0;
-				goto next;
+		यदि (strcasecmp(attrib, "user") == 0) {
+			यदि (ci == रिक्त || (ci->test && ci->user == रिक्त)) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->user == NULL)
-				match_test_missing_fatal("User", "user");
-			if (match_usergroup_pattern_list(ci->user, arg) != 1)
-				result = 0;
-			else
+			यदि (ci->user == रिक्त)
+				मेलनम्_test_missing_fatal("User", "user");
+			यदि (मेलनम्_usergroup_आदर्शः_list(ci->user, arg) != 1)
+				परिणाम = 0;
+			अन्यथा
 				debug("user %.100s matched 'User %.100s' at "
-				    "line %d", ci->user, arg, line);
-		} else if (strcasecmp(attrib, "group") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
-				result = 0;
-				goto next;
+				    "line %d", ci->user, arg, पङ्क्तिः);
+		} अन्यथा यदि (strcasecmp(attrib, "group") == 0) {
+			यदि (ci == रिक्त || (ci->test && ci->user == रिक्त)) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->user == NULL)
-				match_test_missing_fatal("Group", "user");
-			switch (match_cfg_line_group(arg, line, ci->user)) {
-			case -1:
-				result = -1;
-				goto out;
-			case 0:
-				result = 0;
+			यदि (ci->user == रिक्त)
+				मेलनम्_test_missing_fatal("Group", "user");
+			विकल्प (मेलनम्_cfg_पङ्क्तिः_गणः(arg, पङ्क्तिः, ci->user)) {
+			पक्ष -1:
+				परिणाम = -1;
+				गच्छ बहिर्गमनम्;
+			पक्ष 0:
+				परिणाम = 0;
 			}
-		} else if (strcasecmp(attrib, "host") == 0) {
-			if (ci == NULL || (ci->test && ci->host == NULL)) {
-				result = 0;
-				goto next;
+		} अन्यथा यदि (strcasecmp(attrib, "host") == 0) {
+			यदि (ci == रिक्त || (ci->test && ci->host == रिक्त)) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->host == NULL)
-				match_test_missing_fatal("Host", "host");
-			if (match_hostname(ci->host, arg) != 1)
-				result = 0;
-			else
+			यदि (ci->host == रिक्त)
+				मेलनम्_test_missing_fatal("Host", "host");
+			यदि (मेलनम्_hostname(ci->host, arg) != 1)
+				परिणाम = 0;
+			अन्यथा
 				debug("connection from %.100s matched 'Host "
-				    "%.100s' at line %d", ci->host, arg, line);
-		} else if (strcasecmp(attrib, "address") == 0) {
-			if (ci == NULL || (ci->test && ci->address == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+				    "%.100s' at line %d", ci->host, arg, पङ्क्तिः);
+		} अन्यथा यदि (strcasecmp(attrib, "address") == 0) {
+			यदि (ci == रिक्त || (ci->test && ci->स्थानाङ्कः == रिक्त)) {
+				यदि (addr_मेलनम्_list(रिक्त, arg) != 0)
 					fatal("Invalid Match address argument "
-					    "'%s' at line %d", arg, line);
-				result = 0;
-				goto next;
+					    "'%s' at line %d", arg, पङ्क्तिः);
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->address == NULL)
-				match_test_missing_fatal("Address", "addr");
-			switch (addr_match_list(ci->address, arg)) {
-			case 1:
+			यदि (ci->स्थानाङ्कः == रिक्त)
+				मेलनम्_test_missing_fatal("Address", "addr");
+			विकल्प (addr_मेलनम्_list(ci->स्थानाङ्कः, arg)) {
+			पक्ष 1:
 				debug("connection from %.100s matched 'Address "
-				    "%.100s' at line %d", ci->address, arg, line);
-				break;
-			case 0:
-			case -1:
-				result = 0;
-				break;
-			case -2:
-				result = -1;
-				goto out;
+				    "%.100s' at line %d", ci->स्थानाङ्कः, arg, पङ्क्तिः);
+				भङ्ग;
+			पक्ष 0:
+			पक्ष -1:
+				परिणाम = 0;
+				भङ्ग;
+			पक्ष -2:
+				परिणाम = -1;
+				गच्छ बहिर्गमनम्;
 			}
-		} else if (strcasecmp(attrib, "localaddress") == 0){
-			if (ci == NULL || (ci->test && ci->laddress == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+		} अन्यथा यदि (strcasecmp(attrib, "localaddress") == 0){
+			यदि (ci == रिक्त || (ci->test && ci->laddress == रिक्त)) {
+				यदि (addr_मेलनम्_list(रिक्त, arg) != 0)
 					fatal("Invalid Match localaddress "
 					    "argument '%s' at line %d", arg,
-					    line);
-				result = 0;
-				goto next;
+					    पङ्क्तिः);
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->laddress == NULL)
-				match_test_missing_fatal("LocalAddress",
+			यदि (ci->laddress == रिक्त)
+				मेलनम्_test_missing_fatal("LocalAddress",
 				    "laddr");
-			switch (addr_match_list(ci->laddress, arg)) {
-			case 1:
+			विकल्प (addr_मेलनम्_list(ci->laddress, arg)) {
+			पक्ष 1:
 				debug("connection from %.100s matched "
 				    "'LocalAddress %.100s' at line %d",
-				    ci->laddress, arg, line);
-				break;
-			case 0:
-			case -1:
-				result = 0;
-				break;
-			case -2:
-				result = -1;
-				goto out;
+				    ci->laddress, arg, पङ्क्तिः);
+				भङ्ग;
+			पक्ष 0:
+			पक्ष -1:
+				परिणाम = 0;
+				भङ्ग;
+			पक्ष -2:
+				परिणाम = -1;
+				गच्छ बहिर्गमनम्;
 			}
-		} else if (strcasecmp(attrib, "localport") == 0) {
-			if ((port = a2port(arg)) == -1) {
+		} अन्यथा यदि (strcasecmp(attrib, "localport") == 0) {
+			यदि ((पत्तनम् = a2port(arg)) == -1) {
 				error("Invalid LocalPort '%s' on Match line",
 				    arg);
-				result = -1;
-				goto out;
+				परिणाम = -1;
+				गच्छ बहिर्गमनम्;
 			}
-			if (ci == NULL || (ci->test && ci->lport == -1)) {
-				result = 0;
-				goto next;
+			यदि (ci == रिक्त || (ci->test && ci->lport == -1)) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->lport == 0)
-				match_test_missing_fatal("LocalPort", "lport");
+			यदि (ci->lport == 0)
+				मेलनम्_test_missing_fatal("LocalPort", "lport");
 			/* TODO support port lists */
-			if (port == ci->lport)
+			यदि (पत्तनम् == ci->lport)
 				debug("connection from %.100s matched "
 				    "'LocalPort %d' at line %d",
-				    ci->laddress, port, line);
-			else
-				result = 0;
-		} else if (strcasecmp(attrib, "rdomain") == 0) {
-			if (ci == NULL || (ci->test && ci->rdomain == NULL)) {
-				result = 0;
-				goto next;
+				    ci->laddress, पत्तनम्, पङ्क्तिः);
+			अन्यथा
+				परिणाम = 0;
+		} अन्यथा यदि (strcasecmp(attrib, "rdomain") == 0) {
+			यदि (ci == रिक्त || (ci->test && ci->rdomain == रिक्त)) {
+				परिणाम = 0;
+				गच्छ अग्र;
 			}
-			if (ci->rdomain == NULL)
-				match_test_missing_fatal("RDomain", "rdomain");
-			if (match_pattern_list(ci->rdomain, arg, 0) != 1)
-				result = 0;
-			else
+			यदि (ci->rdomain == रिक्त)
+				मेलनम्_test_missing_fatal("RDomain", "rdomain");
+			यदि (मेलनम्_आदर्शः_list(ci->rdomain, arg, 0) != 1)
+				परिणाम = 0;
+			अन्यथा
 				debug("connection RDomain %.100s matched "
 				    "'RDomain %.100s' at line %d",
-				    ci->rdomain, arg, line);
-		} else if (strcasecmp(attrib, "version") == 0) {
-			if (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
-				result = 0;
-			else
+				    ci->rdomain, arg, पङ्क्तिः);
+		} अन्यथा यदि (strcasecmp(attrib, "version") == 0) {
+			यदि (मेलनम्_आदर्शः_list(SSH_RELEASE, arg, 0) != 1)
+				परिणाम = 0;
+			अन्यथा
 				debug("version %.100s matched "
 				    "'version %.100s' at line %d",
-				    SSH_RELEASE, arg, line);
-		} else {
+				    SSH_RELEASE, arg, पङ्क्तिः);
+		} अन्यथा {
 			error("Unsupported Match attribute %s", oattrib);
-			result = -1;
-			goto out;
+			परिणाम = -1;
+			गच्छ बहिर्गमनम्;
 		}
- next:
-		free(attrib);
-		attrib = NULL;
+ अग्र:
+		मुक्त(attrib);
+		attrib = रिक्त;
 	}
-	if (attributes == 0) {
+	यदि (गुणाः == 0) {
 		error("One or more attributes required for Match");
-		return -1;
+		प्रत्यागम -1;
 	}
- out:
-	if (ci != NULL && result != -1)
-		debug3("match %sfound on line %d", result ? "" : "not ", line);
-	free(attrib);
-	return result;
+ बहिर्गमनम्:
+	यदि (ci != रिक्त && परिणाम != -1)
+		debug3("match %sfound on line %d", परिणाम ? "" : "not ", पङ्क्तिः);
+	मुक्त(attrib);
+	प्रत्यागम परिणाम;
 }
 
-#define WHITESPACE " \t\r\n"
+#परिभाषय WHITESPACE " \t\r\n"
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+संरचना multistate {
+	वर्ण *कुञ्चिका;
+	पूर्णाङ्क मानम्;
 };
-static const struct multistate multistate_flag[] = {
+स्थिर ध्रुव संरचना multistate multistate_flag[] = {
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_ignore_rhosts[] = {
+स्थिर ध्रुव संरचना multistate multistate_ignore_rhosts[] = {
 	{ "yes",			IGNORE_RHOSTS_YES },
 	{ "no",				IGNORE_RHOSTS_NO },
 	{ "shosts-only",		IGNORE_RHOSTS_SHOSTS },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+स्थिर ध्रुव संरचना multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_permitrootlogin[] = {
+स्थिर ध्रुव संरचना multistate multistate_permitrootlogin[] = {
 	{ "prohibit-password",		PERMIT_NO_PASSWD },
 	{ "without-password",		PERMIT_NO_PASSWD },
 	{ "forced-commands-only",	PERMIT_FORCED_ONLY },
 	{ "yes",			PERMIT_YES },
 	{ "no",				PERMIT_NO },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_compression[] = {
-#ifdef WITH_ZLIB
+स्थिर ध्रुव संरचना multistate multistate_compression[] = {
+#यदि_परिभाषितम् WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 	{ "delayed",			COMP_DELAYED },
-#endif
+#यदि_अन्तः
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_gatewayports[] = {
+स्थिर ध्रुव संरचना multistate multistate_gatewayports[] = {
 	{ "clientspecified",		2 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_tcpfwd[] = {
+स्थिर ध्रुव संरचना multistate multistate_tcpfwd[] = {
 	{ "yes",			FORWARD_ALLOW },
 	{ "all",			FORWARD_ALLOW },
 	{ "no",				FORWARD_DENY },
 	{ "remote",			FORWARD_REMOTE },
 	{ "local",			FORWARD_LOCAL },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+स्थिर ध्रुव संरचना multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
-static const struct multistate multistate_warnweakcrypto[] = {
+स्थिर ध्रुव संरचना multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ रिक्त, -1 }
 };
 
-static int
-process_server_config_line_depth(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, int *inc_flags, int depth,
-    struct include_list *includes)
+स्थिर पूर्णाङ्क
+process_server_config_पङ्क्तिः_गभीरता(ServerOptions *options, वर्ण *पङ्क्तिः,
+    ध्रुव वर्ण *filename, पूर्णाङ्क linenum, पूर्णाङ्क *activep,
+    संरचना connection_info *connectinfo, पूर्णाङ्क *inc_flags, पूर्णाङ्क गभीरता,
+    संरचना include_list *includes)
 {
-	char *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
-	int cmdline = 0, *intptr, value, value2, value3, n, port, oactive, r;
-	double dvalue, *doubleptr = NULL;
-	int ca_only = 0, found = 0;
+	वर्ण *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
+	पूर्णाङ्क cmdline = 0, *intptr, मानम्, value2, value3, n, पत्तनम्, oactive, r;
+	द्विगुण dvalue, *doubleptr = रिक्त;
+	पूर्णाङ्क ca_only = 0, प्राप्तम् = 0;
 	SyslogFacility *log_facility_ptr;
 	LogLevel *log_level_ptr;
 	ServerOpCodes opcode;
 	u_int i, *uintptr, flags = 0;
-	size_t len;
-	long long val64;
-	const struct multistate *multistate_ptr;
-	const char *errstr;
-	struct include_item *item;
+	आकार_t len;
+	दीर्घ दीर्घ val64;
+	ध्रुव संरचना multistate *multistate_ptr;
+	ध्रुव वर्ण *errstr;
+	संरचना include_item *item;
 	glob_t gbuf;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	वर्ण **oav = रिक्त, **av;
+	पूर्णाङ्क oac = 0, ac;
+	पूर्णाङ्क ret = -1;
+	वर्ण **strs = रिक्त; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	यदि ((len = वाक्यदैर्घ्यम्(पङ्क्तिः)) == 0)
+		प्रत्यागम 0;
+	प्रति (len--; len > 0; len--) {
+		यदि (strchr(WHITESPACE "\f", पङ्क्तिः[len]) == रिक्त)
+			भङ्ग;
+		पङ्क्तिः[len] = '\0';
 	}
 
-	str = line;
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	str = पङ्क्तिः;
+	यदि ((keyword = strdelim(&str)) == रिक्त)
+		प्रत्यागम 0;
 	/* Ignore leading whitespace */
-	if (*keyword == '\0')
+	यदि (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (!keyword || !*keyword || *keyword == '#')
-		return 0;
-	if (str == NULL || *str == '\0') {
+	यदि (!keyword || !*keyword || *keyword == '#')
+		प्रत्यागम 0;
+	यदि (str == रिक्त || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		प्रत्यागम -1;
 	}
-	intptr = NULL;
-	charptr = NULL;
+	intptr = रिक्त;
+	charptr = रिक्त;
 	opcode = parse_token(keyword, filename, linenum, &flags);
 
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	यदि (argv_विभज(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		प्रत्यागम -1;
 	}
 	ac = oac;
 	av = oav;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	यदि (activep == रिक्त) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
-	if (*activep && opcode != sMatch && opcode != sInclude)
+	यदि (*activep && opcode != s_मेलनम् && opcode != sInclude)
 		debug3("%s:%d setting %s %s", filename, linenum, keyword, str);
-	if (*activep == 0 && !(flags & SSHCFG_MATCH)) {
-		if (connectinfo == NULL) {
+	यदि (*activep == 0 && !(flags & SSHCFG_मेलनम्)) {
+		यदि (connectinfo == रिक्त) {
 			fatal("%s line %d: Directive '%s' is not allowed "
 			    "within a Match block", filename, linenum, keyword);
-		} else { /* this is a directive we have already processed */
+		} अन्यथा { /* this is a directive we have already processed */
 			ret = 0;
-			goto out;
+			गच्छ बहिर्गमनम्;
 		}
 	}
 
-	switch (opcode) {
+	विकल्प (opcode) {
 	/* Portable-specific options */
-#ifdef USE_PAM
-	case sUsePAM:
+#यदि_परिभाषितम् USE_PAM
+	पक्ष sUsePAM:
 		intptr = &options->use_pam;
-		goto parse_flag;
-	case sPAMServiceName:
+		गच्छ parse_flag;
+	पक्ष sPAMServiceName:
 		charptr = &options->pam_service_name;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0') {
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
 		}
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
-#endif
+		भङ्ग;
+#यदि_अन्तः
 
 	/* Standard Options */
-	case sBadOption:
-		goto out;
-	case sPort:
+	पक्ष sBadOption:
+		गच्छ बहिर्गमनम्;
+	पक्ष s_पत्तनम्:
 		/* ignore ports from configfile if cmdline specifies ports */
-		if (options->ports_from_cmdline) {
+		यदि (options->ports_from_cmdline) {
 			argv_consume(&ac);
-			break;
+			भङ्ग;
 		}
-		if (options->num_ports >= MAX_PORTS)
+		यदि (options->अङ्कः_ports >= MAX_PORTS)
 			fatal("%s line %d: too many ports.",
 			    filename, linenum);
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing port number.",
 			    filename, linenum);
-		options->ports[options->num_ports++] = a2port(arg);
-		if (options->ports[options->num_ports-1] <= 0)
+		options->ports[options->अङ्कः_ports++] = a2port(arg);
+		यदि (options->ports[options->अङ्कः_ports-1] <= 0)
 			fatal("%s line %d: Badly formatted port number.",
 			    filename, linenum);
-		break;
+		भङ्ग;
 
-	case sLoginGraceTime:
+	पक्ष sLoginGraceTime:
 		intptr = &options->login_grace_time;
  parse_time:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing time value.",
 			    filename, linenum);
-		if ((value = convtime(arg)) == -1)
+		यदि ((मानम् = convtime(arg)) == -1)
 			fatal("%s line %d: invalid time value.",
 			    filename, linenum);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		यदि (*activep && *intptr == -1)
+			*intptr = मानम्;
+		भङ्ग;
 
-	case sListenAddress:
-		arg = argv_next(&ac, &av);
-		if (arg == NULL || *arg == '\0')
+	पक्ष s_Listen_स्थानाङ्कः:
+		arg = argv_अग्र(&ac, &av);
+		यदि (arg == रिक्त || *arg == '\0')
 			fatal("%s line %d: missing address",
 			    filename, linenum);
 		/* check for bare IPv6 address: no "[]" and 2 or more ":" */
-		if (strchr(arg, '[') == NULL && (p = strchr(arg, ':')) != NULL
-		    && strchr(p+1, ':') != NULL) {
-			port = 0;
+		यदि (strchr(arg, '[') == रिक्त && (p = strchr(arg, ':')) != रिक्त
+		    && strchr(p+1, ':') != रिक्त) {
+			पत्तनम् = 0;
 			p = arg;
-		} else {
-			arg2 = NULL;
+		} अन्यथा {
+			arg2 = रिक्त;
 			p = hpdelim(&arg);
-			if (p == NULL)
+			यदि (p == रिक्त)
 				fatal("%s line %d: bad address:port usage",
 				    filename, linenum);
 			p = cleanhostname(p);
-			if (arg == NULL)
-				port = 0;
-			else if ((port = a2port(arg)) <= 0)
+			यदि (arg == रिक्त)
+				पत्तनम् = 0;
+			अन्यथा यदि ((पत्तनम् = a2port(arg)) <= 0)
 				fatal("%s line %d: bad port number",
 				    filename, linenum);
 		}
 		/* Optional routing table */
-		arg2 = NULL;
-		if ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "rdomain") != 0 ||
-			    (arg2 = argv_next(&ac, &av)) == NULL)
+		arg2 = रिक्त;
+		यदि ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (वाक्यं_तुलय(arg, "rdomain") != 0 ||
+			    (arg2 = argv_अग्र(&ac, &av)) == रिक्त)
 				fatal("%s line %d: bad ListenAddress syntax",
 				    filename, linenum);
-			if (!valid_rdomain(arg2))
+			यदि (!valid_rdomain(arg2))
 				fatal("%s line %d: bad routing domain",
 				    filename, linenum);
 		}
-		queue_listen_addr(options, p, arg2, port);
+		queue_listen_addr(options, p, arg2, पत्तनम्);
 
-		break;
+		भङ्ग;
 
-	case sAddressFamily:
-		intptr = &options->address_family;
+	पक्ष s_स्थानाङ्कः_Family:
+		intptr = &options->स्थानाङ्कः_family;
 		multistate_ptr = multistate_addressfamily;
  parse_multistate:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		value = -1;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		मानम् = -1;
+		प्रति (i = 0; multistate_ptr[i].कुञ्चिका != रिक्त; i++) {
+			यदि (strcasecmp(arg, multistate_ptr[i].कुञ्चिका) == 0) {
+				मानम् = multistate_ptr[i].मानम्;
+				भङ्ग;
 			}
 		}
-		if (value == -1)
+		यदि (मानम् == -1)
 			fatal("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		यदि (*activep && *intptr == -1)
+			*intptr = मानम्;
+		भङ्ग;
 
-	case sHostKey:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_Host_कुञ्चिका:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep) {
-			servconf_add_hostkey(filename, linenum,
+		यदि (*activep) {
+			servconf_सङ्कलय_hostkey(filename, linenum,
 			    options, arg, 1);
 		}
-		break;
+		भङ्ग;
 
-	case sHostKeyAgent:
-		charptr = &options->host_key_agent;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_Host_कुञ्चिका_Agent:
+		charptr = &options->host_कुञ्चिका_agent;
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing socket name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
-			*charptr = !strcmp(arg, SSH_AUTHSOCKET_ENV_NAME) ?
-			    xstrdup(arg) : derelativise_path(arg);
-		break;
+		यदि (*activep && *charptr == रिक्त)
+			*charptr = !वाक्यं_तुलय(arg, SSH_AUTHSOCKET_ENV_NAME) ?
+			    xstrdup(arg) : derelativise_मार्गः(arg);
+		भङ्ग;
 
-	case sHostCertificate:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sHostCertificate:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep)
-			servconf_add_hostcert(filename, linenum, options, arg);
-		break;
+		यदि (*activep)
+			servconf_सङ्कलय_hostcert(filename, linenum, options, arg);
+		भङ्ग;
 
-	case sPidFile:
+	पक्ष sPidFile:
 		charptr = &options->pid_file;
  parse_filename:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL) {
-			*charptr = derelativise_path(arg);
+		यदि (*activep && *charptr == रिक्त) {
+			*charptr = derelativise_मार्गः(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			यदि (intptr != रिक्त)
 				*intptr = *intptr + 1;
 		}
-		break;
+		भङ्ग;
 
-	case sModuliFile:
+	पक्ष sModuliFile:
 		charptr = &options->moduli_file;
-		goto parse_filename;
+		गच्छ parse_filename;
 
-	case sPermitRootLogin:
-		intptr = &options->permit_root_login;
+	पक्ष s_Permit_मूलम्_Login:
+		intptr = &options->permit_मूलम्_login;
 		multistate_ptr = multistate_permitrootlogin;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sIgnoreRhosts:
+	पक्ष sIgnoreRhosts:
 		intptr = &options->ignore_rhosts;
 		multistate_ptr = multistate_ignore_rhosts;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sIgnoreUserKnownHosts:
-		intptr = &options->ignore_user_known_hosts;
+	पक्ष s_Ignore_User_ज्ञातम्_Hosts:
+		intptr = &options->ignore_user_ज्ञातम्_hosts;
  parse_flag:
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sHostbasedAuthentication:
+	पक्ष sHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sHostbasedUsesNameFromPacketOnly:
-		intptr = &options->hostbased_uses_name_from_packet_only;
-		goto parse_flag;
+	पक्ष s_Hostbased_उपयुङ्क्ते_Name_From_Packet_Only:
+		intptr = &options->hostbased_उपयुङ्क्ते_name_from_packet_only;
+		गच्छ parse_flag;
 
-	case sHostbasedAcceptedAlgorithms:
+	पक्ष sHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
  parse_pubkey_algos:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: Missing argument.",
 			    filename, linenum);
-		if (*arg != '-' &&
-		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
+		यदि (*arg != '-' &&
+		    !sshkey_नामानि_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only))
 			fatal("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sHostKeyAlgorithms:
+	पक्ष s_Host_कुञ्चिका_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		गच्छ parse_pubkey_algos;
 
-	case sCASignatureAlgorithms:
+	पक्ष sCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		गच्छ parse_pubkey_algos;
 
-	case sPubkeyAuthentication:
+	पक्ष sPubkeyAuthentication:
 		intptr = &options->pubkey_authentication;
 		ca_only = 0;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sPubkeyAcceptedAlgorithms:
+	पक्ष sPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		गच्छ parse_pubkey_algos;
 
-	case sPubkeyAuthOptions:
+	पक्ष sPubkeyAuthOptions:
 		intptr = &options->pubkey_auth_options;
-		value = 0;
+		मानम् = 0;
 		value2 = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcasecmp(arg, "none") == 0)
-				continue;
-			if (strcasecmp(arg, "touch-required") == 0)
-				value |= PUBKEYAUTH_TOUCH_REQUIRED;
-			else if (strcasecmp(arg, "verify-required") == 0)
-				value |= PUBKEYAUTH_VERIFY_REQUIRED;
-			else if (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (strcasecmp(arg, "none") == 0)
+				अनुवर्त;
+			यदि (strcasecmp(arg, "touch-required") == 0)
+				मानम् |= PUBKEYAUTH_TOUCH_REQUIRED;
+			अन्यथा यदि (strcasecmp(arg, "verify-required") == 0)
+				मानम् |= PUBKEYAUTH_VERIFY_REQUIRED;
+			अन्यथा यदि (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
 				value2 = strtonum(arg + 10, 0, 255, &errstr);
-				if (errstr != NULL) {
+				यदि (errstr != रिक्त) {
 					error("%s line %d: bad %s max-pk-ok "
 					    "value: %s", filename, linenum,
 					keyword, errstr);
-					goto out;
+					गच्छ बहिर्गमनम्;
 				}
-			} else {
+			} अन्यथा {
 				error("%s line %d: unsupported %s option %s",
 				    filename, linenum, keyword, arg);
-				goto out;
+				गच्छ बहिर्गमनम्;
 			}
 		}
-		if (*activep && options->pubkey_auth_options == -1) {
-			options->pubkey_auth_options = value;
+		यदि (*activep && options->pubkey_auth_options == -1) {
+			options->pubkey_auth_options = मानम्;
 			options->max_pubkey_ok = value2;
 		}
-		break;
+		भङ्ग;
 
-#ifdef KRB5
-	case sKerberosAuthentication:
+#यदि_परिभाषितम् KRB5
+	पक्ष sKerberosAuthentication:
 		intptr = &options->kerberos_authentication;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sKerberosOrLocalPasswd:
+	पक्ष sKerberosOrLocalPasswd:
 		intptr = &options->kerberos_or_local_passwd;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sKerberosTicketCleanup:
+	पक्ष sKerberosTicketCleanup:
 		intptr = &options->kerberos_ticket_cleanup;
-		goto parse_flag;
-#ifdef USE_AFS
-	case sKerberosGetAFSToken:
+		गच्छ parse_flag;
+#यदि_परिभाषितम् USE_AFS
+	पक्ष sKerberosGetAFSToken:
 		intptr = &options->kerberos_get_afs_token;
-		goto parse_flag;
-#endif /* USE_AFS */
-#endif /* KRB5 */
+		गच्छ parse_flag;
+#यदि_अन्तः /* USE_AFS */
+#यदि_अन्तः /* KRB5 */
 
-#ifdef GSSAPI
-	case sGSSAPIAuthentication:
+#यदि_परिभाषितम् GSSAPI
+	पक्ष sGSSAPIAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sGSSAPICleanupCredentials:
+	पक्ष sGSSAPICleanupCredentials:
 		intptr = &options->gss_cleanup_creds;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sGSSAPIDelegateCredentials:
+	पक्ष sGSSAPIDelegateCredentials:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sGSSAPIStrictAcceptorCheck:
+	पक्ष sGSSAPIStrictAcceptorCheck:
 		intptr = &options->gss_strict_acceptor;
-		goto parse_flag;
-#endif /* GSSAPI */
+		गच्छ parse_flag;
+#यदि_अन्तः /* GSSAPI */
 
-	case sPasswordAuthentication:
+	पक्ष sPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sKbdInteractiveAuthentication:
+	पक्ष sKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sPrintMotd:
+	पक्ष sPrintMotd:
 		intptr = &options->print_motd;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-#ifndef DISABLE_LASTLOG
-	case sPrintLastLog:
+#यदि_अपरिभाषितम् DISABLE_LASTLOG
+	पक्ष s_Print_चरमः_Log:
 		intptr = &options->print_lastlog;
-		goto parse_flag;
-#endif
+		गच्छ parse_flag;
+#यदि_अन्तः
 
-	case sX11Forwarding:
+	पक्ष sX11Forwarding:
 		intptr = &options->x11_forwarding;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sX11DisplayOffset:
-		intptr = &options->x11_display_offset;
+	पक्ष s_X11_Display_विस्थापनम्:
+		intptr = &options->x11_display_विस्थापनम्;
  parse_int:
-		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL)
+		arg = argv_अग्र(&ac, &av);
+		यदि ((errstr = atoi_err(arg, &मानम्)) != रिक्त)
 			fatal("%s line %d: %s integer value %s.",
 			    filename, linenum, keyword, errstr);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		यदि (*activep && *intptr == -1)
+			*intptr = मानम्;
+		भङ्ग;
 
-	case sX11UseLocalhost:
+	पक्ष sX11UseLocalhost:
 		intptr = &options->x11_use_localhost;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sXAuthLocation:
+	पक्ष sXAuthLocation:
 		charptr = &options->xauth_location;
-		goto parse_filename;
+		गच्छ parse_filename;
 
-	case sPermitTTY:
+	पक्ष sPermitTTY:
 		intptr = &options->permit_tty;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sPermitUserRC:
+	पक्ष sPermitUserRC:
 		intptr = &options->permit_user_rc;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sStrictModes:
+	पक्ष sStrictModes:
 		intptr = &options->strict_modes;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sTCPKeepAlive:
+	पक्ष sTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sPermitEmptyPasswords:
-		intptr = &options->permit_empty_passwd;
-		goto parse_flag;
+	पक्ष s_Permit_रिक्तानि_Passwords:
+		intptr = &options->permit_रिक्तानि_passwd;
+		गच्छ parse_flag;
 
-	case sPermitUserEnvironment:
+	पक्ष sPermitUserEnvironment:
 		intptr = &options->permit_user_env;
 		charptr = &options->permit_user_env_allowlist;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = 0;
-		p = NULL;
-		if (strcmp(arg, "yes") == 0)
-			value = 1;
-		else if (strcmp(arg, "no") == 0)
-			value = 0;
-		else {
+		मानम् = 0;
+		p = रिक्त;
+		यदि (वाक्यं_तुलय(arg, "yes") == 0)
+			मानम् = 1;
+		अन्यथा यदि (वाक्यं_तुलय(arg, "no") == 0)
+			मानम् = 0;
+		अन्यथा {
 			/* Pattern-list specified */
-			value = 1;
+			मानम् = 1;
 			p = xstrdup(arg);
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		यदि (*activep && *intptr == -1) {
+			*intptr = मानम्;
 			*charptr = p;
-			p = NULL;
+			p = रिक्त;
 		}
-		free(p);
-		break;
+		मुक्त(p);
+		भङ्ग;
 
-	case sCompression:
+	पक्ष sCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sRekeyLimit:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_Rekey_सीमा:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "default") == 0) {
+		यदि (वाक्यं_तुलय(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1)
+		} अन्यथा {
+			यदि (अवलोकनम्_scaled(arg, &val64) == -1)
 				fatal("%.200s line %d: Bad %s number '%s': %s",
 				    filename, linenum, keyword,
 				    arg, strerror(errno));
-			if (val64 != 0 && val64 < 16)
+			यदि (val64 != 0 && val64 < 16)
 				fatal("%.200s line %d: %s too small",
 				    filename, linenum, keyword);
 		}
-		if (*activep && options->rekey_limit == -1)
-			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		यदि (*activep && options->rekey_सीमा == -1)
+			options->rekey_सीमा = val64;
+		यदि (ac != 0) { /* optional rekey interval present */
+			यदि (वाक्यं_तुलय(av[0], "none") == 0) {
+				(शून्य)argv_अग्र(&ac, &av);	/* discard */
+				भङ्ग;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			गच्छ parse_time;
 		}
-		break;
+		भङ्ग;
 
-	case sGatewayPorts:
+	पक्ष sGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
 		multistate_ptr = multistate_gatewayports;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sUseDNS:
+	पक्ष sUseDNS:
 		intptr = &options->use_dns;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sSyslogFacility:
+	पक्ष sSyslogFacility:
 		log_facility_ptr = &options->log_facility;
-		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET)
+		arg = argv_अग्र(&ac, &av);
+		मानम् = log_facility_सङ्ख्या(arg);
+		यदि (मानम् == SYSLOG_FACILITY_NOT_समुच्चयः)
 			fatal("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		यदि (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) मानम्;
+		भङ्ग;
 
-	case sLogLevel:
+	पक्ष sLogLevel:
 		log_level_ptr = &options->log_level;
-		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET)
+		arg = argv_अग्र(&ac, &av);
+		मानम् = log_level_सङ्ख्या(arg);
+		यदि (मानम् == SYSLOG_LEVEL_NOT_समुच्चयः)
 			fatal("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *log_level_ptr == -1)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		यदि (*activep && *log_level_ptr == -1)
+			*log_level_ptr = (LogLevel) मानम्;
+		भङ्ग;
 
-	case sLogVerbose:
-		found = options->num_log_verbose == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+	पक्ष sLogVerbose:
+		प्राप्तम् = options->अङ्कः_log_verbose == 0;
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				गच्छ बहिर्गमनम्;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			यदि (strcasecmp(arg, "none") == 0) {
+				यदि (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					गच्छ बहिर्गमनम्;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			options->log_verbose = strs;
-			options->num_log_verbose = nstrs;
-			strs = NULL; /* transferred */
+			options->अङ्कः_log_verbose = nstrs;
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sAllowTcpForwarding:
+	पक्ष sAllowTcpForwarding:
 		intptr = &options->allow_tcp_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sAllowStreamLocalForwarding:
+	पक्ष s_Allow_प्रवाहः_Local_Forwarding:
 		intptr = &options->allow_streamlocal_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sAllowAgentForwarding:
+	पक्ष sAllowAgentForwarding:
 		intptr = &options->allow_agent_forwarding;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sAgentSocketPath:
-		charptr = &options->agent_socket_path;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_Agent_Socket_मार्गः:
+		charptr = &options->agent_socket_मार्गः;
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing path.", filename, linenum);
-		if (strncmp(arg, "shared:", 7) == 0) {
+		यदि (वाक्ये_तुलय(arg, "shared:", 7) == 0) {
 			/* Shared paths must be absolute */
-			if (arg[7] != '/') {
+			यदि (arg[7] != '/') {
 				fatal("%s line %d: invalid shared path.",
 				    filename, linenum);
 			}
-		} else if (strncmp(arg, "user:", 5) == 0) {
+		} अन्यथा यदि (वाक्ये_तुलय(arg, "user:", 5) == 0) {
 			/* User paths must not be empty */
-			if (arg[5] == '\0') {
+			यदि (arg[5] == '\0') {
 				fatal("%s line %d: invalid user path.",
 				    filename, linenum);
 			}
-		} else if (strcmp(arg, "none") != 0)
+		} अन्यथा यदि (वाक्यं_तुलय(arg, "none") != 0)
 			fatal("%s line %d: invalid path.", filename, linenum);
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sDisableForwarding:
+	पक्ष sDisableForwarding:
 		intptr = &options->disable_forwarding;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sAllowUsers:
+	पक्ष sAllowUsers:
 		chararrayptr = &options->allow_users;
-		uintptr = &options->num_allow_users;
+		uintptr = &options->अङ्कः_allow_users;
  parse_allowdenyusers:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' ||
-			    match_user(NULL, NULL, NULL, arg) == -1)
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0' ||
+			    मेलनम्_user(रिक्त, रिक्त, रिक्त, arg) == -1)
 				fatal("%s line %d: invalid %s pattern: \"%s\"",
 				    filename, linenum, keyword, arg);
-			found = 1;
-			if (!*activep)
-				continue;
+			प्राप्तम् = 1;
+			यदि (!*activep)
+				अनुवर्त;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		यदि (!प्राप्तम्) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		भङ्ग;
 
-	case sDenyUsers:
+	पक्ष sDenyUsers:
 		chararrayptr = &options->deny_users;
-		uintptr = &options->num_deny_users;
-		goto parse_allowdenyusers;
+		uintptr = &options->अङ्कः_deny_users;
+		गच्छ parse_allowdenyusers;
 
-	case sAllowGroups:
+	पक्ष sAllowGroups:
 		chararrayptr = &options->allow_groups;
-		uintptr = &options->num_allow_groups;
+		uintptr = &options->अङ्कः_allow_groups;
 		/* XXX appends to list; doesn't respect first-match-wins */
  parse_allowdenygroups:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0')
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0')
 				fatal("%s line %d: empty %s pattern",
 				    filename, linenum, keyword);
-			found = 1;
-			if (!*activep)
-				continue;
+			प्राप्तम् = 1;
+			यदि (!*activep)
+				अनुवर्त;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		यदि (!प्राप्तम्) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		भङ्ग;
 
-	case sDenyGroups:
+	पक्ष sDenyGroups:
 		chararrayptr = &options->deny_groups;
-		uintptr = &options->num_deny_groups;
-		goto parse_allowdenygroups;
+		uintptr = &options->अङ्कः_deny_groups;
+		गच्छ parse_allowdenygroups;
 
-	case sCiphers:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sCiphers:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		यदि (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->ciphers == NULL)
+		यदि (options->ciphers == रिक्त)
 			options->ciphers = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sMacs:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sMacs:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		यदि (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 mac spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->macs == NULL)
+		यदि (options->macs == रिक्त)
 			options->macs = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sKexAlgorithms:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sKexAlgorithms:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
-		    !kex_names_valid(*arg == '+' || *arg == '^' ?
+		यदि (*arg != '-' &&
+		    !kex_नामानि_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->kex_algorithms == NULL)
+		यदि (options->kex_algorithms == रिक्त)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sSubsystem:
-		if ((arg = argv_next(&ac, &av)) == NULL || *arg == '\0' ||
-		   ((arg2 = argv_next(&ac, &av)) == NULL || *arg2 == '\0'))
+	पक्ष sSubsystem:
+		यदि ((arg = argv_अग्र(&ac, &av)) == रिक्त || *arg == '\0' ||
+		   ((arg2 = argv_अग्र(&ac, &av)) == रिक्त || *arg2 == '\0'))
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (!*activep) {
+		यदि (!*activep) {
 			argv_consume(&ac);
-			break;
+			भङ्ग;
 		}
-		found = 0;
-		for (i = 0; i < options->num_subsystems; i++) {
-			if (strcmp(arg, options->subsystem_name[i]) == 0) {
-				found = 1;
-				break;
+		प्राप्तम् = 0;
+		प्रति (i = 0; i < options->अङ्कः_subsystems; i++) {
+			यदि (वाक्यं_तुलय(arg, options->subsystem_name[i]) == 0) {
+				प्राप्तम् = 1;
+				भङ्ग;
 			}
 		}
-		if (found) {
+		यदि (प्राप्तम्) {
 			debug("%s line %d: Subsystem '%s' already defined.",
 			    filename, linenum, arg);
 			argv_consume(&ac);
-			break;
+			भङ्ग;
 		}
 		options->subsystem_name = xrecallocarray(
-		    options->subsystem_name, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_name));
+		    options->subsystem_name, options->अङ्कः_subsystems,
+		    options->अङ्कः_subsystems + 1,
+		    परिमाण(*options->subsystem_name));
 		options->subsystem_command = xrecallocarray(
-		    options->subsystem_command, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_command));
-		options->subsystem_args = xrecallocarray(
-		    options->subsystem_args, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_args));
-		options->subsystem_name[options->num_subsystems] = xstrdup(arg);
-		options->subsystem_command[options->num_subsystems] =
+		    options->subsystem_command, options->अङ्कः_subsystems,
+		    options->अङ्कः_subsystems + 1,
+		    परिमाण(*options->subsystem_command));
+		options->subsystem_तर्काः = xrecallocarray(
+		    options->subsystem_तर्काः, options->अङ्कः_subsystems,
+		    options->अङ्कः_subsystems + 1,
+		    परिमाण(*options->subsystem_तर्काः));
+		options->subsystem_name[options->अङ्कः_subsystems] = xstrdup(arg);
+		options->subsystem_command[options->अङ्कः_subsystems] =
 		    xstrdup(arg2);
 		/* Collect arguments (separate to executable) */
 		arg = argv_assemble(1, &arg2); /* quote command correctly */
 		arg2 = argv_assemble(ac, av); /* rest of command */
-		xasprintf(&options->subsystem_args[options->num_subsystems],
+		xasprintf(&options->subsystem_तर्काः[options->अङ्कः_subsystems],
 		    "%s%s%s", arg, *arg2 == '\0' ? "" : " ", arg2);
-		free(arg2);
-		free(arg);
+		मुक्त(arg2);
+		मुक्त(arg);
 		argv_consume(&ac);
-		options->num_subsystems++;
-		break;
+		options->अङ्कः_subsystems++;
+		भङ्ग;
 
-	case sMaxStartups:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sMaxStartups:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* begin:rate:max */
-		if ((n = sscanf(arg, "%d:%d:%d",
-		    &value, &value2, &value3)) == 3) {
-			if (value > value3 || value2 > 100 || value2 < 1)
+		यदि ((n = वाक्यात्_पठ(arg, "%d:%d:%d",
+		    &मानम्, &value2, &value3)) == 3) {
+			यदि (मानम् > value3 || value2 > 100 || value2 < 1)
 				fatal("%s line %d: Invalid %s spec.",
 				    filename, linenum, keyword);
-		} else if (n == 1) {
-			value3 = value;
+		} अन्यथा यदि (n == 1) {
+			value3 = मानम्;
 			value2 = -1;
-		} else {
+		} अन्यथा {
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		}
-		if (value <= 0 || value3 <= 0)
+		यदि (मानम् <= 0 || value3 <= 0)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->max_startups == -1) {
-			options->max_startups_begin = value;
-			options->max_startups_rate = value2;
+		यदि (*activep && options->max_startups == -1) {
+			options->max_startups_begin = मानम्;
+			options->max_startups_दरः = value2;
 			options->max_startups = value3;
 		}
-		break;
+		भङ्ग;
 
-	case sPerSourceNetBlockSize:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_प्रत्येकम्_Source_Net_खण्डम्_आकार:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		switch (n = sscanf(arg, "%d:%d", &value, &value2)) {
-		case 2:
-			if (value2 < 0 || value2 > 128)
+		विकल्प (n = वाक्यात्_पठ(arg, "%d:%d", &मानम्, &value2)) {
+		पक्ष 2:
+			यदि (value2 < 0 || value2 > 128)
 				n = -1;
 			/* FALLTHROUGH */
-		case 1:
-			if (value < 0 || value > 32)
+		पक्ष 1:
+			यदि (मानम् < 0 || मानम् > 32)
 				n = -1;
 		}
-		if (n != 1 && n != 2)
+		यदि (n != 1 && n != 2)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->per_source_masklen_ipv4 == -1) {
-			options->per_source_masklen_ipv4 = value;
-			if (n == 2)
-				options->per_source_masklen_ipv6 = value2;
+		यदि (*activep && options->प्रत्येकम्_source_masklen_ipv4 == -1) {
+			options->प्रत्येकम्_source_masklen_ipv4 = मानम्;
+			यदि (n == 2)
+				options->प्रत्येकम्_source_masklen_ipv6 = value2;
 		}
-		break;
+		भङ्ग;
 
-	case sPerSourceMaxStartups:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_प्रत्येकम्_Source_Max_Startups:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "none") == 0) { /* no limit */
-			value = INT_MAX;
-		} else {
-			if ((errstr = atoi_err(arg, &value)) != NULL)
+		यदि (वाक्यं_तुलय(arg, "none") == 0) { /* no limit */
+			मानम् = अधिकतम_पूर्णाङ्कः;
+		} अन्यथा {
+			यदि ((errstr = atoi_err(arg, &मानम्)) != रिक्त)
 				fatal("%s line %d: %s integer value %s.",
 				    filename, linenum, keyword, errstr);
 		}
-		if (*activep && options->per_source_max_startups == -1)
-			options->per_source_max_startups = value;
-		break;
+		यदि (*activep && options->प्रत्येकम्_source_max_startups == -1)
+			options->प्रत्येकम्_source_max_startups = मानम्;
+		भङ्ग;
 
-	case sPerSourcePenaltyExemptList:
-		charptr = &options->per_source_penalty_exempt;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_प्रत्येकम्_Source_Penalty_Exempt_List:
+		charptr = &options->प्रत्येकम्_source_penalty_exempt;
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		if (addr_match_list(NULL, arg) != 0) {
+		यदि (addr_मेलनम्_list(रिक्त, arg) != 0) {
 			fatal("%s line %d: keyword %s "
 			    "invalid address argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sPerSourcePenalties:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			const char *q = NULL;
+	पक्ष s_प्रत्येकम्_Source_Penalties:
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			ध्रुव वर्ण *q = रिक्त;
 
-			found = 1;
-			intptr = NULL;
-			doubleptr = NULL;
-			value = -1;
+			प्राप्तम् = 1;
+			intptr = रिक्त;
+			doubleptr = रिक्त;
+			मानम् = -1;
 			value2 = 0;
 			/* Allow no/yes only in first position */
-			if (strcasecmp(arg, "no") == 0 ||
+			यदि (strcasecmp(arg, "no") == 0 ||
 			    (value2 = (strcasecmp(arg, "yes") == 0))) {
-				if (ac > 0) {
+				यदि (ac > 0) {
 					fatal("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 				}
-				if (*activep &&
-				    options->per_source_penalty.enabled == -1)
-					options->per_source_penalty.enabled = value2;
-				continue;
-			} else if ((q = strprefix(arg, "crash:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_crash;
-			} else if ((q = strprefix(arg, "authfail:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_authfail;
-			} else if ((q = strprefix(arg, "invaliduser:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_invaliduser;
-			} else if ((q = strprefix(arg, "noauth:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_noauth;
-			} else if ((q = strprefix(arg, "grace-exceeded:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_grace;
-			} else if ((q = strprefix(arg, "refuseconnection:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_refuseconnection;
-			} else if ((q = strprefix(arg, "max:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_max;
-			} else if ((q = strprefix(arg, "min:", 0)) != NULL) {
-				doubleptr = &options->per_source_penalty.penalty_min;
-			} else if ((q = strprefix(arg, "max-sources4:", 0)) != NULL) {
-				intptr = &options->per_source_penalty.max_sources4;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				यदि (*activep &&
+				    options->प्रत्येकम्_source_penalty.enabled == -1)
+					options->प्रत्येकम्_source_penalty.enabled = value2;
+				अनुवर्त;
+			} अन्यथा यदि ((q = strprefix(arg, "crash:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_crash;
+			} अन्यथा यदि ((q = strprefix(arg, "authfail:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_authfail;
+			} अन्यथा यदि ((q = strprefix(arg, "invaliduser:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_invaliduser;
+			} अन्यथा यदि ((q = strprefix(arg, "noauth:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_noauth;
+			} अन्यथा यदि ((q = strprefix(arg, "grace-exceeded:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_grace;
+			} अन्यथा यदि ((q = strprefix(arg, "refuseconnection:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_refuseconnection;
+			} अन्यथा यदि ((q = strprefix(arg, "max:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_max;
+			} अन्यथा यदि ((q = strprefix(arg, "min:", 0)) != रिक्त) {
+				doubleptr = &options->प्रत्येकम्_source_penalty.penalty_min;
+			} अन्यथा यदि ((q = strprefix(arg, "max-sources4:", 0)) != रिक्त) {
+				intptr = &options->प्रत्येकम्_source_penalty.max_sources4;
+				यदि ((errstr = atoi_err(q, &मानम्)) != रिक्त)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if ((q = strprefix(arg, "max-sources6:", 0)) != NULL) {
-				intptr = &options->per_source_penalty.max_sources6;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+			} अन्यथा यदि ((q = strprefix(arg, "max-sources6:", 0)) != रिक्त) {
+				intptr = &options->प्रत्येकम्_source_penalty.max_sources6;
+				यदि ((errstr = atoi_err(q, &मानम्)) != रिक्त)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if (strcmp(arg, "overflow:deny-all") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow:permissive") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else if (strcmp(arg, "overflow6:deny-all") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow6:permissive") == 0) {
-				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else {
+			} अन्यथा यदि (वाक्यं_तुलय(arg, "overflow:deny-all") == 0) {
+				intptr = &options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम्;
+				मानम् = प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_DENY_ALL;
+			} अन्यथा यदि (वाक्यं_तुलय(arg, "overflow:permissive") == 0) {
+				intptr = &options->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम्;
+				मानम् = प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_PERMISSIVE;
+			} अन्यथा यदि (वाक्यं_तुलय(arg, "overflow6:deny-all") == 0) {
+				intptr = &options->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6;
+				मानम् = प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_DENY_ALL;
+			} अन्यथा यदि (वाक्यं_तुलय(arg, "overflow6:permissive") == 0) {
+				intptr = &options->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6;
+				मानम् = प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_PERMISSIVE;
+			} अन्यथा {
 				fatal("%s line %d: unsupported %s keyword %s",
 				    filename, linenum, keyword, arg);
 			}
 
-			if (doubleptr != NULL) {
-				if ((dvalue = convtime_double(q)) < 0) {
+			यदि (doubleptr != रिक्त) {
+				यदि ((dvalue = convtime_double(q)) < 0) {
 					fatal("%s line %d: invalid %s time value.",
 					    filename, linenum, keyword);
 				}
-				if (*activep && *doubleptr < 0.0) {
+				यदि (*activep && *doubleptr < 0.0) {
 					*doubleptr = dvalue;
-					options->per_source_penalty.enabled = 1;
+					options->प्रत्येकम्_source_penalty.enabled = 1;
 				}
-			} else if (intptr != NULL) {
-				if (*activep && *intptr == -1) {
-					*intptr = value;
-					options->per_source_penalty.enabled = 1;
+			} अन्यथा यदि (intptr != रिक्त) {
+				यदि (*activep && *intptr == -1) {
+					*intptr = मानम्;
+					options->प्रत्येकम्_source_penalty.enabled = 1;
 				}
-			} else {
+			} अन्यथा {
 				fatal_f("%s line %d: internal error",
 				    filename, linenum);
 			}
 		}
-		if (!found) {
+		यदि (!प्राप्तम्) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		भङ्ग;
 
-	case sMaxAuthTries:
+	पक्ष sMaxAuthTries:
 		intptr = &options->max_authtries;
-		goto parse_int;
+		गच्छ parse_int;
 
-	case sMaxSessions:
+	पक्ष sMaxSessions:
 		intptr = &options->max_sessions;
-		goto parse_int;
+		गच्छ parse_int;
 
-	case sBanner:
+	पक्ष sBanner:
 		charptr = &options->banner;
-		goto parse_filename;
+		गच्छ parse_filename;
 
 	/*
 	 * These options can contain %X options expanded at
@@ -2054,146 +2054,146 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	 *
 	 * AuthorizedKeysFile	/etc/ssh_keys/%u
 	 */
-	case sAuthorizedKeysFile:
-		uintptr = &options->num_authkeys_files;
-		chararrayptr = &options->authorized_keys_files;
+	पक्ष s_Authorized_कुञ्चिकाः_File:
+		uintptr = &options->अङ्कः_authkeys_files;
+		chararrayptr = &options->authorized_कुञ्चिकाः_files;
  parse_filenames:
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		प्राप्तम् = *uintptr == 0;
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				गच्छ बहिर्गमनम्;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			यदि (strcasecmp(arg, "none") == 0) {
+				यदि (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					गच्छ बहिर्गमनम्;
 				}
 			}
 			arg2 = tilde_expand_filename(arg, getuid());
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			मुक्त(arg2);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sAuthorizedPrincipalsFile:
+	पक्ष sAuthorizedPrincipalsFile:
 		charptr = &options->authorized_principals_file;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		यदि (*activep && *charptr == रिक्त) {
 			*charptr = tilde_expand_filename(arg, getuid());
 			/* increase optional counter */
-			if (intptr != NULL)
+			यदि (intptr != रिक्त)
 				*intptr = *intptr + 1;
 		}
-		break;
+		भङ्ग;
 
-	case sClientAliveInterval:
+	पक्ष sClientAliveInterval:
 		intptr = &options->client_alive_interval;
-		goto parse_time;
+		गच्छ parse_time;
 
-	case sClientAliveCountMax:
-		intptr = &options->client_alive_count_max;
-		goto parse_int;
+	पक्ष s_Client_Alive_गणनम्_Max:
+		intptr = &options->client_alive_गणनम्_max;
+		गच्छ parse_int;
 
-	case sAcceptEnv:
+	पक्ष sAcceptEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL)
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0' || strchr(arg, '=') != रिक्त)
 				fatal("%s line %d: Invalid environment name.",
 				    filename, linenum);
-			found = 1;
-			if (!*activep)
-				continue;
+			प्राप्तम् = 1;
+			यदि (!*activep)
+				अनुवर्त;
 			opt_array_append(filename, linenum, keyword,
-			    &options->accept_env, &options->num_accept_env,
+			    &options->accept_env, &options->अङ्कः_accept_env,
 			    arg);
 		}
-		if (!found) {
+		यदि (!प्राप्तम्) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		भङ्ग;
 
-	case sSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') == NULL)
+	पक्ष s_समुच्चयः_Env:
+		प्राप्तम् = options->अङ्कः_setenv == 0;
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg == '\0' || strchr(arg, '=') == रिक्त)
 				fatal("%s line %d: Invalid environment.",
 				    filename, linenum);
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			यदि (lookup_setenv_अन्तर्_list(arg, strs, nstrs) != रिक्त) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				अनुवर्त;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->अङ्कः_setenv = nstrs;
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sPermitTunnel:
+	पक्ष sPermitTunnel:
 		intptr = &options->permit_tun;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = -1;
-		for (i = 0; tunmode_desc[i].val != -1; i++)
-			if (strcmp(tunmode_desc[i].text, arg) == 0) {
-				value = tunmode_desc[i].val;
-				break;
+		मानम् = -1;
+		प्रति (i = 0; tunmode_desc[i].val != -1; i++)
+			यदि (वाक्यं_तुलय(tunmode_desc[i].text, arg) == 0) {
+				मानम् = tunmode_desc[i].val;
+				भङ्ग;
 			}
-		if (value == -1)
+		यदि (मानम् == -1)
 			fatal("%s line %d: bad %s argument %s",
 			    filename, linenum, keyword, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		यदि (*activep && *intptr == -1)
+			*intptr = मानम्;
+		भङ्ग;
 
-	case sInclude:
-		if (cmdline) {
+	पक्ष sInclude:
+		यदि (cmdline) {
 			fatal("Include directive not supported as a "
 			    "command-line option");
 		}
-		value = 0;
-		while ((arg2 = argv_next(&ac, &av)) != NULL) {
-			if (*arg2 == '\0') {
+		मानम् = 0;
+		यावत् ((arg2 = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (*arg2 == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				गच्छ बहिर्गमनम्;
 			}
-			value++;
-			found = 0;
-			if (*arg2 != '/' && *arg2 != '~') {
+			मानम्++;
+			प्राप्तम् = 0;
+			यदि (*arg2 != '/' && *arg2 != '~') {
 				xasprintf(&arg, "%s/%s", SSHDIR, arg2);
-			} else
+			} अन्यथा
 				arg = xstrdup(arg2);
 
 			/*
@@ -2203,31 +2203,31 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			oactive = *activep;
 
 			/* consult cache of include files */
-			TAILQ_FOREACH(item, includes, entry) {
-				if (strcmp(item->selector, arg) != 0)
-					continue;
-				if (item->filename != NULL) {
-					parse_server_config_depth(options,
+			TAILQ_FOREACH(item, includes, प्रविष्टिः) {
+				यदि (वाक्यं_तुलय(item->selector, arg) != 0)
+					अनुवर्त;
+				यदि (item->filename != रिक्त) {
+					parse_server_config_गभीरता(options,
 					    item->filename, item->contents,
 					    includes, connectinfo,
-					    (*inc_flags & SSHCFG_MATCH_ONLY
-					        ? SSHCFG_MATCH_ONLY : (oactive
+					    (*inc_flags & SSHCFG_मेलनम्_ONLY
+					        ? SSHCFG_मेलनम्_ONLY : (oactive
 					            ? 0 : SSHCFG_NEVERMATCH)),
-					    activep, depth + 1);
+					    activep, गभीरता + 1);
 				}
-				found = 1;
+				प्राप्तम् = 1;
 				*activep = oactive;
 			}
-			if (found != 0) {
-				free(arg);
-				continue;
+			यदि (प्राप्तम् != 0) {
+				मुक्त(arg);
+				अनुवर्त;
 			}
 
 			/* requested glob was not in cache */
 			debug2("%s line %d: new include %s",
 			    filename, linenum, arg);
-			if ((r = glob(arg, 0, NULL, &gbuf)) != 0) {
-				if (r != GLOB_NOMATCH) {
+			यदि ((r = glob(arg, 0, रिक्त, &gbuf)) != 0) {
+				यदि (r != GLOB_NOMATCH) {
 					fatal("%s line %d: include \"%s\" glob "
 					    "failed", filename, linenum, arg);
 				}
@@ -2237,846 +2237,846 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				 */
 				debug2("%s line %d: no match for %s",
 				    filename, linenum, arg);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, परिमाण(*item));
 				item->selector = xstrdup(arg);
 				TAILQ_INSERT_TAIL(includes,
-				    item, entry);
+				    item, प्रविष्टिः);
 			}
-			if (gbuf.gl_pathc > INT_MAX)
+			यदि (gbuf.gl_pathc > अधिकतम_पूर्णाङ्कः)
 				fatal_f("too many glob results");
-			for (n = 0; n < (int)gbuf.gl_pathc; n++) {
+			प्रति (n = 0; n < (पूर्णाङ्क)gbuf.gl_pathc; n++) {
 				debug2("%s line %d: including %s",
 				    filename, linenum, gbuf.gl_pathv[n]);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, परिमाण(*item));
 				item->selector = xstrdup(arg);
 				item->filename = xstrdup(gbuf.gl_pathv[n]);
-				if ((item->contents = sshbuf_new()) == NULL)
+				यदि ((item->contents = sshbuf_new()) == रिक्त)
 					fatal_f("sshbuf_new failed");
-				load_server_config(item->filename,
+				आरोपय_server_config(item->filename,
 				    item->contents);
-				parse_server_config_depth(options,
+				parse_server_config_गभीरता(options,
 				    item->filename, item->contents,
 				    includes, connectinfo,
-				    (*inc_flags & SSHCFG_MATCH_ONLY
-				        ? SSHCFG_MATCH_ONLY : (oactive
+				    (*inc_flags & SSHCFG_मेलनम्_ONLY
+				        ? SSHCFG_मेलनम्_ONLY : (oactive
 				            ? 0 : SSHCFG_NEVERMATCH)),
-				    activep, depth + 1);
+				    activep, गभीरता + 1);
 				*activep = oactive;
-				TAILQ_INSERT_TAIL(includes, item, entry);
+				TAILQ_INSERT_TAIL(includes, item, प्रविष्टिः);
 			}
 			globfree(&gbuf);
-			free(arg);
+			मुक्त(arg);
 		}
-		if (value == 0) {
+		यदि (मानम् == 0) {
 			fatal("%s line %d: %s missing filename argument",
 			    filename, linenum, keyword);
 		}
-		break;
+		भङ्ग;
 
-	case sMatch:
-		if (cmdline)
+	पक्ष s_मेलनम्:
+		यदि (cmdline)
 			fatal("Match directive not supported as a command-line "
 			    "option");
-		value = match_cfg_line(str, &ac, &av, linenum,
-		    (*inc_flags & SSHCFG_NEVERMATCH ? NULL : connectinfo));
-		if (value < 0)
+		मानम् = मेलनम्_cfg_पङ्क्तिः(str, &ac, &av, linenum,
+		    (*inc_flags & SSHCFG_NEVERMATCH ? रिक्त : connectinfo));
+		यदि (मानम् < 0)
 			fatal("%s line %d: Bad Match condition", filename,
 			    linenum);
-		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : value;
+		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : मानम्;
 		/*
 		 * The MATCH_ONLY flag is applicable only until the first
 		 * match block.
 		 */
-		*inc_flags &= ~SSHCFG_MATCH_ONLY;
-		break;
+		*inc_flags &= ~SSHCFG_मेलनम्_ONLY;
+		भङ्ग;
 
-	case sPermitListen:
-	case sPermitOpen:
-		if (opcode == sPermitListen) {
-			uintptr = &options->num_permitted_listens;
+	पक्ष sPermitListen:
+	पक्ष sPermitOpen:
+		यदि (opcode == sPermitListen) {
+			uintptr = &options->अङ्कः_permitted_listens;
 			chararrayptr = &options->permitted_listens;
-		} else {
-			uintptr = &options->num_permitted_opens;
+		} अन्यथा {
+			uintptr = &options->अङ्कः_permitted_opens;
 			chararrayptr = &options->permitted_opens;
 		}
-		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0 ||
-			    strcmp(arg, "none") == 0) {
-				if (nstrs != 0) {
+		प्राप्तम् = *uintptr == 0;
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (वाक्यं_तुलय(arg, "any") == 0 ||
+			    वाक्यं_तुलय(arg, "none") == 0) {
+				यदि (nstrs != 0) {
 					fatal("%s line %d: %s must appear "
 					    "alone on a %s line.",
 					    filename, linenum, arg, keyword);
 				}
 				opt_array_append(filename, linenum, keyword,
 				    &strs, &nstrs, arg);
-				continue;
+				अनुवर्त;
 			}
 
-			if (opcode == sPermitListen &&
-			    strchr(arg, ':') == NULL) {
+			यदि (opcode == sPermitListen &&
+			    strchr(arg, ':') == रिक्त) {
 				/*
 				 * Allow bare port number for PermitListen
 				 * to indicate a wildcard listen host.
 				 */
 				xasprintf(&arg2, "*:%s", arg);
-			} else {
+			} अन्यथा {
 				arg2 = xstrdup(arg);
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				यदि (p == रिक्त) {
 					fatal("%s line %d: %s missing host",
 					    filename, linenum, keyword);
 				}
 				p = cleanhostname(p);
 			}
-			if (arg == NULL ||
-			    ((port = permitopen_port(arg)) < 0)) {
+			यदि (arg == रिक्त ||
+			    ((पत्तनम् = permitopen_पत्तनम्(arg)) < 0)) {
 				fatal("%s line %d: %s bad port number",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			मुक्त(arg2);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sForceCommand:
-		if (str == NULL || *str == '\0')
+	पक्ष sForceCommand:
+		यदि (str == रिक्त || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (*activep && options->adm_forced_command == NULL)
+		यदि (*activep && options->adm_forced_command == रिक्त)
 			options->adm_forced_command = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		भङ्ग;
 
-	case sChrootDirectory:
+	पक्ष sChrootDirectory:
 		charptr = &options->chroot_directory;
 
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sTrustedUserCAKeys:
-		charptr = &options->trusted_user_ca_keys;
-		goto parse_filename;
+	पक्ष sTrustedUserCAKeys:
+		charptr = &options->trusted_user_ca_कुञ्चिकाः;
+		गच्छ parse_filename;
 
-	case sRevokedKeys:
-		uintptr = &options->num_revoked_keys_files;
-		chararrayptr = &options->revoked_keys_files;
-		goto parse_filenames;
+	पक्ष s_Revoked_कुञ्चिकाः:
+		uintptr = &options->अङ्कः_revoked_कुञ्चिकाः_files;
+		chararrayptr = &options->revoked_कुञ्चिकाः_files;
+		गच्छ parse_filenames;
 
-	case sSecurityKeyProvider:
+	पक्ष s_Security_कुञ्चिका_Provider:
 		charptr = &options->sk_provider;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		यदि (*activep && *charptr == रिक्त) {
 			*charptr = strcasecmp(arg, "internal") == 0 ?
-			    xstrdup(arg) : derelativise_path(arg);
+			    xstrdup(arg) : derelativise_मार्गः(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			यदि (intptr != रिक्त)
 				*intptr = *intptr + 1;
 		}
-		break;
+		भङ्ग;
 
-	case sIPQoS:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sIPQoS:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = parse_ipqos(arg)) == -1)
+		यदि ((मानम् = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value == INT_MIN) {
+		यदि (मानम् == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			मानम् = अधिकतम_पूर्णाङ्कः;
 		}
-		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1)
+		arg = argv_अग्र(&ac, &av);
+		यदि (arg == रिक्त)
+			value2 = मानम्;
+		अन्यथा यदि ((value2 = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value2 == INT_MIN) {
+		यदि (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value2 = INT_MAX;
+			value2 = अधिकतम_पूर्णाङ्कः;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		यदि (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = मानम्;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		भङ्ग;
 
-	case sVersionAddendum:
-		if (str == NULL || *str == '\0')
+	पक्ष s_संस्करणम्_Addendum:
+		यदि (str == रिक्त || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		यदि (strchr(str + len, '\r') != रिक्त) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		यदि ((arg = strchr(पङ्क्तिः, '#')) != रिक्त) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(पङ्क्तिः);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
-				options->version_addendum = xstrdup("");
-			else
-				options->version_addendum = xstrdup(str + len);
+		यदि (*activep && options->संस्करणम्_addendum == रिक्त) {
+			यदि (strcasecmp(str + len, "none") == 0)
+				options->संस्करणम्_addendum = xstrdup("");
+			अन्यथा
+				options->संस्करणम्_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		भङ्ग;
 
-	case sAuthorizedKeysCommand:
-		charptr = &options->authorized_keys_command;
+	पक्ष s_Authorized_कुञ्चिकाः_Command:
+		charptr = &options->authorized_कुञ्चिकाः_command;
  parse_command:
 		len = strspn(str, WHITESPACE);
-		if (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
+		यदि (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
 			fatal("%.200s line %d: %s must be an absolute path",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		भङ्ग;
 
-	case sAuthorizedKeysCommandUser:
-		charptr = &options->authorized_keys_command_user;
+	पक्ष s_Authorized_कुञ्चिकाः_Command_User:
+		charptr = &options->authorized_कुञ्चिकाः_command_user;
  parse_localuser:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0') {
 			fatal("%s line %d: missing %s argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sAuthorizedPrincipalsCommand:
+	पक्ष sAuthorizedPrincipalsCommand:
 		charptr = &options->authorized_principals_command;
-		goto parse_command;
+		गच्छ parse_command;
 
-	case sAuthorizedPrincipalsCommandUser:
+	पक्ष sAuthorizedPrincipalsCommandUser:
 		charptr = &options->authorized_principals_command_user;
-		goto parse_localuser;
+		गच्छ parse_localuser;
 
-	case sAuthenticationMethods:
-		found = options->num_auth_methods == 0;
-		value = 0; /* seen "any" pseudo-method */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0) {
-				if (nstrs > 0) {
+	पक्ष sAuthenticationMethods:
+		प्राप्तम् = options->अङ्कः_auth_methods == 0;
+		मानम् = 0; /* seen "any" pseudo-method */
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
+			यदि (वाक्यं_तुलय(arg, "any") == 0) {
+				यदि (nstrs > 0) {
 					fatal("%s line %d: \"any\" must "
 					    "appear alone in %s",
 					    filename, linenum, keyword);
 				}
-				value = 1;
-			} else if (value) {
+				मानम् = 1;
+			} अन्यथा यदि (मानम्) {
 				fatal("%s line %d: \"any\" must appear "
 				    "alone in %s", filename, linenum, keyword);
-			} else if (auth2_methods_valid(arg, 0) != 0) {
+			} अन्यथा यदि (auth2_methods_valid(arg, 0) != 0) {
 				fatal("%s line %d: invalid %s method list.",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			options->auth_methods = strs;
-			options->num_auth_methods = nstrs;
-			strs = NULL; /* transferred */
+			options->अङ्कः_auth_methods = nstrs;
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sStreamLocalBindMask:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष s_प्रवाहः_Local_Bind_आवरणम्:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* Parse mode in octal format */
-		value = strtol(arg, &p, 8);
-		if (arg == p || value < 0 || value > 0777)
+		मानम् = strtol(arg, &p, 8);
+		यदि (arg == p || मानम् < 0 || मानम् > 0777)
 			fatal("%s line %d: Invalid %s.",
 			    filename, linenum, keyword);
-		if (*activep &&
-		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+		यदि (*activep &&
+		    options->fwd_opts.streamlocal_bind_आवरणम् == (बहुलकम्_t)-1)
+			options->fwd_opts.streamlocal_bind_आवरणम् = (बहुलकम्_t)मानम्;
+		भङ्ग;
 
-	case sStreamLocalBindUnlink:
+	पक्ष s_प्रवाहः_Local_Bind_Unlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sFingerprintHash:
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+	पक्ष sFingerprintHash:
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = ssh_digest_alg_by_name(arg)) == -1)
+		यदि ((मानम् = ssh_digest_alg_by_name(arg)) == -1)
 			fatal("%.200s line %d: Invalid %s algorithm \"%s\".",
 			    filename, linenum, keyword, arg);
-		if (*activep)
-			options->fingerprint_hash = value;
-		break;
+		यदि (*activep)
+			options->fingerprint_hash = मानम्;
+		भङ्ग;
 
-	case sExposeAuthInfo:
+	पक्ष sExposeAuthInfo:
 		intptr = &options->expose_userauth_info;
-		goto parse_flag;
+		गच्छ parse_flag;
 
-	case sRDomain:
-#if !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+	पक्ष sRDomain:
+#यदि !defined(__OpenBSD__) && !defined(HAVE_SYS_समुच्चयः_PROCESS_RDOMAIN)
 		fatal("%s line %d: setting RDomain not supported on this "
 		    "platform.", filename, linenum);
-#endif
+#यदि_अन्तः
 		charptr = &options->routing_domain;
-		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		arg = argv_अग्र(&ac, &av);
+		यदि (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
+		यदि (strcasecmp(arg, "none") != 0 && वाक्यं_तुलय(arg, "%D") != 0 &&
 		    !valid_rdomain(arg))
 			fatal("%s line %d: invalid routing domain",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		यदि (*activep && *charptr == रिक्त)
 			*charptr = xstrdup(arg);
-		break;
+		भङ्ग;
 
-	case sRequiredRSASize:
-		intptr = &options->required_rsa_size;
-		goto parse_int;
+	पक्ष sRequiredRSASize:
+		intptr = &options->required_rsa_आकार;
+		गच्छ parse_int;
 
-	case sChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	पक्ष sChannelTimeout:
+		प्राप्तम् = options->अङ्कः_channel_timeouts == 0;
+		यावत् ((arg = argv_अग्र(&ac, &av)) != रिक्त) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			यदि (strcasecmp(arg, "none") == 0) {
+				यदि (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					गच्छ बहिर्गमनम्;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} अन्यथा यदि (parse_आदर्शः_interval(arg,
+			    रिक्त, रिक्त) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		यदि (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		यदि (प्राप्तम् && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->अङ्कः_channel_timeouts = nstrs;
+			strs = रिक्त; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		भङ्ग;
 
-	case sUnusedConnectionTimeout:
-		intptr = &options->unused_connection_timeout;
+	पक्ष s_अप्रयुक्तम्_Connection_Timeout:
+		intptr = &options->अप्रयुक्तम्_connection_timeout;
 		/* peek at first arg for "none" so we can reuse parse_time */
-		if (av[0] != NULL && strcasecmp(av[0], "none") == 0) {
-			(void)argv_next(&ac, &av); /* consume arg */
-			if (*activep)
+		यदि (av[0] != रिक्त && strcasecmp(av[0], "none") == 0) {
+			(शून्य)argv_अग्र(&ac, &av); /* consume arg */
+			यदि (*activep)
 				*intptr = 0;
-			break;
+			भङ्ग;
 		}
-		goto parse_time;
+		गच्छ parse_time;
 
-	case sSshdSessionPath:
-		charptr = &options->sshd_session_path;
-		goto parse_filename;
+	पक्ष s_Sshd_Session_मार्गः:
+		charptr = &options->sshd_session_मार्गः;
+		गच्छ parse_filename;
 
-	case sSshdAuthPath:
-		charptr = &options->sshd_auth_path;
-		goto parse_filename;
+	पक्ष s_Sshd_Auth_मार्गः:
+		charptr = &options->sshd_auth_मार्गः;
+		गच्छ parse_filename;
 
-	case sRefuseConnection:
+	पक्ष sRefuseConnection:
 		intptr = &options->refuse_connection;
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sWarnWeakCrypto:
+	पक्ष sWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		गच्छ parse_multistate;
 
-	case sDeprecated:
-	case sIgnore:
-	case sUnsupported:
+	पक्ष sDeprecated:
+	पक्ष sIgnore:
+	पक्ष sUnsupported:
 		do_log2(opcode == sIgnore ?
 		    SYSLOG_LEVEL_DEBUG2 : SYSLOG_LEVEL_INFO,
 		    "%s line %d: %s option %s", filename, linenum,
 		    opcode == sUnsupported ? "Unsupported" : "Deprecated",
 		    keyword);
 		argv_consume(&ac);
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		fatal("%s line %d: Missing handler for opcode %s (%d)",
 		    filename, linenum, keyword, opcode);
 	}
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	यदि (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
 	/* success */
 	ret = 0;
- out:
-	opt_array_free2(strs, NULL, nstrs);
+ बहिर्गमनम्:
+	opt_array_free2(strs, रिक्त, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	प्रत्यागम ret;
 }
 
-int
-process_server_config_line(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, struct include_list *includes)
+पूर्णाङ्क
+process_server_config_पङ्क्तिः(ServerOptions *options, वर्ण *पङ्क्तिः,
+    ध्रुव वर्ण *filename, पूर्णाङ्क linenum, पूर्णाङ्क *activep,
+    संरचना connection_info *connectinfo, संरचना include_list *includes)
 {
-	int inc_flags = 0;
+	पूर्णाङ्क inc_flags = 0;
 
-	return process_server_config_line_depth(options, line, filename,
+	प्रत्यागम process_server_config_पङ्क्तिः_गभीरता(options, पङ्क्तिः, filename,
 	    linenum, activep, connectinfo, &inc_flags, 0, includes);
 }
 
 
 /* Reads the server configuration file. */
 
-void
-load_server_config(const char *filename, struct sshbuf *conf)
+शून्य
+आरोपय_server_config(ध्रुव वर्ण *filename, संरचना sshbuf *conf)
 {
-	struct stat st;
-	char *line = NULL, *cp;
-	size_t linesize = 0;
+	संरचना stat st;
+	वर्ण *पङ्क्तिः = रिक्त, *cp;
+	आकार_t linesize = 0;
 	FILE *f;
-	int r;
+	पूर्णाङ्क r;
 
 	debug2_f("filename %s", filename);
-	if ((f = fopen(filename, "r")) == NULL) {
+	यदि ((f = fopen(filename, "r")) == रिक्त) {
 		perror(filename);
-		exit(1);
+		निर्गच्छ(1);
 	}
 	sshbuf_reset(conf);
 	/* grow buffer, so realloc is avoided for large config files */
-	if (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
+	यदि (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
 	    (r = sshbuf_allocate(conf, st.st_size)) != 0)
 		fatal_fr(r, "allocate");
-	while (getline(&line, &linesize, f) != -1) {
+	यावत् (getline(&पङ्क्तिः, &linesize, f) != -1) {
 		/*
 		 * Strip whitespace
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages
 		 */
-		cp = line + strspn(line, " \t\r");
-		if ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
+		cp = पङ्क्तिः + strspn(पङ्क्तिः, " \t\r");
+		यदि ((r = sshbuf_put(conf, cp, वाक्यदैर्घ्यम्(cp))) != 0)
 			fatal_fr(r, "sshbuf_put");
 	}
-	free(line);
-	if ((r = sshbuf_put_u8(conf, 0)) != 0)
+	मुक्त(पङ्क्तिः);
+	यदि ((r = sshbuf_put_u8(conf, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
 	fclose(f);
 	debug2_f("done config len = %zu", sshbuf_len(conf));
 }
 
-void
-parse_server_match_config(ServerOptions *options,
-   struct include_list *includes, struct connection_info *connectinfo)
+शून्य
+parse_server_मेलनम्_config(ServerOptions *options,
+   संरचना include_list *includes, संरचना connection_info *connectinfo)
 {
 	ServerOptions mo;
 
 	initialize_server_options(&mo);
 	parse_server_config(&mo, "reprocess config", cfg, includes,
 	    connectinfo, 0);
-	copy_set_server_options(options, &mo, 0);
+	copy_समुच्चयः_server_options(options, &mo, 0);
 	free_server_options(&mo);
 }
 
-int
-parse_server_match_testspec(struct connection_info *ci, char *spec)
+पूर्णाङ्क
+parse_server_मेलनम्_testspec(संरचना connection_info *ci, वर्ण *spec)
 {
-	char *p;
-	const char *val;
+	वर्ण *p;
+	ध्रुव वर्ण *val;
 
-	while ((p = strsep(&spec, ",")) && *p != '\0') {
-		if ((val = strprefix(p, "addr=", 0)) != NULL) {
-			ci->address = xstrdup(val);
-		} else if ((val = strprefix(p, "host=", 0)) != NULL) {
+	यावत् ((p = strsep(&spec, ",")) && *p != '\0') {
+		यदि ((val = strprefix(p, "addr=", 0)) != रिक्त) {
+			ci->स्थानाङ्कः = xstrdup(val);
+		} अन्यथा यदि ((val = strprefix(p, "host=", 0)) != रिक्त) {
 			ci->host = xstrdup(val);
-		} else if ((val = strprefix(p, "user=", 0)) != NULL) {
+		} अन्यथा यदि ((val = strprefix(p, "user=", 0)) != रिक्त) {
 			ci->user = xstrdup(val);
-		} else if ((val = strprefix(p, "laddr=", 0)) != NULL) {
+		} अन्यथा यदि ((val = strprefix(p, "laddr=", 0)) != रिक्त) {
 			ci->laddress = xstrdup(val);
-		} else if ((val = strprefix(p, "rdomain=", 0)) != NULL) {
+		} अन्यथा यदि ((val = strprefix(p, "rdomain=", 0)) != रिक्त) {
 			ci->rdomain = xstrdup(val);
-		} else if ((val = strprefix(p, "lport=", 0)) != NULL) {
+		} अन्यथा यदि ((val = strprefix(p, "lport=", 0)) != रिक्त) {
 			ci->lport = a2port(val);
-			if (ci->lport == -1) {
+			यदि (ci->lport == -1) {
 				fprintf(stderr, "Invalid port '%s' in test mode"
 				    " specification %s\n", p+6, p);
-				return -1;
+				प्रत्यागम -1;
 			}
-		} else if (strcmp(p, "invalid-user") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(p, "invalid-user") == 0) {
 			ci->user_invalid = 1;
-		} else {
+		} अन्यथा {
 			fprintf(stderr, "Invalid test mode specification %s\n",
 			    p);
-			return -1;
+			प्रत्यागम -1;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-void
+शून्य
 servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
 {
-	u_int i, j, found;
+	u_int i, j, प्राप्तम्;
 
-	for (i = 0; i < src->num_subsystems; i++) {
-		found = 0;
-		for (j = 0; j < dst->num_subsystems; j++) {
-			if (strcmp(src->subsystem_name[i],
+	प्रति (i = 0; i < src->अङ्कः_subsystems; i++) {
+		प्राप्तम् = 0;
+		प्रति (j = 0; j < dst->अङ्कः_subsystems; j++) {
+			यदि (वाक्यं_तुलय(src->subsystem_name[i],
 			    dst->subsystem_name[j]) == 0) {
-				found = 1;
-				break;
+				प्राप्तम् = 1;
+				भङ्ग;
 			}
 		}
-		if (found) {
+		यदि (प्राप्तम्) {
 			debug_f("override \"%s\"", dst->subsystem_name[j]);
-			free(dst->subsystem_command[j]);
-			free(dst->subsystem_args[j]);
+			मुक्त(dst->subsystem_command[j]);
+			मुक्त(dst->subsystem_तर्काः[j]);
 			dst->subsystem_command[j] =
 			    xstrdup(src->subsystem_command[i]);
-			dst->subsystem_args[j] =
-			    xstrdup(src->subsystem_args[i]);
-			continue;
+			dst->subsystem_तर्काः[j] =
+			    xstrdup(src->subsystem_तर्काः[i]);
+			अनुवर्त;
 		}
 		debug_f("add \"%s\"", src->subsystem_name[i]);
 		dst->subsystem_name = xrecallocarray(
-		    dst->subsystem_name, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_name));
+		    dst->subsystem_name, dst->अङ्कः_subsystems,
+		    dst->अङ्कः_subsystems + 1, परिमाण(*dst->subsystem_name));
 		dst->subsystem_command = xrecallocarray(
-		    dst->subsystem_command, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_command));
-		dst->subsystem_args = xrecallocarray(
-		    dst->subsystem_args, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_args));
-		j = dst->num_subsystems++;
+		    dst->subsystem_command, dst->अङ्कः_subsystems,
+		    dst->अङ्कः_subsystems + 1, परिमाण(*dst->subsystem_command));
+		dst->subsystem_तर्काः = xrecallocarray(
+		    dst->subsystem_तर्काः, dst->अङ्कः_subsystems,
+		    dst->अङ्कः_subsystems + 1, परिमाण(*dst->subsystem_तर्काः));
+		j = dst->अङ्कः_subsystems++;
 		dst->subsystem_name[j] = xstrdup(src->subsystem_name[i]);
 		dst->subsystem_command[j] = xstrdup(src->subsystem_command[i]);
-		dst->subsystem_args[j] = xstrdup(src->subsystem_args[i]);
+		dst->subsystem_तर्काः[j] = xstrdup(src->subsystem_तर्काः[i]);
 	}
 }
 
-static int
-serialise_s32(struct sshbuf *buf, int v)
+स्थिर पूर्णाङ्क
+serialise_s32(संरचना sshbuf *buf, पूर्णाङ्क v)
 {
 	uint32_t uv;
-	int r;
+	पूर्णाङ्क r;
 
 	uv = v < 0 ? (uint32_t)(-(v + 1)) + 1 : (uint32_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	यदि ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u32(buf, uv)) != 0)
-		return r;
-	return 0;
+		प्रत्यागम r;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_s64(struct sshbuf *buf, int64_t v)
+स्थिर पूर्णाङ्क
+serialise_s64(संरचना sshbuf *buf, int64_t v)
 {
 	uint64_t uv;
-	int r;
+	पूर्णाङ्क r;
 
 	uv = v < 0 ? (uint64_t)(-(v + 1)) + 1 : (uint64_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	यदि ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u64(buf, uv)) != 0)
-		return r;
-	return 0;
+		प्रत्यागम r;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_mode(struct sshbuf *buf, mode_t v)
+स्थिर पूर्णाङ्क
+serialise_बहुलकम्(संरचना sshbuf *buf, बहुलकम्_t v)
 {
 	u_int uv;
 
-	if (v == (mode_t)-1)
-		return serialise_s32(buf, -1);
+	यदि (v == (बहुलकम्_t)-1)
+		प्रत्यागम serialise_s32(buf, -1);
 	uv = (u_int)v;
-	if ((mode_t)uv != v || uv > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	return serialise_s32(buf, (int)uv);
+	यदि ((बहुलकम्_t)uv != v || uv > 0777)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	प्रत्यागम serialise_s32(buf, (पूर्णाङ्क)uv);
 }
 
-static int
-serialise_double(struct sshbuf *buf, double v)
+स्थिर पूर्णाङ्क
+serialise_double(संरचना sshbuf *buf, द्विगुण v)
 {
 	/*
 	 * XXX this is no good for a wire encoding.
 	 * It's fine for passing configurations via RPC, but it would
 	 * be nicer to have an exact binary encoding here.
 	 */
-	return sshbuf_put(buf, &v, sizeof(v));
+	प्रत्यागम sshbuf_put(buf, &v, परिमाण(v));
 }
 
-static int
-serialise_nullable_string(struct sshbuf *buf, const char *s)
+स्थिर पूर्णाङ्क
+serialise_nullable_string(संरचना sshbuf *buf, ध्रुव वर्ण *s)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_put_u8(buf, s != NULL)) != 0)
-		return r;
-	if (s == NULL)
-		return 0;
-	return sshbuf_put_cstring(buf, s);
+	यदि ((r = sshbuf_put_u8(buf, s != रिक्त)) != 0)
+		प्रत्यागम r;
+	यदि (s == रिक्त)
+		प्रत्यागम 0;
+	प्रत्यागम sshbuf_put_cstring(buf, s);
 }
 
-static int
-serialise_nullable_string_array(struct sshbuf *buf, char **a, u_int n)
+स्थिर पूर्णाङ्क
+serialise_nullable_string_array(संरचना sshbuf *buf, वर्ण **a, u_int n)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, n)) != 0)
-		return r;
-	for (i = 0; i < n; i++) {
-		if ((r = serialise_nullable_string(buf, a[i])) != 0)
-			return r;
+	यदि ((r = sshbuf_put_u32(buf, n)) != 0)
+		प्रत्यागम r;
+	प्रति (i = 0; i < n; i++) {
+		यदि ((r = serialise_nullable_string(buf, a[i])) != 0)
+			प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_hostkeyfile(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_hostkeyfile(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_host_key_files)) != 0) {
+	यदि ((r = sshbuf_put_u32(buf, options->अङ्कः_host_कुञ्चिका_files)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		प्रत्यागम r;
 	}
-	for (i = 0; i < options->num_host_key_files; i++) {
-		if ((r = serialise_s32(buf,
-		    options->host_key_file_userprovided[i])) != 0 ||
+	प्रति (i = 0; i < options->अङ्कः_host_कुञ्चिका_files; i++) {
+		यदि ((r = serialise_s32(buf,
+		    options->host_कुञ्चिका_file_userprovided[i])) != 0 ||
 		    (r = serialise_nullable_string(buf,
-		    options->host_key_files[i])) != 0) {
+		    options->host_कुञ्चिका_files[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_ipqos(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_ipqos(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
+	यदि ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
 	    (r = serialise_s32(buf, options->ip_qos_bulk)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_listenaddress(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_listenaddress(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i;
 
 	/* Note: only serialises queued listen addresses */
-	if ((r = sshbuf_put_u32(buf, options->num_queued_listens)) != 0) {
+	यदि ((r = sshbuf_put_u32(buf, options->अङ्कः_queued_listens)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		प्रत्यागम r;
 	}
-	for (i = 0; i < options->num_queued_listens; i++) {
-		const struct queued_listenaddr *qla =
+	प्रति (i = 0; i < options->अङ्कः_queued_listens; i++) {
+		ध्रुव संरचना queued_listenaddr *qla =
 		    options->queued_listen_addrs + i;
 
-		if ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
-		    (r = serialise_s32(buf, qla->port)) != 0 ||
+		यदि ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
+		    (r = serialise_s32(buf, qla->पत्तनम्)) != 0 ||
 		    (r = serialise_nullable_string(buf, qla->rdomain)) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_logfacility(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_logfacility(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, (int)options->log_facility)) != 0) {
+	यदि ((r = serialise_s32(buf, (पूर्णाङ्क)options->log_facility)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_loglevel(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_loglevel(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, (int)options->log_level)) != 0) {
+	यदि ((r = serialise_s32(buf, (पूर्णाङ्क)options->log_level)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_port(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_पत्तनम्(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_ports)) != 0) {
+	यदि ((r = sshbuf_put_u32(buf, options->अङ्कः_ports)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		प्रत्यागम r;
 	}
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = serialise_s32(buf, options->ports[i])) != 0) {
+	प्रति (i = 0; i < options->अङ्कः_ports; i++) {
+		यदि ((r = serialise_s32(buf, options->ports[i])) != 0) {
 			error_fr(r, "serialise port");
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_gatewayports(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_gatewayports(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
+	यदि ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_streamlocalbindmask(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_streamlocalbindmask(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_mode(buf,
-	    options->fwd_opts.streamlocal_bind_mask)) != 0) {
+	यदि ((r = serialise_बहुलकम्(buf,
+	    options->fwd_opts.streamlocal_bind_आवरणम्)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_streamlocalbindunlink(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_streamlocalbindunlink(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_put_u8(buf,
+	यदि ((r = sshbuf_put_u8(buf,
 	    (options->fwd_opts.streamlocal_bind_unlink != 0))) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_maxstartups(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_maxstartups(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
-	    (r = serialise_s32(buf, options->max_startups_rate)) != 0 ||
+	यदि ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
+	    (r = serialise_s32(buf, options->max_startups_दरः)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_permituserenv(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_permituserenv(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
+	यदि ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
 	    (r = serialise_nullable_string(buf,
 	    options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_persourcenetblocksize(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_persourcenetblocksize(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
-	    (r = serialise_s32(buf, options->per_source_masklen_ipv6)) != 0) {
+	यदि ((r = serialise_s32(buf, options->प्रत्येकम्_source_masklen_ipv4)) != 0 ||
+	    (r = serialise_s32(buf, options->प्रत्येकम्_source_masklen_ipv6)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_persourcepenalties(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	const struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	ध्रुव संरचना प्रत्येकम्_source_penalty *psp = &options->प्रत्येकम्_source_penalty;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, psp->enabled)) != 0 ||
+	यदि ((r = serialise_s32(buf, psp->enabled)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources4)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources6)) != 0 ||
-	    (r = serialise_s32(buf, psp->overflow_mode)) != 0 ||
-	    (r = serialise_s32(buf, psp->overflow_mode6)) != 0 ||
+	    (r = serialise_s32(buf, psp->अतिप्रवाहः_बहुलकम्)) != 0 ||
+	    (r = serialise_s32(buf, psp->अतिप्रवाहः_mode6)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_crash)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_grace)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_authfail)) != 0 ||
@@ -3086,535 +3086,535 @@ serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
 	    (r = serialise_double(buf, psp->penalty_max)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_min)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_rekeylimit(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_rekeylimit(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
+	यदि ((r = serialise_s64(buf, options->rekey_सीमा)) != 0 ||
 	    (r = serialise_s32(buf, options->rekey_interval)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_subsystem(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_subsystem(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_subsystems)) != 0) {
+	यदि ((r = sshbuf_put_u32(buf, options->अङ्कः_subsystems)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		प्रत्यागम r;
 	}
-	for (i = 0; i < options->num_subsystems; i++) {
-		if ((r = sshbuf_put_cstring(buf,
+	प्रति (i = 0; i < options->अङ्कः_subsystems; i++) {
+		यदि ((r = sshbuf_put_cstring(buf,
 		    options->subsystem_name[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_command[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
-		    options->subsystem_args[i])) != 0) {
+		    options->subsystem_तर्काः[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_pubkey_auth_options(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_pubkey_auth_options(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
+	यदि ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
 	    (r = serialise_s32(buf, options->max_pubkey_ok)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+serialise_timingsecret(ध्रुव ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
+	यदि ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 
-int
-serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
+पूर्णाङ्क
+serialise_server_options(ध्रुव ServerOptions *options, संरचना sshbuf **bufp)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *buf = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_आन्तरिकम्_ERROR;
 
-	*bufp = NULL;
+	*bufp = रिक्त;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
+	यदि ((buf = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	यदि ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_संस्करणम्)) != 0) {
 		error_fr(r, "serialise version");
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	यदि ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	यदि ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = serialise_nullable_string(buf, options->var)) != 0) { \
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp) \
+	यदि ((r = serialise_nullable_string(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = serialise_nullable_string_array(buf, options->var, \
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	यदि ((r = serialise_nullable_string_array(buf, options->var, \
 	    options->nvar)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
-#define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	यदि ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		गच्छ बहिर्गमनम्;
+#परिभाषय SSHCONF_NONCONF(funcsuffix) \
+	यदि ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		गच्छ बहिर्गमनम्;
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/*रिक्तानि*/
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
 	/* success */
 	r = 0;
 	*bufp = buf;
-	buf = NULL; /* transferred */
- out:
+	buf = रिक्त; /* transferred */
+ बहिर्गमनम्:
 	sshbuf_free(buf);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-deserialise_s32(struct sshbuf *buf, int *v)
+स्थिर पूर्णाङ्क
+deserialise_s32(संरचना sshbuf *buf, पूर्णाङ्क *v)
 {
 	uint32_t tmp;
-	int r;
+	पूर्णाङ्क r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	यदि ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint32_t)INT_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(int)tmp;
-	} else {
-		if (tmp > INT_MAX)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = (int)tmp;
+		प्रत्यागम r;
+	यदि (was_signed > 1)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	यदि (was_signed) {
+		यदि (tmp > (uint32_t)अधिकतम_पूर्णाङ्कः + 1)
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
+		*v = tmp == (uint32_t)अधिकतम_पूर्णाङ्कः + 1 ? INT_MIN : -(पूर्णाङ्क)tmp;
+	} अन्यथा {
+		यदि (tmp > अधिकतम_पूर्णाङ्कः)
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
+		*v = (पूर्णाङ्क)tmp;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_s64(struct sshbuf *buf, int64_t *v)
+स्थिर पूर्णाङ्क
+deserialise_s64(संरचना sshbuf *buf, int64_t *v)
 {
 	uint64_t tmp;
-	int r;
+	पूर्णाङ्क r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	यदि ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u64(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint64_t)INT64_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम r;
+	यदि (was_signed > 1)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	यदि (was_signed) {
+		यदि (tmp > (uint64_t)INT64_MAX + 1)
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
 		*v = tmp == (uint64_t)INT64_MAX + 1 ?
 		    INT64_MIN : -(int64_t)tmp;
-	} else {
-		if (tmp > INT64_MAX)
-			return SSH_ERR_INVALID_FORMAT;
+	} अन्यथा {
+		यदि (tmp > INT64_MAX)
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
 		*v = (int64_t)tmp;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_mode(struct sshbuf *buf, mode_t *v)
+स्थिर पूर्णाङ्क
+deserialise_बहुलकम्(संरचना sshbuf *buf, बहुलकम्_t *v)
 {
-	int r, tmp;
+	पूर्णाङ्क r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0)
-		return r;
-	if (tmp == -1) {
-		*v = (mode_t)-1;
-		return 0;
+	यदि ((r = deserialise_s32(buf, &tmp)) != 0)
+		प्रत्यागम r;
+	यदि (tmp == -1) {
+		*v = (बहुलकम्_t)-1;
+		प्रत्यागम 0;
 	}
-	if (tmp < 0 || tmp > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	*v = (mode_t)tmp;
-	return 0;
+	यदि (tmp < 0 || tmp > 0777)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	*v = (बहुलकम्_t)tmp;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_double(struct sshbuf *buf, double *v)
+स्थिर पूर्णाङ्क
+deserialise_double(संरचना sshbuf *buf, द्विगुण *v)
 {
-	return sshbuf_get(buf, v, sizeof(*v));
+	प्रत्यागम sshbuf_get(buf, v, परिमाण(*v));
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *buf, char **sp)
+स्थिर पूर्णाङ्क
+deserialise_nullable_string(संरचना sshbuf *buf, वर्ण **sp)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_char present;
 
-	if ((r = sshbuf_get_u8(buf, &present)) != 0)
-		return r;
-	if (present == 0) {
-		*sp = NULL;
-		return 0;
+	यदि ((r = sshbuf_get_u8(buf, &present)) != 0)
+		प्रत्यागम r;
+	यदि (present == 0) {
+		*sp = रिक्त;
+		प्रत्यागम 0;
 	}
-	if (present != 1)
-		return SSH_ERR_INVALID_FORMAT;
-	return sshbuf_get_cstring(buf, sp, NULL);
+	यदि (present != 1)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	प्रत्यागम sshbuf_get_cstring(buf, sp, रिक्त);
 }
 
-static void
-free_string_array(char **a, u_int n)
+स्थिर शून्य
+free_string_array(वर्ण **a, u_int n)
 {
 	u_int i;
 
-	if (a == NULL)
-		return;
-	for (i = 0; i < n; i++)
-		free(a[i]);
-	free(a);
+	यदि (a == रिक्त)
+		प्रत्यागम;
+	प्रति (i = 0; i < n; i++)
+		मुक्त(a[i]);
+	मुक्त(a);
 }
 
-static int
-deserialise_count(struct sshbuf *buf, u_int *np, const char *what)
+स्थिर पूर्णाङ्क
+deserialise_गणनम्(संरचना sshbuf *buf, u_int *np, ध्रुव वर्ण *what)
 {
-	int r;
+	पूर्णाङ्क r;
 	uint32_t n;
 
-	if ((r = sshbuf_get_u32(buf, &n)) != 0) {
+	यदि ((r = sshbuf_get_u32(buf, &n)) != 0) {
 		error_fr(r, "deserialise %s length", what);
-		return r;
+		प्रत्यागम r;
 	}
-	if (n > UINT_MAX) {
+	यदि (n > UINT_MAX) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
-	if (n > sshbuf_len(buf)) {
+	यदि (n > sshbuf_len(buf)) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
 	*np = n;
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_nullable_string_array(struct sshbuf *buf, char ***arrayp,
+स्थिर पूर्णाङ्क
+deserialise_nullable_string_array(संरचना sshbuf *buf, वर्ण ***arrayp,
     u_int *np)
 {
-	char **a = NULL;
-	int r;
+	वर्ण **a = रिक्त;
+	पूर्णाङ्क r;
 	u_int i, n;
 
-	*arrayp = NULL;
+	*arrayp = रिक्त;
 	*np = 0;
-	if ((r = deserialise_count(buf, &n, "strings")) != 0)
-		return r;
-	if (n > 0)
-		a = xcalloc(n, sizeof(*a));
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_nullable_string(buf, a + i)) != 0) {
+	यदि ((r = deserialise_गणनम्(buf, &n, "strings")) != 0)
+		प्रत्यागम r;
+	यदि (n > 0)
+		a = xcalloc(n, परिमाण(*a));
+	प्रति (i = 0; i < n; i++) {
+		यदि ((r = deserialise_nullable_string(buf, a + i)) != 0) {
 			free_string_array(a, i + 1);
-			return r;
+			प्रत्यागम r;
 		}
 	}
 	*arrayp = a;
 	*np = n;
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void
-free_queued_listen_addrs(struct queued_listenaddr *qla, u_int n)
+स्थिर शून्य
+free_queued_listen_addrs(संरचना queued_listenaddr *qla, u_int n)
 {
 	u_int i;
 
-	if (qla == NULL)
-		return;
-	for (i = 0; i < n; i++) {
-		free(qla[i].addr);
-		free(qla[i].rdomain);
+	यदि (qla == रिक्त)
+		प्रत्यागम;
+	प्रति (i = 0; i < n; i++) {
+		मुक्त(qla[i].addr);
+		मुक्त(qla[i].rdomain);
 	}
-	free(qla);
+	मुक्त(qla);
 }
 
-static int
-deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_hostkeyfile(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r, *userprovided = NULL;
+	पूर्णाङ्क r, *userprovided = रिक्त;
 	u_int i, n;
-	char **files = NULL;
+	वर्ण **files = रिक्त;
 
-	if ((r = deserialise_count(buf, &n, "host key files")) != 0)
-		return r;
-	if (n > 0) {
-		userprovided = xcalloc(n, sizeof(*userprovided));
-		files = xcalloc(n, sizeof(*files));
+	यदि ((r = deserialise_गणनम्(buf, &n, "host key files")) != 0)
+		प्रत्यागम r;
+	यदि (n > 0) {
+		userprovided = xcalloc(n, परिमाण(*userprovided));
+		files = xcalloc(n, परिमाण(*files));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
+	प्रति (i = 0; i < n; i++) {
+		यदि ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
 		    (r = deserialise_nullable_string(buf, files + i)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(files, i + 1);
-			free(userprovided);
-			return r;
+			मुक्त(userprovided);
+			प्रत्यागम r;
 		}
 	}
-	options->num_host_key_files = n;
-	options->host_key_file_userprovided = userprovided;
-	options->host_key_files = files;
-	return 0;
+	options->अङ्कः_host_कुञ्चिका_files = n;
+	options->host_कुञ्चिका_file_userprovided = userprovided;
+	options->host_कुञ्चिका_files = files;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_ipqos(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_ipqos(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
+	यदि ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
 	    (r = deserialise_s32(buf, &options->ip_qos_bulk)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_listenaddress(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i, n;
-	struct queued_listenaddr *qla = NULL;
+	संरचना queued_listenaddr *qla = रिक्त;
 
-	if ((r = deserialise_count(buf, &n, "listen addresses")) != 0)
-		return r;
-	if (n > 0)
-		qla = xcalloc(n, sizeof(*qla));
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, &qla[i].addr, NULL)) != 0 ||
-		    (r = deserialise_s32(buf, &qla[i].port)) != 0 ||
+	यदि ((r = deserialise_गणनम्(buf, &n, "listen addresses")) != 0)
+		प्रत्यागम r;
+	यदि (n > 0)
+		qla = xcalloc(n, परिमाण(*qla));
+	प्रति (i = 0; i < n; i++) {
+		यदि ((r = sshbuf_get_cstring(buf, &qla[i].addr, रिक्त)) != 0 ||
+		    (r = deserialise_s32(buf, &qla[i].पत्तनम्)) != 0 ||
 		    (r = deserialise_nullable_string(buf,
 		    &qla[i].rdomain)) != 0) {
 			error_fr(r, "deserialise member");
 			free_queued_listen_addrs(qla, i + 1);
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	options->num_queued_listens = n;
+	options->अङ्कः_queued_listens = n;
 	options->queued_listen_addrs = qla;
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_logfacility(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_logfacility(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r, tmp;
+	पूर्णाङ्क r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	यदि ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	if (tmp != SYSLOG_FACILITY_NOT_SET &&
-	    log_facility_name((SyslogFacility)tmp) == NULL) {
+	यदि (tmp != SYSLOG_FACILITY_NOT_समुच्चयः &&
+	    log_facility_name((SyslogFacility)tmp) == रिक्त) {
 		error_f("bad syslog facility");
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_facility = (SyslogFacility)tmp;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_loglevel(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_loglevel(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r, tmp;
+	पूर्णाङ्क r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	यदि ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	if (tmp != SYSLOG_LEVEL_NOT_SET &&
-	    log_level_name((LogLevel)tmp) == NULL) {
+	यदि (tmp != SYSLOG_LEVEL_NOT_समुच्चयः &&
+	    log_level_name((LogLevel)tmp) == रिक्त) {
 		error_f("bad log level");
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_level = (LogLevel)tmp;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_port(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_पत्तनम्(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i, n;
 
-	if ((r = deserialise_count(buf, &n, "ports")) != 0)
-		return r;
-	if (n > MAX_PORTS) {
+	यदि ((r = deserialise_गणनम्(buf, &n, "ports")) != 0)
+		प्रत्यागम r;
+	यदि (n > MAX_PORTS) {
 		error_f("bad number of ports");
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
-	options->num_ports = n;
-	memset(options->ports, 0, sizeof(options->ports));
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = deserialise_s32(buf, options->ports + i)) != 0) {
+	options->अङ्कः_ports = n;
+	स्मृतिं_पूरय(options->ports, 0, परिमाण(options->ports));
+	प्रति (i = 0; i < options->अङ्कः_ports; i++) {
+		यदि ((r = deserialise_s32(buf, options->ports + i)) != 0) {
 			error_fr(r, "deserialise port");
-			return r;
+			प्रत्यागम r;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_gatewayports(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_gatewayports(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
+	यदि ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_streamlocalbindmask(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_streamlocalbindmask(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_mode(buf,
-	    &options->fwd_opts.streamlocal_bind_mask)) != 0) {
+	यदि ((r = deserialise_बहुलकम्(buf,
+	    &options->fwd_opts.streamlocal_bind_आवरणम्)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_streamlocalbindunlink(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_streamlocalbindunlink(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_char tmp;
 
-	if ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
+	यदि ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	if (tmp > 1) {
+	यदि (tmp > 1) {
 		error_f("bad boolean");
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
 	options->fwd_opts.streamlocal_bind_unlink = tmp;
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_maxstartups(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_maxstartups(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
-	    (r = deserialise_s32(buf, &options->max_startups_rate)) != 0 ||
+	यदि ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
+	    (r = deserialise_s32(buf, &options->max_startups_दरः)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_permituserenv(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_permituserenv(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
+	यदि ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
 	    (r = deserialise_nullable_string(buf,
 	    &options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_persourcenetblocksize(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_persourcenetblocksize(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf,
-	    &options->per_source_masklen_ipv4)) != 0 ||
+	यदि ((r = deserialise_s32(buf,
+	    &options->प्रत्येकम्_source_masklen_ipv4)) != 0 ||
 	    (r = deserialise_s32(buf,
-	    &options->per_source_masklen_ipv6)) != 0) {
+	    &options->प्रत्येकम्_source_masklen_ipv6)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_persourcepenalties(ServerOptions *options, संरचना sshbuf *buf)
 {
-	struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	संरचना प्रत्येकम्_source_penalty *psp = &options->प्रत्येकम्_source_penalty;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
+	यदि ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources4)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources6)) != 0 ||
-	    (r = deserialise_s32(buf, &psp->overflow_mode)) != 0 ||
-	    (r = deserialise_s32(buf, &psp->overflow_mode6)) != 0 ||
+	    (r = deserialise_s32(buf, &psp->अतिप्रवाहः_बहुलकम्)) != 0 ||
+	    (r = deserialise_s32(buf, &psp->अतिप्रवाहः_mode6)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_crash)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_grace)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_authfail)) != 0 ||
@@ -3625,382 +3625,382 @@ deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
 	    (r = deserialise_double(buf, &psp->penalty_max)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_min)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_rekeylimit(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_rekeylimit(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
+	यदि ((r = deserialise_s64(buf, &options->rekey_सीमा)) != 0 ||
 	    (r = deserialise_s32(buf, &options->rekey_interval)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_subsystem(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_subsystem(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int i, n;
-	char **names = NULL, **commands = NULL, **args = NULL;
+	वर्ण **नामानि = रिक्त, **commands = रिक्त, **तर्काः = रिक्त;
 
-	if ((r = deserialise_count(buf, &n, "subsystems")) != 0)
-		return r;
-	if (n > 0) {
-		names = xcalloc(n, sizeof(*names));
-		commands = xcalloc(n, sizeof(*names));
-		args = xcalloc(n, sizeof(*args));
+	यदि ((r = deserialise_गणनम्(buf, &n, "subsystems")) != 0)
+		प्रत्यागम r;
+	यदि (n > 0) {
+		नामानि = xcalloc(n, परिमाण(*नामानि));
+		commands = xcalloc(n, परिमाण(*नामानि));
+		तर्काः = xcalloc(n, परिमाण(*तर्काः));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, names + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, commands + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, args + i, NULL)) != 0) {
+	प्रति (i = 0; i < n; i++) {
+		यदि ((r = sshbuf_get_cstring(buf, नामानि + i, रिक्त)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, commands + i, रिक्त)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, तर्काः + i, रिक्त)) != 0) {
 			error_fr(r, "deserialise member");
-			free_string_array(names, i + 1);
+			free_string_array(नामानि, i + 1);
 			free_string_array(commands, i + 1);
-			free_string_array(args, i + 1);
-			return r;
+			free_string_array(तर्काः, i + 1);
+			प्रत्यागम r;
 		}
 	}
-	options->num_subsystems = n;
-	options->subsystem_name = names;
+	options->अङ्कः_subsystems = n;
+	options->subsystem_name = नामानि;
 	options->subsystem_command = commands;
-	options->subsystem_args = args;
-	return 0;
+	options->subsystem_तर्काः = तर्काः;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_pubkey_auth_options(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_pubkey_auth_options(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
+	यदि ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_pubkey_ok)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+deserialise_timingsecret(ServerOptions *options, संरचना sshbuf *buf)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
+	यदि ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		प्रत्यागम r;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
+पूर्णाङ्क
+deserialise_server_options(संरचना sshbuf *buf, ServerOptions *options)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	uint32_t version;
+	पूर्णाङ्क r = SSH_ERR_आन्तरिकम्_ERROR;
+	uint32_t संस्करणम्;
 	ServerOptions new_options;
 
 	initialize_server_options(&new_options);
-	if ((r = sshbuf_get_u32(buf, &version)) != 0) {
+	यदि ((r = sshbuf_get_u32(buf, &संस्करणम्)) != 0) {
 		error_fr(r, "deserialise version");
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (version != SSHD_CONFIG_BLOB_VERSION) {
-		error_f("unsupported config blob version %u", version);
+	यदि (संस्करणम् != SSHD_CONFIG_BLOB_संस्करणम्) {
+		error_f("unsupported config blob version %u", संस्करणम्);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp) \
+	यदि ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+	यदि ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp) \
+	यदि ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = deserialise_nullable_string_array(buf, &new_options.var, \
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+	यदि ((r = deserialise_nullable_string_array(buf, &new_options.var, \
 	    &new_options.nvar)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		गच्छ बहिर्गमनम्; \
 	}
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
-#define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(new_options.var); \
-		new_options.var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+	यदि ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		गच्छ बहिर्गमनम्;
+#परिभाषय SSHCONF_NONCONF(funcsuffix) \
+	यदि ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		गच्छ बहिर्गमनम्;
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	कुरु { \
+		मुक्त(new_options.var); \
+		new_options.var = रिक्त; \
+	} यावत् (0);
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 	SSHD_CONFIG_ENTRIES
 
-	if (sshbuf_len(buf) != 0) {
+	यदि (sshbuf_len(buf) != 0) {
 		error_f("trailing data in config blob");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
 	/* success */
 	r = 0;
 	free_server_options(options);
 	*options = new_options;
-	memset(&new_options, 0, sizeof(new_options));
- out:
+	स्मृतिं_पूरय(&new_options, 0, परिमाण(new_options));
+ बहिर्गमनम्:
 	free_server_options(&new_options);
-	return r;
+	प्रत्यागम r;
 }
 
-static void
+स्थिर शून्य
 free_hostkeyfile(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		free(options->host_key_files[i]);
-	free(options->host_key_files);
-	free(options->host_key_file_userprovided);
+	प्रति (i = 0; i < options->अङ्कः_host_कुञ्चिका_files; i++)
+		मुक्त(options->host_कुञ्चिका_files[i]);
+	मुक्त(options->host_कुञ्चिका_files);
+	मुक्त(options->host_कुञ्चिका_file_userprovided);
 }
 
-static void
+स्थिर शून्य
 free_listenaddress(ServerOptions *options)
 {
 	u_int i;
 
 	free_queued_listen_addrs(options->queued_listen_addrs,
-	    options->num_queued_listens);
+	    options->अङ्कः_queued_listens);
 
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		free(options->listen_addrs[i].rdomain);
-		if (options->listen_addrs[i].addrs != NULL)
+	प्रति (i = 0; i < options->अङ्कः_listen_addrs; i++) {
+		मुक्त(options->listen_addrs[i].rdomain);
+		यदि (options->listen_addrs[i].addrs != रिक्त)
 			freeaddrinfo(options->listen_addrs[i].addrs);
 	}
-	free(options->listen_addrs);
+	मुक्त(options->listen_addrs);
 }
 
-static void
+स्थिर शून्य
 free_permituserenv(ServerOptions *options)
 {
-	free(options->permit_user_env_allowlist);
+	मुक्त(options->permit_user_env_allowlist);
 }
 
-static void
+स्थिर शून्य
 free_subsystem(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_subsystems; i++) {
-		free(options->subsystem_name[i]);
-		free(options->subsystem_command[i]);
-		free(options->subsystem_args[i]);
+	प्रति (i = 0; i < options->अङ्कः_subsystems; i++) {
+		मुक्त(options->subsystem_name[i]);
+		मुक्त(options->subsystem_command[i]);
+		मुक्त(options->subsystem_तर्काः[i]);
 	}
-	free(options->subsystem_name);
-	free(options->subsystem_command);
-	free(options->subsystem_args);
+	मुक्त(options->subsystem_name);
+	मुक्त(options->subsystem_command);
+	मुक्त(options->subsystem_तर्काः);
 }
 
-void
+शून्य
 free_server_options(ServerOptions *options)
 {
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	/* empty */
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	/* empty */
-#define SSHCONF_STRING(var, conf, flags, cp)		free(options->var);
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp)	/*रिक्तानि*/
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp)	/*रिक्तानि*/
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp)		मुक्त(options->var);
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	free_string_array(options->var, options->nvar);
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	free_##funcsuffix(options);
-#define SSHCONF_NONCONF(funcsuffix) \
+#परिभाषय SSHCONF_NONCONF(funcsuffix) \
 	free_##funcsuffix(options);
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	कुरु { \
+		मुक्त(options->var); \
+		options->var = रिक्त; \
+	} यावत् (0);
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
-#define free_ipqos(options)
-#define free_logfacility(options)
-#define free_loglevel(options)
-#define free_port(options)
-#define free_gatewayports(options)
-#define free_streamlocalbindmask(options)
-#define free_streamlocalbindunlink(options)
-#define free_maxstartups(options)
-#define free_persourcenetblocksize(options)
-#define free_persourcepenalties(options)
-#define free_rekeylimit(options)
-#define free_pubkey_auth_options(options)
-#define free_timingsecret(options)
+#परिभाषय free_ipqos(options)
+#परिभाषय free_logfacility(options)
+#परिभाषय free_loglevel(options)
+#परिभाषय free_पत्तनम्(options)
+#परिभाषय free_gatewayports(options)
+#परिभाषय free_streamlocalbindmask(options)
+#परिभाषय free_streamlocalbindunlink(options)
+#परिभाषय free_maxstartups(options)
+#परिभाषय free_persourcenetblocksize(options)
+#परिभाषय free_persourcepenalties(options)
+#परिभाषय free_rekeylimit(options)
+#परिभाषय free_pubkey_auth_options(options)
+#परिभाषय free_timingsecret(options)
 
 	SSHD_CONFIG_ENTRIES
 
-#undef free_ipqos
-#undef free_logfacility
-#undef free_loglevel
-#undef free_port
-#undef free_gatewayports
-#undef free_streamlocalbindmask
-#undef free_streamlocalbindunlink
-#undef free_maxstartups
-#undef free_persourcenetblocksize
-#undef free_persourcepenalties
-#undef free_rekeylimit
-#undef free_timingsecret
+#अपरिभाषय free_ipqos
+#अपरिभाषय free_logfacility
+#अपरिभाषय free_loglevel
+#अपरिभाषय free_पत्तनम्
+#अपरिभाषय free_gatewayports
+#अपरिभाषय free_streamlocalbindmask
+#अपरिभाषय free_streamlocalbindunlink
+#अपरिभाषय free_maxstartups
+#अपरिभाषय free_persourcenetblocksize
+#अपरिभाषय free_persourcepenalties
+#अपरिभाषय free_rekeylimit
+#अपरिभाषय free_timingsecret
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
 	initialize_server_options(options);
 }
 
-static void
-copy_server_option_int(int *dst, int src)
+स्थिर शून्य
+copy_server_option_int(पूर्णाङ्क *dst, पूर्णाङ्क src)
 {
-	if (src != -1)
+	यदि (src != -1)
 		*dst = src;
 }
 
-static void
+स्थिर शून्य
 copy_server_option_int64(int64_t *dst, int64_t src)
 {
-	if (src != -1)
+	यदि (src != -1)
 		*dst = src;
 }
 
-static void
-copy_server_option_string(char **dst, const char *src)
+स्थिर शून्य
+copy_server_option_string(वर्ण **dst, ध्रुव वर्ण *src)
 {
-	if (src != NULL && *dst != src) {
-		free(*dst);
+	यदि (src != रिक्त && *dst != src) {
+		मुक्त(*dst);
 		*dst = xstrdup(src);
 	}
 }
 
-static void
-copy_server_option_strarray_values(char ***dst, u_int ndst,
-    char * const *src, u_int nsrc)
+स्थिर शून्य
+copy_server_option_strarray_मानानि(वर्ण ***dst, u_int ndst,
+    वर्ण * ध्रुव *src, u_int nsrc)
 {
 	u_int i;
 
-	if (nsrc == 0)
-		return;
-	for (i = 0; i < ndst; i++)
-		free((*dst)[i]);
-	free(*dst);
-	*dst = xcalloc(nsrc, sizeof(**dst));
-	for (i = 0; i < nsrc; i++)
-		(*dst)[i] = src[i] == NULL ? NULL : xstrdup(src[i]);
+	यदि (nsrc == 0)
+		प्रत्यागम;
+	प्रति (i = 0; i < ndst; i++)
+		मुक्त((*dst)[i]);
+	मुक्त(*dst);
+	*dst = xcalloc(nsrc, परिमाण(**dst));
+	प्रति (i = 0; i < nsrc; i++)
+		(*dst)[i] = src[i] == रिक्त ? रिक्त : xstrdup(src[i]);
 }
 
-static void
-copy_server_option_strarray(char ***dst, u_int *ndst,
-    char * const *src, u_int nsrc)
+स्थिर शून्य
+copy_server_option_strarray(वर्ण ***dst, u_int *ndst,
+    वर्ण * ध्रुव *src, u_int nsrc)
 {
-	if (nsrc == 0)
-		return;
-	copy_server_option_strarray_values(dst, *ndst, src, nsrc);
+	यदि (nsrc == 0)
+		प्रत्यागम;
+	copy_server_option_strarray_मानानि(dst, *ndst, src, nsrc);
 	*ndst = nsrc;
 }
 
-static void
-copy_ipqos(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_ipqos(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
 	copy_server_option_int(&dst->ip_qos_interactive,
 	    src->ip_qos_interactive);
 	copy_server_option_int(&dst->ip_qos_bulk, src->ip_qos_bulk);
 }
 
-static void
-copy_gatewayports(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_gatewayports(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.gateway_ports,
 	    src->fwd_opts.gateway_ports);
 }
 
-static void
-copy_streamlocalbindunlink(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_streamlocalbindunlink(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.streamlocal_bind_unlink,
 	    src->fwd_opts.streamlocal_bind_unlink);
 }
 
-static void
-copy_loglevel(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_loglevel(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
-	if (src->log_level != -1)
+	यदि (src->log_level != -1)
 		dst->log_level = src->log_level;
 }
 
-static void
-copy_rekeylimit(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_rekeylimit(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
-	copy_server_option_int64(&dst->rekey_limit, src->rekey_limit);
+	copy_server_option_int64(&dst->rekey_सीमा, src->rekey_सीमा);
 	copy_server_option_int(&dst->rekey_interval, src->rekey_interval);
 }
 
-static void
-copy_subsystem(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_subsystem(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
-	u_int old_num_subsystems = dst->num_subsystems;
+	u_int old_अङ्कः_subsystems = dst->अङ्कः_subsystems;
 
-	if (src->num_subsystems == 0)
-		return;
-	copy_server_option_strarray_values(&dst->subsystem_name,
-	    old_num_subsystems, src->subsystem_name, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_command,
-	    old_num_subsystems, src->subsystem_command, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_args,
-	    old_num_subsystems, src->subsystem_args, src->num_subsystems);
-	dst->num_subsystems = src->num_subsystems;
+	यदि (src->अङ्कः_subsystems == 0)
+		प्रत्यागम;
+	copy_server_option_strarray_मानानि(&dst->subsystem_name,
+	    old_अङ्कः_subsystems, src->subsystem_name, src->अङ्कः_subsystems);
+	copy_server_option_strarray_मानानि(&dst->subsystem_command,
+	    old_अङ्कः_subsystems, src->subsystem_command, src->अङ्कः_subsystems);
+	copy_server_option_strarray_मानानि(&dst->subsystem_तर्काः,
+	    old_अङ्कः_subsystems, src->subsystem_तर्काः, src->अङ्कः_subsystems);
+	dst->अङ्कः_subsystems = src->अङ्कः_subsystems;
 }
 
-static void
-copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
+स्थिर शून्य
+copy_pubkey_auth_options(ServerOptions *dst, ध्रुव ServerOptions *src)
 {
-	if (src->pubkey_auth_options != -1) {
+	यदि (src->pubkey_auth_options != -1) {
 		dst->pubkey_auth_options = src->pubkey_auth_options;
 		dst->max_pubkey_ok = src->max_pubkey_ok;
 	}
@@ -4012,54 +4012,54 @@ copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
  * If the preauth flag is set, skip the post-authentication-only manual
  * string cleanup and subsystem merge below.
  */
-void
-copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+शून्य
+copy_समुच्चयः_server_options(ServerOptions *dst, ServerOptions *src, पूर्णाङ्क preauth)
 {
-	if (dst == src)
-		return;
+	यदि (dst == src)
+		प्रत्यागम;
 
-#define SSHCONF_INT(var, conf, flags, ms, def, cp) \
+#परिभाषय SSHCONF_INT(var, conf, flags, ms, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
+#परिभाषय SSHCONF_INTFLAG(var, conf, flags, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
-#define SSHCONF_STRING(var, conf, flags, cp) \
+#परिभाषय SSHCONF_STRING(var, conf, flags, cp) \
 	cp(copy_server_option_string(&dst->var, src->var);)
-#define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
+#परिभाषय SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	cp(copy_server_option_strarray(&dst->var, &dst->nvar, \
 	    src->var, src->nvar);)
-#define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
+#परिभाषय SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	cp(copy_##funcsuffix(dst, src);)
-#define SSHCONF_NONCONF(funcsuffix)			/* empty */
-#define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(dst->var); \
-		dst->var = NULL; \
-	} while (0);
-#define SSHCONF_ALIAS(old, conf, flags)			/* empty */
+#परिभाषय SSHCONF_NONCONF(funcsuffix)			/*रिक्तानि*/
+#परिभाषय SSHCONF_DEPRECATE(conf, flags, opcode)		/*रिक्तानि*/
+#परिभाषय SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
+#परिभाषय SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
+	कुरु { \
+		मुक्त(dst->var); \
+		dst->var = रिक्त; \
+	} यावत् (0);
+#परिभाषय SSHCONF_ALIAS(old, conf, flags)			/*रिक्तानि*/
 
 	SSHD_CONFIG_ENTRIES
 
-#undef SSHCONF_INT
-#undef SSHCONF_INTFLAG
-#undef SSHCONF_STRING
-#undef SSHCONF_STRARRAY
-#undef SSHCONF_CUSTOM
-#undef SSHCONF_NONCONF
-#undef SSHCONF_DEPRECATE
-#undef SSHCONF_UNSUPPORTED_INT
-#undef SSHCONF_UNSUPPORTED_STRING
-#undef SSHCONF_ALIAS
+#अपरिभाषय SSHCONF_INT
+#अपरिभाषय SSHCONF_INTFLAG
+#अपरिभाषय SSHCONF_STRING
+#अपरिभाषय SSHCONF_STRARRAY
+#अपरिभाषय SSHCONF_CUSTOM
+#अपरिभाषय SSHCONF_NONCONF
+#अपरिभाषय SSHCONF_DEPRECATE
+#अपरिभाषय SSHCONF_UNSUPPORTED_INT
+#अपरिभाषय SSHCONF_UNSUPPORTED_STRING
+#अपरिभाषय SSHCONF_ALIAS
 
 	/*
 	 * The bind_mask is a mode_t that may be unsigned, so we can't use
 	 * copy_server_option_int - it does a signed comparison that causes
 	 * compiler warnings.
 	 */
-	if (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
-		dst->fwd_opts.streamlocal_bind_mask =
-		    src->fwd_opts.streamlocal_bind_mask;
+	यदि (src->fwd_opts.streamlocal_bind_आवरणम् != (बहुलकम्_t)-1) {
+		dst->fwd_opts.streamlocal_bind_आवरणम् =
+		    src->fwd_opts.streamlocal_bind_आवरणम्;
 	}
 
 	/* Arguments that accept '+...' need to be expanded */
@@ -4070,23 +4070,23 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * consulted before authentication, so they must be cleared here
 	 * rather than in the post-auth section below.
 	 */
-#define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+#परिभाषय CLEAR_ON_NONE(v) \
+	कुरु { \
+		यदि (option_clear_or_none(v)) { \
+			मुक्त(v); \
+			v = रिक्त; \
 		} \
-	} while(0)
+	} यावत्(0)
 	CLEAR_ON_NONE(dst->authorized_principals_file);
-	CLEAR_ON_NONE(dst->trusted_user_ca_keys);
+	CLEAR_ON_NONE(dst->trusted_user_ca_कुञ्चिकाः);
 	CLEAR_ON_NONE(dst->banner);
 
 	/*
 	 * The only things that should be below this point are string options
 	 * which are only used after authentication.
 	 */
-	if (preauth)
-		return;
+	यदि (preauth)
+		प्रत्यागम;
 
 	/* These options may be "none" to clear a global setting */
 	copy_server_option_string(&dst->adm_forced_command,
@@ -4095,282 +4095,282 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	    src->chroot_directory);
 	CLEAR_ON_NONE(dst->chroot_directory);
 	CLEAR_ON_NONE(dst->adm_forced_command);
-#undef CLEAR_ON_NONE
+#अपरिभाषय CLEAR_ON_NONE
 
 	/* Subsystems require merging. */
 	servconf_merge_subsystems(dst, src);
 }
 
-#define SERVCONF_MAX_DEPTH	16
-static void
-parse_server_config_depth(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth)
+#परिभाषय SERVCONF_MAX_गभीरता	16
+स्थिर शून्य
+parse_server_config_गभीरता(ServerOptions *options, ध्रुव वर्ण *filename,
+    संरचना sshbuf *conf, संरचना include_list *includes,
+    संरचना connection_info *connectinfo, पूर्णाङ्क flags, पूर्णाङ्क *activep, पूर्णाङ्क गभीरता)
 {
-	int linenum, bad_options = 0;
-	char *cp, *obuf, *cbuf;
+	पूर्णाङ्क linenum, bad_options = 0;
+	वर्ण *cp, *obuf, *cbuf;
 
-	if (depth < 0 || depth > SERVCONF_MAX_DEPTH)
+	यदि (गभीरता < 0 || गभीरता > SERVCONF_MAX_गभीरता)
 		fatal("Too many recursive configuration includes");
 
 	debug2_f("config %s len %zu%s", filename, sshbuf_len(conf),
 	    (flags & SSHCFG_NEVERMATCH ? " [checking syntax only]" : ""));
 
-	if ((obuf = cbuf = sshbuf_dup_string(conf)) == NULL)
+	यदि ((obuf = cbuf = sshbuf_dup_string(conf)) == रिक्त)
 		fatal_f("sshbuf_dup_string failed");
 	linenum = 1;
-	while ((cp = strsep(&cbuf, "\n")) != NULL) {
-		if (process_server_config_line_depth(options, cp,
+	यावत् ((cp = strsep(&cbuf, "\n")) != रिक्त) {
+		यदि (process_server_config_पङ्क्तिः_गभीरता(options, cp,
 		    filename, linenum++, activep, connectinfo, &flags,
-		    depth, includes) != 0)
+		    गभीरता, includes) != 0)
 			bad_options++;
 	}
-	free(obuf);
-	if (bad_options > 0)
+	मुक्त(obuf);
+	यदि (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
 }
 
-void
-parse_server_config(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int reexec)
+शून्य
+parse_server_config(ServerOptions *options, ध्रुव वर्ण *filename,
+    संरचना sshbuf *conf, संरचना include_list *includes,
+    संरचना connection_info *connectinfo, पूर्णाङ्क reexec)
 {
-	int active = connectinfo ? 0 : 1;
-	parse_server_config_depth(options, filename, conf, includes,
-	    connectinfo, (connectinfo ? SSHCFG_MATCH_ONLY : 0), &active, 0);
-	if (!reexec)
+	पूर्णाङ्क सक्रिय = connectinfo ? 0 : 1;
+	parse_server_config_गभीरता(options, filename, conf, includes,
+	    connectinfo, (connectinfo ? SSHCFG_मेलनम्_ONLY : 0), &सक्रिय, 0);
+	यदि (!reexec)
 		process_queued_listen_addrs(options);
 }
 
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+स्थिर ध्रुव वर्ण *
+fmt_multistate_int(पूर्णाङ्क val, ध्रुव संरचना multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	प्रति (i = 0; m[i].कुञ्चिका != रिक्त; i++) {
+		यदि (m[i].मानम् == val)
+			प्रत्यागम m[i].कुञ्चिका;
 	}
-	return "UNKNOWN";
+	प्रत्यागम "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(ServerOpCodes code, int val)
+स्थिर ध्रुव वर्ण *
+fmt_intarg(ServerOpCodes संहिता, पूर्णाङ्क val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case sAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case sPermitRootLogin:
-		return fmt_multistate_int(val, multistate_permitrootlogin);
-	case sGatewayPorts:
-		return fmt_multistate_int(val, multistate_gatewayports);
-	case sCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case sAllowTcpForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sAllowStreamLocalForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sIgnoreRhosts:
-		return fmt_multistate_int(val, multistate_ignore_rhosts);
-	case sTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case sWarnWeakCrypto:
-		return fmt_multistate_int(val, multistate_warnweakcrypto);
-	case sFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	यदि (val == -1)
+		प्रत्यागम "unset";
+	विकल्प (संहिता) {
+	पक्ष s_स्थानाङ्कः_Family:
+		प्रत्यागम fmt_multistate_int(val, multistate_addressfamily);
+	पक्ष s_Permit_मूलम्_Login:
+		प्रत्यागम fmt_multistate_int(val, multistate_permitrootlogin);
+	पक्ष sGatewayPorts:
+		प्रत्यागम fmt_multistate_int(val, multistate_gatewayports);
+	पक्ष sCompression:
+		प्रत्यागम fmt_multistate_int(val, multistate_compression);
+	पक्ष sAllowTcpForwarding:
+		प्रत्यागम fmt_multistate_int(val, multistate_tcpfwd);
+	पक्ष s_Allow_प्रवाहः_Local_Forwarding:
+		प्रत्यागम fmt_multistate_int(val, multistate_tcpfwd);
+	पक्ष sIgnoreRhosts:
+		प्रत्यागम fmt_multistate_int(val, multistate_ignore_rhosts);
+	पक्ष sTCPKeepAlive:
+		प्रत्यागम fmt_multistate_int(val, multistate_keepalives);
+	पक्ष sWarnWeakCrypto:
+		प्रत्यागम fmt_multistate_int(val, multistate_warnweakcrypto);
+	पक्ष sFingerprintHash:
+		प्रत्यागम ssh_digest_alg_name(val);
+	स्वभाव:
+		विकल्प (val) {
+		पक्ष 0:
+			प्रत्यागम "no";
+		पक्ष 1:
+			प्रत्यागम "yes";
+		स्वभाव:
+			प्रत्यागम "UNKNOWN";
 		}
 	}
 }
 
-static void
-dump_cfg_int(ServerOpCodes code, int val)
+स्थिर शून्य
+dump_cfg_int(ServerOpCodes संहिता, पूर्णाङ्क val)
 {
-	if (code == sUnusedConnectionTimeout && val == 0) {
-		printf("%s none\n", lookup_opcode_name(code));
-		return;
+	यदि (संहिता == s_अप्रयुक्तम्_Connection_Timeout && val == 0) {
+		प्रारूप_लिख("%s none\n", lookup_opcode_name(संहिता));
+		प्रत्यागम;
 	}
-	printf("%s %d\n", lookup_opcode_name(code), val);
+	प्रारूप_लिख("%s %d\n", lookup_opcode_name(संहिता), val);
 }
 
-static void
-dump_cfg_oct(ServerOpCodes code, int val)
+स्थिर शून्य
+dump_cfg_oct(ServerOpCodes संहिता, पूर्णाङ्क val)
 {
-	printf("%s 0%o\n", lookup_opcode_name(code), val);
+	प्रारूप_लिख("%s 0%o\n", lookup_opcode_name(संहिता), val);
 }
 
-static void
-dump_cfg_fmtint(ServerOpCodes code, int val)
+स्थिर शून्य
+dump_cfg_fmtint(ServerOpCodes संहिता, पूर्णाङ्क val)
 {
-	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
+	प्रारूप_लिख("%s %s\n", lookup_opcode_name(संहिता), fmt_intarg(संहिता, val));
 }
 
-static void
-dump_cfg_string(ServerOpCodes code, const char *val)
+स्थिर शून्य
+dump_cfg_string(ServerOpCodes संहिता, ध्रुव वर्ण *val)
 {
-	printf("%s %s\n", lookup_opcode_name(code),
-	    val == NULL ? "none" : val);
+	प्रारूप_लिख("%s %s\n", lookup_opcode_name(संहिता),
+	    val == रिक्त ? "none" : val);
 }
 
-static void
-dump_cfg_strarray(ServerOpCodes code, u_int count, char **vals)
+स्थिर शून्य
+dump_cfg_strarray(ServerOpCodes संहिता, u_int गणनम्, वर्ण **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
-		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
+	प्रति (i = 0; i < गणनम्; i++)
+		प्रारूप_लिख("%s %s\n", lookup_opcode_name(संहिता), vals[i]);
 }
 
-static void
-dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
+स्थिर शून्य
+dump_cfg_strarray_oneline(ServerOpCodes संहिता, u_int गणनम्, वर्ण **vals)
 {
 	u_int i;
 
-	switch (code) {
-	case sAuthenticationMethods:
-	case sChannelTimeout:
-		break;
-	default:
-		if (count <= 0)
-			return;
-		break;
+	विकल्प (संहिता) {
+	पक्ष sAuthenticationMethods:
+	पक्ष sChannelTimeout:
+		भङ्ग;
+	स्वभाव:
+		यदि (गणनम् <= 0)
+			प्रत्यागम;
+		भङ्ग;
 	}
 
-	printf("%s", lookup_opcode_name(code));
-	for (i = 0; i < count; i++)
-		printf(" %s",  vals[i]);
-	if (code == sAuthenticationMethods && count == 0)
-		printf(" any");
-	else if (code == sChannelTimeout && count == 0)
-		printf(" none");
-	printf("\n");
+	प्रारूप_लिख("%s", lookup_opcode_name(संहिता));
+	प्रति (i = 0; i < गणनम्; i++)
+		प्रारूप_लिख(" %s",  vals[i]);
+	यदि (संहिता == sAuthenticationMethods && गणनम् == 0)
+		प्रारूप_लिख(" any");
+	अन्यथा यदि (संहिता == sChannelTimeout && गणनम् == 0)
+		प्रारूप_लिख(" none");
+	प्रारूप_लिख("\n");
 }
 
-static char *
-format_listen_addrs(struct listenaddr *la)
+स्थिर वर्ण *
+format_listen_addrs(संरचना listenaddr *la)
 {
-	int r;
-	struct addrinfo *ai;
-	char addr[NI_MAXHOST], port[NI_MAXSERV];
-	char *laddr1 = xstrdup(""), *laddr2 = NULL;
+	पूर्णाङ्क r;
+	संरचना addrinfo *ai;
+	वर्ण addr[NI_MAXHOST], पत्तनम्[NI_MAXSERV];
+	वर्ण *laddr1 = xstrdup(""), *laddr2 = रिक्त;
 
 	/*
 	 * ListenAddress must be after Port.  add_one_listen_addr pushes
 	 * addresses onto a stack, so to maintain ordering we need to
 	 * print these in reverse order.
 	 */
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
-		    sizeof(addr), port, sizeof(port),
+	प्रति (ai = la->addrs; ai; ai = ai->ai_next) {
+		यदि ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
+		    परिमाण(addr), पत्तनम्, परिमाण(पत्तनम्),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo: %.100s", ssh_gai_strerror(r));
-			continue;
+			अनुवर्त;
 		}
 		laddr2 = laddr1;
-		if (ai->ai_family == AF_INET6) {
+		यदि (ai->ai_family == AF_INET6) {
 			xasprintf(&laddr1, "ListenAddress [%s]:%s%s%s\n%s",
-			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    addr, पत्तनम्,
+			    la->rdomain == रिक्त ? "" : " rdomain ",
+			    la->rdomain == रिक्त ? "" : la->rdomain,
 			    laddr2);
-		} else {
+		} अन्यथा {
 			xasprintf(&laddr1, "ListenAddress %s:%s%s%s\n%s",
-			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    addr, पत्तनम्,
+			    la->rdomain == रिक्त ? "" : " rdomain ",
+			    la->rdomain == रिक्त ? "" : la->rdomain,
 			    laddr2);
 		}
-		free(laddr2);
+		मुक्त(laddr2);
 	}
-	return laddr1;
+	प्रत्यागम laddr1;
 }
 
-void
+शून्य
 dump_config(ServerOptions *o)
 {
-	char *s;
+	वर्ण *s;
 	u_int i;
 
 	/* these are usually at the top of the config */
-	for (i = 0; i < o->num_ports; i++)
-		printf("Port %d\n", o->ports[i]);
-	dump_cfg_fmtint(sAddressFamily, o->address_family);
+	प्रति (i = 0; i < o->अङ्कः_ports; i++)
+		प्रारूप_लिख("Port %d\n", o->ports[i]);
+	dump_cfg_fmtint(s_स्थानाङ्कः_Family, o->स्थानाङ्कः_family);
 
-	for (i = 0; i < o->num_listen_addrs; i++) {
+	प्रति (i = 0; i < o->अङ्कः_listen_addrs; i++) {
 		s = format_listen_addrs(&o->listen_addrs[i]);
-		printf("%s", s);
-		free(s);
+		प्रारूप_लिख("%s", s);
+		मुक्त(s);
 	}
 
 	/* integer arguments */
-#ifdef USE_PAM
+#यदि_परिभाषितम् USE_PAM
 	dump_cfg_fmtint(sUsePAM, o->use_pam);
 	dump_cfg_string(sPAMServiceName, o->pam_service_name);
-#endif
+#यदि_अन्तः
 	dump_cfg_int(sLoginGraceTime, o->login_grace_time);
-	dump_cfg_int(sX11DisplayOffset, o->x11_display_offset);
+	dump_cfg_int(s_X11_Display_विस्थापनम्, o->x11_display_विस्थापनम्);
 	dump_cfg_int(sMaxAuthTries, o->max_authtries);
 	dump_cfg_int(sMaxSessions, o->max_sessions);
 	dump_cfg_int(sClientAliveInterval, o->client_alive_interval);
-	dump_cfg_int(sClientAliveCountMax, o->client_alive_count_max);
-	dump_cfg_int(sRequiredRSASize, o->required_rsa_size);
-	dump_cfg_oct(sStreamLocalBindMask, o->fwd_opts.streamlocal_bind_mask);
-	dump_cfg_int(sUnusedConnectionTimeout, o->unused_connection_timeout);
+	dump_cfg_int(s_Client_Alive_गणनम्_Max, o->client_alive_गणनम्_max);
+	dump_cfg_int(sRequiredRSASize, o->required_rsa_आकार);
+	dump_cfg_oct(s_प्रवाहः_Local_Bind_आवरणम्, o->fwd_opts.streamlocal_bind_आवरणम्);
+	dump_cfg_int(s_अप्रयुक्तम्_Connection_Timeout, o->अप्रयुक्तम्_connection_timeout);
 
 	/* formatted integer arguments */
-	dump_cfg_fmtint(sPermitRootLogin, o->permit_root_login);
+	dump_cfg_fmtint(s_Permit_मूलम्_Login, o->permit_मूलम्_login);
 	dump_cfg_fmtint(sIgnoreRhosts, o->ignore_rhosts);
-	dump_cfg_fmtint(sIgnoreUserKnownHosts, o->ignore_user_known_hosts);
+	dump_cfg_fmtint(s_Ignore_User_ज्ञातम्_Hosts, o->ignore_user_ज्ञातम्_hosts);
 	dump_cfg_fmtint(sHostbasedAuthentication, o->hostbased_authentication);
-	dump_cfg_fmtint(sHostbasedUsesNameFromPacketOnly,
-	    o->hostbased_uses_name_from_packet_only);
+	dump_cfg_fmtint(s_Hostbased_उपयुङ्क्ते_Name_From_Packet_Only,
+	    o->hostbased_उपयुङ्क्ते_name_from_packet_only);
 	dump_cfg_fmtint(sPubkeyAuthentication, o->pubkey_authentication);
-#ifdef KRB5
+#यदि_परिभाषितम् KRB5
 	dump_cfg_fmtint(sKerberosAuthentication, o->kerberos_authentication);
 	dump_cfg_fmtint(sKerberosOrLocalPasswd, o->kerberos_or_local_passwd);
 	dump_cfg_fmtint(sKerberosTicketCleanup, o->kerberos_ticket_cleanup);
 # ifdef USE_AFS
 	dump_cfg_fmtint(sKerberosGetAFSToken, o->kerberos_get_afs_token);
 # endif
-#endif
-#ifdef GSSAPI
+#यदि_अन्तः
+#यदि_परिभाषितम् GSSAPI
 	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
 	dump_cfg_fmtint(sGSSAPICleanupCredentials, o->gss_cleanup_creds);
 	dump_cfg_fmtint(sGSSAPIDelegateCredentials, o->gss_deleg_creds);
 	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
-#endif
+#यदि_अन्तः
 	dump_cfg_fmtint(sPasswordAuthentication, o->password_authentication);
 	dump_cfg_fmtint(sKbdInteractiveAuthentication,
 	    o->kbd_interactive_authentication);
 	dump_cfg_fmtint(sPrintMotd, o->print_motd);
-#ifndef DISABLE_LASTLOG
-	dump_cfg_fmtint(sPrintLastLog, o->print_lastlog);
-#endif
+#यदि_अपरिभाषितम् DISABLE_LASTLOG
+	dump_cfg_fmtint(s_Print_चरमः_Log, o->print_lastlog);
+#यदि_अन्तः
 	dump_cfg_fmtint(sX11Forwarding, o->x11_forwarding);
 	dump_cfg_fmtint(sX11UseLocalhost, o->x11_use_localhost);
 	dump_cfg_fmtint(sPermitTTY, o->permit_tty);
 	dump_cfg_fmtint(sPermitUserRC, o->permit_user_rc);
 	dump_cfg_fmtint(sStrictModes, o->strict_modes);
 	dump_cfg_fmtint(sTCPKeepAlive, o->tcp_keep_alive);
-	dump_cfg_fmtint(sPermitEmptyPasswords, o->permit_empty_passwd);
+	dump_cfg_fmtint(s_Permit_रिक्तानि_Passwords, o->permit_रिक्तानि_passwd);
 	dump_cfg_fmtint(sCompression, o->compression);
 	dump_cfg_fmtint(sGatewayPorts, o->fwd_opts.gateway_ports);
 	dump_cfg_fmtint(sUseDNS, o->use_dns);
 	dump_cfg_fmtint(sAllowTcpForwarding, o->allow_tcp_forwarding);
 	dump_cfg_fmtint(sAllowAgentForwarding, o->allow_agent_forwarding);
 	dump_cfg_fmtint(sDisableForwarding, o->disable_forwarding);
-	dump_cfg_fmtint(sAllowStreamLocalForwarding, o->allow_streamlocal_forwarding);
-	dump_cfg_fmtint(sStreamLocalBindUnlink, o->fwd_opts.streamlocal_bind_unlink);
+	dump_cfg_fmtint(s_Allow_प्रवाहः_Local_Forwarding, o->allow_streamlocal_forwarding);
+	dump_cfg_fmtint(s_प्रवाहः_Local_Bind_Unlink, o->fwd_opts.streamlocal_bind_unlink);
 	dump_cfg_fmtint(sFingerprintHash, o->fingerprint_hash);
 	dump_cfg_fmtint(sExposeAuthInfo, o->expose_userauth_info);
 	dump_cfg_fmtint(sWarnWeakCrypto, o->warn_weak_crypto);
@@ -4385,142 +4385,142 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sBanner, o->banner);
 	dump_cfg_string(sForceCommand, o->adm_forced_command);
 	dump_cfg_string(sChrootDirectory, o->chroot_directory);
-	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_keys);
-	dump_cfg_string(sSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_कुञ्चिकाः);
+	dump_cfg_string(s_Security_कुञ्चिका_Provider, o->sk_provider);
 	dump_cfg_string(sAuthorizedPrincipalsFile,
 	    o->authorized_principals_file);
-	dump_cfg_string(sVersionAddendum, *o->version_addendum == '\0'
-	    ? "none" : o->version_addendum);
-	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
-	dump_cfg_string(sAuthorizedKeysCommandUser, o->authorized_keys_command_user);
+	dump_cfg_string(s_संस्करणम्_Addendum, *o->संस्करणम्_addendum == '\0'
+	    ? "none" : o->संस्करणम्_addendum);
+	dump_cfg_string(s_Authorized_कुञ्चिकाः_Command, o->authorized_कुञ्चिकाः_command);
+	dump_cfg_string(s_Authorized_कुञ्चिकाः_Command_User, o->authorized_कुञ्चिकाः_command_user);
 	dump_cfg_string(sAuthorizedPrincipalsCommand, o->authorized_principals_command);
 	dump_cfg_string(sAuthorizedPrincipalsCommandUser, o->authorized_principals_command_user);
-	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+	dump_cfg_string(s_Host_कुञ्चिका_Agent, o->host_कुञ्चिका_agent);
 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+	dump_cfg_string(s_Host_कुञ्चिका_Algorithms, o->hostkeyalgorithms);
 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
-#if defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+#यदि defined(__OpenBSD__) || defined(HAVE_SYS_समुच्चयः_PROCESS_RDOMAIN)
 	dump_cfg_string(sRDomain, o->routing_domain);
-#endif
-	dump_cfg_string(sSshdSessionPath, o->sshd_session_path);
-	dump_cfg_string(sSshdAuthPath, o->sshd_auth_path);
-	dump_cfg_string(sPerSourcePenaltyExemptList, o->per_source_penalty_exempt);
-	dump_cfg_string(sAgentSocketPath, o->agent_socket_path);
+#यदि_अन्तः
+	dump_cfg_string(s_Sshd_Session_मार्गः, o->sshd_session_मार्गः);
+	dump_cfg_string(s_Sshd_Auth_मार्गः, o->sshd_auth_मार्गः);
+	dump_cfg_string(s_प्रत्येकम्_Source_Penalty_Exempt_List, o->प्रत्येकम्_source_penalty_exempt);
+	dump_cfg_string(s_Agent_Socket_मार्गः, o->agent_socket_मार्गः);
 
 	/* string arguments requiring a lookup */
 	dump_cfg_string(sLogLevel, log_level_name(o->log_level));
 	dump_cfg_string(sSyslogFacility, log_facility_name(o->log_facility));
 
 	/* string array arguments */
-	dump_cfg_strarray_oneline(sAuthorizedKeysFile, o->num_authkeys_files,
-	    o->authorized_keys_files);
-	dump_cfg_strarray_oneline(sRevokedKeys, o->num_revoked_keys_files,
-	    o->revoked_keys_files);
-	dump_cfg_strarray(sHostKey, o->num_host_key_files, o->host_key_files);
-	dump_cfg_strarray(sHostCertificate, o->num_host_cert_files,
+	dump_cfg_strarray_oneline(s_Authorized_कुञ्चिकाः_File, o->अङ्कः_authkeys_files,
+	    o->authorized_कुञ्चिकाः_files);
+	dump_cfg_strarray_oneline(s_Revoked_कुञ्चिकाः, o->अङ्कः_revoked_कुञ्चिकाः_files,
+	    o->revoked_कुञ्चिकाः_files);
+	dump_cfg_strarray(s_Host_कुञ्चिका, o->अङ्कः_host_कुञ्चिका_files, o->host_कुञ्चिका_files);
+	dump_cfg_strarray(sHostCertificate, o->अङ्कः_host_cert_files,
 	    o->host_cert_files);
-	dump_cfg_strarray(sAllowUsers, o->num_allow_users, o->allow_users);
-	dump_cfg_strarray(sDenyUsers, o->num_deny_users, o->deny_users);
-	dump_cfg_strarray(sAllowGroups, o->num_allow_groups, o->allow_groups);
-	dump_cfg_strarray(sDenyGroups, o->num_deny_groups, o->deny_groups);
-	dump_cfg_strarray(sAcceptEnv, o->num_accept_env, o->accept_env);
-	dump_cfg_strarray(sSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(sAllowUsers, o->अङ्कः_allow_users, o->allow_users);
+	dump_cfg_strarray(sDenyUsers, o->अङ्कः_deny_users, o->deny_users);
+	dump_cfg_strarray(sAllowGroups, o->अङ्कः_allow_groups, o->allow_groups);
+	dump_cfg_strarray(sDenyGroups, o->अङ्कः_deny_groups, o->deny_groups);
+	dump_cfg_strarray(sAcceptEnv, o->अङ्कः_accept_env, o->accept_env);
+	dump_cfg_strarray(s_समुच्चयः_Env, o->अङ्कः_setenv, o->setenv);
 	dump_cfg_strarray_oneline(sAuthenticationMethods,
-	    o->num_auth_methods, o->auth_methods);
+	    o->अङ्कः_auth_methods, o->auth_methods);
 	dump_cfg_strarray_oneline(sLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->अङ्कः_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(sChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->अङ्कः_channel_timeouts, o->channel_timeouts);
 
 	/* other arguments */
-	for (i = 0; i < o->num_subsystems; i++)
-		printf("Subsystem %s %s\n", o->subsystem_name[i],
-		    o->subsystem_args[i]);
+	प्रति (i = 0; i < o->अङ्कः_subsystems; i++)
+		प्रारूप_लिख("Subsystem %s %s\n", o->subsystem_name[i],
+		    o->subsystem_तर्काः[i]);
 
-	printf("MaxStartups %d:%d:%d\n", o->max_startups_begin,
-	    o->max_startups_rate, o->max_startups);
-	printf("PerSourceMaxStartups ");
-	if (o->per_source_max_startups == INT_MAX)
-		printf("none\n");
-	else
-		printf("%d\n", o->per_source_max_startups);
-	printf("PerSourceNetBlockSize %d:%d\n", o->per_source_masklen_ipv4,
-	    o->per_source_masklen_ipv6);
+	प्रारूप_लिख("MaxStartups %d:%d:%d\n", o->max_startups_begin,
+	    o->max_startups_दरः, o->max_startups);
+	प्रारूप_लिख("PerSourceMaxStartups ");
+	यदि (o->प्रत्येकम्_source_max_startups == अधिकतम_पूर्णाङ्कः)
+		प्रारूप_लिख("none\n");
+	अन्यथा
+		प्रारूप_लिख("%d\n", o->प्रत्येकम्_source_max_startups);
+	प्रारूप_लिख("PerSourceNetBlockSize %d:%d\n", o->प्रत्येकम्_source_masklen_ipv4,
+	    o->प्रत्येकम्_source_masklen_ipv6);
 
-	s = NULL;
-	for (i = 0; tunmode_desc[i].val != -1; i++) {
-		if (tunmode_desc[i].val == o->permit_tun) {
+	s = रिक्त;
+	प्रति (i = 0; tunmode_desc[i].val != -1; i++) {
+		यदि (tunmode_desc[i].val == o->permit_tun) {
 			s = tunmode_desc[i].text;
-			break;
+			भङ्ग;
 		}
 	}
 	dump_cfg_string(sPermitTunnel, s);
 
-	printf("IPQoS %s ", iptos2str(o->ip_qos_interactive));
-	printf("%s\n", iptos2str(o->ip_qos_bulk));
+	प्रारूप_लिख("IPQoS %s ", iptos2str(o->ip_qos_interactive));
+	प्रारूप_लिख("%s\n", iptos2str(o->ip_qos_bulk));
 
-	printf("RekeyLimit %llu %d\n", (unsigned long long)o->rekey_limit,
+	प्रारूप_लिख("RekeyLimit %llu %d\n", (अचिह्नित दीर्घ दीर्घ)o->rekey_सीमा,
 	    o->rekey_interval);
 
-	printf("PermitOpen");
-	if (o->num_permitted_opens == 0)
-		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_opens; i++)
-			printf(" %s", o->permitted_opens[i]);
+	प्रारूप_लिख("PermitOpen");
+	यदि (o->अङ्कः_permitted_opens == 0)
+		प्रारूप_लिख(" any");
+	अन्यथा {
+		प्रति (i = 0; i < o->अङ्कः_permitted_opens; i++)
+			प्रारूप_लिख(" %s", o->permitted_opens[i]);
 	}
-	printf("\n");
-	printf("PermitListen");
-	if (o->num_permitted_listens == 0)
-		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_listens; i++)
-			printf(" %s", o->permitted_listens[i]);
+	प्रारूप_लिख("\n");
+	प्रारूप_लिख("PermitListen");
+	यदि (o->अङ्कः_permitted_listens == 0)
+		प्रारूप_लिख(" any");
+	अन्यथा {
+		प्रति (i = 0; i < o->अङ्कः_permitted_listens; i++)
+			प्रारूप_लिख(" %s", o->permitted_listens[i]);
 	}
-	printf("\n");
+	प्रारूप_लिख("\n");
 
-	if (o->permit_user_env_allowlist == NULL) {
+	यदि (o->permit_user_env_allowlist == रिक्त) {
 		dump_cfg_fmtint(sPermitUserEnvironment, o->permit_user_env);
-	} else {
-		printf("PermitUserEnvironment %s\n",
+	} अन्यथा {
+		प्रारूप_लिख("PermitUserEnvironment %s\n",
 		    o->permit_user_env_allowlist);
 	}
 
-	printf("PubkeyAuthOptions");
-	if (o->pubkey_auth_options == 0)
-		printf(" none");
-	if (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
-		printf(" touch-required");
-	if (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
-		printf(" verify-required");
-	if (o->max_pubkey_ok != -1)
-		printf(" max-pk-ok:%d", o->max_pubkey_ok);
-	printf("\n");
+	प्रारूप_लिख("PubkeyAuthOptions");
+	यदि (o->pubkey_auth_options == 0)
+		प्रारूप_लिख(" none");
+	यदि (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
+		प्रारूप_लिख(" touch-required");
+	यदि (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
+		प्रारूप_लिख(" verify-required");
+	यदि (o->max_pubkey_ok != -1)
+		प्रारूप_लिख(" max-pk-ok:%d", o->max_pubkey_ok);
+	प्रारूप_लिख("\n");
 
-	if (o->per_source_penalty.enabled) {
-		printf("PerSourcePenalties crash:%f authfail:%f noauth:%f "
+	यदि (o->प्रत्येकम्_source_penalty.enabled) {
+		प्रारूप_लिख("PerSourcePenalties crash:%f authfail:%f noauth:%f "
 		    "invaliduser:%f "
 		    "grace-exceeded:%f refuseconnection:%f max:%f min:%f "
 		    "max-sources4:%d max-sources6:%d "
 		    "overflow:%s overflow6:%s\n",
-		    o->per_source_penalty.penalty_crash,
-		    o->per_source_penalty.penalty_authfail,
-		    o->per_source_penalty.penalty_noauth,
-		    o->per_source_penalty.penalty_invaliduser,
-		    o->per_source_penalty.penalty_grace,
-		    o->per_source_penalty.penalty_refuseconnection,
-		    o->per_source_penalty.penalty_max,
-		    o->per_source_penalty.penalty_min,
-		    o->per_source_penalty.max_sources4,
-		    o->per_source_penalty.max_sources6,
-		    o->per_source_penalty.overflow_mode ==
-		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
+		    o->प्रत्येकम्_source_penalty.penalty_crash,
+		    o->प्रत्येकम्_source_penalty.penalty_authfail,
+		    o->प्रत्येकम्_source_penalty.penalty_noauth,
+		    o->प्रत्येकम्_source_penalty.penalty_invaliduser,
+		    o->प्रत्येकम्_source_penalty.penalty_grace,
+		    o->प्रत्येकम्_source_penalty.penalty_refuseconnection,
+		    o->प्रत्येकम्_source_penalty.penalty_max,
+		    o->प्रत्येकम्_source_penalty.penalty_min,
+		    o->प्रत्येकम्_source_penalty.max_sources4,
+		    o->प्रत्येकम्_source_penalty.max_sources6,
+		    o->प्रत्येकम्_source_penalty.अतिप्रवाहः_बहुलकम् ==
+		    प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_DENY_ALL ?
 		    "deny-all" : "permissive",
-		    o->per_source_penalty.overflow_mode6 ==
-		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
+		    o->प्रत्येकम्_source_penalty.अतिप्रवाहः_mode6 ==
+		    प्रत्येकम्_SOURCE_PENALTY_अतिप्रवाहः_DENY_ALL ?
 		    "deny-all" : "permissive");
-	} else
-		printf("PerSourcePenalties no\n");
+	} अन्यथा
+		प्रारूप_लिख("PerSourcePenalties no\n");
 }

@@ -22,94 +22,94 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifdef HAVE_OSF_SIA
-#include <sia.h>
-#include <siad.h>
-#include <pwd.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
+#यदि_परिभाषितम् HAVE_OSF_SIA
+#अन्तर्भाव <sia.h>
+#अन्तर्भाव <siad.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <setjmp.h>
+#अन्तर्भाव <sys/resource.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
 
-#include "ssh.h"
-#include "ssh_api.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-sia.h"
-#include "log.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "uidswap.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "ssh_api.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "auth-sia.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "canohost.h"
+#अन्तर्भाव "uidswap.h"
 
-extern ServerOptions options;
-extern int saved_argc;
-extern char **saved_argv;
+बाह्य ServerOptions options;
+बाह्य पूर्णाङ्क saved_argc;
+बाह्य वर्ण **saved_argv;
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *pass)
+पूर्णाङ्क
+sys_auth_passwd(संरचना ssh *ssh, ध्रुव वर्ण *pass)
 {
-	int ret;
-	SIAENTITY *ent = NULL;
-	const char *host;
+	पूर्णाङ्क ret;
+	SIAENTITY *ent = रिक्त;
+	ध्रुव वर्ण *host;
 	Authctxt *authctxt = ssh->authctxt;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (!authctxt->user || pass == NULL || pass[0] == '\0')
-		return (0);
+	यदि (!authctxt->user || pass == रिक्त || pass[0] == '\0')
+		प्रत्यागम (0);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
-	    NULL, 0, NULL) != SIASUCCESS)
-		return (0);
+	यदि (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
+	    रिक्त, 0, रिक्त) != SIASUCCESS)
+		प्रत्यागम (0);
 
-	if ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
+	यदि ((ret = sia_ses_authent(रिक्त, pass, ent)) != SIASUCCESS) {
 		error("Couldn't authenticate %s from %s",
 		    authctxt->user, host);
-		if (ret & SIASTOP)
+		यदि (ret & SIASTOP)
 			sia_ses_release(&ent);
 
-		return (0);
+		प्रत्यागम (0);
 	}
 
 	sia_ses_release(&ent);
 
-	return (1);
+	प्रत्यागम (1);
 }
 
-void
-session_setup_sia(struct passwd *pw, char *tty)
+शून्य
+session_सज्जता_sia(संरचना passwd *pw, वर्ण *tty)
 {
-	SIAENTITY *ent = NULL;
-	const char *host;
+	SIAENTITY *ent = रिक्त;
+	ध्रुव वर्ण *host;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
-	    tty, 0, NULL) != SIASUCCESS)
+	यदि (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
+	    tty, 0, रिक्त) != SIASUCCESS)
 		fatal("sia_ses_init failed");
 
-	if (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
+	यदि (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
 		sia_ses_release(&ent);
 		fatal("sia_make_entity_pwd failed");
 	}
 
 	ent->authtype = SIA_A_NONE;
-	if (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
+	यदि (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't establish session for %s from %s",
 		    pw->pw_name, host);
 
-	if (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
+	यदि (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't launch session for %s from %s",
 		    pw->pw_name, host);
 
 	sia_ses_release(&ent);
 
 	setuid(0);
-	permanently_set_uid(pw);
+	permanently_समुच्चयः_uid(pw);
 }
 
-#endif /* HAVE_OSF_SIA */
+#यदि_अन्तः /* HAVE_OSF_SIA */

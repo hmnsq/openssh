@@ -11,20 +11,20 @@
  * incompatible with the protocol description in the RFC file, it must be
  * called by a name other than "ssh" or "Secure Shell".
  */
-#ifndef MATCH_H
-#define MATCH_H
+#यदि_अपरिभाषितम् मेलनम्_H
+#परिभाषय मेलनम्_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+पूर्णाङ्क	 मेलनम्_आदर्शः(ध्रुव वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	 मेलनम्_आदर्शः_list(ध्रुव वर्ण *, ध्रुव वर्ण *, पूर्णाङ्क);
+पूर्णाङ्क	 मेलनम्_usergroup_आदर्शः_list(ध्रुव वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	 मेलनम्_hostname(ध्रुव वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	 मेलनम्_host_and_ip(ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	 मेलनम्_user(ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *);
+वर्ण	*मेलनम्_list(ध्रुव वर्ण *, ध्रुव वर्ण *, u_int *);
+वर्ण	*मेलनम्_filter_denylist(ध्रुव वर्ण *, ध्रुव वर्ण *);
+वर्ण	*मेलनम्_filter_allowlist(ध्रुव वर्ण *, ध्रुव वर्ण *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
-#endif
+पूर्णाङ्क	 addr_मेलनम्_list(ध्रुव वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	 addr_मेलनम्_cidr_list(ध्रुव वर्ण *, ध्रुव वर्ण *);
+#यदि_अन्तः

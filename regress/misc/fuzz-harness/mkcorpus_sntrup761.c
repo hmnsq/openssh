@@ -3,80 +3,80 @@
 // Will write to ./sntrup761_pubkey_corpus (for sntrup761_enc_fuzz) and
 // to ./sntrup761_ciphertext_corpus (for sntrup761_dec_fuzz)
 
-#include <sys/stat.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
-#include <errno.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <err.h>
+#अन्तर्भाव <errno.h>
 
-#include "crypto_api.h"
-#include "hash.c"
+#अन्तर्भाव "crypto_api.h"
+#अन्तर्भाव "hash.c"
 
-#undef randombytes
-#define USE_SNTRUP761X25519 1
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+#अपरिभाषय randombytes
+#परिभाषय USE_SNTRUP761X25519 1
+शून्य randombytes(अचिह्नित वर्ण *ptr, आकार_t l);
+चञ्चल crypto_int16 crypto_int16_optblocker = 0;
+चञ्चल crypto_int32 crypto_int32_optblocker = 0;
+चञ्चल crypto_int64 crypto_int64_optblocker = 0;
+#अन्तर्भाव "sntrup761.c"
 
-#define NSEEDS 1000
+#परिभाषय NSEEDS 1000
 
-static int real_random;
+स्थिर पूर्णाङ्क real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+शून्य
+randombytes(अचिह्नित वर्ण *ptr, आकार_t l)
 {
-	if (real_random)
+	यदि (real_random)
 		arc4random_buf(ptr, l);
-	else
-		memset(ptr, 0, l);
+	अन्यथा
+		स्मृतिं_पूरय(ptr, 0, l);
 }
 
-void write_blob(const char *path, int n, const char *suffix,
-    const void *ptr, size_t l)
+शून्य write_blob(ध्रुव वर्ण *मार्गः, पूर्णाङ्क n, ध्रुव वर्ण *suffix,
+    ध्रुव शून्य *ptr, आकार_t l)
 {
-	char name[256];
+	वर्ण name[256];
 	FILE *f;
 
-	snprintf(name, sizeof(name), "%s/%06d.%s", path, n, suffix);
-	if ((f = fopen(name, "wb+")) == NULL)
+	snprintf(name, परिमाण(name), "%s/%06d.%s", मार्गः, n, suffix);
+	यदि ((f = fopen(name, "wb+")) == रिक्त)
 		err(1, "fopen %s", name);
-	if (fwrite(ptr, l, 1, f) != 1)
+	यदि (fwrite(ptr, l, 1, f) != 1)
 		err(1, "write %s", name);
 	fclose(f);
 }
 
-int main(void)
+पूर्णाङ्क मुख्यम्(शून्य)
 {
-	int i;
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	पूर्णाङ्क i;
+	अचिह्नित वर्ण pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	अचिह्नित वर्ण sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	अचिह्नित वर्ण ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	अचिह्नित वर्ण secret[crypto_kem_sntrup761_अष्टकानि];
 
-	if (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
+	यदि (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_pubkey_corpus");
-	if (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
+	यदि (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_ciphertext_corpus");
 
 	fprintf(stderr, "making: ");
-	for (i = 0; i < NSEEDS; i++) {
+	प्रति (i = 0; i < NSEEDS; i++) {
 		real_random = i != 0;
-		if (crypto_kem_sntrup761_keypair(pk, sk) != 0)
+		यदि (crypto_kem_sntrup761_keypair(pk, sk) != 0)
 			errx(1, "crypto_kem_sntrup761_keypair failed");
-		write_blob("sntrup761_pubkey_corpus", i, "pk", pk, sizeof(pk));
-		if (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
+		write_blob("sntrup761_pubkey_corpus", i, "pk", pk, परिमाण(pk));
+		यदि (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
 			errx(1, "crypto_kem_sntrup761_enc failed");
 		write_blob("sntrup761_ciphertext_corpus", i, "ct",
-		    ciphertext, sizeof(ciphertext));
-		if (i % 20 == 0)
+		    ciphertext, परिमाण(ciphertext));
+		यदि (i % 20 == 0)
 			fprintf(stderr, ".");
 	}
 	fprintf(stderr, "\n");
-	return 0;
+	प्रत्यागम 0;
 }

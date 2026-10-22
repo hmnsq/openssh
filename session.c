@@ -33,71 +33,71 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/un.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/wait.h>
+#अन्तर्भाव <sys/un.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/socket.h>
+#अन्तर्भाव <sys/queue.h>
 
-#include <arpa/inet.h>
+#अन्तर्भाव <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <grp.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <grp.h>
+#अन्तर्भाव <netdb.h>
+#अन्तर्भाव <paths.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <limits.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshpty.h"
-#include "packet.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "match.h"
-#include "uidswap.h"
-#include "channels.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "authfd.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshlogin.h"
-#include "serverloop.h"
-#include "canohost.h"
-#include "session.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "sftp.h"
-#include "atomicio.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "ssh2.h"
+#अन्तर्भाव "sshpty.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "uidswap.h"
+#अन्तर्भाव "channels.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "auth-options.h"
+#अन्तर्भाव "authfd.h"
+#अन्तर्भाव "pathnames.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "sshlogin.h"
+#अन्तर्भाव "serverloop.h"
+#अन्तर्भाव "canohost.h"
+#अन्तर्भाव "session.h"
+#यदि_परिभाषितम् GSSAPI
+#अन्तर्भाव "ssh-gss.h"
+#यदि_अन्तः
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "sftp.h"
+#अन्तर्भाव "atomicio.h"
 
-#if defined(KRB5) && defined(USE_AFS)
-#include <kafs.h>
-#endif
+#यदि defined(KRB5) && defined(USE_AFS)
+#अन्तर्भाव <kafs.h>
+#यदि_अन्तः
 
-#ifdef WITH_SELINUX
-#include <selinux/selinux.h>
-#endif
+#यदि_परिभाषितम् WITH_SELINUX
+#अन्तर्भाव <selinux/selinux.h>
+#यदि_अन्तः
 
 /*
  * Hack for systems that do not support FD passing: allocate PTYs directly
@@ -106,215 +106,215 @@
  * sshd-session.c:privsep_postauth) or that PTY allocation doesn't require
  * privileges to begin with (e.g. Cygwin).
  */
-#ifdef DISABLE_FD_PASSING
-#define mm_pty_allocate pty_allocate
-#endif
+#यदि_परिभाषितम् DISABLE_FD_PASSING
+#परिभाषय mm_pty_allocate pty_allocate
+#यदि_अन्तः
 
-#define IS_INTERNAL_SFTP(c) \
-	(!strncmp(c, INTERNAL_SFTP_NAME, sizeof(INTERNAL_SFTP_NAME) - 1) && \
-	 (c[sizeof(INTERNAL_SFTP_NAME) - 1] == '\0' || \
-	  c[sizeof(INTERNAL_SFTP_NAME) - 1] == ' ' || \
-	  c[sizeof(INTERNAL_SFTP_NAME) - 1] == '\t'))
+#परिभाषय IS_आन्तरिकम्_SFTP(c) \
+	(!वाक्ये_तुलय(c, आन्तरिकम्_SFTP_NAME, परिमाण(आन्तरिकम्_SFTP_NAME) - 1) && \
+	 (c[परिमाण(आन्तरिकम्_SFTP_NAME) - 1] == '\0' || \
+	  c[परिमाण(आन्तरिकम्_SFTP_NAME) - 1] == ' ' || \
+	  c[परिमाण(आन्तरिकम्_SFTP_NAME) - 1] == '\t'))
 
 /* func */
 
-Session *session_new(void);
-void	session_set_fds(struct ssh *, Session *, int, int, int, int, int);
-void	session_pty_cleanup(Session *);
-void	session_proctitle(Session *);
-int	session_setup_x11fwd(struct ssh *, Session *);
-int	do_exec_pty(struct ssh *, Session *, const char *);
-int	do_exec_no_pty(struct ssh *, Session *, const char *);
-int	do_exec(struct ssh *, Session *, const char *);
-void	do_login(struct ssh *, Session *, const char *);
-void	do_child(struct ssh *, Session *, const char *);
-void	do_motd(void);
-int	check_quietlogin(Session *, const char *);
+Session *session_new(शून्य);
+शून्य	session_समुच्चयः_fds(संरचना ssh *, Session *, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क);
+शून्य	session_pty_cleanup(Session *);
+शून्य	session_proctitle(Session *);
+पूर्णाङ्क	session_सज्जता_x11fwd(संरचना ssh *, Session *);
+पूर्णाङ्क	do_exec_pty(संरचना ssh *, Session *, ध्रुव वर्ण *);
+पूर्णाङ्क	do_exec_no_pty(संरचना ssh *, Session *, ध्रुव वर्ण *);
+पूर्णाङ्क	do_exec(संरचना ssh *, Session *, ध्रुव वर्ण *);
+शून्य	do_login(संरचना ssh *, Session *, ध्रुव वर्ण *);
+शून्य	do_child(संरचना ssh *, Session *, ध्रुव वर्ण *);
+शून्य	do_motd(शून्य);
+पूर्णाङ्क	check_quietlogin(Session *, ध्रुव वर्ण *);
 
-static void do_authenticated2(struct ssh *, Authctxt *);
+स्थिर शून्य do_authenticated2(संरचना ssh *, Authctxt *);
 
-static int session_pty_req(struct ssh *, Session *);
+स्थिर पूर्णाङ्क session_pty_req(संरचना ssh *, Session *);
 
 /* import */
-extern ServerOptions options;
-extern char *__progname;
-extern int debug_flag;
-extern struct sshbuf *loginmsg;
-extern struct sshauthopt *auth_opts;
-extern char *tun_fwd_ifnames; /* serverloop.c */
+बाह्य ServerOptions options;
+बाह्य वर्ण *__progname;
+बाह्य पूर्णाङ्क debug_flag;
+बाह्य संरचना sshbuf *loginmsg;
+बाह्य संरचना sshauthopt *auth_opts;
+बाह्य वर्ण *tun_fwd_ifnames; /* serverloop.c */
 
 /* original command from peer. */
-const char *original_command = NULL;
+ध्रुव वर्ण *original_command = रिक्त;
 
-/* data */
-static int sessions_first_unused = -1;
-static int sessions_nalloc = 0;
-static Session *sessions = NULL;
+/*दत्त*/
+स्थिर पूर्णाङ्क sessions_first_अप्रयुक्तम् = -1;
+स्थिर पूर्णाङ्क sessions_nalloc = 0;
+स्थिर Session *sessions = रिक्त;
 
-#define SUBSYSTEM_NONE			0
-#define SUBSYSTEM_EXT			1
-#define SUBSYSTEM_INT_SFTP		2
-#define SUBSYSTEM_INT_SFTP_ERROR	3
+#परिभाषय SUBSYSTEM_NONE			0
+#परिभाषय SUBSYSTEM_EXT			1
+#परिभाषय SUBSYSTEM_INT_SFTP		2
+#परिभाषय SUBSYSTEM_INT_SFTP_ERROR	3
 
-#ifdef HAVE_LOGIN_CAP
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
 login_cap_t *lc;
-#endif
+#यदि_अन्तः
 
-static int is_child = 0;
-static int in_chroot = 0;
+स्थिर पूर्णाङ्क is_child = 0;
+स्थिर पूर्णाङ्क अन्तर्_chroot = 0;
 
 /* File containing userauth info, if ExposeAuthInfo set */
-static char *auth_info_file = NULL;
+स्थिर वर्ण *auth_info_file = रिक्त;
 
 /* Name and directory of socket for authentication agent forwarding. */
-static char *auth_sock_name = NULL;
-static char *auth_sock_dir = NULL; /* only set if directory needs cleanup */
+स्थिर वर्ण *auth_sock_name = रिक्त;
+स्थिर वर्ण *auth_sock_dir = रिक्त; /* only set if directory needs cleanup */
 
 /* removes the agent forwarding socket */
 
-static void
-auth_sock_cleanup_proc(struct passwd *pw)
+स्थिर शून्य
+auth_sock_cleanup_proc(संरचना passwd *pw)
 {
-	if (auth_sock_name != NULL) {
+	यदि (auth_sock_name != रिक्त) {
 		temporarily_use_uid(pw);
-		agent_listener_cleanup(options.agent_socket_path,
+		agent_listener_cleanup(options.agent_socket_मार्गः,
 		    auth_sock_name, auth_sock_dir);
-		free(auth_sock_name);
-		auth_sock_name = NULL;
+		मुक्त(auth_sock_name);
+		auth_sock_name = रिक्त;
 		restore_uid();
 	}
 }
 
-static int
-auth_input_request_forwarding(struct ssh *ssh, struct passwd *pw, int agent_new)
+स्थिर पूर्णाङ्क
+auth_निवेशः_request_forwarding(संरचना ssh *ssh, संरचना passwd *pw, पूर्णाङ्क agent_new)
 {
 	Channel *nc;
-	int sock = -1;
+	पूर्णाङ्क sock = -1;
 
-	if (auth_sock_name != NULL) {
+	यदि (auth_sock_name != रिक्त) {
 		error("authentication forwarding requested twice.");
-		return 0;
+		प्रत्यागम 0;
 	}
 
 	/* Temporarily drop privileged uid for mkdir/bind. */
 	temporarily_use_uid(pw);
 
-	if (agent_listener(options.agent_socket_path, pw->pw_name, pw->pw_uid,
+	यदि (agent_listener(options.agent_socket_मार्गः, pw->pw_name, pw->pw_uid,
 	    pw->pw_dir, getpid(), "sshd", &sock, &auth_sock_name,
 	    &auth_sock_dir) != 0) {
 		/* a more detailed error is already logged */
 		ssh_packet_send_debug(ssh, "Agent forwarding disabled: "
 		    "couldn't create listener socket");
 		restore_uid();
-		goto authsock_err;
+		गच्छ authsock_err;
 	}
 	restore_uid();
 
 	/* Allocate a channel for the authentication agent socket. */
 	nc = channel_new(ssh, "auth-listener",
 	    SSH_CHANNEL_AUTH_SOCKET, sock, sock, -1,
-	    CHAN_X11_WINDOW_DEFAULT, CHAN_X11_PACKET_DEFAULT,
+	    CHAN_X11_गवाक्षः_DEFAULT, CHAN_X11_PACKET_DEFAULT,
 	    0, "auth socket", 1);
-	nc->path = xstrdup(auth_sock_name);
+	nc->मार्गः = xstrdup(auth_sock_name);
 	nc->agent_new = agent_new;
-	return 1;
+	प्रत्यागम 1;
 
  authsock_err:
-	free(auth_sock_name);
-	if (sock != -1)
+	मुक्त(auth_sock_name);
+	यदि (sock != -1)
 		close(sock);
-	auth_sock_name = NULL;
-	return 0;
+	auth_sock_name = रिक्त;
+	प्रत्यागम 0;
 }
 
-static void
-display_loginmsg(void)
+स्थिर शून्य
+display_loginmsg(शून्य)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (sshbuf_len(loginmsg) == 0)
-		return;
-	if ((r = sshbuf_put_u8(loginmsg, 0)) != 0)
+	यदि (sshbuf_len(loginmsg) == 0)
+		प्रत्यागम;
+	यदि ((r = sshbuf_put_u8(loginmsg, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
-	printf("%s", (char *)sshbuf_ptr(loginmsg));
+	प्रारूप_लिख("%s", (वर्ण *)sshbuf_ptr(loginmsg));
 	sshbuf_reset(loginmsg);
 }
 
-static void
-prepare_auth_info_file(struct passwd *pw, struct sshbuf *info)
+स्थिर शून्य
+prepare_auth_info_file(संरचना passwd *pw, संरचना sshbuf *info)
 {
-	int fd = -1, success = 0;
+	पूर्णाङ्क fd = -1, success = 0;
 
-	if (!options.expose_userauth_info || info == NULL)
-		return;
+	यदि (!options.expose_userauth_info || info == रिक्त)
+		प्रत्यागम;
 
 	temporarily_use_uid(pw);
 	auth_info_file = xstrdup("/tmp/sshauth.XXXXXXXXXXXXXXX");
-	if ((fd = mkstemp(auth_info_file)) == -1) {
+	यदि ((fd = mkstemp(auth_info_file)) == -1) {
 		error_f("mkstemp: %s", strerror(errno));
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(info),
+	यदि (atomicio(vwrite, fd, sshbuf_mutable_ptr(info),
 	    sshbuf_len(info)) != sshbuf_len(info)) {
 		error_f("write: %s", strerror(errno));
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (close(fd) != 0) {
+	यदि (close(fd) != 0) {
 		error_f("close: %s", strerror(errno));
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 	success = 1;
- out:
-	if (!success) {
-		if (fd != -1)
+ बहिर्गमनम्:
+	यदि (!success) {
+		यदि (fd != -1)
 			close(fd);
-		free(auth_info_file);
-		auth_info_file = NULL;
+		मुक्त(auth_info_file);
+		auth_info_file = रिक्त;
 	}
 	restore_uid();
 }
 
-static void
-set_fwdpermit_from_authopts(struct ssh *ssh, const struct sshauthopt *opts)
+स्थिर शून्य
+समुच्चयः_fwdpermit_from_authopts(संरचना ssh *ssh, ध्रुव संरचना sshauthopt *opts)
 {
-	char *tmp, *cp, *host;
-	int port;
-	size_t i;
+	वर्ण *tmp, *cp, *host;
+	पूर्णाङ्क पत्तनम्;
+	आकार_t i;
 
-	if ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0) {
+	यदि ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0) {
 		channel_clear_permission(ssh, FORWARD_USER, FORWARD_LOCAL);
-		for (i = 0; i < auth_opts->npermitopen; i++) {
+		प्रति (i = 0; i < auth_opts->npermitopen; i++) {
 			tmp = cp = xstrdup(auth_opts->permitopen[i]);
 			/* This shouldn't fail as it has already been checked */
-			if ((host = hpdelim2(&cp, NULL)) == NULL)
+			यदि ((host = hpdelim2(&cp, रिक्त)) == रिक्त)
 				fatal_f("internal error: hpdelim");
 			host = cleanhostname(host);
-			if (cp == NULL || (port = permitopen_port(cp)) < 0)
+			यदि (cp == रिक्त || (पत्तनम् = permitopen_पत्तनम्(cp)) < 0)
 				fatal_f("internal error: permitopen port");
-			channel_add_permission(ssh,
-			    FORWARD_USER, FORWARD_LOCAL, host, port);
-			free(tmp);
+			channel_सङ्कलय_permission(ssh,
+			    FORWARD_USER, FORWARD_LOCAL, host, पत्तनम्);
+			मुक्त(tmp);
 		}
 	}
-	if ((options.allow_tcp_forwarding & FORWARD_REMOTE) != 0) {
+	यदि ((options.allow_tcp_forwarding & FORWARD_REMOTE) != 0) {
 		channel_clear_permission(ssh, FORWARD_USER, FORWARD_REMOTE);
-		for (i = 0; i < auth_opts->npermitlisten; i++) {
+		प्रति (i = 0; i < auth_opts->npermitlisten; i++) {
 			tmp = cp = xstrdup(auth_opts->permitlisten[i]);
 			/* This shouldn't fail as it has already been checked */
-			if ((host = hpdelim(&cp)) == NULL)
+			यदि ((host = hpdelim(&cp)) == रिक्त)
 				fatal_f("internal error: hpdelim");
 			host = cleanhostname(host);
-			if (cp == NULL || (port = permitopen_port(cp)) < 0)
+			यदि (cp == रिक्त || (पत्तनम् = permitopen_पत्तनम्(cp)) < 0)
 				fatal_f("internal error: permitlisten port");
-			channel_add_permission(ssh,
-			    FORWARD_USER, FORWARD_REMOTE, host, port);
-			free(tmp);
+			channel_सङ्कलय_permission(ssh,
+			    FORWARD_USER, FORWARD_REMOTE, host, पत्तनम्);
+			मुक्त(tmp);
 		}
 	}
 }
 
-void
-do_authenticated(struct ssh *ssh, Authctxt *authctxt)
+शून्य
+do_authenticated(संरचना ssh *ssh, Authctxt *authctxt)
 {
 	setproctitle("%s", authctxt->pw->pw_name);
 
@@ -322,20 +322,20 @@ do_authenticated(struct ssh *ssh, Authctxt *authctxt)
 
 	/* set up the channel layer */
 	/* XXX - streamlocal? */
-	set_fwdpermit_from_authopts(ssh, auth_opts);
+	समुच्चयः_fwdpermit_from_authopts(ssh, auth_opts);
 
-	if (!auth_opts->permit_port_forwarding_flag ||
+	यदि (!auth_opts->permit_पत्तनम्_forwarding_flag ||
 	    options.disable_forwarding) {
 		channel_disable_admin(ssh, FORWARD_LOCAL);
 		channel_disable_admin(ssh, FORWARD_REMOTE);
-	} else {
-		if ((options.allow_tcp_forwarding & FORWARD_LOCAL) == 0)
+	} अन्यथा {
+		यदि ((options.allow_tcp_forwarding & FORWARD_LOCAL) == 0)
 			channel_disable_admin(ssh, FORWARD_LOCAL);
-		else
+		अन्यथा
 			channel_permit_all(ssh, FORWARD_LOCAL);
-		if ((options.allow_tcp_forwarding & FORWARD_REMOTE) == 0)
+		यदि ((options.allow_tcp_forwarding & FORWARD_REMOTE) == 0)
 			channel_disable_admin(ssh, FORWARD_REMOTE);
-		else
+		अन्यथा
 			channel_permit_all(ssh, FORWARD_REMOTE);
 	}
 	auth_debug_send(ssh);
@@ -348,126 +348,126 @@ do_authenticated(struct ssh *ssh, Authctxt *authctxt)
 }
 
 /* Check untrusted xauth strings for metacharacters */
-static int
-xauth_valid_string(const char *s)
+स्थिर पूर्णाङ्क
+xauth_valid_string(ध्रुव वर्ण *s)
 {
-	size_t i;
+	आकार_t i;
 
-	for (i = 0; s[i] != '\0'; i++) {
-		if (!isalnum((u_char)s[i]) &&
+	प्रति (i = 0; s[i] != '\0'; i++) {
+		यदि (!अक्षरम्_अङ्कः_वा((u_char)s[i]) &&
 		    s[i] != '.' && s[i] != ':' && s[i] != '/' &&
 		    s[i] != '-' && s[i] != '_')
-			return 0;
+			प्रत्यागम 0;
 	}
-	return 1;
+	प्रत्यागम 1;
 }
 
-#define USE_PIPES 1
+#परिभाषय USE_PIPES 1
 /*
  * This is called to fork and execute a command when we have no tty.  This
  * will call do_child from the child, and server_loop from the parent after
  * setting up file descriptors and such.
  */
-int
-do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
+पूर्णाङ्क
+do_exec_no_pty(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *command)
 {
 	pid_t pid;
-#ifdef USE_PIPES
-	int pin[2], pout[2], perr[2];
+#यदि_परिभाषितम् USE_PIPES
+	पूर्णाङ्क pin[2], pout[2], perr[2];
 
-	if (s == NULL)
+	यदि (s == रिक्त)
 		fatal("do_exec_no_pty: no session");
 
 	/* Allocate pipes for communicating with the program. */
-	if (pipe(pin) == -1) {
+	यदि (pipe(pin) == -1) {
 		error_f("pipe in: %.100s", strerror(errno));
-		return -1;
+		प्रत्यागम -1;
 	}
-	if (pipe(pout) == -1) {
+	यदि (pipe(pout) == -1) {
 		error_f("pipe out: %.100s", strerror(errno));
 		close(pin[0]);
 		close(pin[1]);
-		return -1;
+		प्रत्यागम -1;
 	}
-	if (pipe(perr) == -1) {
+	यदि (pipe(perr) == -1) {
 		error_f("pipe err: %.100s", strerror(errno));
 		close(pin[0]);
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
-		return -1;
+		प्रत्यागम -1;
 	}
-#else
-	int inout[2], err[2];
+#अन्यथा
+	पूर्णाङ्क inout[2], err[2];
 
-	if (s == NULL)
+	यदि (s == रिक्त)
 		fatal("do_exec_no_pty: no session");
 
 	/* Uses socket pairs to communicate with the program. */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1) {
+	यदि (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1) {
 		error_f("socketpair #1: %.100s", strerror(errno));
-		return -1;
+		प्रत्यागम -1;
 	}
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, err) == -1) {
+	यदि (socketpair(AF_UNIX, SOCK_STREAM, 0, err) == -1) {
 		error_f("socketpair #2: %.100s", strerror(errno));
 		close(inout[0]);
 		close(inout[1]);
-		return -1;
+		प्रत्यागम -1;
 	}
-#endif
+#यदि_अन्तः
 
 	session_proctitle(s);
 
 	/* Fork the child. */
-	switch ((pid = fork())) {
-	case -1:
+	विकल्प ((pid = fork())) {
+	पक्ष -1:
 		error_f("fork: %.100s", strerror(errno));
-#ifdef USE_PIPES
+#यदि_परिभाषितम् USE_PIPES
 		close(pin[0]);
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
 		close(perr[0]);
 		close(perr[1]);
-#else
+#अन्यथा
 		close(inout[0]);
 		close(inout[1]);
 		close(err[0]);
 		close(err[1]);
-#endif
-		return -1;
-	case 0:
+#यदि_अन्तः
+		प्रत्यागम -1;
+	पक्ष 0:
 		is_child = 1;
 
 		/*
 		 * Create a new session and process group since the 4.4BSD
 		 * setlogin() affects the entire process group.
 		 */
-		if (setsid() == -1)
+		यदि (setsid() == -1)
 			error("setsid failed: %.100s", strerror(errno));
 
-#ifdef USE_PIPES
+#यदि_परिभाषितम् USE_PIPES
 		/*
 		 * Redirect stdin.  We close the parent side of the socket
 		 * pair, and make the child side the standard input.
 		 */
 		close(pin[1]);
-		if (dup2(pin[0], 0) == -1)
+		यदि (dup2(pin[0], 0) == -1)
 			perror("dup2 stdin");
 		close(pin[0]);
 
 		/* Redirect stdout. */
 		close(pout[0]);
-		if (dup2(pout[1], 1) == -1)
+		यदि (dup2(pout[1], 1) == -1)
 			perror("dup2 stdout");
 		close(pout[1]);
 
 		/* Redirect stderr. */
 		close(perr[0]);
-		if (dup2(perr[1], 2) == -1)
+		यदि (dup2(perr[1], 2) == -1)
 			perror("dup2 stderr");
 		close(perr[1]);
-#else
+#अन्यथा
 		/*
 		 * Redirect stdin, stdout, and stderr.  Stdin and stdout will
 		 * use the same socket, as some programs (particularly rdist)
@@ -475,26 +475,26 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 		 */
 		close(inout[1]);
 		close(err[1]);
-		if (dup2(inout[0], 0) == -1)	/* stdin */
+		यदि (dup2(inout[0], 0) == -1)	/* stdin */
 			perror("dup2 stdin");
-		if (dup2(inout[0], 1) == -1)	/* stdout (same as stdin) */
+		यदि (dup2(inout[0], 1) == -1)	/* stdout (same as stdin) */
 			perror("dup2 stdout");
 		close(inout[0]);
-		if (dup2(err[0], 2) == -1)	/* stderr */
+		यदि (dup2(err[0], 2) == -1)	/* stderr */
 			perror("dup2 stderr");
 		close(err[0]);
-#endif
+#यदि_अन्तः
 
 		/* Do processing for the child (exec command etc). */
 		do_child(ssh, s, command);
 		/* NOTREACHED */
-	default:
-		break;
+	स्वभाव:
+		भङ्ग;
 	}
 
-#ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
-#endif
+#यदि_परिभाषितम् HAVE_CYGWIN
+	cygwin_समुच्चयः_impersonation_token(INVALID_HANDLE_मानम्);
+#यदि_अन्तः
 
 	s->pid = pid;
 
@@ -505,15 +505,15 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 	 */
 	sshbuf_reset(loginmsg);
 
-#ifdef USE_PIPES
+#यदि_परिभाषितम् USE_PIPES
 	/* We are the parent.  Close the child sides of the pipes. */
 	close(pin[0]);
 	close(pout[1]);
 	close(perr[1]);
 
-	session_set_fds(ssh, s, pin[1], pout[0], perr[0],
+	session_समुच्चयः_fds(ssh, s, pin[1], pout[0], perr[0],
 	    s->is_subsystem, 0);
-#else
+#अन्यथा
 	/* We are the parent.  Close the child sides of the socket pairs. */
 	close(inout[0]);
 	close(err[0]);
@@ -522,10 +522,10 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 	 * Enter the interactive session.  Note: server_loop must be able to
 	 * handle the case that fdin and fdout are the same.
 	 */
-	session_set_fds(ssh, s, inout[1], inout[1], err[1],
+	session_समुच्चयः_fds(ssh, s, inout[1], inout[1], err[1],
 	    s->is_subsystem, 0);
-#endif
-	return 0;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
 /*
@@ -534,13 +534,13 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
  * setting up file descriptors, controlling tty, updating wtmp, utmp,
  * lastlog, and other such operations.
  */
-int
-do_exec_pty(struct ssh *ssh, Session *s, const char *command)
+पूर्णाङ्क
+do_exec_pty(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *command)
 {
-	int fdout, ptyfd, ttyfd, ptymaster;
+	पूर्णाङ्क fdout, ptyfd, ttyfd, ptymaster;
 	pid_t pid;
 
-	if (s == NULL)
+	यदि (s == रिक्त)
 		fatal("do_exec_pty: no session");
 	ptyfd = s->ptyfd;
 	ttyfd = s->ttyfd;
@@ -552,31 +552,31 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 	 * Do this before forking (and cleanup in the child) so as to
 	 * detect and gracefully fail out-of-fd conditions.
 	 */
-	if ((fdout = dup(ptyfd)) == -1) {
+	यदि ((fdout = dup(ptyfd)) == -1) {
 		error_f("dup #1: %s", strerror(errno));
 		close(ttyfd);
 		close(ptyfd);
-		return -1;
+		प्रत्यागम -1;
 	}
 	/* we keep a reference to the pty master */
-	if ((ptymaster = dup(ptyfd)) == -1) {
+	यदि ((ptymaster = dup(ptyfd)) == -1) {
 		error_f("dup #2: %s", strerror(errno));
 		close(ttyfd);
 		close(ptyfd);
 		close(fdout);
-		return -1;
+		प्रत्यागम -1;
 	}
 
 	/* Fork the child. */
-	switch ((pid = fork())) {
-	case -1:
+	विकल्प ((pid = fork())) {
+	पक्ष -1:
 		error_f("fork: %.100s", strerror(errno));
 		close(fdout);
 		close(ptymaster);
 		close(ttyfd);
 		close(ptyfd);
-		return -1;
-	case 0:
+		प्रत्यागम -1;
+	पक्ष 0:
 		is_child = 1;
 
 		close(fdout);
@@ -589,33 +589,33 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 		pty_make_controlling_tty(&ttyfd, s->tty);
 
 		/* Redirect stdin/stdout/stderr from the pseudo tty. */
-		if (dup2(ttyfd, 0) == -1)
+		यदि (dup2(ttyfd, 0) == -1)
 			error("dup2 stdin: %s", strerror(errno));
-		if (dup2(ttyfd, 1) == -1)
+		यदि (dup2(ttyfd, 1) == -1)
 			error("dup2 stdout: %s", strerror(errno));
-		if (dup2(ttyfd, 2) == -1)
+		यदि (dup2(ttyfd, 2) == -1)
 			error("dup2 stderr: %s", strerror(errno));
 
 		/* Close the extra descriptor for the pseudo tty. */
 		close(ttyfd);
 
 		/* record login, etc. similar to login(1) */
-#ifndef HAVE_OSF_SIA
+#यदि_अपरिभाषितम् HAVE_OSF_SIA
 		do_login(ssh, s, command);
-#endif
+#यदि_अन्तः
 		/*
 		 * Do common processing for the child, such as execing
 		 * the command.
 		 */
 		do_child(ssh, s, command);
 		/* NOTREACHED */
-	default:
-		break;
+	स्वभाव:
+		भङ्ग;
 	}
 
-#ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
-#endif
+#यदि_परिभाषितम् HAVE_CYGWIN
+	cygwin_समुच्चयः_impersonation_token(INVALID_HANDLE_मानम्);
+#यदि_अन्तः
 
 	s->pid = pid;
 
@@ -624,82 +624,82 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 
 	/* Enter interactive session. */
 	s->ptymaster = ptymaster;
-	session_set_fds(ssh, s, ptyfd, fdout, -1, 1, 1);
-	return 0;
+	session_समुच्चयः_fds(ssh, s, ptyfd, fdout, -1, 1, 1);
+	प्रत्यागम 0;
 }
 
 /*
  * This is called to fork and execute a command.  If another command is
  * to be forced, execute that instead.
  */
-int
-do_exec(struct ssh *ssh, Session *s, const char *command)
+पूर्णाङ्क
+do_exec(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *command)
 {
-	int ret;
-	const char *forced = NULL, *tty = NULL;
-	char session_type[1024];
+	पूर्णाङ्क ret;
+	ध्रुव वर्ण *forced = रिक्त, *tty = रिक्त;
+	वर्ण session_type[1024];
 
-	if (options.adm_forced_command) {
+	यदि (options.adm_forced_command) {
 		original_command = command;
 		command = options.adm_forced_command;
 		forced = "(config)";
-	} else if (auth_opts->force_command != NULL) {
+	} अन्यथा यदि (auth_opts->force_command != रिक्त) {
 		original_command = command;
 		command = auth_opts->force_command;
 		forced = "(key-option)";
 	}
 	s->forced = 0;
-	if (forced != NULL) {
+	यदि (forced != रिक्त) {
 		s->forced = 1;
-		if (IS_INTERNAL_SFTP(command)) {
+		यदि (IS_आन्तरिकम्_SFTP(command)) {
 			s->is_subsystem = s->is_subsystem ?
 			    SUBSYSTEM_INT_SFTP : SUBSYSTEM_INT_SFTP_ERROR;
-		} else if (s->is_subsystem)
+		} अन्यथा यदि (s->is_subsystem)
 			s->is_subsystem = SUBSYSTEM_EXT;
-		snprintf(session_type, sizeof(session_type),
+		snprintf(session_type, परिमाण(session_type),
 		    "forced-command %s '%.900s'", forced, command);
-	} else if (s->is_subsystem) {
-		snprintf(session_type, sizeof(session_type),
+	} अन्यथा यदि (s->is_subsystem) {
+		snprintf(session_type, परिमाण(session_type),
 		    "subsystem '%.900s'", s->subsys);
-	} else if (command == NULL) {
-		snprintf(session_type, sizeof(session_type), "shell");
-	} else {
+	} अन्यथा यदि (command == रिक्त) {
+		snprintf(session_type, परिमाण(session_type), "shell");
+	} अन्यथा {
 		/* NB. we don't log unforced commands to preserve privacy */
-		snprintf(session_type, sizeof(session_type), "command");
+		snprintf(session_type, परिमाण(session_type), "command");
 	}
 
-	if (s->ttyfd != -1) {
+	यदि (s->ttyfd != -1) {
 		tty = s->tty;
-		if (strncmp(tty, "/dev/", 5) == 0)
+		यदि (वाक्ये_तुलय(tty, "/dev/", 5) == 0)
 			tty += 5;
 	}
 
 	verbose("Starting session: %s%s%s for %s from %.200s port %d id %d",
 	    session_type,
-	    tty == NULL ? "" : " on ",
-	    tty == NULL ? "" : tty,
+	    tty == रिक्त ? "" : " on ",
+	    tty == रिक्त ? "" : tty,
 	    s->pw->pw_name,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh),
+	    ssh_remote_पत्तनम्(ssh),
 	    s->self);
 
-#ifdef SSH_AUDIT_EVENTS
-	if (command != NULL)
-		mm_audit_run_command(command);
-	else if (s->ttyfd == -1) {
-		char *shell = s->pw->pw_shell;
+#यदि_परिभाषितम् SSH_AUDIT_EVENTS
+	यदि (command != रिक्त)
+		mm_audit_सततम्_command(command);
+	अन्यथा यदि (s->ttyfd == -1) {
+		वर्ण *shell = s->pw->pw_shell;
 
-		if (shell[0] == '\0')	/* empty shell means /bin/sh */
+		यदि (shell[0] == '\0')	/* empty shell means /bin/sh */
 			shell =_PATH_BSHELL;
-		mm_audit_run_command(shell);
+		mm_audit_सततम्_command(shell);
 	}
-#endif
-	if (s->ttyfd != -1)
+#यदि_अन्तः
+	यदि (s->ttyfd != -1)
 		ret = do_exec_pty(ssh, s, command);
-	else
+	अन्यथा
 		ret = do_exec_no_pty(ssh, s, command);
 
-	original_command = NULL;
+	original_command = रिक्त;
 
 	/*
 	 * Clear loginmsg: it's the child's responsibility to display
@@ -708,32 +708,32 @@ do_exec(struct ssh *ssh, Session *s, const char *command)
 	 */
 	sshbuf_reset(loginmsg);
 
-	return ret;
+	प्रत्यागम ret;
 }
 
 /* administrative, login(1)-like work */
-void
-do_login(struct ssh *ssh, Session *s, const char *command)
+शून्य
+do_login(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *command)
 {
 	socklen_t fromlen;
-	struct sockaddr_storage from;
+	संरचना sockaddr_storage from;
 
 	/*
 	 * Get IP address of client. If the connection is not a socket, let
 	 * the address be 0.0.0.0.
 	 */
-	memset(&from, 0, sizeof(from));
-	fromlen = sizeof(from);
-	if (ssh_packet_connection_is_on_socket(ssh)) {
-		if (getpeername(ssh_packet_get_connection_in(ssh),
-		    (struct sockaddr *)&from, &fromlen) == -1) {
+	स्मृतिं_पूरय(&from, 0, परिमाण(from));
+	fromlen = परिमाण(from);
+	यदि (ssh_packet_connection_is_on_socket(ssh)) {
+		यदि (getpeername(ssh_packet_get_connection_अन्तर्(ssh),
+		    (संरचना sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername: %.100s", strerror(errno));
 			cleanup_exit(255);
 		}
 	}
 
-	if (check_quietlogin(s, command))
-		return;
+	यदि (check_quietlogin(s, command))
+		प्रत्यागम;
 
 	display_loginmsg();
 
@@ -743,21 +743,21 @@ do_login(struct ssh *ssh, Session *s, const char *command)
 /*
  * Display the message of the day.
  */
-void
-do_motd(void)
+शून्य
+do_motd(शून्य)
 {
 	FILE *f;
-	char buf[256];
+	वर्ण buf[256];
 
-	if (options.print_motd) {
-#ifdef HAVE_LOGIN_CAP
+	यदि (options.print_motd) {
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
 		f = fopen(login_getcapstr(lc, "welcome", "/etc/motd",
 		    "/etc/motd"), "r");
-#else
+#अन्यथा
 		f = fopen("/etc/motd", "r");
-#endif
-		if (f) {
-			while (fgets(buf, sizeof(buf), f))
+#यदि_अन्तः
+		यदि (f) {
+			यावत् (fgets(buf, परिमाण(buf), f))
 				fputs(buf, stdout);
 			fclose(f);
 		}
@@ -768,25 +768,25 @@ do_motd(void)
 /*
  * Check for quiet login, either .hushlogin or command given.
  */
-int
-check_quietlogin(Session *s, const char *command)
+पूर्णाङ्क
+check_quietlogin(Session *s, ध्रुव वर्ण *command)
 {
-	char buf[256];
-	struct passwd *pw = s->pw;
-	struct stat st;
+	वर्ण buf[256];
+	संरचना passwd *pw = s->pw;
+	संरचना stat st;
 
 	/* Return 1 if .hushlogin exists or a command given. */
-	if (command != NULL)
-		return 1;
-	snprintf(buf, sizeof(buf), "%.200s/.hushlogin", pw->pw_dir);
-#ifdef HAVE_LOGIN_CAP
-	if (login_getcapbool(lc, "hushlogin", 0) || stat(buf, &st) >= 0)
-		return 1;
-#else
-	if (stat(buf, &st) >= 0)
-		return 1;
-#endif
-	return 0;
+	यदि (command != रिक्त)
+		प्रत्यागम 1;
+	snprintf(buf, परिमाण(buf), "%.200s/.hushlogin", pw->pw_dir);
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+	यदि (login_getcapbool(lc, "hushlogin", 0) || stat(buf, &st) >= 0)
+		प्रत्यागम 1;
+#अन्यथा
+	यदि (stat(buf, &st) >= 0)
+		प्रत्यागम 1;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
 /*
@@ -797,77 +797,77 @@ check_quietlogin(Session *s, const char *command)
  * If allowlist is not NULL, then it is interpreted as a pattern list and
  * only variable names that match it will be accepted.
  */
-static void
-read_environment_file(char ***env, u_int *envsize,
-	const char *filename, const char *allowlist)
+स्थिर शून्य
+read_environment_file(वर्ण ***env, u_int *envsize,
+	ध्रुव वर्ण *filename, ध्रुव वर्ण *allowlist)
 {
 	FILE *f;
-	char *line = NULL, *cp, *value;
-	size_t linesize = 0;
+	वर्ण *पङ्क्तिः = रिक्त, *cp, *मानम्;
+	आकार_t linesize = 0;
 	u_int lineno = 0;
 
 	f = fopen(filename, "r");
-	if (!f)
-		return;
+	यदि (!f)
+		प्रत्यागम;
 
-	while (getline(&line, &linesize, f) != -1) {
-		if (++lineno > 1000)
+	यावत् (getline(&पङ्क्तिः, &linesize, f) != -1) {
+		यदि (++lineno > 1000)
 			fatal("Too many lines in environment file %s", filename);
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		प्रति (cp = पङ्क्तिः; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (!*cp || *cp == '#' || *cp == '\n')
-			continue;
+		यदि (!*cp || *cp == '#' || *cp == '\n')
+			अनुवर्त;
 
 		cp[strcspn(cp, "\n")] = '\0';
 
-		value = strchr(cp, '=');
-		if (value == NULL) {
+		मानम् = strchr(cp, '=');
+		यदि (मानम् == रिक्त) {
 			fprintf(stderr, "Bad line %u in %.100s\n", lineno,
 			    filename);
-			continue;
+			अनुवर्त;
 		}
 		/*
 		 * Replace the equals sign by nul, and advance value to
 		 * the value string.
 		 */
-		*value = '\0';
-		value++;
-		if (allowlist != NULL &&
-		    match_pattern_list(cp, allowlist, 0) != 1)
-			continue;
-		child_set_env(env, envsize, cp, value);
+		*मानम् = '\0';
+		मानम्++;
+		यदि (allowlist != रिक्त &&
+		    मेलनम्_आदर्शः_list(cp, allowlist, 0) != 1)
+			अनुवर्त;
+		child_समुच्चयः_env(env, envsize, cp, मानम्);
 	}
-	free(line);
+	मुक्त(पङ्क्तिः);
 	fclose(f);
 }
 
-#ifdef HAVE_ETC_DEFAULT_LOGIN
+#यदि_परिभाषितम् HAVE_ETC_DEFAULT_LOGIN
 /*
  * Return named variable from specified environment, or NULL if not present.
  */
-static char *
-child_get_env(char **env, const char *name)
+स्थिर वर्ण *
+child_get_env(वर्ण **env, ध्रुव वर्ण *name)
 {
-	int i;
-	size_t len;
+	पूर्णाङ्क i;
+	आकार_t len;
 
-	len = strlen(name);
-	for (i=0; env[i] != NULL; i++)
-		if (strncmp(name, env[i], len) == 0 && env[i][len] == '=')
-			return(env[i] + len + 1);
-	return NULL;
+	len = वाक्यदैर्घ्यम्(name);
+	प्रति (i=0; env[i] != रिक्त; i++)
+		यदि (वाक्ये_तुलय(name, env[i], len) == 0 && env[i][len] == '=')
+			प्रत्यागम(env[i] + len + 1);
+	प्रत्यागम रिक्त;
 }
 
 /*
  * Read /etc/default/login.
  * We pick up the PATH (or SUPATH for root) and UMASK.
  */
-static void
-read_etc_default_login(char ***env, u_int *envsize, uid_t uid)
+स्थिर शून्य
+read_etc_default_login(वर्ण ***env, u_int *envsize, uid_t uid)
 {
-	char **tmpenv = NULL, *var;
+	वर्ण **tmpenv = रिक्त, *var;
 	u_int i, tmpenvsize = 0;
-	u_long mask;
+	u_long आवरणम्;
 
 	/*
 	 * We don't want to copy the whole file to the child's environment,
@@ -877,118 +877,118 @@ read_etc_default_login(char ***env, u_int *envsize, uid_t uid)
 	read_environment_file(&tmpenv, &tmpenvsize, "/etc/default/login",
 	    options.permit_user_env_allowlist);
 
-	if (tmpenv == NULL)
-		return;
+	यदि (tmpenv == रिक्त)
+		प्रत्यागम;
 
-	if (uid == 0)
+	यदि (uid == 0)
 		var = child_get_env(tmpenv, "SUPATH");
-	else
+	अन्यथा
 		var = child_get_env(tmpenv, "PATH");
-	if (var != NULL)
-		child_set_env(env, envsize, "PATH", var);
+	यदि (var != रिक्त)
+		child_समुच्चयः_env(env, envsize, "PATH", var);
 
-	if ((var = child_get_env(tmpenv, "UMASK")) != NULL)
-		if (sscanf(var, "%5lo", &mask) == 1)
-			umask((mode_t)mask);
+	यदि ((var = child_get_env(tmpenv, "UMASK")) != रिक्त)
+		यदि (वाक्यात्_पठ(var, "%5lo", &आवरणम्) == 1)
+			umask((बहुलकम्_t)आवरणम्);
 
-	for (i = 0; tmpenv[i] != NULL; i++)
-		free(tmpenv[i]);
-	free(tmpenv);
+	प्रति (i = 0; tmpenv[i] != रिक्त; i++)
+		मुक्त(tmpenv[i]);
+	मुक्त(tmpenv);
 }
-#endif /* HAVE_ETC_DEFAULT_LOGIN */
+#यदि_अन्तः /* HAVE_ETC_DEFAULT_LOGIN */
 
-#if defined(USE_PAM) || defined(HAVE_CYGWIN)
-static void
-copy_environment_denylist(char **source, char ***env, u_int *envsize,
-    const char *denylist)
+#यदि defined(USE_PAM) || defined(HAVE_CYGWIN)
+स्थिर शून्य
+copy_environment_denylist(वर्ण **source, वर्ण ***env, u_int *envsize,
+    ध्रुव वर्ण *denylist)
 {
-	char *var_name, *var_val;
-	int i;
+	वर्ण *var_name, *var_val;
+	पूर्णाङ्क i;
 
-	if (source == NULL)
-		return;
+	यदि (source == रिक्त)
+		प्रत्यागम;
 
-	for(i = 0; source[i] != NULL; i++) {
+	प्रति(i = 0; source[i] != रिक्त; i++) {
 		var_name = xstrdup(source[i]);
-		if ((var_val = strstr(var_name, "=")) == NULL) {
-			free(var_name);
-			continue;
+		यदि ((var_val = वाक्ये_अन्विष(var_name, "=")) == रिक्त) {
+			मुक्त(var_name);
+			अनुवर्त;
 		}
 		*var_val++ = '\0';
 
-		if (denylist == NULL ||
-		    match_pattern_list(var_name, denylist, 0) != 1) {
+		यदि (denylist == रिक्त ||
+		    मेलनम्_आदर्शः_list(var_name, denylist, 0) != 1) {
 			debug3("Copy environment: %s=%s", var_name, var_val);
-			child_set_env(env, envsize, var_name, var_val);
+			child_समुच्चयः_env(env, envsize, var_name, var_val);
 		}
 
-		free(var_name);
+		मुक्त(var_name);
 	}
 }
-#endif /* defined(USE_PAM) || defined(HAVE_CYGWIN) */
+#यदि_अन्तः /* defined(USE_PAM) || defined(HAVE_CYGWIN) */
 
-#ifdef HAVE_CYGWIN
-static void
-copy_environment(char **source, char ***env, u_int *envsize)
+#यदि_परिभाषितम् HAVE_CYGWIN
+स्थिर शून्य
+copy_environment(वर्ण **source, वर्ण ***env, u_int *envsize)
 {
-	copy_environment_denylist(source, env, envsize, NULL);
+	copy_environment_denylist(source, env, envsize, रिक्त);
 }
-#endif
+#यदि_अन्तः
 
-static char **
-do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+स्थिर वर्ण **
+do_सज्जता_env(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *shell)
 {
-	char buf[256];
-	size_t n;
+	वर्ण buf[256];
+	आकार_t n;
 	u_int i, envsize;
-	char *ocp, *cp, *value, **env, *laddr;
-	struct passwd *pw = s->pw;
-#if !defined (HAVE_LOGIN_CAP) && !defined (HAVE_CYGWIN)
-	char *path = NULL;
-#endif
+	वर्ण *ocp, *cp, *मानम्, **env, *laddr;
+	संरचना passwd *pw = s->pw;
+#यदि !defined (HAVE_LOGIN_CAP) && !defined (HAVE_CYGWIN)
+	वर्ण *मार्गः = रिक्त;
+#यदि_अन्तः
 
 	/* Initialize the environment. */
 	envsize = 100;
-	env = xcalloc(envsize, sizeof(char *));
-	env[0] = NULL;
+	env = xcalloc(envsize, परिमाण(वर्ण *));
+	env[0] = रिक्त;
 
-#ifdef HAVE_CYGWIN
+#यदि_परिभाषितम् HAVE_CYGWIN
 	/*
 	 * The Windows environment contains some setting which are
 	 * important for a running system. They must not be dropped.
 	 */
 	{
-		char **p;
+		वर्ण **p;
 
 		p = fetch_windows_environment();
 		copy_environment(p, &env, &envsize);
 		free_windows_environment(p);
 	}
-#endif
+#यदि_अन्तः
 
-#ifdef GSSAPI
+#यदि_परिभाषितम् GSSAPI
 	/* Allow any GSSAPI methods that we've used to alter
 	 * the child's environment as they see fit
 	 */
 	ssh_gssapi_do_child(&env, &envsize);
-#endif
+#यदि_अन्तः
 
 	/* Set basic environment. */
-	for (i = 0; i < s->num_env; i++)
-		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
+	प्रति (i = 0; i < s->अङ्कः_env; i++)
+		child_समुच्चयः_env(&env, &envsize, s->env[i].name, s->env[i].val);
 
-	child_set_env(&env, &envsize, "USER", pw->pw_name);
-	child_set_env(&env, &envsize, "LOGNAME", pw->pw_name);
-#ifdef _AIX
-	child_set_env(&env, &envsize, "LOGIN", pw->pw_name);
-#endif
-	child_set_env(&env, &envsize, "HOME", pw->pw_dir);
-#ifdef HAVE_LOGIN_CAP
-	if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETPATH) < 0)
-		child_set_env(&env, &envsize, "PATH", _PATH_STDPATH);
-	else
-		child_set_env(&env, &envsize, "PATH", getenv("PATH"));
-#else /* HAVE_LOGIN_CAP */
+	child_समुच्चयः_env(&env, &envsize, "USER", pw->pw_name);
+	child_समुच्चयः_env(&env, &envsize, "LOGNAME", pw->pw_name);
+#यदि_परिभाषितम् _AIX
+	child_समुच्चयः_env(&env, &envsize, "LOGIN", pw->pw_name);
+#यदि_अन्तः
+	child_समुच्चयः_env(&env, &envsize, "HOME", pw->pw_dir);
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+	यदि (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETPATH) < 0)
+		child_समुच्चयः_env(&env, &envsize, "PATH", _PATH_STDPATH);
+	अन्यथा
+		child_समुच्चयः_env(&env, &envsize, "PATH", getenv("PATH"));
+#अन्यथा /* HAVE_LOGIN_CAP */
 # ifndef HAVE_CYGWIN
 	/*
 	 * There's no standard path on Windows. The path contains
@@ -998,36 +998,36 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 	 */
 #  ifdef HAVE_ETC_DEFAULT_LOGIN
 	read_etc_default_login(&env, &envsize, pw->pw_uid);
-	path = child_get_env(env, "PATH");
+	मार्गः = child_get_env(env, "PATH");
 #  endif /* HAVE_ETC_DEFAULT_LOGIN */
-	if (path == NULL || *path == '\0') {
-		child_set_env(&env, &envsize, "PATH",
-		    s->pw->pw_uid == 0 ?  SUPERUSER_PATH : _PATH_STDPATH);
+	यदि (मार्गः == रिक्त || *मार्गः == '\0') {
+		child_समुच्चयः_env(&env, &envsize, "PATH",
+		    s->pw->pw_uid == 0 ?  SUPERUSER_मार्गः : _PATH_STDPATH);
 	}
 # endif /* HAVE_CYGWIN */
-#endif /* HAVE_LOGIN_CAP */
+#यदि_अन्तः /* HAVE_LOGIN_CAP */
 
-	if (!options.use_pam) {
-		snprintf(buf, sizeof buf, "%.200s/%.50s",
+	यदि (!options.use_pam) {
+		snprintf(buf, परिमाण buf, "%.200s/%.50s",
 		    _PATH_MAILDIR, pw->pw_name);
-		child_set_env(&env, &envsize, "MAIL", buf);
+		child_समुच्चयः_env(&env, &envsize, "MAIL", buf);
 	}
 
 	/* Normal systems set SHELL by default. */
-	child_set_env(&env, &envsize, "SHELL", shell);
+	child_समुच्चयः_env(&env, &envsize, "SHELL", shell);
 
-	if (getenv("TZ"))
-		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-#ifdef HAVE_LOGIN_CAP
-	if (getenv("XDG_RUNTIME_DIR")) {
-		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
+	यदि (getenv("TZ"))
+		child_समुच्चयः_env(&env, &envsize, "TZ", getenv("TZ"));
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+	यदि (getenv("XDG_RUNTIME_DIR")) {
+		child_समुच्चयः_env(&env, &envsize, "XDG_RUNTIME_DIR",
 		    getenv("XDG_RUNTIME_DIR"));
 	}
-#endif /* HAVE_LOGIN_CAP */
-	if (s->term)
-		child_set_env(&env, &envsize, "TERM", s->term);
-	if (s->display)
-		child_set_env(&env, &envsize, "DISPLAY", s->display);
+#यदि_अन्तः /* HAVE_LOGIN_CAP */
+	यदि (s->पदांशः)
+		child_समुच्चयः_env(&env, &envsize, "TERM", s->पदांशः);
+	यदि (s->display)
+		child_समुच्चयः_env(&env, &envsize, "DISPLAY", s->display);
 
 	/*
 	 * Since we clear KRB5CCNAME at startup, if it's set now then it
@@ -1035,71 +1035,71 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 	 * SIA), so copy it to the child.
 	 */
 	{
-		char *cp;
+		वर्ण *cp;
 
-		if ((cp = getenv("KRB5CCNAME")) != NULL)
-			child_set_env(&env, &envsize, "KRB5CCNAME", cp);
+		यदि ((cp = getenv("KRB5CCNAME")) != रिक्त)
+			child_समुच्चयः_env(&env, &envsize, "KRB5CCNAME", cp);
 	}
 
-#ifdef _AIX
+#यदि_परिभाषितम् _AIX
 	{
-		char *cp;
+		वर्ण *cp;
 
-		if ((cp = getenv("AUTHSTATE")) != NULL)
-			child_set_env(&env, &envsize, "AUTHSTATE", cp);
+		यदि ((cp = getenv("AUTHSTATE")) != रिक्त)
+			child_समुच्चयः_env(&env, &envsize, "AUTHSTATE", cp);
 		read_environment_file(&env, &envsize, "/etc/environment",
 		    options.permit_user_env_allowlist);
 	}
-#endif
-#ifdef KRB5
-	if (s->authctxt->krb5_ccname)
-		child_set_env(&env, &envsize, "KRB5CCNAME",
+#यदि_अन्तः
+#यदि_परिभाषितम् KRB5
+	यदि (s->authctxt->krb5_ccname)
+		child_समुच्चयः_env(&env, &envsize, "KRB5CCNAME",
 		    s->authctxt->krb5_ccname);
-#endif
-	if (auth_sock_name != NULL)
-		child_set_env(&env, &envsize, SSH_AUTHSOCKET_ENV_NAME,
+#यदि_अन्तः
+	यदि (auth_sock_name != रिक्त)
+		child_समुच्चयः_env(&env, &envsize, SSH_AUTHSOCKET_ENV_NAME,
 		    auth_sock_name);
 
 
 	/* Set custom environment options from pubkey authentication. */
-	if (options.permit_user_env) {
-		for (n = 0 ; n < auth_opts->nenv; n++) {
+	यदि (options.permit_user_env) {
+		प्रति (n = 0 ; n < auth_opts->nenv; n++) {
 			ocp = xstrdup(auth_opts->env[n]);
 			cp = strchr(ocp, '=');
-			if (cp != NULL) {
+			यदि (cp != रिक्त) {
 				*cp = '\0';
 				/* Apply PermitUserEnvironment allowlist */
-				if (options.permit_user_env_allowlist == NULL ||
-				    match_pattern_list(ocp,
+				यदि (options.permit_user_env_allowlist == रिक्त ||
+				    मेलनम्_आदर्शः_list(ocp,
 				    options.permit_user_env_allowlist, 0) == 1)
-					child_set_env(&env, &envsize,
+					child_समुच्चयः_env(&env, &envsize,
 					    ocp, cp + 1);
 			}
-			free(ocp);
+			मुक्त(ocp);
 		}
 	}
 
 	/* read $HOME/.ssh/environment. */
-	if (options.permit_user_env) {
-		snprintf(buf, sizeof buf, "%.200s/%s/environment",
-		    pw->pw_dir, _PATH_SSH_USER_DIR);
+	यदि (options.permit_user_env) {
+		snprintf(buf, परिमाण buf, "%.200s/%s/environment",
+		    pw->pw_dir, मार्गः_SSH_USER_DIR);
 		read_environment_file(&env, &envsize, buf,
 		    options.permit_user_env_allowlist);
 	}
 
-#ifdef USE_PAM
+#यदि_परिभाषितम् USE_PAM
 	/*
 	 * Pull in any environment variables that may have
 	 * been set by PAM.
 	 */
-	if (options.use_pam) {
-		char **p;
+	यदि (options.use_pam) {
+		वर्ण **p;
 
 		/*
 		 * Don't allow PAM-internal env vars to leak
 		 * back into the session environment.
 		 */
-#define PAM_ENV_DENYLIST  "SSH_AUTH_INFO*,SSH_CONNECTION*"
+#परिभाषय PAM_ENV_DENYLIST  "SSH_AUTH_INFO*,SSH_CONNECTION*"
 		p = fetch_pam_child_environment();
 		copy_environment_denylist(p, &env, &envsize,
 		    PAM_ENV_DENYLIST);
@@ -1110,272 +1110,272 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 		    PAM_ENV_DENYLIST);
 		free_pam_environment(p);
 	}
-#endif /* USE_PAM */
+#यदि_अन्तः /* USE_PAM */
 
 	/* Environment specified by admin */
-	for (i = 0; i < options.num_setenv; i++) {
+	प्रति (i = 0; i < options.अङ्कः_setenv; i++) {
 		cp = xstrdup(options.setenv[i]);
-		if ((value = strchr(cp, '=')) == NULL) {
+		यदि ((मानम् = strchr(cp, '=')) == रिक्त) {
 			/* shouldn't happen; vars are checked in servconf.c */
 			fatal("Invalid config SetEnv: %s", options.setenv[i]);
 		}
-		*value++ = '\0';
-		child_set_env(&env, &envsize, cp, value);
-		free(cp);
+		*मानम्++ = '\0';
+		child_समुच्चयः_env(&env, &envsize, cp, मानम्);
+		मुक्त(cp);
 	}
 
 	/* SSH_CLIENT deprecated */
-	snprintf(buf, sizeof buf, "%.50s %d %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-	    ssh_local_port(ssh));
-	child_set_env(&env, &envsize, "SSH_CLIENT", buf);
+	snprintf(buf, परिमाण buf, "%.50s %d %d",
+	    ssh_remote_ipaddr(ssh), ssh_remote_पत्तनम्(ssh),
+	    ssh_local_पत्तनम्(ssh));
+	child_समुच्चयः_env(&env, &envsize, "SSH_CLIENT", buf);
 
-	laddr = get_local_ipaddr(ssh_packet_get_connection_in(ssh));
-	snprintf(buf, sizeof buf, "%.50s %d %.50s %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-	    laddr, ssh_local_port(ssh));
-	free(laddr);
-	child_set_env(&env, &envsize, "SSH_CONNECTION", buf);
+	laddr = get_local_ipaddr(ssh_packet_get_connection_अन्तर्(ssh));
+	snprintf(buf, परिमाण buf, "%.50s %d %.50s %d",
+	    ssh_remote_ipaddr(ssh), ssh_remote_पत्तनम्(ssh),
+	    laddr, ssh_local_पत्तनम्(ssh));
+	मुक्त(laddr);
+	child_समुच्चयः_env(&env, &envsize, "SSH_CONNECTION", buf);
 
-	if (tun_fwd_ifnames != NULL)
-		child_set_env(&env, &envsize, "SSH_TUNNEL", tun_fwd_ifnames);
-	if (auth_info_file != NULL)
-		child_set_env(&env, &envsize, "SSH_USER_AUTH", auth_info_file);
-	if (s->ttyfd != -1)
-		child_set_env(&env, &envsize, "SSH_TTY", s->tty);
-	if (original_command)
-		child_set_env(&env, &envsize, "SSH_ORIGINAL_COMMAND",
+	यदि (tun_fwd_ifnames != रिक्त)
+		child_समुच्चयः_env(&env, &envsize, "SSH_TUNNEL", tun_fwd_ifnames);
+	यदि (auth_info_file != रिक्त)
+		child_समुच्चयः_env(&env, &envsize, "SSH_USER_AUTH", auth_info_file);
+	यदि (s->ttyfd != -1)
+		child_समुच्चयः_env(&env, &envsize, "SSH_TTY", s->tty);
+	यदि (original_command)
+		child_समुच्चयः_env(&env, &envsize, "SSH_ORIGINAL_COMMAND",
 		    original_command);
 
-	if (debug_flag) {
+	यदि (debug_flag) {
 		/* dump the environment */
 		fprintf(stderr, "Environment:\n");
-		for (i = 0; env[i]; i++)
+		प्रति (i = 0; env[i]; i++)
 			fprintf(stderr, "  %.200s\n", env[i]);
 	}
-	return env;
+	प्रत्यागम env;
 }
 
 /*
  * Run $HOME/.ssh/rc, /etc/ssh/sshrc, or xauth (whichever is found
  * first in this order).
  */
-static void
-do_rc_files(struct ssh *ssh, Session *s, const char *shell)
+स्थिर शून्य
+do_rc_files(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *shell)
 {
-	FILE *f = NULL;
-	char *cmd = NULL, *user_rc = NULL;
-	int do_xauth;
-	struct stat st;
+	FILE *f = रिक्त;
+	वर्ण *cmd = रिक्त, *user_rc = रिक्त;
+	पूर्णाङ्क do_xauth;
+	संरचना stat st;
 
 	do_xauth =
-	    s->display != NULL && s->auth_proto != NULL && s->auth_data != NULL;
-	xasprintf(&user_rc, "%s/%s", s->pw->pw_dir, _PATH_SSH_USER_RC);
+	    s->display != रिक्त && s->auth_proto != रिक्त && s->auth_दत्त != रिक्त;
+	xasprintf(&user_rc, "%s/%s", s->pw->pw_dir, मार्गः_SSH_USER_RC);
 
 	/* ignore _PATH_SSH_USER_RC for subsystems and admin forced commands */
-	if (!s->is_subsystem && options.adm_forced_command == NULL &&
+	यदि (!s->is_subsystem && options.adm_forced_command == रिक्त &&
 	    auth_opts->permit_user_rc && options.permit_user_rc &&
 	    stat(user_rc, &st) >= 0) {
-		if (xasprintf(&cmd, "%s -c '%s %s'", shell, _PATH_BSHELL,
+		यदि (xasprintf(&cmd, "%s -c '%s %s'", shell, _PATH_BSHELL,
 		    user_rc) == -1)
 			fatal_f("xasprintf: %s", strerror(errno));
-		if (debug_flag)
+		यदि (debug_flag)
 			fprintf(stderr, "Running %s\n", cmd);
 		f = popen(cmd, "w");
-		if (f) {
-			if (do_xauth)
+		यदि (f) {
+			यदि (do_xauth)
 				fprintf(f, "%s %s\n", s->auth_proto,
-				    s->auth_data);
+				    s->auth_दत्त);
 			pclose(f);
-		} else
+		} अन्यथा
 			fprintf(stderr, "Could not run %s\n",
 			    user_rc);
-	} else if (stat(_PATH_SSH_SYSTEM_RC, &st) >= 0) {
-		if (debug_flag)
+	} अन्यथा यदि (stat(मार्गः_SSH_SYSTEM_RC, &st) >= 0) {
+		यदि (debug_flag)
 			fprintf(stderr, "Running %s %s\n", _PATH_BSHELL,
-			    _PATH_SSH_SYSTEM_RC);
-		f = popen(_PATH_BSHELL " " _PATH_SSH_SYSTEM_RC, "w");
-		if (f) {
-			if (do_xauth)
+			    मार्गः_SSH_SYSTEM_RC);
+		f = popen(_PATH_BSHELL " " मार्गः_SSH_SYSTEM_RC, "w");
+		यदि (f) {
+			यदि (do_xauth)
 				fprintf(f, "%s %s\n", s->auth_proto,
-				    s->auth_data);
+				    s->auth_दत्त);
 			pclose(f);
-		} else
+		} अन्यथा
 			fprintf(stderr, "Could not run %s\n",
-			    _PATH_SSH_SYSTEM_RC);
-	} else if (do_xauth && options.xauth_location != NULL) {
+			    मार्गः_SSH_SYSTEM_RC);
+	} अन्यथा यदि (do_xauth && options.xauth_location != रिक्त) {
 		/* Add authority data to .Xauthority if appropriate. */
-		if (debug_flag) {
+		यदि (debug_flag) {
 			fprintf(stderr,
 			    "Running %.500s remove %.100s\n",
 			    options.xauth_location, s->auth_display);
 			fprintf(stderr,
 			    "%.500s add %.100s %.100s %.100s\n",
 			    options.xauth_location, s->auth_display,
-			    s->auth_proto, s->auth_data);
+			    s->auth_proto, s->auth_दत्त);
 		}
-		if (xasprintf(&cmd, "%s -q -", options.xauth_location) == -1)
+		यदि (xasprintf(&cmd, "%s -q -", options.xauth_location) == -1)
 			fatal_f("xasprintf: %s", strerror(errno));
 		f = popen(cmd, "w");
-		if (f) {
+		यदि (f) {
 			fprintf(f, "remove %s\n",
 			    s->auth_display);
 			fprintf(f, "add %s %s %s\n",
 			    s->auth_display, s->auth_proto,
-			    s->auth_data);
+			    s->auth_दत्त);
 			pclose(f);
-		} else {
+		} अन्यथा {
 			fprintf(stderr, "Could not run %s\n",
 			    cmd);
 		}
 	}
-	free(cmd);
-	free(user_rc);
+	मुक्त(cmd);
+	मुक्त(user_rc);
 }
 
-static void
-do_nologin(struct passwd *pw)
+स्थिर शून्य
+do_nologin(संरचना passwd *pw)
 {
-	FILE *f = NULL;
-	char buf[1024], *nl, *def_nl = _PATH_NOLOGIN;
-	struct stat sb;
+	FILE *f = रिक्त;
+	वर्ण buf[1024], *nl, *def_nl = _PATH_NOLOGIN;
+	संरचना stat sb;
 
-#ifdef HAVE_LOGIN_CAP
-	if (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == 0)
-		return;
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+	यदि (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == 0)
+		प्रत्यागम;
 	nl = login_getcapstr(lc, "nologin", def_nl, def_nl);
-#else
-	if (pw->pw_uid == 0)
-		return;
+#अन्यथा
+	यदि (pw->pw_uid == 0)
+		प्रत्यागम;
 	nl = def_nl;
-#endif
-	if (stat(nl, &sb) == -1)
-		return;
+#यदि_अन्तः
+	यदि (stat(nl, &sb) == -1)
+		प्रत्यागम;
 
 	/* /etc/nologin exists.  Print its contents if we can and exit. */
 	logit("User %.100s not allowed because %s exists", pw->pw_name, nl);
-	if ((f = fopen(nl, "r")) != NULL) {
-		while (fgets(buf, sizeof(buf), f))
+	यदि ((f = fopen(nl, "r")) != रिक्त) {
+		यावत् (fgets(buf, परिमाण(buf), f))
 			fputs(buf, stderr);
 		fclose(f);
 	}
-	exit(254);
+	निर्गच्छ(254);
 }
 
 /*
  * Chroot into a directory after checking it for safety: all path components
  * must be root-owned directories with strict permissions.
  */
-static void
-safely_chroot(const char *path, uid_t uid)
+स्थिर शून्य
+safely_chroot(ध्रुव वर्ण *मार्गः, uid_t uid)
 {
-	const char *cp;
-	char component[PATH_MAX];
-	struct stat st;
+	ध्रुव वर्ण *cp;
+	वर्ण component[PATH_MAX];
+	संरचना stat st;
 
-	if (!path_absolute(path))
+	यदि (!मार्गः_absolute(मार्गः))
 		fatal("chroot path does not begin at root");
-	if (strlen(path) >= sizeof(component))
+	यदि (वाक्यदैर्घ्यम्(मार्गः) >= परिमाण(component))
 		fatal("chroot path too long");
 
 	/*
 	 * Descend the path, checking that each component is a
 	 * root-owned directory with strict permissions.
 	 */
-	for (cp = path; cp != NULL;) {
-		if ((cp = strchr(cp, '/')) == NULL)
-			strlcpy(component, path, sizeof(component));
-		else {
+	प्रति (cp = मार्गः; cp != रिक्त;) {
+		यदि ((cp = strchr(cp, '/')) == रिक्त)
+			strlcpy(component, मार्गः, परिमाण(component));
+		अन्यथा {
 			cp++;
-			memcpy(component, path, cp - path);
-			component[cp - path] = '\0';
+			स्मृतिं_प्रतिलिख(component, मार्गः, cp - मार्गः);
+			component[cp - मार्गः] = '\0';
 		}
 
 		debug3_f("checking '%s'", component);
 
-		if (stat(component, &st) != 0)
+		यदि (stat(component, &st) != 0)
 			fatal_f("stat(\"%s\"): %s",
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		यदि (st.st_uid != 0 || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
-			    cp == NULL ? "" : "component ", component);
-		if (!S_ISDIR(st.st_mode))
+			    cp == रिक्त ? "" : "component ", component);
+		यदि (!S_ISDIR(st.st_mode))
 			fatal("chroot path %s\"%s\" is not a directory",
-			    cp == NULL ? "" : "component ", component);
+			    cp == रिक्त ? "" : "component ", component);
 
 	}
 
-	if (chdir(path) == -1)
+	यदि (chdir(मार्गः) == -1)
 		fatal("Unable to chdir to chroot path \"%s\": "
-		    "%s", path, strerror(errno));
-	if (chroot(path) == -1)
-		fatal("chroot(\"%s\"): %s", path, strerror(errno));
-	if (chdir("/") == -1)
+		    "%s", मार्गः, strerror(errno));
+	यदि (chroot(मार्गः) == -1)
+		fatal("chroot(\"%s\"): %s", मार्गः, strerror(errno));
+	यदि (chdir("/") == -1)
 		fatal_f("chdir(/) after chroot: %s", strerror(errno));
-	verbose("Changed root directory to \"%s\"", path);
+	verbose("Changed root directory to \"%s\"", मार्गः);
 }
 
 /* Set login name, uid, gid, and groups. */
-void
-do_setusercontext(struct passwd *pw)
+शून्य
+do_setusercontext(संरचना passwd *pw)
 {
-	char uidstr[32], *chroot_path, *tmp;
+	वर्ण uidstr[32], *chroot_मार्गः, *tmp;
 
 	platform_setusercontext(pw);
 
-	if (platform_privileged_uidswap()) {
-#ifdef HAVE_LOGIN_CAP
-		if (setusercontext(lc, pw, pw->pw_uid,
+	यदि (platform_privileged_uidswap()) {
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+		यदि (setusercontext(lc, pw, pw->pw_uid,
 		    (LOGIN_SETALL & ~(LOGIN_SETPATH|LOGIN_SETUSER))) < 0) {
 			perror("unable to set user context");
-			exit(1);
+			निर्गच्छ(1);
 		}
-#else
-		if (setlogin(pw->pw_name) < 0)
+#अन्यथा
+		यदि (setlogin(pw->pw_name) < 0)
 			error("setlogin failed: %s", strerror(errno));
-		if (setgid(pw->pw_gid) < 0) {
+		यदि (setgid(pw->pw_gid) < 0) {
 			perror("setgid");
-			exit(1);
+			निर्गच्छ(1);
 		}
 		/* Initialize the group list. */
-		if (initgroups(pw->pw_name, pw->pw_gid) < 0) {
+		यदि (initgroups(pw->pw_name, pw->pw_gid) < 0) {
 			perror("initgroups");
-			exit(1);
+			निर्गच्छ(1);
 		}
 		endgrent();
-#endif
+#यदि_अन्तः
 
 		platform_setusercontext_post_groups(pw);
 
-		if (!in_chroot && options.chroot_directory != NULL &&
+		यदि (!अन्तर्_chroot && options.chroot_directory != रिक्त &&
 		    strcasecmp(options.chroot_directory, "none") != 0) {
 			tmp = tilde_expand_filename(options.chroot_directory,
 			    pw->pw_uid);
-			snprintf(uidstr, sizeof(uidstr), "%llu",
-			    (unsigned long long)pw->pw_uid);
-			chroot_path = percent_expand(tmp, "h", pw->pw_dir,
-			    "u", pw->pw_name, "U", uidstr, (char *)NULL);
-			safely_chroot(chroot_path, pw->pw_uid);
-			free(tmp);
-			free(chroot_path);
+			snprintf(uidstr, परिमाण(uidstr), "%llu",
+			    (अचिह्नित दीर्घ दीर्घ)pw->pw_uid);
+			chroot_मार्गः = percent_expand(tmp, "h", pw->pw_dir,
+			    "u", pw->pw_name, "U", uidstr, (वर्ण *)रिक्त);
+			safely_chroot(chroot_मार्गः, pw->pw_uid);
+			मुक्त(tmp);
+			मुक्त(chroot_मार्गः);
 			/* Make sure we don't attempt to chroot again */
-			free(options.chroot_directory);
-			options.chroot_directory = NULL;
-			in_chroot = 1;
+			मुक्त(options.chroot_directory);
+			options.chroot_directory = रिक्त;
+			अन्तर्_chroot = 1;
 		}
 
-#ifdef HAVE_LOGIN_CAP
-		if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+		यदि (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
 			perror("unable to set user context (setuser)");
-			exit(1);
+			निर्गच्छ(1);
 		}
 		/* 
 		 * FreeBSD's setusercontext() will not apply the user's
 		 * own umask setting unless running with the user's UID.
 		 */
-		(void) setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUMASK);
-#else
+		(शून्य) setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUMASK);
+#अन्यथा
 # ifdef USE_LIBIAF
 		/*
 		 * In a chroot environment, the set_id() will always fail;
@@ -1385,62 +1385,62 @@ do_setusercontext(struct passwd *pw)
 		 * internal sftp chroot case.  We'll lose auditing and ACLs but
 		 * permanently_set_uid will take care of the rest.
 		 */
-		if (!in_chroot && set_id(pw->pw_name) != 0)
+		यदि (!अन्तर्_chroot && समुच्चयः_id(pw->pw_name) != 0)
 			fatal("set_id(%s) Failed", pw->pw_name);
 # endif /* USE_LIBIAF */
 		/* Permanently switch to the desired uid. */
-		permanently_set_uid(pw);
-#endif
-	} else if (options.chroot_directory != NULL &&
+		permanently_समुच्चयः_uid(pw);
+#यदि_अन्तः
+	} अन्यथा यदि (options.chroot_directory != रिक्त &&
 	    strcasecmp(options.chroot_directory, "none") != 0) {
 		fatal("server lacks privileges to chroot to ChrootDirectory");
 	}
 
-	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
+	यदि (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
 		fatal("Failed to set uids to %u.", (u_int) pw->pw_uid);
 }
 
-static void
+स्थिर शून्य
 do_pwchange(Session *s)
 {
-	fflush(NULL);
+	fflush(रिक्त);
 	fprintf(stderr, "WARNING: Your password has expired.\n");
-	if (s->ttyfd != -1) {
+	यदि (s->ttyfd != -1) {
 		fprintf(stderr,
 		    "You must change your password now and log in again!\n");
-#ifdef WITH_SELINUX
-		setexeccon(NULL);
-#endif
-#ifdef PASSWD_NEEDS_USERNAME
-		execl(_PATH_PASSWD_PROG, "passwd", s->pw->pw_name,
-		    (char *)NULL);
-#else
-		execl(_PATH_PASSWD_PROG, "passwd", (char *)NULL);
-#endif
+#यदि_परिभाषितम् WITH_SELINUX
+		setexeccon(रिक्त);
+#यदि_अन्तः
+#यदि_परिभाषितम् PASSWD_NEEDS_USERNAME
+		execl(मार्गः_PASSWD_PROG, "passwd", s->pw->pw_name,
+		    (वर्ण *)रिक्त);
+#अन्यथा
+		execl(मार्गः_PASSWD_PROG, "passwd", (वर्ण *)रिक्त);
+#यदि_अन्तः
 		perror("passwd");
-	} else {
+	} अन्यथा {
 		fprintf(stderr,
 		    "Password change required but no TTY available.\n");
 	}
-	exit(1);
+	निर्गच्छ(1);
 }
 
-static void
-child_close_fds(struct ssh *ssh)
+स्थिर शून्य
+child_close_fds(संरचना ssh *ssh)
 {
-	extern int auth_sock;
+	बाह्य पूर्णाङ्क auth_sock;
 
-	if (auth_sock != -1) {
+	यदि (auth_sock != -1) {
 		close(auth_sock);
 		auth_sock = -1;
 	}
 
-	if (ssh_packet_get_connection_in(ssh) ==
-	    ssh_packet_get_connection_out(ssh))
-		close(ssh_packet_get_connection_in(ssh));
-	else {
-		close(ssh_packet_get_connection_in(ssh));
-		close(ssh_packet_get_connection_out(ssh));
+	यदि (ssh_packet_get_connection_अन्तर्(ssh) ==
+	    ssh_packet_get_connection_बहिर्गमनम्(ssh))
+		close(ssh_packet_get_connection_अन्तर्(ssh));
+	अन्यथा {
+		close(ssh_packet_get_connection_अन्तर्(ssh));
+		close(ssh_packet_get_connection_बहिर्गमनम्(ssh));
 	}
 	/*
 	 * Close all descriptors related to channels.  They will still remain
@@ -1456,7 +1456,7 @@ child_close_fds(struct ssh *ssh)
 	endpwent();
 
 	/* Stop directing logs to a high-numbered fd before we close it */
-	log_redirect_stderr_to(NULL);
+	log_redirect_stderr_गन्तव्यम्(रिक्त);
 
 	/*
 	 * Close any extra open file descriptors so that we don't have them
@@ -1472,40 +1472,40 @@ child_close_fds(struct ssh *ssh)
  * environment, closing extra file descriptors, setting the user and group
  * ids, and executing the command or shell.
  */
-#define ARGV_MAX 10
-void
-do_child(struct ssh *ssh, Session *s, const char *command)
+#परिभाषय ARGV_MAX 10
+शून्य
+do_child(संरचना ssh *ssh, Session *s, ध्रुव वर्ण *command)
 {
-	extern char **environ;
-	char **env, *argv[ARGV_MAX], remote_id[512];
-	const char *shell, *shell0;
-	struct passwd *pw = s->pw;
-	int r = 0;
+	बाह्य वर्ण **environ;
+	वर्ण **env, *argv[ARGV_MAX], remote_id[512];
+	ध्रुव वर्ण *shell, *shell0;
+	संरचना passwd *pw = s->pw;
+	पूर्णाङ्क r = 0;
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, परिमाण(remote_id));
 
 	/* remove keys from memory */
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_कुञ्चिकाः(ssh);
 
 	/* Force a password change */
-	if (s->authctxt->force_pwchange) {
+	यदि (s->authctxt->force_pwchange) {
 		do_setusercontext(pw);
 		child_close_fds(ssh);
 		do_pwchange(s);
-		exit(1);
+		निर्गच्छ(1);
 	}
 
 	/*
 	 * Login(1) does this as well, and it needs uid 0 for the "-h"
 	 * switch, so we let login(1) to this for us.
 	 */
-#ifdef HAVE_OSF_SIA
-	session_setup_sia(pw, s->ttyfd == -1 ? NULL : s->tty);
-	if (!check_quietlogin(s, command))
+#यदि_परिभाषितम् HAVE_OSF_SIA
+	session_सज्जता_sia(pw, s->ttyfd == -1 ? रिक्त : s->tty);
+	यदि (!check_quietlogin(s, command))
 		do_motd();
-#else /* HAVE_OSF_SIA */
+#अन्यथा /* HAVE_OSF_SIA */
 	/* When PAM is enabled we rely on it to do the nologin check */
-	if (!options.use_pam)
+	यदि (!options.use_pam)
 		do_nologin(pw);
 	do_setusercontext(pw);
 	/*
@@ -1513,17 +1513,17 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * generated messages, so if this in an interactive
 	 * login then display them too.
 	 */
-	if (!check_quietlogin(s, command))
+	यदि (!check_quietlogin(s, command))
 		display_loginmsg();
-#endif /* HAVE_OSF_SIA */
+#यदि_अन्तः /* HAVE_OSF_SIA */
 
-#ifdef USE_PAM
-	if (options.use_pam && !is_pam_session_open()) {
+#यदि_परिभाषितम् USE_PAM
+	यदि (options.use_pam && !is_pam_session_open()) {
 		debug3("PAM session not opened, exiting");
 		display_loginmsg();
-		exit(254);
+		निर्गच्छ(254);
 	}
-#endif
+#यदि_अन्तः
 
 	/*
 	 * Get the shell from the password data.  An empty shell field is
@@ -1535,11 +1535,11 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * Make sure $SHELL points to the shell from the password file,
 	 * even if shell is overridden from login.conf
 	 */
-	env = do_setup_env(ssh, s, shell);
+	env = do_सज्जता_env(ssh, s, shell);
 
-#ifdef HAVE_LOGIN_CAP
-	shell = login_getcapstr(lc, "shell", (char *)shell, (char *)shell);
-#endif
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
+	shell = login_getcapstr(lc, "shell", (वर्ण *)shell, (वर्ण *)shell);
+#यदि_अन्तः
 
 	/*
 	 * Close the connection descriptors; note that this is the child, and
@@ -1556,7 +1556,7 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 */
 	environ = env;
 
-#if defined(KRB5) && defined(USE_AFS)
+#यदि defined(KRB5) && defined(USE_AFS)
 	/*
 	 * At this point, we check to see if AFS is active and if we have
 	 * a valid Kerberos 5 TGT. If so, it seems like a good idea to see
@@ -1565,36 +1565,36 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * home directory is in AFS and it's not world-readable.
 	 */
 
-	if (options.kerberos_get_afs_token && k_hasafs() &&
-	    (s->authctxt->krb5_ctx != NULL)) {
-		char cell[64];
+	यदि (options.kerberos_get_afs_token && k_hasafs() &&
+	    (s->authctxt->krb5_ctx != रिक्त)) {
+		वर्ण cell[64];
 
 		debug("Getting AFS token");
 
 		k_setpag();
 
-		if (k_afs_cell_of_file(pw->pw_dir, cell, sizeof(cell)) == 0)
+		यदि (k_afs_cell_सम्बन्धि_file(pw->pw_dir, cell, परिमाण(cell)) == 0)
 			krb5_afslog(s->authctxt->krb5_ctx,
-			    s->authctxt->krb5_fwd_ccache, cell, NULL);
+			    s->authctxt->krb5_fwd_ccache, cell, रिक्त);
 
 		krb5_afslog_home(s->authctxt->krb5_ctx,
-		    s->authctxt->krb5_fwd_ccache, NULL, NULL, pw->pw_dir);
+		    s->authctxt->krb5_fwd_ccache, रिक्त, रिक्त, pw->pw_dir);
 	}
-#endif
+#यदि_अन्तः
 
 	/* Change current directory to the user's home directory. */
-	if (chdir(pw->pw_dir) == -1) {
+	यदि (chdir(pw->pw_dir) == -1) {
 		/* Suppress missing homedir warning for chroot case */
-#ifdef HAVE_LOGIN_CAP
+#यदि_परिभाषितम् HAVE_LOGIN_CAP
 		r = login_getcapbool(lc, "requirehome", 0);
-#endif
-		if (r || !in_chroot) {
+#यदि_अन्तः
+		यदि (r || !अन्तर्_chroot) {
 			fprintf(stderr, "Could not chdir to home "
 			    "directory %s: %s\n", pw->pw_dir,
 			    strerror(errno));
 		}
-		if (r)
-			exit(1);
+		यदि (r)
+			निर्गच्छ(1);
 	}
 
 	closefrom(STDERR_FILENO + 1);
@@ -1604,38 +1604,38 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	/* restore SIGPIPE for child */
 	ssh_signal(SIGPIPE, SIG_DFL);
 
-	if (s->is_subsystem == SUBSYSTEM_INT_SFTP_ERROR) {
+	यदि (s->is_subsystem == SUBSYSTEM_INT_SFTP_ERROR) {
 		error("Connection from %s: refusing non-sftp session",
 		    remote_id);
-		printf("This service allows sftp connections only.\n");
-		fflush(NULL);
-		exit(1);
-	} else if (s->is_subsystem == SUBSYSTEM_INT_SFTP) {
-		extern int optind, optreset;
-		int sftp_argc;
-		char **sftp_argv;
+		प्रारूप_लिख("This service allows sftp connections only.\n");
+		fflush(रिक्त);
+		निर्गच्छ(1);
+	} अन्यथा यदि (s->is_subsystem == SUBSYSTEM_INT_SFTP) {
+		बाह्य पूर्णाङ्क optind, optreset;
+		पूर्णाङ्क sftp_argc;
+		वर्ण **sftp_argv;
 
-		setproctitle("%s@%s", s->pw->pw_name, INTERNAL_SFTP_NAME);
-		if (argv_split(command == NULL ? "sftp-server" : command,
+		setproctitle("%s@%s", s->pw->pw_name, आन्तरिकम्_SFTP_NAME);
+		यदि (argv_विभज(command == रिक्त ? "sftp-server" : command,
 		    &sftp_argc, &sftp_argv, 1) != 0) {
 			error("internal error: can't split internal-sftp "
 			    "arguments");
-			exit(1);
+			निर्गच्छ(1);
 		}
 		optind = optreset = 1;
 		__progname = sftp_argv[0];
-#ifdef WITH_SELINUX
+#यदि_परिभाषितम् WITH_SELINUX
 		ssh_selinux_change_context("sftpd_t");
-#endif
-		exit(sftp_server_main(sftp_argc, sftp_argv, s->pw));
+#यदि_अन्तः
+		निर्गच्छ(sftp_server_main(sftp_argc, sftp_argv, s->pw));
 	}
 
-	fflush(NULL);
+	fflush(रिक्त);
 
 	/* Get the last component of the shell name. */
-	if ((shell0 = strrchr(shell, '/')) != NULL)
+	यदि ((shell0 = strrchr(shell, '/')) != रिक्त)
 		shell0++;
-	else
+	अन्यथा
 		shell0 = shell;
 
 	/*
@@ -1643,297 +1643,297 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * name to be passed in argv[0] is preceded by '-' to indicate that
 	 * this is a login shell.
 	 */
-	if (!command) {
-		char argv0[256];
+	यदि (!command) {
+		वर्ण argv0[256];
 
 		/* Start the shell.  Set initial character to '-'. */
 		argv0[0] = '-';
 
-		if (strlcpy(argv0 + 1, shell0, sizeof(argv0) - 1)
-		    >= sizeof(argv0) - 1) {
+		यदि (strlcpy(argv0 + 1, shell0, परिमाण(argv0) - 1)
+		    >= परिमाण(argv0) - 1) {
 			errno = EINVAL;
 			perror(shell);
-			exit(1);
+			निर्गच्छ(1);
 		}
 
 		/* Execute the shell. */
 		argv[0] = argv0;
-		argv[1] = NULL;
+		argv[1] = रिक्त;
 		execve(shell, argv, env);
 
 		/* Executing the shell failed. */
 		perror(shell);
-		exit(1);
+		निर्गच्छ(1);
 	}
 	/*
 	 * Execute the command using the user's shell.  This uses the -c
 	 * option to execute the command.
 	 */
-	argv[0] = (char *) shell0;
+	argv[0] = (वर्ण *) shell0;
 	argv[1] = "-c";
-	argv[2] = (char *) command;
-	argv[3] = NULL;
+	argv[2] = (वर्ण *) command;
+	argv[3] = रिक्त;
 	execve(shell, argv, env);
 	perror(shell);
-	exit(1);
+	निर्गच्छ(1);
 }
 
-void
-session_unused(int id)
+शून्य
+session_अप्रयुक्तम्(पूर्णाङ्क id)
 {
 	debug3_f("session id %d unused", id);
-	if (id >= options.max_sessions ||
+	यदि (id >= options.max_sessions ||
 	    id >= sessions_nalloc) {
 		fatal_f("insane session id %d (max %d nalloc %d)",
 		    id, options.max_sessions, sessions_nalloc);
 	}
-	memset(&sessions[id], 0, sizeof(*sessions));
+	स्मृतिं_पूरय(&sessions[id], 0, परिमाण(*sessions));
 	sessions[id].self = id;
-	sessions[id].used = 0;
+	sessions[id].प्रयुक्तम् = 0;
 	sessions[id].chanid = -1;
 	sessions[id].ptyfd = -1;
 	sessions[id].ttyfd = -1;
 	sessions[id].ptymaster = -1;
-	sessions[id].x11_chanids = NULL;
-	sessions[id].next_unused = sessions_first_unused;
-	sessions_first_unused = id;
+	sessions[id].x11_chanids = रिक्त;
+	sessions[id].अग्र_अप्रयुक्तम् = sessions_first_अप्रयुक्तम्;
+	sessions_first_अप्रयुक्तम् = id;
 }
 
 Session *
-session_new(void)
+session_new(शून्य)
 {
 	Session *s, *tmp;
 
-	if (sessions_first_unused == -1) {
-		if (sessions_nalloc >= options.max_sessions)
-			return NULL;
+	यदि (sessions_first_अप्रयुक्तम् == -1) {
+		यदि (sessions_nalloc >= options.max_sessions)
+			प्रत्यागम रिक्त;
 		debug2_f("allocate (allocated %d max %d)",
 		    sessions_nalloc, options.max_sessions);
 		tmp = xrecallocarray(sessions, sessions_nalloc,
-		    sessions_nalloc + 1, sizeof(*sessions));
-		if (tmp == NULL) {
+		    sessions_nalloc + 1, परिमाण(*sessions));
+		यदि (tmp == रिक्त) {
 			error_f("cannot allocate %d sessions",
 			    sessions_nalloc + 1);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
 		sessions = tmp;
-		session_unused(sessions_nalloc++);
+		session_अप्रयुक्तम्(sessions_nalloc++);
 	}
 
-	if (sessions_first_unused >= sessions_nalloc ||
-	    sessions_first_unused < 0) {
+	यदि (sessions_first_अप्रयुक्तम् >= sessions_nalloc ||
+	    sessions_first_अप्रयुक्तम् < 0) {
 		fatal_f("insane first_unused %d max %d nalloc %d",
-		    sessions_first_unused, options.max_sessions,
+		    sessions_first_अप्रयुक्तम्, options.max_sessions,
 		    sessions_nalloc);
 	}
 
-	s = &sessions[sessions_first_unused];
-	if (s->used)
-		fatal_f("session %d already used", sessions_first_unused);
-	sessions_first_unused = s->next_unused;
-	s->used = 1;
-	s->next_unused = -1;
+	s = &sessions[sessions_first_अप्रयुक्तम्];
+	यदि (s->प्रयुक्तम्)
+		fatal_f("session %d already used", sessions_first_अप्रयुक्तम्);
+	sessions_first_अप्रयुक्तम् = s->अग्र_अप्रयुक्तम्;
+	s->प्रयुक्तम् = 1;
+	s->अग्र_अप्रयुक्तम् = -1;
 	debug("session_new: session %d", s->self);
 
-	return s;
+	प्रत्यागम s;
 }
 
-static void
-session_dump(void)
+स्थिर शून्य
+session_dump(शून्य)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	पूर्णाङ्क i;
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
 
 		debug("dump: used %d next_unused %d session %d "
 		    "channel %d pid %ld",
-		    s->used,
-		    s->next_unused,
+		    s->प्रयुक्तम्,
+		    s->अग्र_अप्रयुक्तम्,
 		    s->self,
 		    s->chanid,
-		    (long)s->pid);
+		    (दीर्घ)s->pid);
 	}
 }
 
-int
-session_open(Authctxt *authctxt, int chanid)
+पूर्णाङ्क
+session_open(Authctxt *authctxt, पूर्णाङ्क chanid)
 {
 	Session *s = session_new();
 	debug("session_open: channel %d", chanid);
-	if (s == NULL) {
+	यदि (s == रिक्त) {
 		error("no more sessions");
-		return 0;
+		प्रत्यागम 0;
 	}
 	s->authctxt = authctxt;
 	s->pw = authctxt->pw;
-	if (s->pw == NULL || !authctxt->valid)
+	यदि (s->pw == रिक्त || !authctxt->valid)
 		fatal("no user for session %d", s->self);
 	debug("session_open: session %d: link with channel %d", s->self, chanid);
 	s->chanid = chanid;
-	return 1;
+	प्रत्यागम 1;
 }
 
 Session *
-session_by_tty(char *tty)
+session_by_tty(वर्ण *tty)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	पूर्णाङ्क i;
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->ttyfd != -1 && strcmp(s->tty, tty) == 0) {
+		यदि (s->प्रयुक्तम् && s->ttyfd != -1 && वाक्यं_तुलय(s->tty, tty) == 0) {
 			debug("session_by_tty: session %d tty %s", i, tty);
-			return s;
+			प्रत्यागम s;
 		}
 	}
 	debug("session_by_tty: unknown tty %.100s", tty);
 	session_dump();
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static Session *
-session_by_channel(int id)
+स्थिर Session *
+session_by_channel(पूर्णाङ्क id)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	पूर्णाङ्क i;
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->chanid == id) {
+		यदि (s->प्रयुक्तम् && s->chanid == id) {
 			debug("session_by_channel: session %d channel %d",
 			    i, id);
-			return s;
+			प्रत्यागम s;
 		}
 	}
 	debug("session_by_channel: unknown channel %d", id);
 	session_dump();
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static Session *
-session_by_x11_channel(int id)
+स्थिर Session *
+session_by_x11_channel(पूर्णाङ्क id)
 {
-	int i, j;
+	पूर्णाङ्क i, j;
 
-	for (i = 0; i < sessions_nalloc; i++) {
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
 
-		if (s->x11_chanids == NULL || !s->used)
-			continue;
-		for (j = 0; s->x11_chanids[j] != -1; j++) {
-			if (s->x11_chanids[j] == id) {
+		यदि (s->x11_chanids == रिक्त || !s->प्रयुक्तम्)
+			अनुवर्त;
+		प्रति (j = 0; s->x11_chanids[j] != -1; j++) {
+			यदि (s->x11_chanids[j] == id) {
 				debug("session_by_x11_channel: session %d "
 				    "channel %d", s->self, id);
-				return s;
+				प्रत्यागम s;
 			}
 		}
 	}
 	debug("session_by_x11_channel: unknown channel %d", id);
 	session_dump();
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static Session *
+स्थिर Session *
 session_by_pid(pid_t pid)
 {
-	int i;
-	debug("session_by_pid: pid %ld", (long)pid);
-	for (i = 0; i < sessions_nalloc; i++) {
+	पूर्णाङ्क i;
+	debug("session_by_pid: pid %ld", (दीर्घ)pid);
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->pid == pid)
-			return s;
+		यदि (s->प्रयुक्तम् && s->pid == pid)
+			प्रत्यागम s;
 	}
-	error("session_by_pid: unknown pid %ld", (long)pid);
+	error("session_by_pid: unknown pid %ld", (दीर्घ)pid);
 	session_dump();
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static int
-session_window_change_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_गवाक्षः_change_req(संरचना ssh *ssh, Session *s)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_get_u32(ssh, &s->col)) != 0 ||
+	यदि ((r = sshpkt_get_u32(ssh, &s->col)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->row)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->xpixel)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->ypixel)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	pty_change_window_size(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
-	return 1;
+	pty_change_गवाक्षः_आकार(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
+	प्रत्यागम 1;
 }
 
-static int
-session_pty_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_pty_req(संरचना ssh *ssh, Session *s)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (!auth_opts->permit_pty_flag || !options.permit_tty) {
+	यदि (!auth_opts->permit_pty_flag || !options.permit_tty) {
 		debug("Allocating a pty not permitted for this connection.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (s->ttyfd != -1) {
+	यदि (s->ttyfd != -1) {
 		ssh_packet_disconnect(ssh, "Protocol error: you already have a pty.");
-		return 0;
+		प्रत्यागम 0;
 	}
 
-	if ((r = sshpkt_get_cstring(ssh, &s->term, NULL)) != 0 ||
+	यदि ((r = sshpkt_get_cstring(ssh, &s->पदांशः, रिक्त)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->col)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->row)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->xpixel)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->ypixel)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	if (strcmp(s->term, "") == 0) {
-		free(s->term);
-		s->term = NULL;
+	यदि (वाक्यं_तुलय(s->पदांशः, "") == 0) {
+		मुक्त(s->पदांशः);
+		s->पदांशः = रिक्त;
 	}
 
 	/* Allocate a pty and open it. */
 	debug("Allocating pty.");
-	if (!mm_pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, sizeof(s->tty))) {
-		free(s->term);
-		s->term = NULL;
+	यदि (!mm_pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, परिमाण(s->tty))) {
+		मुक्त(s->पदांशः);
+		s->पदांशः = रिक्त;
 		s->ptyfd = -1;
 		s->ttyfd = -1;
 		error("session_pty_req: session %d alloc failed", s->self);
-		return 0;
+		प्रत्यागम 0;
 	}
 	debug("session_pty_req: session %d alloc %s", s->self, s->tty);
 
 	ssh_tty_parse_modes(ssh, s->ttyfd);
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	/* Set window size from the packet. */
-	pty_change_window_size(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
+	pty_change_गवाक्षः_आकार(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
 
 	session_proctitle(s);
-	return 1;
+	प्रत्यागम 1;
 }
 
-static int
-session_subsystem_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_subsystem_req(संरचना ssh *ssh, Session *s)
 {
-	struct stat st;
-	int r, success = 0, found = 0;
-	char *prog, *cmd, *type;
+	संरचना stat st;
+	पूर्णाङ्क r, success = 0, प्राप्तम् = 0;
+	वर्ण *prog, *cmd, *type;
 	u_int i;
 
-	if ((r = sshpkt_get_cstring(ssh, &s->subsys, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_cstring(ssh, &s->subsys, रिक्त)) != 0 ||
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 	debug2("subsystem request for %.100s by user %s", s->subsys,
 	    s->pw->pw_name);
 
-	for (i = 0; i < options.num_subsystems; i++) {
-		if (strcmp(s->subsys, options.subsystem_name[i]) != 0)
-			continue;
-		found = 1;
+	प्रति (i = 0; i < options.अङ्कः_subsystems; i++) {
+		यदि (वाक्यं_तुलय(s->subsys, options.subsystem_name[i]) != 0)
+			अनुवर्त;
+		प्राप्तम् = 1;
 		prog = options.subsystem_command[i];
-		cmd = options.subsystem_args[i];
-		if (strcmp(INTERNAL_SFTP_NAME, prog) == 0) {
+		cmd = options.subsystem_तर्काः[i];
+		यदि (वाक्यं_तुलय(आन्तरिकम्_SFTP_NAME, prog) == 0) {
 			s->is_subsystem = SUBSYSTEM_INT_SFTP;
 			debug("subsystem: %s", prog);
-		} else {
-			if (stat(prog, &st) == -1)
+		} अन्यथा {
+			यदि (stat(prog, &st) == -1)
 				debug("subsystem: cannot stat %s: %s",
 				    prog, strerror(errno));
 			s->is_subsystem = SUBSYSTEM_EXT;
@@ -1941,137 +1941,137 @@ session_subsystem_req(struct ssh *ssh, Session *s)
 		}
 		xasprintf(&type, "session:subsystem:%s",
 		    options.subsystem_name[i]);
-		channel_set_xtype(ssh, s->chanid, type);
-		free(type);
+		channel_समुच्चयः_xtype(ssh, s->chanid, type);
+		मुक्त(type);
 		success = do_exec(ssh, s, cmd) == 0;
-		break;
+		भङ्ग;
 	}
 
-	if (!success) {
+	यदि (!success) {
 		logit("subsystem request for %.100s by user %s failed, %s",
 		    s->subsys, s->pw->pw_name,
-		    found ? "execution failed" : "subsystem not found");
+		    प्राप्तम् ? "execution failed" : "subsystem not found");
 	}
 
-	return success;
+	प्रत्यागम success;
 }
 
-static int
-session_x11_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_x11_req(संरचना ssh *ssh, Session *s)
 {
-	int r, success;
+	पूर्णाङ्क r, success;
 	u_char single_connection = 0;
 
-	if (s->auth_proto != NULL || s->auth_data != NULL) {
+	यदि (s->auth_proto != रिक्त || s->auth_दत्त != रिक्त) {
 		error("session_x11_req: session %d: "
 		    "x11 forwarding already active", s->self);
-		return 0;
+		प्रत्यागम 0;
 	}
-	if ((r = sshpkt_get_u8(ssh, &single_connection)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &s->auth_proto, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &s->auth_data, NULL)) != 0 ||
+	यदि ((r = sshpkt_get_u8(ssh, &single_connection)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &s->auth_proto, रिक्त)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &s->auth_दत्त, रिक्त)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->screen)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	s->single_connection = single_connection;
 
-	if (xauth_valid_string(s->auth_proto) &&
-	    xauth_valid_string(s->auth_data))
-		success = session_setup_x11fwd(ssh, s);
-	else {
+	यदि (xauth_valid_string(s->auth_proto) &&
+	    xauth_valid_string(s->auth_दत्त))
+		success = session_सज्जता_x11fwd(ssh, s);
+	अन्यथा {
 		success = 0;
 		error("Invalid X11 forwarding data");
 	}
-	if (!success) {
-		free(s->auth_proto);
-		free(s->auth_data);
-		s->auth_proto = NULL;
-		s->auth_data = NULL;
+	यदि (!success) {
+		मुक्त(s->auth_proto);
+		मुक्त(s->auth_दत्त);
+		s->auth_proto = रिक्त;
+		s->auth_दत्त = रिक्त;
 	}
-	return success;
+	प्रत्यागम success;
 }
 
-static int
-session_shell_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_shell_req(संरचना ssh *ssh, Session *s)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	channel_set_xtype(ssh, s->chanid, "session:shell");
+	channel_समुच्चयः_xtype(ssh, s->chanid, "session:shell");
 
-	return do_exec(ssh, s, NULL) == 0;
+	प्रत्यागम do_exec(ssh, s, रिक्त) == 0;
 }
 
-static int
-session_exec_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_exec_req(संरचना ssh *ssh, Session *s)
 {
 	u_int success;
-	int r;
-	char *command = NULL;
+	पूर्णाङ्क r;
+	वर्ण *command = रिक्त;
 
-	if ((r = sshpkt_get_cstring(ssh, &command, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_cstring(ssh, &command, रिक्त)) != 0 ||
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	channel_set_xtype(ssh, s->chanid, "session:command");
+	channel_समुच्चयः_xtype(ssh, s->chanid, "session:command");
 
 	success = do_exec(ssh, s, command) == 0;
-	free(command);
-	return success;
+	मुक्त(command);
+	प्रत्यागम success;
 }
 
-static int
-session_break_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_break_req(संरचना ssh *ssh, Session *s)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_get_u32(ssh, NULL)) != 0 || /* ignore */
-	    (r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_u32(ssh, रिक्त)) != 0 || /* ignore */
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	if (s->ptymaster == -1 || tcsendbreak(s->ptymaster, 0) == -1)
-		return 0;
-	return 1;
+	यदि (s->ptymaster == -1 || tcsendbreak(s->ptymaster, 0) == -1)
+		प्रत्यागम 0;
+	प्रत्यागम 1;
 }
 
-static int
-session_env_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_env_req(संरचना ssh *ssh, Session *s)
 {
-	char *name, *val;
+	वर्ण *name, *val;
 	u_int i;
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &val, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_cstring(ssh, &name, रिक्त)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &val, रिक्त)) != 0 ||
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	/* Don't set too many environment variables */
-	if (s->num_env > 128) {
+	यदि (s->अङ्कः_env > 128) {
 		debug2("Ignoring env request %s: too many env vars", name);
-		goto fail;
+		गच्छ fail;
 	}
 
-	for (i = 0; i < options.num_accept_env; i++) {
-		if (match_pattern(name, options.accept_env[i])) {
-			debug2("Setting env %d: %s=%s", s->num_env, name, val);
-			s->env = xrecallocarray(s->env, s->num_env,
-			    s->num_env + 1, sizeof(*s->env));
-			s->env[s->num_env].name = name;
-			s->env[s->num_env].val = val;
-			s->num_env++;
-			return (1);
+	प्रति (i = 0; i < options.अङ्कः_accept_env; i++) {
+		यदि (मेलनम्_आदर्शः(name, options.accept_env[i])) {
+			debug2("Setting env %d: %s=%s", s->अङ्कः_env, name, val);
+			s->env = xrecallocarray(s->env, s->अङ्कः_env,
+			    s->अङ्कः_env + 1, परिमाण(*s->env));
+			s->env[s->अङ्कः_env].name = name;
+			s->env[s->अङ्कः_env].val = val;
+			s->अङ्कः_env++;
+			प्रत्यागम (1);
 		}
 	}
 	debug2("Ignoring env request %s: disallowed name", name);
 
  fail:
-	free(name);
-	free(val);
-	return (0);
+	मुक्त(name);
+	मुक्त(val);
+	प्रत्यागम (0);
 }
 
 /*
@@ -2079,97 +2079,97 @@ session_env_req(struct ssh *ssh, Session *s)
  * Subset of signals from RFC 4254 section 6.10C, with SIGINFO as
  * local extension.
  */
-static int
-name2sig(char *name)
+स्थिर पूर्णाङ्क
+name2sig(वर्ण *name)
 {
-#define SSH_SIG(x) if (strcmp(name, #x) == 0) return SIG ## x
+#परिभाषय SSH_SIG(x) यदि (वाक्यं_तुलय(name, #x) == 0) प्रत्यागम SIG ## x
 	SSH_SIG(HUP);
 	SSH_SIG(INT);
 	SSH_SIG(KILL);
 	SSH_SIG(QUIT);
-	SSH_SIG(TERM);
+	SSH_SIG(पदांशः_2);
 	SSH_SIG(USR1);
 	SSH_SIG(USR2);
-#undef	SSH_SIG
-#ifdef SIGINFO
-	if (strcmp(name, "INFO@openssh.com") == 0)
-		return SIGINFO;
-#endif
-	return -1;
+#अपरिभाषय	SSH_SIG
+#यदि_परिभाषितम् SIGINFO
+	यदि (वाक्यं_तुलय(name, "INFO@openssh.com") == 0)
+		प्रत्यागम SIGINFO;
+#यदि_अन्तः
+	प्रत्यागम -1;
 }
 
-static int
-session_signal_req(struct ssh *ssh, Session *s)
+स्थिर पूर्णाङ्क
+session_signal_req(संरचना ssh *ssh, Session *s)
 {
-	char *signame = NULL;
-	int r, sig, success = 0;
+	वर्ण *signame = रिक्त;
+	पूर्णाङ्क r, sig, success = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &signame, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	यदि ((r = sshpkt_get_cstring(ssh, &signame, रिक्त)) != 0 ||
+	    (r = sshpkt_get_अन्तः(ssh)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if ((sig = name2sig(signame)) == -1) {
+	यदि ((sig = name2sig(signame)) == -1) {
 		error_f("unsupported signal \"%s\"", signame);
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (s->pid <= 0) {
+	यदि (s->pid <= 0) {
 		error_f("no pid for session %d", s->self);
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (s->forced || s->is_subsystem) {
+	यदि (s->forced || s->is_subsystem) {
 		error_f("refusing to send signal %s to %s session",
 		    signame, s->forced ? "forced-command" : "subsystem");
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
-	debug_f("signal %s, killpg(%ld, %d)", signame, (long)s->pid, sig);
+	debug_f("signal %s, killpg(%ld, %d)", signame, (दीर्घ)s->pid, sig);
 	temporarily_use_uid(s->pw);
 	r = killpg(s->pid, sig);
 	restore_uid();
-	if (r != 0) {
-		error_f("killpg(%ld, %d): %s", (long)s->pid,
+	यदि (r != 0) {
+		error_f("killpg(%ld, %d): %s", (दीर्घ)s->pid,
 		    sig, strerror(errno));
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
 	/* success */
 	success = 1;
- out:
-	free(signame);
-	return success;
+ बहिर्गमनम्:
+	मुक्त(signame);
+	प्रत्यागम success;
 }
 
-static int
-session_auth_agent_req(struct ssh *ssh, Session *s, int agent_new)
+स्थिर पूर्णाङ्क
+session_auth_agent_req(संरचना ssh *ssh, Session *s, पूर्णाङ्क agent_new)
 {
-	static int called = 0;
-	int r;
+	स्थिर पूर्णाङ्क called = 0;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	यदि ((r = sshpkt_get_अन्तः(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	if (!auth_opts->permit_agent_forwarding_flag ||
+	यदि (!auth_opts->permit_agent_forwarding_flag ||
 	    !options.allow_agent_forwarding ||
 	    options.disable_forwarding) {
 		debug_f("agent forwarding disabled");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (called)
-		return 0;
+	यदि (called)
+		प्रत्यागम 0;
 
 	called = 1;
-	return auth_input_request_forwarding(ssh, s->pw, agent_new);
+	प्रत्यागम auth_निवेशः_request_forwarding(ssh, s->pw, agent_new);
 }
 
-int
-session_input_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
+पूर्णाङ्क
+session_निवेशः_channel_req(संरचना ssh *ssh, Channel *c, ध्रुव वर्ण *rtype)
 {
-	int success = 0;
+	पूर्णाङ्क success = 0;
 	Session *s;
 
-	if ((s = session_by_channel(c->self)) == NULL) {
+	यदि ((s = session_by_channel(c->self)) == रिक्त) {
 		logit_f("no session %d req %.100s", c->self, rtype);
-		return 0;
+		प्रत्यागम 0;
 	}
 	debug_f("session %d req %s", s->self, rtype);
 
@@ -2177,74 +2177,74 @@ session_input_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
 	 * a session is in LARVAL state until a shell, a command
 	 * or a subsystem is executed
 	 */
-	if (c->type == SSH_CHANNEL_LARVAL) {
-		if (strcmp(rtype, "shell") == 0) {
+	यदि (c->type == SSH_CHANNEL_LARVAL) {
+		यदि (वाक्यं_तुलय(rtype, "shell") == 0) {
 			success = session_shell_req(ssh, s);
-		} else if (strcmp(rtype, "exec") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "exec") == 0) {
 			success = session_exec_req(ssh, s);
-		} else if (strcmp(rtype, "pty-req") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "pty-req") == 0) {
 			success = session_pty_req(ssh, s);
-		} else if (strcmp(rtype, "x11-req") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "x11-req") == 0) {
 			success = session_x11_req(ssh, s);
-		} else if (strcmp(rtype, "auth-agent-req@openssh.com") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "auth-agent-req@openssh.com") == 0) {
 			success = session_auth_agent_req(ssh, s, 0);
-		} else if (strcmp(rtype, "agent-req") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "agent-req") == 0) {
 			success = session_auth_agent_req(ssh, s, 1);
-		} else if (strcmp(rtype, "subsystem") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "subsystem") == 0) {
 			success = session_subsystem_req(ssh, s);
-		} else if (strcmp(rtype, "env") == 0) {
+		} अन्यथा यदि (वाक्यं_तुलय(rtype, "env") == 0) {
 			success = session_env_req(ssh, s);
 		}
 	}
-	if (strcmp(rtype, "window-change") == 0) {
-		success = session_window_change_req(ssh, s);
-	} else if (strcmp(rtype, "break") == 0) {
+	यदि (वाक्यं_तुलय(rtype, "window-change") == 0) {
+		success = session_गवाक्षः_change_req(ssh, s);
+	} अन्यथा यदि (वाक्यं_तुलय(rtype, "break") == 0) {
 		success = session_break_req(ssh, s);
-	} else if (strcmp(rtype, "signal") == 0) {
+	} अन्यथा यदि (वाक्यं_तुलय(rtype, "signal") == 0) {
 		success = session_signal_req(ssh, s);
 	}
 
-	return success;
+	प्रत्यागम success;
 }
 
-void
-session_set_fds(struct ssh *ssh, Session *s,
-    int fdin, int fdout, int fderr, int ignore_fderr, int is_tty)
+शून्य
+session_समुच्चयः_fds(संरचना ssh *ssh, Session *s,
+    पूर्णाङ्क fdin, पूर्णाङ्क fdout, पूर्णाङ्क fderr, पूर्णाङ्क ignore_fderr, पूर्णाङ्क is_tty)
 {
 	/*
 	 * now that have a child and a pipe to the child,
 	 * we can activate our channel and register the fd's
 	 */
-	if (s->chanid == -1)
+	यदि (s->chanid == -1)
 		fatal("no channel for session %d", s->self);
-	channel_set_fds(ssh, s->chanid,
+	channel_समुच्चयः_fds(ssh, s->chanid,
 	    fdout, fdin, fderr,
 	    ignore_fderr ? CHAN_EXTENDED_IGNORE : CHAN_EXTENDED_READ,
-	    1, is_tty, CHAN_SES_WINDOW_DEFAULT);
+	    1, is_tty, CHAN_SES_गवाक्षः_DEFAULT);
 }
 
 /*
  * Function to perform pty cleanup. Also called if we get aborted abnormally
  * (e.g., due to a dropped connection).
  */
-void
+शून्य
 session_pty_cleanup2(Session *s)
 {
-	if (s == NULL) {
+	यदि (s == रिक्त) {
 		error_f("no session");
-		return;
+		प्रत्यागम;
 	}
-	if (s->ttyfd == -1)
-		return;
+	यदि (s->ttyfd == -1)
+		प्रत्यागम;
 
 	debug_f("session %d release %s", s->self, s->tty);
 
 	/* Record that the user has logged out. */
-	if (s->pid != 0)
-		record_logout(s->pid, s->tty, s->pw->pw_name);
+	यदि (s->pid != 0)
+		लेखः_logout(s->pid, s->tty, s->pw->pw_name);
 
 	/* Release the pseudo-tty. */
-	if (getuid() == 0)
+	यदि (getuid() == 0)
 		pty_release(s->tty);
 
 	/*
@@ -2252,7 +2252,7 @@ session_pty_cleanup2(Session *s)
 	 * the pty cleanup, so that another process doesn't get this pty
 	 * while we're still cleaning up.
 	 */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	यदि (s->ptymaster != -1 && close(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
 		    s->ptymaster, strerror(errno));
 
@@ -2260,16 +2260,16 @@ session_pty_cleanup2(Session *s)
 	s->ttyfd = -1;
 }
 
-void
+शून्य
 session_pty_cleanup(Session *s)
 {
 	mm_session_pty_cleanup2(s);
 }
 
-static char *
-sig2name(int sig)
+स्थिर वर्ण *
+sig2name(पूर्णाङ्क sig)
 {
-#define SSH_SIG(x) if (sig == SIG ## x) return #x
+#परिभाषय SSH_SIG(x) यदि (sig == SIG ## x) प्रत्यागम #x
 	SSH_SIG(ABRT);
 	SSH_SIG(ALRM);
 	SSH_SIG(FPE);
@@ -2280,99 +2280,99 @@ sig2name(int sig)
 	SSH_SIG(PIPE);
 	SSH_SIG(QUIT);
 	SSH_SIG(SEGV);
-	SSH_SIG(TERM);
+	SSH_SIG(पदांशः_2);
 	SSH_SIG(USR1);
 	SSH_SIG(USR2);
-#undef	SSH_SIG
-	return "SIG@openssh.com";
+#अपरिभाषय	SSH_SIG
+	प्रत्यागम "SIG@openssh.com";
 }
 
-static void
-session_close_x11(struct ssh *ssh, int id)
+स्थिर शून्य
+session_close_x11(संरचना ssh *ssh, पूर्णाङ्क id)
 {
 	Channel *c;
 
-	if ((c = channel_by_id(ssh, id)) == NULL) {
+	यदि ((c = channel_by_id(ssh, id)) == रिक्त) {
 		debug_f("x11 channel %d missing", id);
-	} else {
+	} अन्यथा {
 		/* Detach X11 listener */
 		debug_f("detach x11 channel %d", id);
 		channel_cancel_cleanup(ssh, id);
-		if (c->ostate != CHAN_OUTPUT_CLOSED)
+		यदि (c->ostate != CHAN_OUTPUT_CLOSED)
 			chan_mark_dead(ssh, c);
 	}
 }
 
-static void
-session_close_single_x11(struct ssh *ssh, int id, int force, void *arg)
+स्थिर शून्य
+session_close_single_x11(संरचना ssh *ssh, पूर्णाङ्क id, पूर्णाङ्क force, शून्य *arg)
 {
 	Session *s;
 	u_int i;
 
 	debug3_f("channel %d", id);
 	channel_cancel_cleanup(ssh, id);
-	if ((s = session_by_x11_channel(id)) == NULL)
+	यदि ((s = session_by_x11_channel(id)) == रिक्त)
 		fatal_f("no x11 channel %d", id);
-	for (i = 0; s->x11_chanids[i] != -1; i++) {
+	प्रति (i = 0; s->x11_chanids[i] != -1; i++) {
 		debug_f("session %d: closing channel %d",
 		    s->self, s->x11_chanids[i]);
 		/*
 		 * The channel "id" is already closing, but make sure we
 		 * close all of its siblings.
 		 */
-		if (s->x11_chanids[i] != id)
+		यदि (s->x11_chanids[i] != id)
 			session_close_x11(ssh, s->x11_chanids[i]);
 	}
-	free(s->x11_chanids);
-	s->x11_chanids = NULL;
-	free(s->display);
-	s->display = NULL;
-	free(s->auth_proto);
-	s->auth_proto = NULL;
-	free(s->auth_data);
-	s->auth_data = NULL;
-	free(s->auth_display);
-	s->auth_display = NULL;
+	मुक्त(s->x11_chanids);
+	s->x11_chanids = रिक्त;
+	मुक्त(s->display);
+	s->display = रिक्त;
+	मुक्त(s->auth_proto);
+	s->auth_proto = रिक्त;
+	मुक्त(s->auth_दत्त);
+	s->auth_दत्त = रिक्त;
+	मुक्त(s->auth_display);
+	s->auth_display = रिक्त;
 }
 
-static void
-session_exit_message(struct ssh *ssh, Session *s, int status)
+स्थिर शून्य
+session_exit_सन्देशः(संरचना ssh *ssh, Session *s, पूर्णाङ्क स्थितिः)
 {
 	Channel *c;
-	int r;
-	char *note = NULL;
+	पूर्णाङ्क r;
+	वर्ण *note = रिक्त;
 
-	if ((c = channel_lookup(ssh, s->chanid)) == NULL)
+	यदि ((c = channel_lookup(ssh, s->chanid)) == रिक्त)
 		fatal_f("session %d: no channel %d", s->self, s->chanid);
 
-	if (WIFEXITED(status)) {
+	यदि (WIFEXITED(स्थितिः)) {
 		channel_request_start(ssh, s->chanid, "exit-status", 0);
-		if ((r = sshpkt_put_u32(ssh, WEXITSTATUS(status))) != 0 ||
+		यदि ((r = sshpkt_put_u32(ssh, WEXITSTATUS(स्थितिः))) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: exit reply", __func__);
-		xasprintf(&note, "exit %d", WEXITSTATUS(status));
-	} else if (WIFSIGNALED(status)) {
+		xasprintf(&note, "exit %d", WEXITSTATUS(स्थितिः));
+	} अन्यथा यदि (WIFSIGNALED(स्थितिः)) {
 		channel_request_start(ssh, s->chanid, "exit-signal", 0);
-#ifndef WCOREDUMP
+#यदि_अपरिभाषितम् WCOREDUMP
 # define WCOREDUMP(x) (0)
-#endif
-		if ((r = sshpkt_put_cstring(ssh, sig2name(WTERMSIG(status)))) != 0 ||
-		    (r = sshpkt_put_u8(ssh, WCOREDUMP(status)? 1 : 0)) != 0 ||
+#यदि_अन्तः
+		यदि ((r = sshpkt_put_cstring(ssh, sig2name(WTERMSIG(स्थितिः)))) != 0 ||
+		    (r = sshpkt_put_u8(ssh, WCOREDUMP(स्थितिः)? 1 : 0)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: exit reply", __func__);
-		xasprintf(&note, "signal %d%s", WTERMSIG(status),
-		    WCOREDUMP(status) ? " core dumped" : "");
-	} else {
+		xasprintf(&note, "signal %d%s", WTERMSIG(स्थितिः),
+		    WCOREDUMP(स्थितिः) ? " core dumped" : "");
+	} अन्यथा {
 		/* Some weird exit cause.  Just exit. */
 		ssh_packet_disconnect(ssh, "wait returned status %04x.",
-		    status);
+		    स्थितिः);
 	}
 
 	debug_f("session %d channel %d pid %ld %s", s->self, s->chanid,
-	    (long)s->pid, note == NULL ? "UNKNOWN" : note);
-	free(note);
+	    (दीर्घ)s->pid, note == रिक्त ? "UNKNOWN" : note);
+	मुक्त(note);
 
 	/* disconnect channel */
 	debug_f("release channel %d", s->chanid);
@@ -2382,7 +2382,7 @@ session_exit_message(struct ssh *ssh, Session *s, int status)
 	 * the channel gets EOF. The session will be then be closed
 	 * by session_close_by_channel when the child sessions close their fds.
 	 */
-	channel_register_cleanup(ssh, c->self, session_close_by_channel, 1);
+	channel_पञ्जिकाकोशः_cleanup(ssh, c->self, session_close_by_channel, 1);
 
 	/*
 	 * emulate a write failure with 'chan_write_failed', nobody will be
@@ -2390,52 +2390,52 @@ session_exit_message(struct ssh *ssh, Session *s, int status)
 	 * Note that we must not call 'chan_read_failed', since there could
 	 * be some more data waiting in the pipe.
 	 */
-	if (c->ostate != CHAN_OUTPUT_CLOSED)
+	यदि (c->ostate != CHAN_OUTPUT_CLOSED)
 		chan_write_failed(ssh, c);
 }
 
-void
-session_close(struct ssh *ssh, Session *s)
+शून्य
+session_close(संरचना ssh *ssh, Session *s)
 {
 	u_int i;
 
 	verbose("Close session: user %s from %.200s port %d id %d",
 	    s->pw->pw_name,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh),
+	    ssh_remote_पत्तनम्(ssh),
 	    s->self);
 
-	if (s->ttyfd != -1)
+	यदि (s->ttyfd != -1)
 		session_pty_cleanup(s);
-	free(s->term);
-	free(s->display);
-	free(s->x11_chanids);
-	free(s->auth_display);
-	free(s->auth_data);
-	free(s->auth_proto);
-	free(s->subsys);
-	if (s->env != NULL) {
-		for (i = 0; i < s->num_env; i++) {
-			free(s->env[i].name);
-			free(s->env[i].val);
+	मुक्त(s->पदांशः);
+	मुक्त(s->display);
+	मुक्त(s->x11_chanids);
+	मुक्त(s->auth_display);
+	मुक्त(s->auth_दत्त);
+	मुक्त(s->auth_proto);
+	मुक्त(s->subsys);
+	यदि (s->env != रिक्त) {
+		प्रति (i = 0; i < s->अङ्कः_env; i++) {
+			मुक्त(s->env[i].name);
+			मुक्त(s->env[i].val);
 		}
-		free(s->env);
+		मुक्त(s->env);
 	}
 	session_proctitle(s);
-	session_unused(s->self);
+	session_अप्रयुक्तम्(s->self);
 }
 
-void
-session_close_by_pid(struct ssh *ssh, pid_t pid, int status)
+शून्य
+session_close_by_pid(संरचना ssh *ssh, pid_t pid, पूर्णाङ्क स्थितिः)
 {
 	Session *s = session_by_pid(pid);
-	if (s == NULL) {
-		debug_f("no session for pid %ld", (long)pid);
-		return;
+	यदि (s == रिक्त) {
+		debug_f("no session for pid %ld", (दीर्घ)pid);
+		प्रत्यागम;
 	}
-	if (s->chanid != -1)
-		session_exit_message(ssh, s, status);
-	if (s->ttyfd != -1)
+	यदि (s->chanid != -1)
+		session_exit_सन्देशः(ssh, s, स्थितिः);
+	यदि (s->ttyfd != -1)
 		session_pty_cleanup(s);
 	s->pid = 0;
 }
@@ -2444,35 +2444,35 @@ session_close_by_pid(struct ssh *ssh, pid_t pid, int status)
  * this is called when a channel dies before
  * the session 'child' itself dies
  */
-void
-session_close_by_channel(struct ssh *ssh, int id, int force, void *arg)
+शून्य
+session_close_by_channel(संरचना ssh *ssh, पूर्णाङ्क id, पूर्णाङ्क force, शून्य *arg)
 {
 	Session *s = session_by_channel(id);
 	u_int i;
 
-	if (s == NULL) {
+	यदि (s == रिक्त) {
 		debug_f("no session for id %d", id);
-		return;
+		प्रत्यागम;
 	}
-	debug_f("channel %d child %ld", id, (long)s->pid);
-	if (s->pid != 0) {
+	debug_f("channel %d child %ld", id, (दीर्घ)s->pid);
+	यदि (s->pid != 0) {
 		debug_f("channel %d: has child, ttyfd %d", id, s->ttyfd);
 		/*
 		 * delay detach of session (unless this is a forced close),
 		 * but release pty, since the fd's to the child are already
 		 * closed
 		 */
-		if (s->ttyfd != -1)
+		यदि (s->ttyfd != -1)
 			session_pty_cleanup(s);
-		if (!force)
-			return;
+		यदि (!force)
+			प्रत्यागम;
 	}
 	/* detach by removing callback */
 	channel_cancel_cleanup(ssh, s->chanid);
 
 	/* Close any X11 listeners associated with this session */
-	if (s->x11_chanids != NULL) {
-		for (i = 0; s->x11_chanids[i] != -1; i++) {
+	यदि (s->x11_chanids != रिक्त) {
+		प्रति (i = 0; s->x11_chanids[i] != -1; i++) {
 			session_close_x11(ssh, s->x11_chanids[i]);
 			s->x11_chanids[i] = -1;
 		}
@@ -2482,211 +2482,211 @@ session_close_by_channel(struct ssh *ssh, int id, int force, void *arg)
 	session_close(ssh, s);
 }
 
-void
-session_destroy_all(struct ssh *ssh, void (*closefunc)(Session *))
+शून्य
+session_destroy_all(संरचना ssh *ssh, शून्य (*closefunc)(Session *))
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	पूर्णाङ्क i;
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used) {
-			if (closefunc != NULL)
+		यदि (s->प्रयुक्तम्) {
+			यदि (closefunc != रिक्त)
 				closefunc(s);
-			else
+			अन्यथा
 				session_close(ssh, s);
 		}
 	}
 }
 
-static char *
-session_tty_list(void)
+स्थिर वर्ण *
+session_tty_list(शून्य)
 {
-	static char buf[1024];
-	int i;
-	char *cp;
+	स्थिर वर्ण buf[1024];
+	पूर्णाङ्क i;
+	वर्ण *cp;
 
 	buf[0] = '\0';
-	for (i = 0; i < sessions_nalloc; i++) {
+	प्रति (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->ttyfd != -1) {
+		यदि (s->प्रयुक्तम् && s->ttyfd != -1) {
 
-			if (strncmp(s->tty, "/dev/", 5) != 0) {
+			यदि (वाक्ये_तुलय(s->tty, "/dev/", 5) != 0) {
 				cp = strrchr(s->tty, '/');
-				cp = (cp == NULL) ? s->tty : cp + 1;
-			} else
+				cp = (cp == रिक्त) ? s->tty : cp + 1;
+			} अन्यथा
 				cp = s->tty + 5;
 
-			if (buf[0] != '\0')
-				strlcat(buf, ",", sizeof buf);
-			strlcat(buf, cp, sizeof buf);
+			यदि (buf[0] != '\0')
+				strlcat(buf, ",", परिमाण buf);
+			strlcat(buf, cp, परिमाण buf);
 		}
 	}
-	if (buf[0] == '\0')
-		strlcpy(buf, "notty", sizeof buf);
-	return buf;
+	यदि (buf[0] == '\0')
+		strlcpy(buf, "notty", परिमाण buf);
+	प्रत्यागम buf;
 }
 
-void
+शून्य
 session_proctitle(Session *s)
 {
-	if (s->pw == NULL)
+	यदि (s->pw == रिक्त)
 		error("no user for session %d", s->self);
-	else
+	अन्यथा
 		setproctitle("%s@%s", s->pw->pw_name, session_tty_list());
 }
 
-int
-session_setup_x11fwd(struct ssh *ssh, Session *s)
+पूर्णाङ्क
+session_सज्जता_x11fwd(संरचना ssh *ssh, Session *s)
 {
-	struct stat st;
-	char display[512], auth_display[512];
-	char hostname[NI_MAXHOST];
+	संरचना stat st;
+	वर्ण display[512], auth_display[512];
+	वर्ण hostname[NI_MAXHOST];
 	u_int i;
 
-	if (!auth_opts->permit_x11_forwarding_flag) {
+	यदि (!auth_opts->permit_x11_forwarding_flag) {
 		ssh_packet_send_debug(ssh, "X11 forwarding disabled by key options.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (!options.x11_forwarding || options.disable_forwarding) {
+	यदि (!options.x11_forwarding || options.disable_forwarding) {
 		debug("X11 forwarding disabled in server configuration file.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (options.xauth_location == NULL ||
+	यदि (options.xauth_location == रिक्त ||
 	    (stat(options.xauth_location, &st) == -1)) {
 		ssh_packet_send_debug(ssh, "No xauth program; cannot forward X11.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (s->display != NULL) {
+	यदि (s->display != रिक्त) {
 		debug("X11 display already set.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	if (x11_create_display_inet(ssh, options.x11_display_offset,
+	यदि (x11_create_display_inet(ssh, options.x11_display_विस्थापनम्,
 	    options.x11_use_localhost, s->single_connection,
-	    &s->display_number, &s->x11_chanids) == -1) {
+	    &s->display_सङ्ख्या, &s->x11_chanids) == -1) {
 		debug("x11_create_display_inet failed.");
-		return 0;
+		प्रत्यागम 0;
 	}
-	for (i = 0; s->x11_chanids[i] != -1; i++) {
-		channel_register_cleanup(ssh, s->x11_chanids[i],
+	प्रति (i = 0; s->x11_chanids[i] != -1; i++) {
+		channel_पञ्जिकाकोशः_cleanup(ssh, s->x11_chanids[i],
 		    session_close_single_x11, 0);
 	}
 
 	/* Set up a suitable value for the DISPLAY variable. */
-	if (gethostname(hostname, sizeof(hostname)) == -1)
+	यदि (gethostname(hostname, परिमाण(hostname)) == -1)
 		fatal("gethostname: %.100s", strerror(errno));
 	/*
 	 * auth_display must be used as the displayname when the
 	 * authorization entry is added with xauth(1).  This will be
 	 * different than the DISPLAY string for localhost displays.
 	 */
-	if (options.x11_use_localhost) {
-		snprintf(display, sizeof display, "localhost:%u.%u",
-		    s->display_number, s->screen);
-		snprintf(auth_display, sizeof auth_display, "unix:%u.%u",
-		    s->display_number, s->screen);
+	यदि (options.x11_use_localhost) {
+		snprintf(display, परिमाण display, "localhost:%u.%u",
+		    s->display_सङ्ख्या, s->screen);
+		snprintf(auth_display, परिमाण auth_display, "unix:%u.%u",
+		    s->display_सङ्ख्या, s->screen);
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(auth_display);
-	} else {
-#ifdef IPADDR_IN_DISPLAY
-		struct hostent *he;
-		struct in_addr my_addr;
+	} अन्यथा {
+#यदि_परिभाषितम् IPADDR_अन्तर्_DISPLAY
+		संरचना hostent *he;
+		संरचना in_addr my_addr;
 
 		he = gethostbyname(hostname);
-		if (he == NULL) {
+		यदि (he == रिक्त) {
 			error("Can't get IP address for X11 DISPLAY.");
 			ssh_packet_send_debug(ssh, "Can't get IP address for X11 DISPLAY.");
-			return 0;
+			प्रत्यागम 0;
 		}
-		memcpy(&my_addr, he->h_addr_list[0], sizeof(struct in_addr));
-		snprintf(display, sizeof display, "%.50s:%u.%u", inet_ntoa(my_addr),
-		    s->display_number, s->screen);
-#else
-		snprintf(display, sizeof display, "%.400s:%u.%u", hostname,
-		    s->display_number, s->screen);
-#endif
+		स्मृतिं_प्रतिलिख(&my_addr, he->h_addr_list[0], परिमाण(संरचना in_addr));
+		snprintf(display, परिमाण display, "%.50s:%u.%u", inet_ntoa(my_addr),
+		    s->display_सङ्ख्या, s->screen);
+#अन्यथा
+		snprintf(display, परिमाण display, "%.400s:%u.%u", hostname,
+		    s->display_सङ्ख्या, s->screen);
+#यदि_अन्तः
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(display);
 	}
 
-	return 1;
+	प्रत्यागम 1;
 }
 
-static void
-do_authenticated2(struct ssh *ssh, Authctxt *authctxt)
+स्थिर शून्य
+do_authenticated2(संरचना ssh *ssh, Authctxt *authctxt)
 {
 	server_loop2(ssh, authctxt);
 }
 
-void
-do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+शून्य
+do_cleanup(संरचना ssh *ssh, Authctxt *authctxt)
 {
-	static int called = 0;
+	स्थिर पूर्णाङ्क called = 0;
 
 	debug("do_cleanup");
 
 	/* no cleanup if we're in the child for login shell */
-	if (is_child)
-		return;
+	यदि (is_child)
+		प्रत्यागम;
 
 	/* avoid double cleanup */
-	if (called)
-		return;
+	यदि (called)
+		प्रत्यागम;
 	called = 1;
 
-	if (authctxt == NULL)
-		return;
+	यदि (authctxt == रिक्त)
+		प्रत्यागम;
 
-#ifdef USE_PAM
-	if (options.use_pam) {
+#यदि_परिभाषितम् USE_PAM
+	यदि (options.use_pam) {
 		sshpam_cleanup();
 		sshpam_thread_cleanup();
 	}
-#endif
+#यदि_अन्तः
 
-	if (!authctxt->authenticated)
-		return;
+	यदि (!authctxt->authenticated)
+		प्रत्यागम;
 
-#ifdef KRB5
-	if (options.kerberos_ticket_cleanup &&
+#यदि_परिभाषितम् KRB5
+	यदि (options.kerberos_ticket_cleanup &&
 	    authctxt->krb5_ctx)
 		krb5_cleanup_proc(authctxt);
-#endif
+#यदि_अन्तः
 
-#ifdef GSSAPI
-	if (options.gss_cleanup_creds)
+#यदि_परिभाषितम् GSSAPI
+	यदि (options.gss_cleanup_creds)
 		ssh_gssapi_cleanup_creds();
-#endif
+#यदि_अन्तः
 
 	/* remove agent socket */
 	auth_sock_cleanup_proc(authctxt->pw);
 
 	/* remove userauth info */
-	if (auth_info_file != NULL) {
+	यदि (auth_info_file != रिक्त) {
 		temporarily_use_uid(authctxt->pw);
 		unlink(auth_info_file);
 		restore_uid();
-		free(auth_info_file);
-		auth_info_file = NULL;
+		मुक्त(auth_info_file);
+		auth_info_file = रिक्त;
 	}
 
 	/*
 	 * Cleanup ptys/utmp only if privsep is disabled,
 	 * or if running in monitor.
 	 */
-	if (mm_is_monitor())
+	यदि (mm_is_monitor())
 		session_destroy_all(ssh, session_pty_cleanup2);
 }
 
 /* Return a name for the remote host that fits inside utmp_size */
 
-const char *
-session_get_remote_name_or_ip(struct ssh *ssh, u_int utmp_size, int use_dns)
+ध्रुव वर्ण *
+session_get_remote_name_or_ip(संरचना ssh *ssh, u_int utmp_आकार, पूर्णाङ्क use_dns)
 {
-	const char *remote = "";
+	ध्रुव वर्ण *remote = "";
 
-	if (utmp_size > 0)
+	यदि (utmp_आकार > 0)
 		remote = auth_get_canonical_hostname(ssh, use_dns);
-	if (utmp_size == 0 || strlen(remote) > utmp_size)
+	यदि (utmp_आकार == 0 || वाक्यदैर्घ्यम्(remote) > utmp_आकार)
 		remote = ssh_remote_ipaddr(ssh);
-	return remote;
+	प्रत्यागम remote;
 }
 

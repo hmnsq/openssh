@@ -23,62 +23,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef DH_H
-#define DH_H
+#यदि_अपरिभाषितम् DH_H
+#परिभाषय DH_H
 
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+संरचना dhgroup {
+	पूर्णाङ्क आकार;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
-DH	*dh_new_group(BIGNUM *, BIGNUM *);
-DH	*dh_new_group1(void);
-DH	*dh_new_group14(void);
-DH	*dh_new_group16(void);
-DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*वृणु_dh(पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क);
+DH	*dh_new_गणः_asc(ध्रुव वर्ण *, ध्रुव वर्ण *);
+DH	*dh_new_गणः(BIGNUM *, BIGNUM *);
+DH	*dh_new_group1(शून्य);
+DH	*dh_new_group14(शून्य);
+DH	*dh_new_group16(शून्य);
+DH	*dh_new_group18(शून्य);
+DH	*dh_new_गणः_fallback(पूर्णाङ्क);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+पूर्णाङ्क	 dh_gen_कुञ्चिका(DH *, पूर्णाङ्क);
+पूर्णाङ्क	 dh_pub_is_valid(ध्रुव DH *, ध्रुव BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(पूर्णाङ्क);
+शून्य	 dh_समुच्चयः_moduli_file(ध्रुव वर्ण *);
 
 /*
  * Max value from RFC4419.
  * Min value from RFC8270.
  */
-#define DH_GRP_MIN	2048
-#define DH_GRP_MAX	8192
+#परिभाषय DH_GRP_MIN	2048
+#परिभाषय DH_GRP_MAX	8192
 
 /*
  * Values for "type" field of moduli(5)
  * Specifies the internal structure of the prime modulus.
  */
-#define MODULI_TYPE_UNKNOWN		(0)
-#define MODULI_TYPE_UNSTRUCTURED	(1)
-#define MODULI_TYPE_SAFE		(2)
-#define MODULI_TYPE_SCHNORR		(3)
-#define MODULI_TYPE_SOPHIE_GERMAIN	(4)
-#define MODULI_TYPE_STRONG		(5)
+#परिभाषय MODULI_TYPE_UNKNOWN		(0)
+#परिभाषय MODULI_TYPE_UNSTRUCTURED	(1)
+#परिभाषय MODULI_TYPE_SAFE		(2)
+#परिभाषय MODULI_TYPE_SCHNORR		(3)
+#परिभाषय MODULI_TYPE_SOPHIE_GERMAIN	(4)
+#परिभाषय MODULI_TYPE_STRONG		(5)
 
 /*
  * Values for "tests" field of moduli(5)
  * Specifies the methods used in checking for primality.
  * Usually, more than one test is used.
  */
-#define MODULI_TESTS_UNTESTED		(0x00)
-#define MODULI_TESTS_COMPOSITE		(0x01)
-#define MODULI_TESTS_SIEVE		(0x02)
-#define MODULI_TESTS_MILLER_RABIN	(0x04)
-#define MODULI_TESTS_JACOBI		(0x08)
-#define MODULI_TESTS_ELLIPTIC		(0x10)
+#परिभाषय MODULI_TESTS_UNTESTED		(0x00)
+#परिभाषय MODULI_TESTS_संयुक्त		(0x01)
+#परिभाषय MODULI_TESTS_SIEVE		(0x02)
+#परिभाषय MODULI_TESTS_MILLER_RABIN	(0x04)
+#परिभाषय MODULI_TESTS_JACOBI		(0x08)
+#परिभाषय MODULI_TESTS_ELLIPTIC		(0x10)
 
-#endif /* WITH_OPENSSL */
+#यदि_अन्तः /* WITH_OPENSSL */
 
-#endif /* DH_H */
+#यदि_अन्तः /* DH_H */

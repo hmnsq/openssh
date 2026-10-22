@@ -24,35 +24,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+संरचना sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+प्रकारनिर्देश संरचना Sensitive Sensitive;
+संरचना Sensitive {
+	संरचना sshkey	**कुञ्चिकाः;
+	पूर्णाङ्क		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+संरचना ssh_conn_info {
+	वर्ण *conn_hash_hex;
+	वर्ण *shorthost;
+	वर्ण *uidstr;
+	वर्ण *keyalias;
+	वर्ण *thishost;
+	वर्ण *host_arg;
+	वर्ण *portstr;
+	वर्ण *remhost;
+	वर्ण *remuser;
+	वर्ण *homedir;
+	वर्ण *locuser;
+	वर्ण *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+संरचना addrinfo;
+संरचना ssh;
+संरचना hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#परिभाषय DEFAULT_CLIENT_PERCENT_EXPAND_तर्काः_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,44 +65,44 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
-	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
+#परिभाषय DEFAULT_CLIENT_PERCENT_EXPAND_तर्काः(conn_info) \
+	DEFAULT_CLIENT_PERCENT_EXPAND_तर्काः_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+पूर्णाङ्क	 ssh_connect(संरचना ssh *, ध्रुव वर्ण *, ध्रुव वर्ण *,
+	    संरचना addrinfo *, संरचना sockaddr_storage *, u_short,
+	    पूर्णाङ्क, पूर्णाङ्क *, पूर्णाङ्क);
+शून्य	 ssh_kill_proxy_command(शून्य);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+शून्य	 ssh_login(संरचना ssh *, Sensitive *, ध्रुव वर्ण *,
+    संरचना sockaddr_storage *, u_short, संरचना passwd *, पूर्णाङ्क,
+    ध्रुव संरचना ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+पूर्णाङ्क	 verify_host_कुञ्चिका(वर्ण *, संरचना sockaddr *, संरचना sshkey *,
+    ध्रुव संरचना ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+शून्य	 get_hostfile_hostname_ipaddr(वर्ण *, संरचना sockaddr *, u_short,
+    वर्ण **, वर्ण **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+शून्य	 ssh_kex2(संरचना ssh *ssh, वर्ण *, संरचना sockaddr_storage *, u_short,
+    ध्रुव संरचना ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+शून्य	 ssh_userauth2(संरचना ssh *ssh, ध्रुव वर्ण *, ध्रुव वर्ण *,
+    वर्ण *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+शून्य	 pubkey_dump(संरचना ssh *);
 
-int	 ssh_local_cmd(const char *);
+पूर्णाङ्क	 ssh_local_cmd(ध्रुव वर्ण *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+शून्य	 maybe_सङ्कलय_कुञ्चिका_गन्तव्यम्_agent(ध्रुव वर्ण *, संरचना sshkey *,
+    ध्रुव वर्ण *, ध्रुव वर्ण *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+शून्य	 आरोपय_hostkeys_command(संरचना hostkeys *, ध्रुव वर्ण *,
+    ध्रुव वर्ण *, ध्रुव संरचना ssh_conn_info *,
+    ध्रुव संरचना sshkey *, ध्रुव वर्ण *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+पूर्णाङ्क hostkey_accepted_by_hostkeyalgs(ध्रुव संरचना sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+शून्य ssh_conn_info_free(संरचना ssh_conn_info *);
+संरचना ssh_conn_info *ssh_conn_info_dup(ध्रुव संरचना ssh_conn_info *);

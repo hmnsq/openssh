@@ -26,144 +26,144 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/uio.h>
+#अन्तर्भाव <sys/uio.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <poll.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <limits.h>
 
-#include "atomicio.h"
+#अन्तर्भाव "atomicio.h"
 
 /*
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+आकार_t
+atomicio6(ssize_t (*f) (पूर्णाङ्क, शून्य *, आकार_t), पूर्णाङ्क fd, शून्य *_s, आकार_t n,
+    पूर्णाङ्क (*cb)(शून्य *, आकार_t), शून्य *cb_arg)
 {
-	char *s = _s;
-	size_t pos = 0;
+	वर्ण *s = _s;
+	आकार_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	संरचना pollfd pfd;
 
 	pfd.fd = fd;
-	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	pfd.events = f == पठ ? POLLIN : POLLOUT;
+	यावत् (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		विकल्प (res) {
+		पक्ष -1:
+			यदि (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				यदि (cb != रिक्त && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					प्रत्यागम pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				अनुवर्त;
+			} अन्यथा यदि (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(शून्य)poll(&pfd, 1, -1);
+				अनुवर्त;
 			}
-			return 0;
-		case 0:
+			प्रत्यागम 0;
+		पक्ष 0:
 			errno = EPIPE;
-			return pos;
-		default:
-			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			प्रत्यागम pos;
+		स्वभाव:
+			pos += (आकार_t)res;
+			यदि (cb != रिक्त && cb(cb_arg, (आकार_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				प्रत्यागम pos;
 			}
 		}
 	}
-	return pos;
+	प्रत्यागम pos;
 }
 
-size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+आकार_t
+atomicio(ssize_t (*f) (पूर्णाङ्क, शून्य *, आकार_t), पूर्णाङ्क fd, शून्य *_s, आकार_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	प्रत्यागम atomicio6(f, fd, _s, n, रिक्त, रिक्त);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+आकार_t
+atomiciov6(ssize_t (*f) (पूर्णाङ्क, ध्रुव संरचना iovec *, पूर्णाङ्क), पूर्णाङ्क fd,
+    ध्रुव संरचना iovec *_iov, पूर्णाङ्क iovcnt,
+    पूर्णाङ्क (*cb)(शून्य *, आकार_t), शून्य *cb_arg)
 {
-	size_t pos = 0, rem;
+	आकार_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	संरचना iovec iov_array[IOV_MAX], *iov = iov_array;
+	संरचना pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	यदि (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		प्रत्यागम 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	स्मृतिं_प्रतिलिख(iov, _iov, (आकार_t)iovcnt * परिमाण(*_iov));
 
 	pfd.fd = fd;
-#ifndef BROKEN_READV_COMPARISON
+#यदि_अपरिभाषितम् BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#अन्यथा
 	pfd.events = POLLIN|POLLOUT;
-#endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+#यदि_अन्तः
+	प्रति (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		विकल्प (res) {
+		पक्ष -1:
+			यदि (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				यदि (cb != रिक्त && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					प्रत्यागम pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				अनुवर्त;
+			} अन्यथा यदि (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(शून्य)poll(&pfd, 1, -1);
+				अनुवर्त;
 			}
-			return 0;
-		case 0:
+			प्रत्यागम 0;
+		पक्ष 0:
 			errno = EPIPE;
-			return pos;
-		default:
-			rem = (size_t)res;
+			प्रत्यागम pos;
+		स्वभाव:
+			rem = (आकार_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			यावत् (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			यदि (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				प्रत्यागम 0;
 			}
-			if (iovcnt == 0)
-				break;
+			यदि (iovcnt == 0)
+				भङ्ग;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((वर्ण *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		यदि (cb != रिक्त && cb(cb_arg, (आकार_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			प्रत्यागम pos;
 		}
 	}
-	return pos;
+	प्रत्यागम pos;
 }
 
-size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+आकार_t
+atomiciov(ssize_t (*f) (पूर्णाङ्क, ध्रुव संरचना iovec *, पूर्णाङ्क), पूर्णाङ्क fd,
+    ध्रुव संरचना iovec *_iov, पूर्णाङ्क iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	प्रत्यागम atomiciov6(f, fd, _iov, iovcnt, रिक्त, रिक्त);
 }

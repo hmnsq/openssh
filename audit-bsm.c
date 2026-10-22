@@ -32,94 +32,94 @@
  */
 /* #pragma ident	"@(#)bsmaudit.c	1.1	01/09/17 SMI" */
 
-#include "includes.h"
-#if defined(USE_BSM_AUDIT)
+#अन्तर्भाव "includes.h"
+#यदि defined(USE_BSM_AUDIT)
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <netdb.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#ifdef BROKEN_BSM_API
-#include <libscf.h>
-#endif
+#यदि_परिभाषितम् BROKEN_BSM_API
+#अन्तर्भाव <libscf.h>
+#यदि_अन्तः
 
-#include "ssh.h"
-#include "log.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "xmalloc.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "xmalloc.h"
 
-#ifndef AUE_openssh
+#यदि_अपरिभाषितम् AUE_openssh
 # define AUE_openssh     32800
-#endif
-#include <bsm/audit.h>
-#include <bsm/libbsm.h>
-#include <bsm/audit_uevents.h>
-#include <bsm/audit_record.h>
-#include <locale.h>
+#यदि_अन्तः
+#अन्तर्भाव <bsm/audit.h>
+#अन्तर्भाव <bsm/libbsm.h>
+#अन्तर्भाव <bsm/audit_uevents.h>
+#अन्तर्भाव <bsm/audit_record.h>
+#अन्तर्भाव <locale.h>
 
-#if defined(HAVE_GETAUDIT_ADDR)
-#define	AuditInfoStruct		auditinfo_addr
-#define AuditInfoTermID		au_tid_addr_t
-#define SetAuditFunc(a,b)	setaudit_addr((a),(b))
-#define SetAuditFuncText	"setaudit_addr"
-#define AUToSubjectFunc		au_to_subject_ex
-#define AUToReturnFunc(a,b)	au_to_return32((a), (int32_t)(b))
-#else
-#define	AuditInfoStruct		auditinfo
-#define AuditInfoTermID		au_tid_t
-#define SetAuditFunc(a,b)	setaudit(a)
-#define SetAuditFuncText	"setaudit"
-#define AUToSubjectFunc		au_to_subject
-#define AUToReturnFunc(a,b)	au_to_return((a), (u_int)(b))
-#endif
+#यदि defined(HAVE_GETAUDIT_ADDR)
+#परिभाषय	AuditInfoStruct		auditinfo_addr
+#परिभाषय Audit_Info_पदांशः_ID		au_tid_addr_t
+#परिभाषय समुच्चयः_Audit_Func(a,b)	setaudit_addr((a),(b))
+#परिभाषय समुच्चयः_Audit_Func_Text	"setaudit_addr"
+#परिभाषय AUToSubjectFunc		au_गन्तव्यम्_subject_ex
+#परिभाषय AUToReturnFunc(a,b)	au_गन्तव्यम्_return32((a), (int32_t)(b))
+#अन्यथा
+#परिभाषय	AuditInfoStruct		auditinfo
+#परिभाषय Audit_Info_पदांशः_ID		au_tid_t
+#परिभाषय समुच्चयः_Audit_Func(a,b)	setaudit(a)
+#परिभाषय समुच्चयः_Audit_Func_Text	"setaudit"
+#परिभाषय AUToSubjectFunc		au_गन्तव्यम्_subject
+#परिभाषय AUToReturnFunc(a,b)	au_गन्तव्यम्_return((a), (u_int)(b))
+#यदि_अन्तः
 
-#ifndef cannot_audit
-extern int	cannot_audit(int);
-#endif
-extern void	aug_init(void);
-extern void	aug_save_auid(au_id_t);
-extern void	aug_save_uid(uid_t);
-extern void	aug_save_euid(uid_t);
-extern void	aug_save_gid(gid_t);
-extern void	aug_save_egid(gid_t);
-extern void	aug_save_pid(pid_t);
-extern void	aug_save_asid(au_asid_t);
-extern void	aug_save_tid(dev_t, unsigned int);
-extern void	aug_save_tid_ex(dev_t, uint32_t *, uint32_t);
-extern int	aug_save_me(void);
-extern int	aug_save_namask(void);
-extern void	aug_save_event(au_event_t);
-extern void	aug_save_sorf(int);
-extern void	aug_save_text(char *);
-extern void	aug_save_text1(char *);
-extern void	aug_save_text2(char *);
-extern void	aug_save_na(int);
-extern void	aug_save_user(char *);
-extern void	aug_save_path(char *);
-extern int	aug_save_policy(void);
-extern void	aug_save_afunc(int (*)(int));
-extern int	aug_audit(void);
-extern int	aug_na_selected(void);
-extern int	aug_selected(void);
-extern int	aug_daemon_session(void);
+#यदि_अपरिभाषितम् cannot_audit
+बाह्य पूर्णाङ्क	cannot_audit(पूर्णाङ्क);
+#यदि_अन्तः
+बाह्य शून्य	aug_init(शून्य);
+बाह्य शून्य	aug_save_auid(au_id_t);
+बाह्य शून्य	aug_save_uid(uid_t);
+बाह्य शून्य	aug_save_euid(uid_t);
+बाह्य शून्य	aug_save_gid(gid_t);
+बाह्य शून्य	aug_save_egid(gid_t);
+बाह्य शून्य	aug_save_pid(pid_t);
+बाह्य शून्य	aug_save_asid(au_asid_t);
+बाह्य शून्य	aug_save_tid(dev_t, अचिह्नित पूर्णाङ्क);
+बाह्य शून्य	aug_save_tid_ex(dev_t, uint32_t *, uint32_t);
+बाह्य पूर्णाङ्क	aug_save_me(शून्य);
+बाह्य पूर्णाङ्क	aug_save_namask(शून्य);
+बाह्य शून्य	aug_save_event(au_event_t);
+बाह्य शून्य	aug_save_sorf(पूर्णाङ्क);
+बाह्य शून्य	aug_save_text(वर्ण *);
+बाह्य शून्य	aug_save_text1(वर्ण *);
+बाह्य शून्य	aug_save_text2(वर्ण *);
+बाह्य शून्य	aug_save_na(पूर्णाङ्क);
+बाह्य शून्य	aug_save_user(वर्ण *);
+बाह्य शून्य	aug_save_मार्गः(वर्ण *);
+बाह्य पूर्णाङ्क	aug_save_policy(शून्य);
+बाह्य शून्य	aug_save_afunc(पूर्णाङ्क (*)(पूर्णाङ्क));
+बाह्य पूर्णाङ्क	aug_audit(शून्य);
+बाह्य पूर्णाङ्क	aug_na_selected(शून्य);
+बाह्य पूर्णाङ्क	aug_selected(शून्य);
+बाह्य पूर्णाङ्क	aug_daemon_session(शून्य);
 
-#ifndef HAVE_GETTEXT
+#यदि_अपरिभाषितम् HAVE_GETTEXT
 # define gettext(a)	(a)
-#endif
+#यदि_अन्तः
 
-extern Authctxt *the_authctxt;
-static AuditInfoTermID ssh_bsm_tid;
+बाह्य Authctxt *the_authctxt;
+स्थिर Audit_Info_पदांशः_ID ssh_bsm_tid;
 
-#ifdef BROKEN_BSM_API
+#यदि_परिभाषितम् BROKEN_BSM_API
 /* For some reason this constant is no longer defined
    in Solaris 11. */
-#define BSM_TEXTBUFSZ 256
-#endif
+#परिभाषय BSM_TEXTBUFSZ 256
+#यदि_अन्तः
 
 /* Below is the low-level BSM interface code */
 
@@ -128,60 +128,60 @@ static AuditInfoTermID ssh_bsm_tid;
  * different mechanism in audit_connection_from() for IPv4-only machines.
  * getaudit_addr() is only present on IPv6 capable machines.
  */
-#if defined(HAVE_AUG_GET_MACHINE) || !defined(HAVE_GETAUDIT_ADDR)
-extern int aug_get_machine(char *, uint32_t *, uint32_t *);
-#else
-static int
-aug_get_machine(char *host, uint32_t *addr, uint32_t *type)
+#यदि defined(HAVE_AUG_GET_MACHINE) || !defined(HAVE_GETAUDIT_ADDR)
+बाह्य पूर्णाङ्क aug_get_machine(वर्ण *, uint32_t *, uint32_t *);
+#अन्यथा
+स्थिर पूर्णाङ्क
+aug_get_machine(वर्ण *host, uint32_t *addr, uint32_t *type)
 {
-	struct addrinfo *ai; 
-	struct sockaddr_in *in4;
-	struct sockaddr_in6 *in6;
-	int ret = 0, r;
+	संरचना addrinfo *ai; 
+	संरचना sockaddr_in *in4;
+	संरचना sockaddr_in6 *in6;
+	पूर्णाङ्क ret = 0, r;
 
-	if ((r = getaddrinfo(host, NULL, NULL, &ai)) != 0) {
+	यदि ((r = getaddrinfo(host, रिक्त, रिक्त, &ai)) != 0) {
 		error("BSM audit: getaddrinfo failed for %.100s: %.100s", host,
 		    r == EAI_SYSTEM ? strerror(errno) : gai_strerror(r));
-		return -1;
+		प्रत्यागम -1;
 	}
 	
-	switch (ai->ai_family) {
-	case AF_INET:
-		in4 = (struct sockaddr_in *)ai->ai_addr;
+	विकल्प (ai->ai_family) {
+	पक्ष AF_INET:
+		in4 = (संरचना sockaddr_in *)ai->ai_addr;
 		*type = AU_IPv4;
-		memcpy(addr, &in4->sin_addr, sizeof(struct in_addr));
-		break;
-#ifdef AU_IPv6
-	case AF_INET6: 
-		in6 = (struct sockaddr_in6 *)ai->ai_addr;
+		स्मृतिं_प्रतिलिख(addr, &in4->sin_addr, परिमाण(संरचना in_addr));
+		भङ्ग;
+#यदि_परिभाषितम् AU_IPv6
+	पक्ष AF_INET6: 
+		in6 = (संरचना sockaddr_in6 *)ai->ai_addr;
 		*type = AU_IPv6;
-		memcpy(addr, &in6->sin6_addr, sizeof(struct in6_addr));
-		break;
-#endif
-	default:
+		स्मृतिं_प्रतिलिख(addr, &in6->sin6_addr, परिमाण(संरचना in6_addr));
+		भङ्ग;
+#यदि_अन्तः
+	स्वभाव:
 		error("BSM audit: unknown address family for %.100s: %d",
 		    host, ai->ai_family);
 		ret = -1;
 	}
 	freeaddrinfo(ai);
-	return ret;
+	प्रत्यागम ret;
 }
-#endif
+#यदि_अन्तः
 
-#ifdef BROKEN_BSM_API
+#यदि_परिभाषितम् BROKEN_BSM_API
 /*
   In Solaris 11 the audit daemon has been moved to SMF. In the process
   they simply dropped getacna() from the API, since it read from a now
   non-existent config file. This function re-implements getacna() to
   read from the SMF repository instead.
  */
-int
-getacna(char *auditstring, int len)
+पूर्णाङ्क
+getacna(वर्ण *auditstring, पूर्णाङ्क len)
 {
-	scf_handle_t *handle = NULL;
-	scf_property_t *property = NULL;
-	scf_value_t *value = NULL;
-	int ret = 0;
+	scf_handle_t *handle = रिक्त;
+	scf_property_t *property = रिक्त;
+	scf_मानम्_t *मानम् = रिक्त;
+	पूर्णाङ्क ret = 0;
 
 	/*
 	 * The man page for getacna on Solaris 10 states we should return -2
@@ -189,78 +189,78 @@ getacna(char *auditstring, int len)
 	 * bother with errno here, though, since the only use of this function
 	 * below doesn't check for errors anyway.
 	*/
-	handle = scf_handle_create(SCF_VERSION);
-	if (handle == NULL) 
-		return -2;
+	handle = scf_handle_create(SCF_संस्करणम्);
+	यदि (handle == रिक्त) 
+		प्रत्यागम -2;
 
 	ret = scf_handle_bind(handle);
-	if (ret == -1) 
-		return -2;
+	यदि (ret == -1) 
+		प्रत्यागम -2;
 
 	property = scf_property_create(handle);
-	if (property == NULL) 
-		return -2;
+	यदि (property == रिक्त) 
+		प्रत्यागम -2;
 
 	ret = scf_handle_decode_fmri(handle, 
 	    "svc:/system/auditd:default/:properties/preselection/naflags",
-	    NULL, NULL, NULL, NULL, property, 0);
-	if (ret == -1) 
-		return -2;
+	    रिक्त, रिक्त, रिक्त, रिक्त, property, 0);
+	यदि (ret == -1) 
+		प्रत्यागम -2;
 
-	value = scf_value_create(handle);
-	if (value == NULL) 
-		return -2;
+	मानम् = scf_मानम्_create(handle);
+	यदि (मानम् == रिक्त) 
+		प्रत्यागम -2;
 
-	ret = scf_property_get_value(property, value);
-	if (ret == -1) 
-		return -2;
+	ret = scf_property_get_मानम्(property, मानम्);
+	यदि (ret == -1) 
+		प्रत्यागम -2;
 
-	ret = scf_value_get_astring(value, auditstring, len);
-	if (ret == -1) 
-		return -2;
+	ret = scf_मानम्_get_astring(मानम्, auditstring, len);
+	यदि (ret == -1) 
+		प्रत्यागम -2;
 
-	scf_value_destroy(value);
+	scf_मानम्_destroy(मानम्);
 	scf_property_destroy(property);
 	scf_handle_destroy(handle);
 
-	return 0;
+	प्रत्यागम 0;
 }
-#endif
+#यदि_अन्तः
 
 /*
  * Check if the specified event is selected (enabled) for auditing.
  * Returns 1 if the event is selected, 0 if not and -1 on failure.
  */
-static int
-selected(char *username, uid_t uid, au_event_t event, int sf)
+स्थिर पूर्णाङ्क
+selected(वर्ण *username, uid_t uid, au_event_t event, पूर्णाङ्क sf)
 {
-	int rc, sorf;
-	char naflags[512];
-	struct au_mask mask;
+	पूर्णाङ्क rc, sorf;
+	वर्ण naflags[512];
+	संरचना au_आवरणम् आवरणम्;
 
-	mask.am_success = mask.am_failure = 0;
-	if (uid < 0) {
+	आवरणम्.am_success = आवरणम्.am_failure = 0;
+	यदि (uid < 0) {
 		/* get flags for non-attributable (to a real user) events */
-		rc = getacna(naflags, sizeof(naflags));
-		if (rc == 0)
-			(void) getauditflagsbin(naflags, &mask);
-	} else
-		rc = au_user_mask(username, &mask);
+		rc = getacna(naflags, परिमाण(naflags));
+		यदि (rc == 0)
+			(शून्य) getauditflagsbin(naflags, &आवरणम्);
+	} अन्यथा
+		rc = au_user_आवरणम्(username, &आवरणम्);
 
 	sorf = (sf == 0) ? AU_PRS_SUCCESS : AU_PRS_FAILURE;
-	return(au_preselect(event, &mask, sorf, AU_PRS_REREAD));
+	प्रत्यागम(au_preselect(event, &आवरणम्, sorf, AU_PRS_REREAD));
 }
 
-static void
-bsm_audit_record(int typ, char *string, au_event_t event_no)
+स्थिर शून्य
+bsm_audit_लेखः(पूर्णाङ्क typ, वर्ण *string, au_event_t event_no)
 {
-	int		ad, rc, sel;
+	पूर्णाङ्क		ad, rc, sel;
 	uid_t		uid = -1;
 	gid_t		gid = -1;
 	pid_t		pid = getpid();
-	AuditInfoTermID	tid = ssh_bsm_tid;
+	Audit_Info_पदांशः_ID	tid = ssh_bsm_tid;
 
-	if (the_authctxt != NULL && the_authctxt->valid) {
+	यदि (the_authctxt != रिक्त && the_authctxt->valid) {
 		uid = the_authctxt->pw->pw_uid;
 		gid = the_authctxt->pw->pw_gid;
 	}
@@ -268,188 +268,188 @@ bsm_audit_record(int typ, char *string, au_event_t event_no)
 	rc = (typ == 0) ? 0 : -1;
 	sel = selected(the_authctxt->user, uid, event_no, rc);
 	debug3("BSM audit: typ %d rc %d \"%s\"", typ, rc, string);
-	if (!sel)
-		return;	/* audit event does not match mask, do not write */
+	यदि (!sel)
+		प्रत्यागम;	/* audit event does not match mask, do not write */
 
 	debug3("BSM audit: writing audit new record");
 	ad = au_open();
 
-	(void) au_write(ad, AUToSubjectFunc(uid, uid, gid, uid, gid,
+	(शून्य) au_write(ad, AUToSubjectFunc(uid, uid, gid, uid, gid,
 	    pid, pid, &tid));
-	(void) au_write(ad, au_to_text(string));
-	(void) au_write(ad, AUToReturnFunc(typ, rc));
+	(शून्य) au_write(ad, au_गन्तव्यम्_text(string));
+	(शून्य) au_write(ad, AUToReturnFunc(typ, rc));
 
-#ifdef BROKEN_BSM_API
+#यदि_परिभाषितम् BROKEN_BSM_API
 	/*
 	 * The last argument is the event modifier flags. For some seemingly
 	 * undocumented reason it was added in Solaris 11.
 	 */
-	rc = au_close(ad, AU_TO_WRITE, event_no, 0);
-#else
-	rc = au_close(ad, AU_TO_WRITE, event_no);
-#endif
+	rc = au_close(ad, AU_गन्तव्यम्_WRITE, event_no, 0);
+#अन्यथा
+	rc = au_close(ad, AU_गन्तव्यम्_WRITE, event_no);
+#यदि_अन्तः
 
-	if (rc < 0)
+	यदि (rc < 0)
 		error("BSM audit: %s failed to write \"%s\" record: %s",
 		    __func__, string, strerror(errno));
 }
 
-static void
-bsm_audit_session_setup(void)
+स्थिर शून्य
+bsm_audit_session_सज्जता(शून्य)
 {
-	int rc;
-	struct AuditInfoStruct info;
-	au_mask_t mask;
+	पूर्णाङ्क rc;
+	संरचना AuditInfoStruct info;
+	au_आवरणम्_t आवरणम्;
 
-	if (the_authctxt == NULL) {
+	यदि (the_authctxt == रिक्त) {
 		error("BSM audit: session setup internal error (NULL ctxt)");
-		return;
+		प्रत्यागम;
 	}
 
-	if (the_authctxt->valid)
+	यदि (the_authctxt->valid)
 		info.ai_auid = the_authctxt->pw->pw_uid;
-	else
+	अन्यथा
 		info.ai_auid = -1;
 	info.ai_asid = getpid();
-	mask.am_success = 0;
-	mask.am_failure = 0;
+	आवरणम्.am_success = 0;
+	आवरणम्.am_failure = 0;
 
-	(void) au_user_mask(the_authctxt->user, &mask);
+	(शून्य) au_user_आवरणम्(the_authctxt->user, &आवरणम्);
 
-	info.ai_mask.am_success  = mask.am_success;
-	info.ai_mask.am_failure  = mask.am_failure;
+	info.ai_आवरणम्.am_success  = आवरणम्.am_success;
+	info.ai_आवरणम्.am_failure  = आवरणम्.am_failure;
 
 	info.ai_termid = ssh_bsm_tid;
 
-	rc = SetAuditFunc(&info, sizeof(info));
-	if (rc < 0)
+	rc = समुच्चयः_Audit_Func(&info, परिमाण(info));
+	यदि (rc < 0)
 		error("BSM audit: %s: %s failed: %s", __func__,
-		    SetAuditFuncText, strerror(errno));
+		    समुच्चयः_Audit_Func_Text, strerror(errno));
 }
 
-static void
-bsm_audit_bad_login(const char *what)
+स्थिर शून्य
+bsm_audit_bad_login(ध्रुव वर्ण *what)
 {
-	char textbuf[BSM_TEXTBUFSZ];
+	वर्ण textbuf[BSM_TEXTBUFSZ];
 
-	if (the_authctxt->valid) {
-		(void) snprintf(textbuf, sizeof (textbuf),
+	यदि (the_authctxt->valid) {
+		(शून्य) snprintf(textbuf, परिमाण (textbuf),
 			gettext("invalid %s for user %s"),
 			    what, the_authctxt->user);
-		bsm_audit_record(4, textbuf, AUE_openssh);
-	} else {
-		(void) snprintf(textbuf, sizeof (textbuf),
+		bsm_audit_लेखः(4, textbuf, AUE_openssh);
+	} अन्यथा {
+		(शून्य) snprintf(textbuf, परिमाण (textbuf),
 			gettext("invalid user name \"%s\""),
 			    the_authctxt->user);
-		bsm_audit_record(3, textbuf, AUE_openssh);
+		bsm_audit_लेखः(3, textbuf, AUE_openssh);
 	}
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+शून्य
+audit_connection_from(ध्रुव वर्ण *host, पूर्णाङ्क पत्तनम्)
 {
-	AuditInfoTermID *tid = &ssh_bsm_tid;
-	char buf[1024];
+	Audit_Info_पदांशः_ID *tid = &ssh_bsm_tid;
+	वर्ण buf[1024];
 
-	if (cannot_audit(0))
-		return;
-	debug3("BSM audit: connection from %.100s port %d", host, port);
+	यदि (cannot_audit(0))
+		प्रत्यागम;
+	debug3("BSM audit: connection from %.100s port %d", host, पत्तनम्);
 
 	/* populate our terminal id structure */
-#if defined(HAVE_GETAUDIT_ADDR)
-	tid->at_port = (dev_t)port;
-	aug_get_machine((char *)host, &(tid->at_addr[0]), &(tid->at_type));
-	snprintf(buf, sizeof(buf), "%08x %08x %08x %08x", tid->at_addr[0],
+#यदि defined(HAVE_GETAUDIT_ADDR)
+	tid->at_पत्तनम् = (dev_t)पत्तनम्;
+	aug_get_machine((वर्ण *)host, &(tid->at_addr[0]), &(tid->at_type));
+	snprintf(buf, परिमाण(buf), "%08x %08x %08x %08x", tid->at_addr[0],
 	    tid->at_addr[1], tid->at_addr[2], tid->at_addr[3]);
-	debug3("BSM audit: iptype %d machine ID %s", (int)tid->at_type, buf);
-#else
+	debug3("BSM audit: iptype %d machine ID %s", (पूर्णाङ्क)tid->at_type, buf);
+#अन्यथा
 	/* this is used on IPv4-only machines */
-	tid->port = (dev_t)port;
+	tid->पत्तनम् = (dev_t)पत्तनम्;
 	tid->machine = inet_addr(host);
-	snprintf(buf, sizeof(buf), "%08x", tid->machine);
+	snprintf(buf, परिमाण(buf), "%08x", tid->machine);
 	debug3("BSM audit: machine ID %s", buf);
-#endif
+#यदि_अन्तः
 }
 
-void
-audit_run_command(const char *command)
+शून्य
+audit_सततम्_command(ध्रुव वर्ण *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+शून्य
+audit_session_open(संरचना logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_session_close(struct logininfo *li)
+शून्य
+audit_session_close(संरचना logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+शून्य
+audit_event(संरचना ssh *ssh, ssh_audit_event_t event)
 {
-	char    textbuf[BSM_TEXTBUFSZ];
-	static int logged_in = 0;
-	const char *user = the_authctxt ? the_authctxt->user : "(unknown user)";
+	वर्ण    textbuf[BSM_TEXTBUFSZ];
+	स्थिर पूर्णाङ्क logged_अन्तर् = 0;
+	ध्रुव वर्ण *user = the_authctxt ? the_authctxt->user : "(unknown user)";
 
-	if (cannot_audit(0))
-		return;
+	यदि (cannot_audit(0))
+		प्रत्यागम;
 
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-		logged_in = 1;
-		bsm_audit_session_setup();
-		snprintf(textbuf, sizeof(textbuf),
+	विकल्प(event) {
+	पक्ष SSH_AUTH_SUCCESS:
+		logged_अन्तर् = 1;
+		bsm_audit_session_सज्जता();
+		snprintf(textbuf, परिमाण(textbuf),
 		    gettext("successful login %s"), user);
-		bsm_audit_record(0, textbuf, AUE_openssh);
-		break;
+		bsm_audit_लेखः(0, textbuf, AUE_openssh);
+		भङ्ग;
 
-	case SSH_CONNECTION_CLOSE:
+	पक्ष SSH_CONNECTION_CLOSE:
 		/*
 		 * We can also get a close event if the user attempted auth
 		 * but never succeeded.
 		 */
-		if (logged_in) {
-			snprintf(textbuf, sizeof(textbuf),
+		यदि (logged_अन्तर्) {
+			snprintf(textbuf, परिमाण(textbuf),
 			    gettext("sshd logout %s"), the_authctxt->user);
-			bsm_audit_record(0, textbuf, AUE_logout);
-		} else {
+			bsm_audit_लेखः(0, textbuf, AUE_logout);
+		} अन्यथा {
 			debug("%s: connection closed without authentication",
 			    __func__);
 		}
-		break;
+		भङ्ग;
 
-	case SSH_NOLOGIN:
-		bsm_audit_record(1,
+	पक्ष SSH_NOLOGIN:
+		bsm_audit_लेखः(1,
 		    gettext("logins disabled by /etc/nologin"), AUE_openssh);
-		break;
+		भङ्ग;
 
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-		snprintf(textbuf, sizeof(textbuf),
+	पक्ष SSH_LOGIN_EXCEED_MAXTRIES:
+		snprintf(textbuf, परिमाण(textbuf),
 		    gettext("too many tries for user %s"), the_authctxt->user);
-		bsm_audit_record(1, textbuf, AUE_openssh);
-		break;
+		bsm_audit_लेखः(1, textbuf, AUE_openssh);
+		भङ्ग;
 
-	case SSH_LOGIN_ROOT_DENIED:
-		bsm_audit_record(2, gettext("not_console"), AUE_openssh);
-		break;
+	पक्ष SSH_LOGIN_मूलम्_DENIED:
+		bsm_audit_लेखः(2, gettext("not_console"), AUE_openssh);
+		भङ्ग;
 
-	case SSH_AUTH_FAIL_PASSWD:
+	पक्ष SSH_AUTH_FAIL_PASSWD:
 		bsm_audit_bad_login("password");
-		break;
+		भङ्ग;
 
-	case SSH_AUTH_FAIL_KBDINT:
+	पक्ष SSH_AUTH_FAIL_KBDINT:
 		bsm_audit_bad_login("interactive password entry");
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		debug_f("unhandled event %d", event);
 	}
 }
-#endif /* BSM */
+#यदि_अन्तः /* BSM */

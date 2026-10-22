@@ -25,79 +25,79 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypt/arc4random.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/time.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/time.h>
 
-#ifndef HAVE_ARC4RANDOM
+#यदि_अपरिभाषितम् HAVE_ARC4RANDOM
 
 /*
  * Always use the getentropy implementation from bsd-getentropy.c, which
  * will call a native getentropy if available then fall back as required.
  * We use a different name so that OpenSSL cannot call the wrong getentropy.
  */
-int _ssh_compat_getentropy(void *, size_t);
-#ifdef getentropy
+पूर्णाङ्क _ssh_compat_getentropy(शून्य *, आकार_t);
+#यदि_परिभाषितम् getentropy
 # undef getentropy
-#endif
-#define getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
+#यदि_अन्तः
+#परिभाषय getentropy(x, y) (_ssh_compat_getentropy((x), (y)))
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-#define KEYSTREAM_ONLY
-#include "chacha_private.h"
+#परिभाषय KEYSTREAM_ONLY
+#अन्तर्भाव "chacha_private.h"
 
-#define minimum(a, b) ((a) < (b) ? (a) : (b))
+#परिभाषय minimum(a, b) ((a) < (b) ? (a) : (b))
 
-#if defined(__GNUC__) || defined(_MSC_VER)
-#define inline __inline
-#else				/* __GNUC__ || _MSC_VER */
-#define inline
-#endif				/* !__GNUC__ && !_MSC_VER */
+#यदि defined(__GNUC__) || defined(_MSC_VER)
+#परिभाषय अन्तःस्थ __inline
+#अन्यथा				/* __GNUC__ || _MSC_VER */
+#परिभाषय अन्तःस्थ
+#यदि_अन्तः				/* !__GNUC__ && !_MSC_VER */
 
-#define KEYSZ	32
-#define IVSZ	8
-#define BLOCKSZ	64
-#define RSBUFSZ	(16*BLOCKSZ)
+#परिभाषय KEYSZ	32
+#परिभाषय IVSZ	8
+#परिभाषय BLOCKSZ	64
+#परिभाषय RSBUFSZ	(16*BLOCKSZ)
 
-#define REKEY_BASE	(1024*1024) /* NB. should be a power of 2 */
+#परिभाषय REKEY_आधारः	(1024*1024) /* NB. should be a power of 2 */
 
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
-static struct _rs {
-	size_t		rs_have;	/* valid bytes at end of rs_buf */
-	size_t		rs_count;	/* bytes till reseed */
+स्थिर संरचना _rs {
+	आकार_t		rs_have;	/* valid bytes at end of rs_buf */
+	आकार_t		rs_गणनम्;	/* bytes till reseed */
 } *rs;
 
 /* Maybe be preserved in fork children, if _rs_allocate() decides. */
-static struct _rsx {
+स्थिर संरचना _rsx {
 	chacha_ctx	rs_chacha;	/* chacha context for random keystream */
 	u_char		rs_buf[RSBUFSZ];	/* keystream blocks */
 } *rsx;
 
-static inline int _rs_allocate(struct _rs **, struct _rsx **);
-static inline void _rs_forkdetect(void);
-#include "arc4random.h"
+स्थिर अन्तःस्थ पूर्णाङ्क _rs_allocate(संरचना _rs **, संरचना _rsx **);
+स्थिर अन्तःस्थ शून्य _rs_forkdetect(शून्य);
+#अन्तर्भाव "arc4random.h"
 
-static inline void _rs_rekey(u_char *dat, size_t datlen);
+स्थिर अन्तःस्थ शून्य _rs_rekey(u_char *dat, आकार_t datlen);
 
-static inline void
-_rs_init(u_char *buf, size_t n)
+स्थिर अन्तःस्थ शून्य
+_rs_init(u_char *buf, आकार_t n)
 {
-	if (n < KEYSZ + IVSZ)
-		return;
+	यदि (n < KEYSZ + IVSZ)
+		प्रत्यागम;
 
-	if (rs == NULL) {
-		if (_rs_allocate(&rs, &rsx) == -1)
+	यदि (rs == रिक्त) {
+		यदि (_rs_allocate(&rs, &rsx) == -1)
 			_exit(1);
 	}
 
@@ -105,113 +105,113 @@ _rs_init(u_char *buf, size_t n)
 	chacha_ivsetup(&rsx->rs_chacha, buf + KEYSZ);
 }
 
-static void
-_rs_stir(void)
+स्थिर शून्य
+_rs_stir(शून्य)
 {
 	u_char rnd[KEYSZ + IVSZ];
 	uint32_t rekey_fuzz = 0;
 
-	if (getentropy(rnd, sizeof rnd) == -1)
+	यदि (getentropy(rnd, परिमाण rnd) == -1)
 		_getentropy_fail();
 
-	if (!rs)
-		_rs_init(rnd, sizeof(rnd));
-	else
-		_rs_rekey(rnd, sizeof(rnd));
-	explicit_bzero(rnd, sizeof(rnd));	/* discard source seed */
+	यदि (!rs)
+		_rs_init(rnd, परिमाण(rnd));
+	अन्यथा
+		_rs_rekey(rnd, परिमाण(rnd));
+	explicit_bzero(rnd, परिमाण(rnd));	/* discard source seed */
 
 	/* invalidate rs_buf */
 	rs->rs_have = 0;
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
+	स्मृतिं_पूरय(rsx->rs_buf, 0, परिमाण(rsx->rs_buf));
 
 	/* rekey interval should not be predictable */
-	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
-	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
-	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
+	chacha_encrypt_अष्टकानि(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
+	    (uint8_t *)&rekey_fuzz, परिमाण(rekey_fuzz));
+	rs->rs_गणनम् = REKEY_आधारः + (rekey_fuzz % REKEY_आधारः);
 }
 
-static inline void
-_rs_stir_if_needed(size_t len)
+स्थिर अन्तःस्थ शून्य
+_rs_stir_if_needed(आकार_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	यदि (!rs || rs->rs_गणनम् <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
-		rs->rs_count = 0;
-	else
-		rs->rs_count -= len;
+	यदि (rs->rs_गणनम् <= len)
+		rs->rs_गणनम् = 0;
+	अन्यथा
+		rs->rs_गणनम् -= len;
 }
 
-static inline void
-_rs_rekey(u_char *dat, size_t datlen)
+स्थिर अन्तःस्थ शून्य
+_rs_rekey(u_char *dat, आकार_t datlen)
 {
-#ifndef KEYSTREAM_ONLY
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
-#endif
+#यदि_अपरिभाषितम् KEYSTREAM_ONLY
+	स्मृतिं_पूरय(rsx->rs_buf, 0, परिमाण(rsx->rs_buf));
+#यदि_अन्तः
 	/* fill rs_buf with the keystream */
-	chacha_encrypt_bytes(&rsx->rs_chacha, rsx->rs_buf,
-	    rsx->rs_buf, sizeof(rsx->rs_buf));
+	chacha_encrypt_अष्टकानि(&rsx->rs_chacha, rsx->rs_buf,
+	    rsx->rs_buf, परिमाण(rsx->rs_buf));
 	/* mix in optional user provided data */
-	if (dat) {
-		size_t i, m;
+	यदि (dat) {
+		आकार_t i, m;
 
 		m = minimum(datlen, KEYSZ + IVSZ);
-		for (i = 0; i < m; i++)
+		प्रति (i = 0; i < m; i++)
 			rsx->rs_buf[i] ^= dat[i];
 	}
 	/* immediately reinit for backtracking resistance */
 	_rs_init(rsx->rs_buf, KEYSZ + IVSZ);
-	memset(rsx->rs_buf, 0, KEYSZ + IVSZ);
-	rs->rs_have = sizeof(rsx->rs_buf) - KEYSZ - IVSZ;
+	स्मृतिं_पूरय(rsx->rs_buf, 0, KEYSZ + IVSZ);
+	rs->rs_have = परिमाण(rsx->rs_buf) - KEYSZ - IVSZ;
 }
 
-static inline void
-_rs_random_buf(void *_buf, size_t n)
+स्थिर अन्तःस्थ शून्य
+_rs_random_buf(शून्य *_buf, आकार_t n)
 {
 	u_char *buf = (u_char *)_buf;
 	u_char *keystream;
-	size_t m;
+	आकार_t m;
 
 	_rs_stir_if_needed(n);
-	while (n > 0) {
-		if (rs->rs_have > 0) {
+	यावत् (n > 0) {
+		यदि (rs->rs_have > 0) {
 			m = minimum(n, rs->rs_have);
-			keystream = rsx->rs_buf + sizeof(rsx->rs_buf)
+			keystream = rsx->rs_buf + परिमाण(rsx->rs_buf)
 			    - rs->rs_have;
-			memcpy(buf, keystream, m);
-			memset(keystream, 0, m);
+			स्मृतिं_प्रतिलिख(buf, keystream, m);
+			स्मृतिं_पूरय(keystream, 0, m);
 			buf += m;
 			n -= m;
 			rs->rs_have -= m;
 		}
-		if (rs->rs_have == 0)
-			_rs_rekey(NULL, 0);
+		यदि (rs->rs_have == 0)
+			_rs_rekey(रिक्त, 0);
 	}
 }
 
-static inline void
+स्थिर अन्तःस्थ शून्य
 _rs_random_u32(uint32_t *val)
 {
 	u_char *keystream;
 
-	_rs_stir_if_needed(sizeof(*val));
-	if (rs->rs_have < sizeof(*val))
-		_rs_rekey(NULL, 0);
-	keystream = rsx->rs_buf + sizeof(rsx->rs_buf) - rs->rs_have;
-	memcpy(val, keystream, sizeof(*val));
-	memset(keystream, 0, sizeof(*val));
-	rs->rs_have -= sizeof(*val);
+	_rs_stir_if_needed(परिमाण(*val));
+	यदि (rs->rs_have < परिमाण(*val))
+		_rs_rekey(रिक्त, 0);
+	keystream = rsx->rs_buf + परिमाण(rsx->rs_buf) - rs->rs_have;
+	स्मृतिं_प्रतिलिख(val, keystream, परिमाण(*val));
+	स्मृतिं_पूरय(keystream, 0, परिमाण(*val));
+	rs->rs_have -= परिमाण(*val);
 }
 
 uint32_t
-arc4random(void)
+arc4random(शून्य)
 {
 	uint32_t val;
 
-	_ARC4_LOCK();
+	ARC4_तालकम्();
 	_rs_random_u32(&val);
 	_ARC4_UNLOCK();
-	return val;
+	प्रत्यागम val;
 }
 DEF_WEAK(arc4random);
 
@@ -220,33 +220,33 @@ DEF_WEAK(arc4random);
  * arc4random_buf().
  */
 # ifndef HAVE_ARC4RANDOM_BUF
-void
-arc4random_buf(void *buf, size_t n)
+शून्य
+arc4random_buf(शून्य *buf, आकार_t n)
 {
-	_ARC4_LOCK();
+	ARC4_तालकम्();
 	_rs_random_buf(buf, n);
 	_ARC4_UNLOCK();
 }
 DEF_WEAK(arc4random_buf);
 # endif /* !HAVE_ARC4RANDOM_BUF */
-#endif /* !HAVE_ARC4RANDOM */
+#यदि_अन्तः /* !HAVE_ARC4RANDOM */
 
 /* arc4random_buf() that uses platform arc4random() */
-#if !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
-void
-arc4random_buf(void *_buf, size_t n)
+#यदि !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
+शून्य
+arc4random_buf(शून्य *_buf, आकार_t n)
 {
-	size_t i;
+	आकार_t i;
 	u_int32_t r = 0;
-	char *buf = (char *)_buf;
+	वर्ण *buf = (वर्ण *)_buf;
 
-	for (i = 0; i < n; i++) {
-		if (i % 4 == 0)
+	प्रति (i = 0; i < n; i++) {
+		यदि (i % 4 == 0)
 			r = arc4random();
 		buf[i] = r & 0xff;
 		r >>= 8;
 	}
-	explicit_bzero(&r, sizeof(r));
+	explicit_bzero(&r, परिमाण(r));
 }
-#endif /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
+#यदि_अन्तः /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
 

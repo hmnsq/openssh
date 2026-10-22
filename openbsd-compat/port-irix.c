@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#यदि defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#ifdef WITH_IRIX_PROJECT
+#यदि_परिभाषितम् WITH_IRIX_PROJECT
 # include <proj.h>
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_JOBS
+#यदि_अन्तः /* WITH_IRIX_PROJECT */
+#यदि_परिभाषितम् WITH_IRIX_JOBS
 # include <sys/resource.h>
-#endif
-#ifdef WITH_IRIX_AUDIT
+#यदि_अन्तः
+#यदि_परिभाषितम् WITH_IRIX_AUDIT
 # include <sat.h>
-#endif /* WITH_IRIX_AUDIT */
+#यदि_अन्तः /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+शून्य
+irix_setusercontext(संरचना passwd *pw)
 {
-#ifdef WITH_IRIX_PROJECT
+#यदि_परिभाषितम् WITH_IRIX_PROJECT
 	prid_t projid;
-#endif
-#ifdef WITH_IRIX_JOBS
+#यदि_अन्तः
+#यदि_परिभाषितम् WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
-#endif
+#नोचेद्यदि defined(WITH_IRIX_ARRAY)
+	पूर्णाङ्क jid = 0;
+#यदि_अन्तः
 
-#ifdef WITH_IRIX_JOBS
+#यदि_परिभाषितम् WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	यदि (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_JOBS */
-#ifdef WITH_IRIX_ARRAY
+#यदि_अन्तः /* WITH_IRIX_JOBS */
+#यदि_परिभाषितम् WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	यदि (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_ARRAY */
-#ifdef WITH_IRIX_PROJECT
+#यदि_अन्तः /* WITH_IRIX_ARRAY */
+#यदि_परिभाषितम् WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	यदि ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	यदि (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+		    (पूर्णाङ्क)projid, pw->pw_name, strerror(errno));
+#यदि_अन्तः /* WITH_IRIX_PROJECT */
+#यदि_परिभाषितम् WITH_IRIX_AUDIT
+	यदि (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (पूर्णाङ्क) pw->pw_uid);
+		यदि (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
-#endif /* WITH_IRIX_AUDIT */
+#यदि_अन्तः /* WITH_IRIX_AUDIT */
 }
 
 
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#यदि_अन्तः /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */

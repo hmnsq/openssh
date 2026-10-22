@@ -27,62 +27,62 @@
  * binary mode on Windows systems.
  */
 
-#define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
-#include "includes.h"
+#परिभाषय NO_द्विमान_OPEN	/* Avoid redefining open to binary_open for this file */
+#अन्तर्भाव "includes.h"
 
-#ifdef HAVE_CYGWIN
+#यदि_परिभाषितम् HAVE_CYGWIN
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <wctype.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <wchar.h>
+#अन्तर्भाव <wctype.h>
 
-#include "xmalloc.h"
+#अन्तर्भाव "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+पूर्णाङ्क
+द्विमान_open(ध्रुव वर्ण *filename, पूर्णाङ्क flags, ...)
 {
 	va_list ap;
-	mode_t mode;
+	बहुलकम्_t बहुलकम्;
 
 	va_start(ap, flags);
-	mode = va_arg(ap, mode_t);
+	बहुलकम् = va_arg(ap, बहुलकम्_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	प्रत्यागम (उद्घाटय(filename, flags | O_द्विमान, बहुलकम्));
 }
 
-int
-check_ntsec(const char *filename)
+पूर्णाङ्क
+check_ntsec(ध्रुव वर्ण *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	प्रत्यागम (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+ध्रुव वर्ण *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  स्थिर वर्ण cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  यदि (!cyg_privsep_user[0])
     {
-#ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
-#endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+#यदि_परिभाषितम् CW_CYGNAME_FROM_WINNAME
+      यदि (cygwin_आन्तरिकम् (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   परिमाण cyg_privsep_user) != 0)
+#यदि_अन्तः
+	strlcpy(cyg_privsep_user, "sshd", परिमाण(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  प्रत्यागम cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#परिभाषय NL(x) x, (परिमाण (x) - 1)
+#परिभाषय WENV_SIZ (परिमाण (wenv_arr) / परिमाण (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
-	size_t namelen;
+स्थिर संरचना wenv {
+	ध्रुव वर्ण *name;
+	आकार_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
 	{ NL("COMPUTERNAME=") },
@@ -97,27 +97,27 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
-fetch_windows_environment(void)
+वर्ण **
+fetch_windows_environment(शून्य)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	वर्ण **e, **p;
+	अचिह्नित पूर्णाङ्क i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, परिमाण(वर्ण *));
+	प्रति (e = environ; *e != रिक्त; ++e) {
+		प्रति (i = 0; i < WENV_SIZ; ++i) {
+			यदि (!वाक्ये_तुलय(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
-	p[idx] = NULL;
-	return p;
+	p[idx] = रिक्त;
+	प्रत्यागम p;
 }
 
-void
-free_windows_environment(char **p)
+शून्य
+free_windows_environment(वर्ण **p)
 {
-	free(p);
+	मुक्त(p);
 }
 
 /*
@@ -128,86 +128,86 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
-__match_pattern (const wchar_t *s, const wchar_t *pattern)
+स्थिर पूर्णाङ्क
+__match_pattern (ध्रुव wchar_t *s, ध्रुव wchar_t *आदर्शः)
 {
-	for (;;) {
+	प्रति (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		यदि (!*आदर्शः)
+			प्रत्यागम !*s;
 
-		if (*pattern == '*') {
+		यदि (*आदर्शः == '*') {
 			/* Skip the asterisk. */
-			pattern++;
+			आदर्शः++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			यदि (!*आदर्शः)
+				प्रत्यागम 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			यदि (*आदर्शः != '?' && *आदर्शः != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
-					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+				प्रति (; *s; s++)
+					यदि (*s == *आदर्शः &&
+					    __match_pattern(s + 1, आदर्शः + 1))
+						प्रत्यागम 1;
 				/* Failed. */
-				return 0;
+				प्रत्यागम 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			प्रति (; *s; s++)
+				यदि (__match_pattern(s, आदर्शः))
+					प्रत्यागम 1;
 			/* Failed. */
-			return 0;
+			प्रत्यागम 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		यदि (!*s)
+			प्रत्यागम 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		यदि (*आदर्शः != '?' && towlower(*आदर्शः) != towlower(*s))
+			प्रत्यागम 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
-		pattern++;
+		आदर्शः++;
 	}
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+स्थिर पूर्णाङ्क
+मेलनम्_आदर्शः_2(ध्रुव वर्ण *s, ध्रुव वर्ण *आदर्शः)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
-	size_t len;
-	int ret;
+	आकार_t len;
+	पूर्णाङ्क ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	यदि ((len = mbstowcs(रिक्त, s, 0)) == (आकार_t) -1)
+		प्रत्यागम 0;
+	ws = (wchar_t *) xcalloc(len + 1, परिमाण (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
-		free(ws);
-		return 0;
+	यदि ((len = mbstowcs(रिक्त, आदर्शः, 0)) == (आकार_t) -1) {
+		मुक्त(ws);
+		प्रत्यागम 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
-	mbstowcs(wpattern, pattern, len + 1);
+	wpattern = (wchar_t *) xcalloc(len + 1, परिमाण (wchar_t));
+	mbstowcs(wpattern, आदर्शः, len + 1);
 	ret = __match_pattern (ws, wpattern);
-	free(ws);
-	free(wpattern);
-	return ret;
+	मुक्त(ws);
+	मुक्त(wpattern);
+	प्रत्यागम ret;
 }
 
 /*
@@ -216,48 +216,48 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+पूर्णाङ्क
+cygwin_ug_मेलनम्_आदर्शः_list(ध्रुव वर्ण *string, ध्रुव वर्ण *आदर्शः)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	size_t i, subi, len = strlen(pattern);
+	वर्ण sub[1024];
+	पूर्णाङ्क negated;
+	पूर्णाङ्क got_धनात्मकम्;
+	आकार_t i, subi, len = वाक्यदैर्घ्यम्(आदर्शः);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_धनात्मकम् = 0;
+	प्रति (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		यदि (आदर्शः[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} अन्यथा
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		प्रति (subi = 0;
+		    i < len && subi < परिमाण(sub) - 1 && आदर्शः[i] != ',';
 		    subi++, i++)
-			sub[subi] = pattern[i];
+			sub[subi] = आदर्शः[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		यदि (subi >= परिमाण(sub) - 1)
+			प्रत्यागम 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		यदि (i < len && आदर्शः[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		यदि (मेलनम्_आदर्शः_2(string, sub)) {
+			यदि (negated)
+				प्रत्यागम -1;		/* Negative */
+			अन्यथा
+				got_धनात्मकम् = 1;	/*धनात्मकम्*/
 		}
 	}
 
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	प्रत्यागम got_धनात्मकम्;
 }
 
-#endif /* HAVE_CYGWIN */
+#यदि_अन्तः /* HAVE_CYGWIN */

@@ -5,58 +5,58 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
-#endif
+#यदि_परिभाषितम् WITH_OPENSSL
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/ec.h>
+#अन्तर्भाव <openssl/rsa.h>
+#अन्तर्भाव <openssl/objects.h>
+#यदि_अन्तः
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "authfile.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "sshbuf.h"
 
-#include "common.h"
+#अन्तर्भाव "common.h"
 
-void sshkey_fuzz_tests(void);
+शून्य sshkey_fuzz_tests(शून्य);
 
-static void
-onerror(void *fuzz)
+स्थिर शून्य
+onerror(शून्य *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((संरचना fuzz *)fuzz);
 }
 
-static void
-public_fuzz(struct sshkey *k)
+स्थिर शून्य
+लौकिकम्_fuzz(संरचना sshkey *k)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf;
-	struct fuzz *fuzz;
+	संरचना sshkey *k1;
+	संरचना sshbuf *buf;
+	संरचना fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
-	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
+	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_अन्तः;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	यदि (test_is_fast() || sshkey_type_plain(k->type) == कुञ्चिका_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	यदि (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP | FUZZ_2_BYTE_FLIP;
 
-	ASSERT_PTR_NE(buf = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(buf = sshbuf_new(), रिक्त);
 	ASSERT_INT_EQ(sshkey_putb(k, buf), 0);
 	fuzz = fuzz_begin(fuzzers, sshbuf_mutable_ptr(buf), sshbuf_len(buf));
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(buf), sshbuf_len(buf),
@@ -64,304 +64,304 @@ public_fuzz(struct sshkey *k)
 	sshkey_free(k1);
 	sshbuf_free(buf);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
-		if (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
+	प्रति(; !fuzz_समाप्तम्(fuzz); fuzz_अग्र(fuzz)) {
+		यदि (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
 			sshkey_free(k1);
 	}
 	fuzz_cleanup(fuzz);
 }
 
-static void
-sig_fuzz(struct sshkey *k, const char *sig_alg)
+स्थिर शून्य
+sig_fuzz(संरचना sshkey *k, ध्रुव वर्ण *sig_alg)
 {
-	struct fuzz *fuzz;
+	संरचना fuzz *fuzz;
 	u_char *sig, c[] = "some junk to be signed";
-	size_t l;
+	आकार_t l;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
-	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
+	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_अन्तः;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	यदि (test_is_fast() || sshkey_type_plain(k->type) == कुञ्चिका_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_2_BYTE_FLIP;
-	if (test_is_slow())
+	यदि (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP;
 
-	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, sizeof(c),
-	    sig_alg, NULL, NULL, 0), 0);
-	ASSERT_SIZE_T_GT(l, 0);
+	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, परिमाण(c),
+	    sig_alg, रिक्त, रिक्त, 0), 0);
+	ASSERT_आकार_T_GT(l, 0);
 	fuzz = fuzz_begin(fuzzers, sig, l);
-	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, sizeof(c), NULL, 0, NULL), 0);
-	free(sig);
+	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, परिमाण(c), रिक्त, 0, रिक्त), 0);
+	मुक्त(sig);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	प्रति(; !fuzz_समाप्तम्(fuzz); fuzz_अग्र(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
-			continue;
+		यदि (fuzz_matches_original(fuzz))
+			अनुवर्त;
 		ASSERT_INT_NE(sshkey_verify(k, fuzz_ptr(fuzz), fuzz_len(fuzz),
-		    c, sizeof(c), NULL, 0, NULL), 0);
+		    c, परिमाण(c), रिक्त, 0, रिक्त), 0);
 	}
 	fuzz_cleanup(fuzz);
 }
 
-#define NUM_FAST_BASE64_TESTS	1024
+#परिभाषय अङ्कः_FAST_BASE64_TESTS	1024
 
-void
-sshkey_fuzz_tests(void)
+शून्य
+sshkey_fuzz_tests(शून्य)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf, *fuzzed;
-	struct fuzz *fuzz;
-	int r, i;
+	संरचना sshkey *k1;
+	संरचना sshbuf *buf, *fuzzed;
+	संरचना fuzz *fuzz;
+	पूर्णाङ्क r, i;
 
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 	TEST_START("fuzz RSA private");
-	buf = load_file("rsa_1");
+	buf = आरोपय_file("rsa_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz RSA new-format private");
-	buf = load_file("rsa_n");
+	buf = आरोपय_file("rsa_n");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 
 	TEST_START("fuzz ECDSA private");
-	buf = load_file("ecdsa_1");
+	buf = आरोपय_file("ecdsa_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz ECDSA new-format private");
-	buf = load_file("ecdsa_n");
+	buf = आरोपय_file("ecdsa_n");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	TEST_समाप्तम्();
+#यदि_अन्तः /* WITH_OPENSSL */
 
 	TEST_START("fuzz Ed25519 private");
-	buf = load_file("ed25519_1");
+	buf = आरोपय_file("ed25519_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	/* MLDSA44-ED25519 are large and slow to fuzz */
 	TEST_START("fuzz MLDSA44-ED25519 private");
-	buf = load_file("mldsa44_ed25519_1");
+	buf = आरोपय_file("mldsa44_ed25519_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), रिक्त);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	प्रति(i = 0; !fuzz_समाप्तम्(fuzz); i++, fuzz_अग्र(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		यदि (sshkey_parse_वैयक्तिकम्_fileblob(fuzzed, "", &k1, रिक्त) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (test_is_fast() && i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 		/* MLDSA44_ED25519 keys are large and slow to fuzz */
-		if (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
-			break;
+		यदि (!test_is_slow() || i >= अङ्कः_FAST_BASE64_TESTS)
+			भङ्ग;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 	TEST_START("fuzz RSA public");
-	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("rsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	public_fuzz(k1);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz RSA cert");
-	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("rsa_1"), &k1), 0);
-	public_fuzz(k1);
+	ASSERT_INT_EQ(sshkey_आरोपय_cert(test_दत्त_file("rsa_1"), &k1), 0);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 
 	TEST_START("fuzz ECDSA public");
-	buf = load_file("ecdsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("ecdsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	public_fuzz(k1);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz ECDSA cert");
-	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ecdsa_1"), &k1), 0);
-	public_fuzz(k1);
+	ASSERT_INT_EQ(sshkey_आरोपय_cert(test_दत्त_file("ecdsa_1"), &k1), 0);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	TEST_समाप्तम्();
+#यदि_अन्तः /* WITH_OPENSSL */
 
 	TEST_START("fuzz Ed25519 public");
-	buf = load_file("ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("ed25519_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	public_fuzz(k1);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz Ed25519 cert");
-	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ed25519_1"), &k1), 0);
-	public_fuzz(k1);
+	ASSERT_INT_EQ(sshkey_आरोपय_cert(test_दत्त_file("ed25519_1"), &k1), 0);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz MLDSA44-ED25519 public");
-	buf = load_file("mldsa44_ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("mldsa44_ed25519_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	public_fuzz(k1);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz MLDSA44-ED25519 cert");
-	ASSERT_INT_EQ(sshkey_load_cert(
-	    test_data_file("mldsa44_ed25519_1"), &k1), 0);
-	public_fuzz(k1);
+	ASSERT_INT_EQ(sshkey_आरोपय_cert(
+	    test_दत्त_file("mldsa44_ed25519_1"), &k1), 0);
+	लौकिकम्_fuzz(k1);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 	TEST_START("fuzz RSA sig");
-	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("rsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "ssh-rsa");
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz RSA SHA256 sig");
-	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("rsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "rsa-sha2-256");
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz RSA SHA512 sig");
-	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("rsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "rsa-sha2-512");
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 
 	TEST_START("fuzz ECDSA sig");
-	buf = load_file("ecdsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("ecdsa_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, रिक्त);
 	sshkey_free(k1);
-	TEST_DONE();
-#endif /* WITH_OPENSSL */
+	TEST_समाप्तम्();
+#यदि_अन्तः /* WITH_OPENSSL */
 
 	TEST_START("fuzz Ed25519 sig");
-	buf = load_file("ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("ed25519_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, रिक्त);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 	TEST_START("fuzz MLDSA44-ED25519 sig");
-	buf = load_file("mldsa44_ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	buf = आरोपय_file("mldsa44_ed25519_1");
+	ASSERT_INT_EQ(sshkey_parse_वैयक्तिकम्_fileblob(buf, "", &k1, रिक्त), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, रिक्त);
 	sshkey_free(k1);
-	TEST_DONE();
+	TEST_समाप्तम्();
 
 /* XXX fuzz decoded new-format blobs too */
 /* XXX fuzz XMSS too */

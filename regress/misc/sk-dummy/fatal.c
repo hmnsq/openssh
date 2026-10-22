@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <unistd.h>
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+शून्य
+sshlogv(ध्रुव वर्ण *file, ध्रुव वर्ण *func, पूर्णाङ्क पङ्क्तिः, पूर्णाङ्क showfunc,
+    LogLevel level, ध्रुव वर्ण *suffix, ध्रुव वर्ण *fmt, va_list तर्काः)
 {
-	if (showfunc)
+	यदि (showfunc)
 		fprintf(stderr, "%s: ", func);
-	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	vfprintf(stderr, fmt, तर्काः);
+	यदि (suffix != रिक्त)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+शून्य
+sshlog(ध्रुव वर्ण *file, ध्रुव वर्ण *func, पूर्णाङ्क पङ्क्तिः, पूर्णाङ्क showfunc,
+    LogLevel level, ध्रुव वर्ण *suffix, ध्रुव वर्ण *fmt, ...)
 {
-	va_list args;
+	va_list तर्काः;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(तर्काः, fmt);
+	sshlogv(file, func, पङ्क्तिः, showfunc, level, suffix, fmt, तर्काः);
+	va_end(तर्काः);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+शून्य
+sshfatal(ध्रुव वर्ण *file, ध्रुव वर्ण *func, पूर्णाङ्क पङ्क्तिः, पूर्णाङ्क showfunc,
+    LogLevel level, ध्रुव वर्ण *suffix, ध्रुव वर्ण *fmt, ...)
 {
-	va_list args;
+	va_list तर्काः;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(तर्काः, fmt);
+	sshlogv(file, func, पङ्क्तिः, showfunc, level, suffix, fmt, तर्काः);
+	va_end(तर्काः);
 	_exit(1);
 }

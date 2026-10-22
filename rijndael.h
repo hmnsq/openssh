@@ -25,31 +25,31 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _PRIVATE_RIJNDAEL_H
-#define _PRIVATE_RIJNDAEL_H
+#यदि_अपरिभाषितम् वैयक्तिकम्_RIJNDAEL_H
+#परिभाषय वैयक्तिकम्_RIJNDAEL_H
 
-#define AES_MAXKEYBITS	(256)
-#define AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
+#परिभाषय AES_MAXKEYBITS	(256)
+#परिभाषय AES_MAXKEYBYTES	(AES_MAXKEYBITS/8)
 /* for 256-bit keys, fewer for less */
-#define AES_MAXROUNDS	14
+#परिभाषय AES_MAXROUNDS	14
 
-typedef unsigned char	u8;
-typedef unsigned short	u16;
-typedef unsigned int	u32;
+प्रकारनिर्देश अचिह्नित वर्ण	u8;
+प्रकारनिर्देश अचिह्नित ह्रस्व	u16;
+प्रकारनिर्देश अचिह्नित पूर्णाङ्क	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+पूर्णाङ्क	rijndael_कुञ्चिका_सज्जता_Enc(अचिह्नित पूर्णाङ्क [], ध्रुव अचिह्नित वर्ण [], पूर्णाङ्क);
+शून्य	rijndaelEncrypt(ध्रुव अचिह्नित पूर्णाङ्क [], पूर्णाङ्क, ध्रुव u8 [16], u8 [16]);
 
 /*  The structure for key information */
-typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+प्रकारनिर्देश संरचना {
+	पूर्णाङ्क	decrypt;
+	पूर्णाङ्क	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
-void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
-void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
+शून्य	 rijndael_समुच्चयः_कुञ्चिका(rijndael_ctx *, u_char *, पूर्णाङ्क, पूर्णाङ्क);
+शून्य	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
+शून्य	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 
-#endif /* _PRIVATE_RIJNDAEL_H */
+#यदि_अन्तः /* _PRIVATE_RIJNDAEL_H */

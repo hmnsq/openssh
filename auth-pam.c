@@ -47,217 +47,217 @@
 
 /* Based on FreeBSD: src/crypto/openssh/auth2-pam-freebsd.c,v 1.11 2003/03/31 13:48:18 des */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/wait.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
-#include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
-#include <pam/pam_appl.h>
-#endif
+#यदि_परिभाषितम् USE_PAM
+#यदि defined(HAVE_SECURITY_PAM_APPL_H)
+#अन्तर्भाव <security/pam_appl.h>
+#नोचेद्यदि defined (HAVE_PAM_PAM_APPL_H)
+#अन्तर्भाव <pam/pam_appl.h>
+#यदि_अन्तः
 
 /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
-#ifdef PAM_SUN_CODEBASE
+#यदि_परिभाषितम् PAM_SUN_CODEBASE
 # define sshpam_const		/* Solaris, HP-UX, SunOS */
-#else
-# define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
-#endif
+#अन्यथा
+# define sshpam_const	ध्रुव	/* LinuxPAM, OpenPAM, AIX */
+#यदि_अन्तः
 
 /* Ambiguity in spec: is it an array of pointers or a pointer to an array? */
-#ifdef PAM_SUN_CODEBASE
-# define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
-#else
-# define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
-#endif
+#यदि_परिभाषितम् PAM_SUN_CODEBASE
+# define PAM_सन्देशः_MEMBER(सन्देशः, n, member) ((*(सन्देशः))[(n)].member)
+#अन्यथा
+# define PAM_सन्देशः_MEMBER(सन्देशः, n, member) ((सन्देशः)[(n)]->member)
+#यदि_अन्तः
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-pam.h"
-#include "canohost.h"
-#include "log.h"
-#include "msg.h"
-#include "packet.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "auth-options.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "srclimit.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "auth-pam.h"
+#अन्तर्भाव "canohost.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "msg.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "ssh2.h"
+#अन्तर्भाव "auth-options.h"
+#यदि_परिभाषितम् GSSAPI
+#अन्तर्भाव "ssh-gss.h"
+#यदि_अन्तः
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "srclimit.h"
 
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
-extern u_int utmp_len;
+बाह्य ServerOptions options;
+बाह्य संरचना sshbuf *loginmsg;
+बाह्य u_int utmp_len;
 
 /* so we don't silently change behaviour */
-#ifdef USE_POSIX_THREADS
+#यदि_परिभाषितम् USE_POSIX_तन्तवः
 # error "USE_POSIX_THREADS replaced by UNSUPPORTED_POSIX_THREADS_HACK"
-#endif
+#यदि_अन्तः
 
 /*
  * Formerly known as USE_POSIX_THREADS, using this is completely unsupported
  * and generally a bad idea.  Use at own risk and do not expect support if
  * this breaks.
  */
-#ifdef UNSUPPORTED_POSIX_THREADS_HACK
-#include <pthread.h>
+#यदि_परिभाषितम् UNSUPPORTED_POSIX_तन्तवः_HACK
+#अन्तर्भाव <pthread.h>
 /*
  * Avoid namespace clash when *not* using pthreads for systems *with*
  * pthreads, which unconditionally define pthread_t via sys/types.h
  * (e.g. Linux)
  */
-typedef pthread_t sp_pthread_t;
-#else
-typedef pid_t sp_pthread_t;
-#define pthread_exit	fake_pthread_exit
-#define pthread_create	fake_pthread_create
-#define pthread_cancel	fake_pthread_cancel
-#define pthread_join	fake_pthread_join
-#endif
+प्रकारनिर्देश pthread_t sp_pthread_t;
+#अन्यथा
+प्रकारनिर्देश pid_t sp_pthread_t;
+#परिभाषय pthread_exit	fake_pthread_exit
+#परिभाषय pthread_create	fake_pthread_create
+#परिभाषय pthread_cancel	fake_pthread_cancel
+#परिभाषय pthread_join	fake_pthread_join
+#यदि_अन्तः
 
-typedef int SshPamDone;
-#define SshPamError -1
-#define SshPamNone 0
-#define SshPamAuthenticated 1
-#define SshPamAgain 2
+प्रकारनिर्देश पूर्णाङ्क Ssh_Pam_समाप्तम्;
+#परिभाषय SshPamError -1
+#परिभाषय SshPamNone 0
+#परिभाषय SshPamAuthenticated 1
+#परिभाषय SshPamAgain 2
 
-struct pam_ctxt {
+संरचना pam_ctxt {
 	sp_pthread_t	 pam_thread;
-	int		 pam_psock;
-	int		 pam_csock;
-	SshPamDone	 pam_done;
+	पूर्णाङ्क		 pam_psock;
+	पूर्णाङ्क		 pam_csock;
+	Ssh_Pam_समाप्तम्	 pam_समाप्तम्;
 };
 
-static void sshpam_free_ctx(void *);
-static struct pam_ctxt *cleanup_ctxt;
+स्थिर शून्य sshpam_free_ctx(शून्य *);
+स्थिर संरचना pam_ctxt *cleanup_ctxt;
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#यदि_अपरिभाषितम् UNSUPPORTED_POSIX_तन्तवः_HACK
 /*
  * Simulate threads with processes.
  */
 
-static int sshpam_thread_status = -1;
-static sshsig_t sshpam_oldsig;
+स्थिर पूर्णाङ्क sshpam_thread_स्थितिः = -1;
+स्थिर sshsig_t sshpam_oldsig;
 
-static void
-sshpam_sigchld_handler(int sig)
+स्थिर शून्य
+sshpam_sigchld_handler(पूर्णाङ्क sig)
 {
 	ssh_signal(SIGCHLD, SIG_DFL);
-	if (cleanup_ctxt == NULL)
-		return;	/* handler called after PAM cleanup, shouldn't happen */
-	if (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_status, WNOHANG)
+	यदि (cleanup_ctxt == रिक्त)
+		प्रत्यागम;	/* handler called after PAM cleanup, shouldn't happen */
+	यदि (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_स्थितिः, WNOHANG)
 	    <= 0) {
 		/* PAM thread has not exited, privsep slave must have */
 		kill(cleanup_ctxt->pam_thread, SIGTERM);
-		while (waitpid(cleanup_ctxt->pam_thread,
-		    &sshpam_thread_status, 0) == -1) {
-			if (errno == EINTR)
-				continue;
-			return;
+		यावत् (waitpid(cleanup_ctxt->pam_thread,
+		    &sshpam_thread_स्थितिः, 0) == -1) {
+			यदि (errno == EINTR)
+				अनुवर्त;
+			प्रत्यागम;
 		}
 	}
-	if (sshpam_thread_status == -1)
-		return;
-	if (WIFSIGNALED(sshpam_thread_status)) {
-		if (signal_is_crash(WTERMSIG(sshpam_thread_status)))
+	यदि (sshpam_thread_स्थितिः == -1)
+		प्रत्यागम;
+	यदि (WIFSIGNALED(sshpam_thread_स्थितिः)) {
+		यदि (signal_is_crash(WTERMSIG(sshpam_thread_स्थितिः)))
 			_exit(EXIT_CHILD_CRASH);
-	} else if (!WIFEXITED(sshpam_thread_status))
+	} अन्यथा यदि (!WIFEXITED(sshpam_thread_स्थितिः))
 		_exit(EXIT_CHILD_CRASH);
 }
 
 /* ARGSUSED */
-static void
-pthread_exit(void *value)
+स्थिर शून्य
+pthread_exit(शून्य *मानम्)
 {
 	_exit(0);
 }
 
 /* ARGSUSED */
-static int
-pthread_create(sp_pthread_t *thread, const void *attr,
-    void *(*thread_start)(void *), void *arg)
+स्थिर पूर्णाङ्क
+pthread_create(sp_pthread_t *thread, ध्रुव शून्य *attr,
+    शून्य *(*thread_start)(शून्य *), शून्य *arg)
 {
 	pid_t pid;
-	struct pam_ctxt *ctx = arg;
+	संरचना pam_ctxt *ctx = arg;
 
-	sshpam_thread_status = -1;
-	switch ((pid = fork())) {
-	case -1:
+	sshpam_thread_स्थितिः = -1;
+	विकल्प ((pid = fork())) {
+	पक्ष -1:
 		error("fork(): %s", strerror(errno));
-		return errno;
-	case 0:
+		प्रत्यागम errno;
+	पक्ष 0:
 		close(ctx->pam_psock);
 		ctx->pam_psock = -1;
 		thread_start(arg);
 		_exit(1);
-	default:
+	स्वभाव:
 		*thread = pid;
 		close(ctx->pam_csock);
 		ctx->pam_csock = -1;
 		sshpam_oldsig = ssh_signal(SIGCHLD, sshpam_sigchld_handler);
-		return (0);
+		प्रत्यागम (0);
 	}
 }
 
-static int
+स्थिर पूर्णाङ्क
 pthread_cancel(sp_pthread_t thread)
 {
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	return (kill(thread, SIGTERM));
+	प्रत्यागम (kill(thread, SIGTERM));
 }
 
 /* ARGSUSED */
-static int
-pthread_join(sp_pthread_t thread, void **value)
+स्थिर पूर्णाङ्क
+pthread_join(sp_pthread_t thread, शून्य **मानम्)
 {
-	int status;
+	पूर्णाङ्क स्थितिः;
 
-	if (sshpam_thread_status != -1)
-		return (sshpam_thread_status);
+	यदि (sshpam_thread_स्थितिः != -1)
+		प्रत्यागम (sshpam_thread_स्थितिः);
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	while (waitpid(thread, &status, 0) == -1) {
-		if (errno == EINTR)
-			continue;
+	यावत् (waitpid(thread, &स्थितिः, 0) == -1) {
+		यदि (errno == EINTR)
+			अनुवर्त;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	return (status);
+	प्रत्यागम (स्थितिः);
 }
-#endif
+#यदि_अन्तः
 
 
-static pam_handle_t *sshpam_handle = NULL;
-static char *sshpam_initial_user;
-static int sshpam_err = 0;
-static int sshpam_authenticated = 0;
-static int sshpam_session_open = 0;
-static int sshpam_cred_established = 0;
-static int sshpam_account_status = -1;
-static int sshpam_maxtries_reached = 0;
-static char **sshpam_env = NULL;
-static Authctxt *sshpam_authctxt = NULL;
-static const char *sshpam_password = NULL;
-static char *sshpam_rhost = NULL;
-static char *sshpam_laddr = NULL;
+स्थिर pam_handle_t *sshpam_handle = रिक्त;
+स्थिर वर्ण *sshpam_initial_user;
+स्थिर पूर्णाङ्क sshpam_err = 0;
+स्थिर पूर्णाङ्क sshpam_authenticated = 0;
+स्थिर पूर्णाङ्क sshpam_session_open = 0;
+स्थिर पूर्णाङ्क sshpam_cred_established = 0;
+स्थिर पूर्णाङ्क sshpam_account_स्थितिः = -1;
+स्थिर पूर्णाङ्क sshpam_maxtries_reached = 0;
+स्थिर वर्ण **sshpam_env = रिक्त;
+स्थिर Authctxt *sshpam_authctxt = रिक्त;
+स्थिर ध्रुव वर्ण *sshpam_password = रिक्त;
+स्थिर वर्ण *sshpam_rhost = रिक्त;
+स्थिर वर्ण *sshpam_laddr = रिक्त;
 
 /* Some PAM implementations don't implement this */
-#ifndef HAVE_PAM_GETENVLIST
-static char **
+#यदि_अपरिभाषितम् HAVE_PAM_GETENVLIST
+स्थिर वर्ण **
 pam_getenvlist(pam_handle_t *pamh)
 {
 	/*
@@ -265,94 +265,94 @@ pam_getenvlist(pam_handle_t *pamh)
 	 * for platforms without pam_getenvlist by searching for known
 	 * env vars (e.g. KRB5CCNAME) from the PAM environment.
 	 */
-	 return NULL;
+	 प्रत्यागम रिक्त;
 }
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_PAM_PUTENV
-static int
-pam_putenv(pam_handle_t *pamh, const char *name_value)
+#यदि_अपरिभाषितम् HAVE_PAM_PUTENV
+स्थिर पूर्णाङ्क
+pam_putenv(pam_handle_t *pamh, ध्रुव वर्ण *name_मानम्)
 {
-	return PAM_SUCCESS;
+	प्रत्यागम PAM_SUCCESS;
 }
-#endif /* HAVE_PAM_PUTENV */
+#यदि_अन्तः /* HAVE_PAM_PUTENV */
 
-static void
-sshpam_password_change_required(int reqd)
+स्थिर शून्य
+sshpam_password_change_required(पूर्णाङ्क reqd)
 {
-	extern struct sshauthopt *auth_opts;
-	static int saved_port, saved_agent, saved_x11;
+	बाह्य संरचना sshauthopt *auth_opts;
+	स्थिर पूर्णाङ्क saved_पत्तनम्, saved_agent, saved_x11;
 
 	debug3_f("reqd=%d", reqd);
-	if (sshpam_authctxt == NULL)
+	यदि (sshpam_authctxt == रिक्त)
 		fatal_f("PAM authctxt not initialized");
 	sshpam_authctxt->force_pwchange = reqd;
-	if (reqd) {
-		saved_port = auth_opts->permit_port_forwarding_flag;
+	यदि (reqd) {
+		saved_पत्तनम् = auth_opts->permit_पत्तनम्_forwarding_flag;
 		saved_agent = auth_opts->permit_agent_forwarding_flag;
 		saved_x11 = auth_opts->permit_x11_forwarding_flag;
-		auth_opts->permit_port_forwarding_flag = 0;
+		auth_opts->permit_पत्तनम्_forwarding_flag = 0;
 		auth_opts->permit_agent_forwarding_flag = 0;
 		auth_opts->permit_x11_forwarding_flag = 0;
-	} else {
-		if (saved_port)
-			auth_opts->permit_port_forwarding_flag = saved_port;
-		if (saved_agent)
+	} अन्यथा {
+		यदि (saved_पत्तनम्)
+			auth_opts->permit_पत्तनम्_forwarding_flag = saved_पत्तनम्;
+		यदि (saved_agent)
 			auth_opts->permit_agent_forwarding_flag = saved_agent;
-		if (saved_x11)
+		यदि (saved_x11)
 			auth_opts->permit_x11_forwarding_flag = saved_x11;
 	}
 }
 
 /* Import regular and PAM environment from subprocess */
-static void
-import_environments(struct sshbuf *b)
+स्थिर शून्य
+import_environments(संरचना sshbuf *b)
 {
-	char *env;
-	u_int n, i, num_env;
-	int r;
+	वर्ण *env;
+	u_int n, i, अङ्कः_env;
+	पूर्णाङ्क r;
 
 	debug3_f("entering");
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#यदि_अपरिभाषितम् UNSUPPORTED_POSIX_तन्तवः_HACK
 	/* Import variables set by do_pam_account */
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	यदि ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	if (n > INT_MAX)
+	यदि (n > अधिकतम_पूर्णाङ्कः)
 		fatal_f("invalid PAM account status %u", n);
-	sshpam_account_status = (int)n;
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	sshpam_account_स्थितिः = (पूर्णाङ्क)n;
+	यदि ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
 	sshpam_password_change_required(n != 0);
 
 	/* Import environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	यदि ((r = sshbuf_get_u32(b, &अङ्कः_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	यदि (अङ्कः_env > 1024) {
 		fatal_f("received %u environment variables, expected <= 1024",
-		    num_env);
+		    अङ्कः_env);
 	}
-	sshpam_env = xcalloc(num_env + 1, sizeof(*sshpam_env));
-	debug3("PAM: num env strings %u", num_env);
-	for(i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), NULL)) != 0)
+	sshpam_env = xcalloc(अङ्कः_env + 1, परिमाण(*sshpam_env));
+	debug3("PAM: num env strings %u", अङ्कः_env);
+	प्रति(i = 0; i < अङ्कः_env; i++) {
+		यदि ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), रिक्त)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	sshpam_env[num_env] = NULL;
+	sshpam_env[अङ्कः_env] = रिक्त;
 
 	/* Import PAM environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	यदि ((r = sshbuf_get_u32(b, &अङ्कः_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	यदि (अङ्कः_env > 1024) {
 		fatal_f("received %u PAM env variables, expected <= 1024",
-		    num_env);
+		    अङ्कः_env);
 	}
-	debug("PAM: num PAM env strings %u", num_env);
-	for (i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &env, NULL)) != 0)
+	debug("PAM: num PAM env strings %u", अङ्कः_env);
+	प्रति (i = 0; i < अङ्कः_env; i++) {
+		यदि ((r = sshbuf_get_cstring(b, &env, रिक्त)) != 0)
 			fatal_fr(r, "buffer error");
 		/* Errors are not fatal here */
-		if ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
+		यदि ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
 			error("PAM: pam_putenv: %s",
 			    pam_strerror(sshpam_handle, r));
 		}
@@ -362,364 +362,364 @@ import_environments(struct sshbuf *b)
 		 * take ownership? We don't know, so it's safest just to leak.
 		 */
 	}
-#endif
+#यदि_अन्तः
 }
 
 /*
  * Conversation function for authentication thread.
  */
-static int
-sshpam_thread_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+स्थिर पूर्णाङ्क
+sshpam_thread_conv(पूर्णाङ्क n, sshpam_const संरचना pam_सन्देशः **सन्देशः,
+    संरचना pam_response **resp, शून्य *दत्त)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt;
-	struct pam_response *reply;
-	int r, i;
-	u_char status;
+	संरचना sshbuf *बफर;
+	संरचना pam_ctxt *ctxt;
+	संरचना pam_response *प्रत्युत्तरम्;
+	पूर्णाङ्क r, i;
+	u_char स्थितिः;
 
 	debug3_f("PAM: entering, %d messages", n);
-	*resp = NULL;
+	*resp = रिक्त;
 
-	if (data == NULL) {
+	यदि (दत्त == रिक्त) {
 		error("PAM: conversation function passed a null context");
-		return (PAM_CONV_ERR);
+		प्रत्यागम (PAM_CONV_ERR);
 	}
-	ctxt = data;
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	ctxt = दत्त;
+	यदि (n <= 0 || n > PAM_MAX_अङ्कः_सन्देशः)
+		प्रत्यागम (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return PAM_CONV_ERR;
-	if ((buffer = sshbuf_new()) == NULL) {
-		free(reply);
-		return PAM_CONV_ERR;
+	यदि ((प्रत्युत्तरम् = शून्यस्मृतिं_देहि(n, परिमाण(*प्रत्युत्तरम्))) == रिक्त)
+		प्रत्यागम PAM_CONV_ERR;
+	यदि ((बफर = sshbuf_new()) == रिक्त) {
+		मुक्त(प्रत्युत्तरम्);
+		प्रत्यागम PAM_CONV_ERR;
 	}
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_PROMPT_ECHO_OFF:
-		case PAM_PROMPT_ECHO_ON:
-			if ((r = sshbuf_put_cstring(buffer,
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	प्रति (i = 0; i < n; ++i) {
+		विकल्प (PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style)) {
+		पक्ष PAM_PROMPT_ECHO_OFF:
+		पक्ष PAM_PROMPT_ECHO_ON:
+			यदि ((r = sshbuf_put_cstring(बफर,
+			    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
-			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
-				goto fail;
+			यदि (ssh_सन्देशः_send(ctxt->pam_csock,
+			    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style), बफर) == -1)
+				गच्छ fail;
 
-			if (ssh_msg_recv(ctxt->pam_csock, buffer) == -1)
-				goto fail;
-			if ((r = sshbuf_get_u8(buffer, &status)) != 0)
+			यदि (ssh_सन्देशः_recv(ctxt->pam_csock, बफर) == -1)
+				गच्छ fail;
+			यदि ((r = sshbuf_get_u8(बफर, &स्थितिः)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (status != PAM_AUTHTOK)
-				goto fail;
-			if ((r = sshbuf_get_cstring(buffer,
-			    &reply[i].resp, NULL)) != 0)
+			यदि (स्थितिः != PAM_AUTHTOK)
+				गच्छ fail;
+			यदि ((r = sshbuf_get_cstring(बफर,
+			    &प्रत्युत्तरम्[i].resp, रिक्त)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			break;
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
+			भङ्ग;
+		पक्ष PAM_ERROR_सन्देशः:
+		पक्ष PAM_TEXT_INFO:
 			debug3("PAM: Got message of type %d: %s",
-			       PAM_MSG_MEMBER(msg, i, msg_style),
-			       PAM_MSG_MEMBER(msg, i, msg));
-			if ((r = sshbuf_put_cstring(buffer,
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+			       PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style),
+			       PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः));
+			यदि ((r = sshbuf_put_cstring(बफर,
+			    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
-			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
-				goto fail;
-			break;
-		default:
-			goto fail;
+			यदि (ssh_सन्देशः_send(ctxt->pam_csock,
+			    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style), बफर) == -1)
+				गच्छ fail;
+			भङ्ग;
+		स्वभाव:
+			गच्छ fail;
 		}
-		sshbuf_reset(buffer);
+		sshbuf_reset(बफर);
 	}
-	sshbuf_free(buffer);
-	*resp = reply;
-	return (PAM_SUCCESS);
+	sshbuf_free(बफर);
+	*resp = प्रत्युत्तरम्;
+	प्रत्यागम (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	प्रति(i = 0; i < n; i++) {
+		मुक्त(प्रत्युत्तरम्[i].resp);
 	}
-	free(reply);
-	sshbuf_free(buffer);
-	return (PAM_CONV_ERR);
+	मुक्त(प्रत्युत्तरम्);
+	sshbuf_free(बफर);
+	प्रत्यागम (PAM_CONV_ERR);
 }
 
-static int
+स्थिर पूर्णाङ्क
 check_pam_user(Authctxt *authctxt)
 {
-	const char *pam_user;
+	ध्रुव वर्ण *pam_user;
 
-	if (authctxt == NULL || authctxt->pw == NULL ||
-	    authctxt->pw->pw_name == NULL)
+	यदि (authctxt == रिक्त || authctxt->pw == रिक्त ||
+	    authctxt->pw->pw_name == रिक्त)
 		fatal_f("PAM authctxt user not initialized");
 
-	if ((sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
-	    (sshpam_const void **) &pam_user)) != PAM_SUCCESS)
-		return sshpam_err;
+	यदि ((sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
+	    (sshpam_const शून्य **) &pam_user)) != PAM_SUCCESS)
+		प्रत्यागम sshpam_err;
 
-	if (pam_user == NULL) {
+	यदि (pam_user == रिक्त) {
 		debug("PAM error: PAM_USER is NULL");
-		return PAM_USER_UNKNOWN;
+		प्रत्यागम PAM_USER_UNKNOWN;
 	}
 
-	if (sshpam_initial_user == NULL)
+	यदि (sshpam_initial_user == रिक्त)
 		fatal_f("internal error: sshpam_initial_user NULL");
-	if (strcmp(sshpam_initial_user, pam_user) != 0) {
+	यदि (वाक्यं_तुलय(sshpam_initial_user, pam_user) != 0) {
 		error_f("PAM user \"%s\" does not match previous \"%s\"",
 		      pam_user, sshpam_initial_user);
-		return PAM_USER_UNKNOWN;
+		प्रत्यागम PAM_USER_UNKNOWN;
 	}
-	return PAM_SUCCESS;
+	प्रत्यागम PAM_SUCCESS;
 }
 
 /*
  * Authentication thread.
  */
-static void *
-sshpam_thread(void *ctxtp)
+स्थिर शून्य *
+sshpam_thread(शून्य *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
-	struct sshbuf *buffer = NULL;
-	struct pam_conv sshpam_conv;
-	int r, flags = (options.permit_empty_passwd == 0 ?
+	संरचना pam_ctxt *ctxt = ctxtp;
+	संरचना sshbuf *बफर = रिक्त;
+	संरचना pam_conv sshpam_conv;
+	पूर्णाङ्क r, flags = (options.permit_रिक्तानि_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
-	extern char **environ;
-	char **env_from_pam;
+#यदि_अपरिभाषितम् UNSUPPORTED_POSIX_तन्तवः_HACK
+	बाह्य वर्ण **environ;
+	वर्ण **env_from_pam;
 	u_int i;
-	const char *pam_user;
-	const char **ptr_pam_user = &pam_user;
-	char *tz = getenv("TZ");
+	ध्रुव वर्ण *pam_user;
+	ध्रुव वर्ण **ptr_pam_user = &pam_user;
+	वर्ण *tz = getenv("TZ");
 
 	sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
-	    (sshpam_const void **)ptr_pam_user);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
+	    (sshpam_const शून्य **)ptr_pam_user);
+	यदि (sshpam_err != PAM_SUCCESS)
+		गच्छ auth_fail;
 
-	environ[0] = NULL;
-	if (tz != NULL)
-		if (setenv("TZ", tz, 1) == -1)
+	environ[0] = रिक्त;
+	यदि (tz != रिक्त)
+		यदि (setenv("TZ", tz, 1) == -1)
 			error("PAM: could not set TZ environment: %s",
 			    strerror(errno));
 
-	if (sshpam_authctxt != NULL) {
+	यदि (sshpam_authctxt != रिक्त) {
 		setproctitle("%s [pam]",
 		    sshpam_authctxt->valid ? pam_user : "unknown");
 	}
-#endif
+#यदि_अन्तः
 
 	sshpam_conv.conv = sshpam_thread_conv;
 	sshpam_conv.appdata_ptr = ctxt;
 
-	if (sshpam_authctxt == NULL)
+	यदि (sshpam_authctxt == रिक्त)
 		fatal_f("PAM authctxt not initialized");
 
-	if ((buffer = sshbuf_new()) == NULL)
+	यदि ((बफर = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&sshpam_conv);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
+	sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_CONV,
+	    (ध्रुव शून्य *)&sshpam_conv);
+	यदि (sshpam_err != PAM_SUCCESS)
+		गच्छ auth_fail;
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
-	if (sshpam_err == PAM_MAXTRIES)
-		sshpam_set_maxtries_reached(1);
-	if (sshpam_err != PAM_SUCCESS)
-		goto auth_fail;
-	if ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
-		goto auth_fail;
+	यदि (sshpam_err == PAM_MAXTRIES)
+		sshpam_समुच्चयः_maxtries_reached(1);
+	यदि (sshpam_err != PAM_SUCCESS)
+		गच्छ auth_fail;
+	यदि ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
+		गच्छ auth_fail;
 
-	if (!do_pam_account()) {
+	यदि (!do_pam_account()) {
 		sshpam_err = PAM_ACCT_EXPIRED;
-		goto auth_fail;
+		गच्छ auth_fail;
 	}
-	if (sshpam_authctxt->force_pwchange) {
+	यदि (sshpam_authctxt->force_pwchange) {
 		sshpam_err = pam_chauthtok(sshpam_handle,
 		    PAM_CHANGE_EXPIRED_AUTHTOK);
-		if (sshpam_err != PAM_SUCCESS)
-			goto auth_fail;
+		यदि (sshpam_err != PAM_SUCCESS)
+			गच्छ auth_fail;
 		sshpam_password_change_required(0);
 	}
 
-	if ((r = sshbuf_put_cstring(buffer, "OK")) != 0)
+	यदि ((r = sshbuf_put_cstring(बफर, "OK")) != 0)
 		fatal_fr(r, "buffer error");
 
-#ifndef UNSUPPORTED_POSIX_THREADS_HACK
+#यदि_अपरिभाषितम् UNSUPPORTED_POSIX_तन्तवः_HACK
 	/* Export variables set by do_pam_account */
-	if ((r = sshbuf_put_u32(buffer, sshpam_account_status)) != 0 ||
-	    (r = sshbuf_put_u32(buffer, sshpam_authctxt->force_pwchange)) != 0)
+	यदि ((r = sshbuf_put_u32(बफर, sshpam_account_स्थितिः)) != 0 ||
+	    (r = sshbuf_put_u32(बफर, sshpam_authctxt->force_pwchange)) != 0)
 		fatal_fr(r, "buffer error");
 
 	/* Export any environment strings set in child */
-	for (i = 0; environ[i] != NULL; i++) {
-		/* Count */
-		if (i > INT_MAX)
+	प्रति (i = 0; environ[i] != रिक्त; i++) {
+		/*गणनम्*/
+		यदि (i > अधिकतम_पूर्णाङ्कः)
 			fatal_f("too many environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	यदि ((r = sshbuf_put_u32(बफर, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; environ[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, environ[i])) != 0)
+	प्रति (i = 0; environ[i] != रिक्त; i++) {
+		यदि ((r = sshbuf_put_cstring(बफर, environ[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	/* Export any environment strings set by PAM in child */
 	env_from_pam = pam_getenvlist(sshpam_handle);
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
-		/* Count */
-		if (i > INT_MAX)
+	प्रति (i = 0; env_from_pam != रिक्त && env_from_pam[i] != रिक्त; i++) {
+		/*गणनम्*/
+		यदि (i > अधिकतम_पूर्णाङ्कः)
 			fatal_f("too many PAM environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	यदि ((r = sshbuf_put_u32(बफर, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, env_from_pam[i])) != 0)
+	प्रति (i = 0; env_from_pam != रिक्त && env_from_pam[i] != रिक्त; i++) {
+		यदि ((r = sshbuf_put_cstring(बफर, env_from_pam[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
-#endif /* UNSUPPORTED_POSIX_THREADS_HACK */
+#यदि_अन्तः /* UNSUPPORTED_POSIX_THREADS_HACK */
 
 	/* XXX - can't do much about an error here */
-	ssh_msg_send(ctxt->pam_csock, sshpam_err, buffer);
-	sshbuf_free(buffer);
-	pthread_exit(NULL);
+	ssh_सन्देशः_send(ctxt->pam_csock, sshpam_err, बफर);
+	sshbuf_free(बफर);
+	pthread_exit(रिक्त);
 
  auth_fail:
-	if ((r = sshbuf_put_cstring(buffer,
+	यदि ((r = sshbuf_put_cstring(बफर,
 	    pam_strerror(sshpam_handle, sshpam_err))) != 0)
 		fatal_fr(r, "buffer error");
 	/* XXX - can't do much about an error here */
-	if (sshpam_err == PAM_ACCT_EXPIRED)
-		ssh_msg_send(ctxt->pam_csock, PAM_ACCT_EXPIRED, buffer);
-	else if (sshpam_maxtries_reached)
-		ssh_msg_send(ctxt->pam_csock, PAM_MAXTRIES, buffer);
-	else
-		ssh_msg_send(ctxt->pam_csock, PAM_AUTH_ERR, buffer);
-	sshbuf_free(buffer);
-	pthread_exit(NULL);
+	यदि (sshpam_err == PAM_ACCT_EXPIRED)
+		ssh_सन्देशः_send(ctxt->pam_csock, PAM_ACCT_EXPIRED, बफर);
+	अन्यथा यदि (sshpam_maxtries_reached)
+		ssh_सन्देशः_send(ctxt->pam_csock, PAM_MAXTRIES, बफर);
+	अन्यथा
+		ssh_सन्देशः_send(ctxt->pam_csock, PAM_AUTH_ERR, बफर);
+	sshbuf_free(बफर);
+	pthread_exit(रिक्त);
 
-	return (NULL); /* Avoid warning for non-pthread case */
+	प्रत्यागम (रिक्त); /* Avoid warning for non-pthread case */
 }
 
-void
-sshpam_thread_cleanup(void)
+शून्य
+sshpam_thread_cleanup(शून्य)
 {
-	struct pam_ctxt *ctxt = cleanup_ctxt;
+	संरचना pam_ctxt *ctxt = cleanup_ctxt;
 
 	debug3_f("entering");
-	if (ctxt != NULL && ctxt->pam_thread != 0) {
+	यदि (ctxt != रिक्त && ctxt->pam_thread != 0) {
 		pthread_cancel(ctxt->pam_thread);
-		pthread_join(ctxt->pam_thread, NULL);
+		pthread_join(ctxt->pam_thread, रिक्त);
 		close(ctxt->pam_psock);
 		close(ctxt->pam_csock);
-		memset(ctxt, 0, sizeof(*ctxt));
-		cleanup_ctxt = NULL;
+		स्मृतिं_पूरय(ctxt, 0, परिमाण(*ctxt));
+		cleanup_ctxt = रिक्त;
 	}
 }
 
-static int
-sshpam_null_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+स्थिर पूर्णाङ्क
+sshpam_null_conv(पूर्णाङ्क n, sshpam_const संरचना pam_सन्देशः **सन्देशः,
+    संरचना pam_response **resp, शून्य *दत्त)
 {
 	debug3_f("PAM: entering, %d messages", n);
-	return (PAM_CONV_ERR);
+	प्रत्यागम (PAM_CONV_ERR);
 }
 
-static struct pam_conv null_conv = { sshpam_null_conv, NULL };
+स्थिर संरचना pam_conv null_conv = { sshpam_null_conv, रिक्त };
 
-static int
-sshpam_store_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+स्थिर पूर्णाङ्क
+sshpam_store_conv(पूर्णाङ्क n, sshpam_const संरचना pam_सन्देशः **सन्देशः,
+    संरचना pam_response **resp, शून्य *दत्त)
 {
-	struct pam_response *reply;
-	int r, i;
+	संरचना pam_response *प्रत्युत्तरम्;
+	पूर्णाङ्क r, i;
 
 	debug3_f("PAM: called with %d messages", n);
-	*resp = NULL;
+	*resp = रिक्त;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	यदि (n <= 0 || n > PAM_MAX_अङ्कः_सन्देशः)
+		प्रत्यागम (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	यदि ((प्रत्युत्तरम् = शून्यस्मृतिं_देहि(n, परिमाण(*प्रत्युत्तरम्))) == रिक्त)
+		प्रत्यागम (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			if ((r = sshbuf_putf(loginmsg, "%s\n",
-			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	प्रति (i = 0; i < n; ++i) {
+		विकल्प (PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style)) {
+		पक्ष PAM_ERROR_सन्देशः:
+		पक्ष PAM_TEXT_INFO:
+			यदि ((r = sshbuf_putf(loginmsg, "%s\n",
+			    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		default:
-			goto fail;
+			प्रत्युत्तरम्[i].resp_retcode = PAM_SUCCESS;
+			भङ्ग;
+		स्वभाव:
+			गच्छ fail;
 		}
 	}
-	*resp = reply;
-	return (PAM_SUCCESS);
+	*resp = प्रत्युत्तरम्;
+	प्रत्यागम (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	प्रति(i = 0; i < n; i++) {
+		मुक्त(प्रत्युत्तरम्[i].resp);
 	}
-	free(reply);
-	return (PAM_CONV_ERR);
+	मुक्त(प्रत्युत्तरम्);
+	प्रत्यागम (PAM_CONV_ERR);
 }
 
-static struct pam_conv store_conv = { sshpam_store_conv, NULL };
+स्थिर संरचना pam_conv store_conv = { sshpam_store_conv, रिक्त };
 
-void
-sshpam_cleanup(void)
+शून्य
+sshpam_cleanup(शून्य)
 {
-	if (sshpam_handle == NULL || !mm_is_monitor())
-		return;
+	यदि (sshpam_handle == रिक्त || !mm_is_monitor())
+		प्रत्यागम;
 	debug("PAM: cleanup");
-	pam_set_item(sshpam_handle, PAM_CONV, (const void *)&null_conv);
-	if (sshpam_session_open) {
+	pam_समुच्चयः_item(sshpam_handle, PAM_CONV, (ध्रुव शून्य *)&null_conv);
+	यदि (sshpam_session_open) {
 		debug("PAM: closing session");
 		pam_close_session(sshpam_handle, PAM_SILENT);
 		sshpam_session_open = 0;
 	}
-	if (sshpam_cred_established) {
+	यदि (sshpam_cred_established) {
 		debug("PAM: deleting credentials");
 		pam_setcred(sshpam_handle, PAM_DELETE_CRED);
 		sshpam_cred_established = 0;
 	}
 	sshpam_authenticated = 0;
-	pam_end(sshpam_handle, sshpam_err);
-	sshpam_handle = NULL;
-	free(sshpam_initial_user);
-	sshpam_initial_user = NULL;
+	pam_अन्तः(sshpam_handle, sshpam_err);
+	sshpam_handle = रिक्त;
+	मुक्त(sshpam_initial_user);
+	sshpam_initial_user = रिक्त;
 }
 
-static int
-sshpam_init(struct ssh *ssh, Authctxt *authctxt)
+स्थिर पूर्णाङ्क
+sshpam_init(संरचना ssh *ssh, Authctxt *authctxt)
 {
-	const char *user = authctxt->user;
-	int r;
+	ध्रुव वर्ण *user = authctxt->user;
+	पूर्णाङ्क r;
 
-	if (options.pam_service_name == NULL)
+	यदि (options.pam_service_name == रिक्त)
 		fatal_f("internal error: NULL PAM service name");
-#if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
+#यदि defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_आकार)
 	/* Protect buggy PAM implementations from excessively long usernames */
-	if (strlen(user) >= PAM_MAX_RESP_SIZE)
+	यदि (वाक्यदैर्घ्यम्(user) >= PAM_MAX_RESP_आकार)
 		fatal("Username too long from %s port %d",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-#endif
-	if (sshpam_handle == NULL && ssh == NULL)
+		    ssh_remote_ipaddr(ssh), ssh_remote_पत्तनम्(ssh));
+#यदि_अन्तः
+	यदि (sshpam_handle == रिक्त && ssh == रिक्त)
 		fatal("%s: called initially with no packet context", __func__);
-	if (sshpam_handle != NULL) {
+	यदि (sshpam_handle != रिक्त) {
 		/* We already have a PAM context; check if the user matches */
-		if ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
+		यदि ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
 			fatal("PAM user mismatch");
-		return 0;
+		प्रत्यागम 0;
 	}
 	debug("PAM: initializing for \"%s\" with service \"%s\"", user,
 	    options.pam_service_name);
@@ -728,13 +728,13 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 	sshpam_initial_user = xstrdup(user);
 	sshpam_authctxt = authctxt;
 
-	if (sshpam_err != PAM_SUCCESS) {
-		pam_end(sshpam_handle, sshpam_err);
-		sshpam_handle = NULL;
-		return (-1);
+	यदि (sshpam_err != PAM_SUCCESS) {
+		pam_अन्तः(sshpam_handle, sshpam_err);
+		sshpam_handle = रिक्त;
+		प्रत्यागम (-1);
 	}
 
-	if (ssh != NULL && sshpam_rhost == NULL) {
+	यदि (ssh != रिक्त && sshpam_rhost == रिक्त) {
 		/*
 		 * We need to cache these as we don't have packet context
 		 * during the kbdint flow.
@@ -742,193 +742,193 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 		sshpam_rhost = xstrdup(auth_get_canonical_hostname(ssh,
 		    options.use_dns));
 		sshpam_laddr = get_local_ipaddr(
-		    ssh_packet_get_connection_in(ssh));
+		    ssh_packet_get_connection_अन्तर्(ssh));
 	}
-	if (sshpam_rhost != NULL && strcmp(sshpam_rhost, "UNKNOWN") != 0) {
+	यदि (sshpam_rhost != रिक्त && वाक्यं_तुलय(sshpam_rhost, "UNKNOWN") != 0) {
 		debug("PAM: setting PAM_RHOST to \"%s\"", sshpam_rhost);
-		sshpam_err = pam_set_item(sshpam_handle, PAM_RHOST,
+		sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_RHOST,
 		    sshpam_rhost);
-		if (sshpam_err != PAM_SUCCESS) {
-			pam_end(sshpam_handle, sshpam_err);
-			sshpam_handle = NULL;
-			return (-1);
+		यदि (sshpam_err != PAM_SUCCESS) {
+			pam_अन्तः(sshpam_handle, sshpam_err);
+			sshpam_handle = रिक्त;
+			प्रत्यागम (-1);
 		}
 	}
-	if (ssh != NULL && sshpam_laddr != NULL) {
-		char *conninfo;
+	यदि (ssh != रिक्त && sshpam_laddr != रिक्त) {
+		वर्ण *conninfo;
 
 		/* Put SSH_CONNECTION in the PAM environment too */
 		xasprintf(&conninfo, "SSH_CONNECTION=%.50s %d %.50s %d",
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-		    sshpam_laddr, ssh_local_port(ssh));
-		if ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
+		    ssh_remote_ipaddr(ssh), ssh_remote_पत्तनम्(ssh),
+		    sshpam_laddr, ssh_local_पत्तनम्(ssh));
+		यदि ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
 			logit("pam_putenv: %s", pam_strerror(sshpam_handle, r));
-		free(conninfo);
+		मुक्त(conninfo);
 	}
 
-#ifdef PAM_TTY_KLUDGE
+#यदि_परिभाषितम् PAM_TTY_KLUDGE
 	/*
 	 * Some silly PAM modules (e.g. pam_time) require a TTY to operate.
 	 * sshd doesn't set the tty until too late in the auth process and
 	 * may not even set one (for tty-less connections)
 	 */
 	debug("PAM: setting PAM_TTY to \"ssh\"");
-	sshpam_err = pam_set_item(sshpam_handle, PAM_TTY, "ssh");
-	if (sshpam_err != PAM_SUCCESS) {
-		pam_end(sshpam_handle, sshpam_err);
-		sshpam_handle = NULL;
-		return (-1);
+	sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_TTY, "ssh");
+	यदि (sshpam_err != PAM_SUCCESS) {
+		pam_अन्तः(sshpam_handle, sshpam_err);
+		sshpam_handle = रिक्त;
+		प्रत्यागम (-1);
 	}
-#endif
-	return (0);
+#यदि_अन्तः
+	प्रत्यागम (0);
 }
 
-static void
-expose_authinfo(const char *caller)
+स्थिर शून्य
+expose_authinfo(ध्रुव वर्ण *caller)
 {
-	char *auth_info;
+	वर्ण *auth_info;
 
 	/*
 	 * Expose authentication information to PAM.
 	 * The environment variable is versioned. Please increment the
 	 * version suffix if the format of session_info changes.
 	 */
-	if (sshpam_authctxt->session_info == NULL)
+	यदि (sshpam_authctxt->session_info == रिक्त)
 		auth_info = xstrdup("");
-	else if ((auth_info = sshbuf_dup_string(
-	    sshpam_authctxt->session_info)) == NULL)
+	अन्यथा यदि ((auth_info = sshbuf_dup_string(
+	    sshpam_authctxt->session_info)) == रिक्त)
 		fatal_f("sshbuf_dup_string failed");
 
 	debug2("%s: auth information in SSH_AUTH_INFO_0", caller);
 	do_pam_putenv("SSH_AUTH_INFO_0", auth_info);
-	free(auth_info);
+	मुक्त(auth_info);
 }
 
-static void *
+स्थिर शून्य *
 sshpam_init_ctx(Authctxt *authctxt)
 {
-	struct pam_ctxt *ctxt;
-	int result, socks[2];
+	संरचना pam_ctxt *ctxt;
+	पूर्णाङ्क परिणाम, socks[2];
 
 	debug3_f("entering");
 	/*
 	 * Refuse to start if we don't have PAM enabled or do_pam_account
 	 * has previously failed.
 	 */
-	if (!options.use_pam || sshpam_account_status == 0)
-		return NULL;
+	यदि (!options.use_pam || sshpam_account_स्थितिः == 0)
+		प्रत्यागम रिक्त;
 
 	/* Initialize PAM */
-	if (sshpam_init(NULL, authctxt) == -1) {
+	यदि (sshpam_init(रिक्त, authctxt) == -1) {
 		error("PAM: initialization failed");
-		return (NULL);
+		प्रत्यागम (रिक्त);
 	}
 
 	expose_authinfo(__func__);
-	ctxt = xcalloc(1, sizeof *ctxt);
+	ctxt = xcalloc(1, परिमाण *ctxt);
 
 	/* Start the authentication thread */
-	if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
+	यदि (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
 		error("PAM: failed create sockets: %s", strerror(errno));
-		free(ctxt);
-		return (NULL);
+		मुक्त(ctxt);
+		प्रत्यागम (रिक्त);
 	}
 	ctxt->pam_psock = socks[0];
 	ctxt->pam_csock = socks[1];
-	result = pthread_create(&ctxt->pam_thread, NULL, sshpam_thread, ctxt);
-	if (result != 0) {
+	परिणाम = pthread_create(&ctxt->pam_thread, रिक्त, sshpam_thread, ctxt);
+	यदि (परिणाम != 0) {
 		error("PAM: failed to start authentication thread: %s",
-		    strerror(result));
+		    strerror(परिणाम));
 		close(socks[0]);
 		close(socks[1]);
-		free(ctxt);
-		return (NULL);
+		मुक्त(ctxt);
+		प्रत्यागम (रिक्त);
 	}
 	cleanup_ctxt = ctxt;
-	return (ctxt);
+	प्रत्यागम (ctxt);
 }
 
-static int
-sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+स्थिर पूर्णाङ्क
+sshpam_query(शून्य *ctx, वर्ण **name, वर्ण **info,
+    u_int *अङ्कः, वर्ण ***prompts, u_int **echo_on)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt = ctx;
+	संरचना sshbuf *बफर;
+	संरचना pam_ctxt *ctxt = ctx;
 	u_char type;
-	char *msg;
-	size_t mlen, nmesg = 0;
-	int r;
+	वर्ण *सन्देशः;
+	आकार_t mlen, nmesg = 0;
+	पूर्णाङ्क r;
 
 	debug3_f("entering");
-	if ((buffer = sshbuf_new()) == NULL)
+	यदि ((बफर = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	*name = xstrdup("");
 	*info = xstrdup("");
-	*prompts = NULL;
-	*num = 0;
-	ctxt->pam_done = SshPamNone;
+	*prompts = रिक्त;
+	*अङ्कः = 0;
+	ctxt->pam_समाप्तम् = SshPamNone;
 
-	while (ssh_msg_recv(ctxt->pam_psock, buffer) == 0) {
-		if (++nmesg > PAM_MAX_NUM_MSG)
+	यावत् (ssh_सन्देशः_recv(ctxt->pam_psock, बफर) == 0) {
+		यदि (++nmesg > PAM_MAX_अङ्कः_सन्देशः)
 			fatal_f("too many query messages");
-		if ((r = sshbuf_get_u8(buffer, &type)) != 0 ||
-		    (r = sshbuf_get_cstring(buffer, &msg, &mlen)) != 0)
+		यदि ((r = sshbuf_get_u8(बफर, &type)) != 0 ||
+		    (r = sshbuf_get_cstring(बफर, &सन्देशः, &mlen)) != 0)
 			fatal_fr(r, "buffer error");
-		switch (type) {
-		case PAM_PROMPT_ECHO_ON:
-		case PAM_PROMPT_ECHO_OFF:
-			*prompts = xcalloc(1, sizeof(char *));
-			*echo_on = xcalloc(1, sizeof(u_int));
-			(*prompts)[0] = msg;	/* transfer ownership */
+		विकल्प (type) {
+		पक्ष PAM_PROMPT_ECHO_ON:
+		पक्ष PAM_PROMPT_ECHO_OFF:
+			*prompts = xcalloc(1, परिमाण(वर्ण *));
+			*echo_on = xcalloc(1, परिमाण(u_int));
+			(*prompts)[0] = सन्देशः;	/* transfer ownership */
 			(*echo_on)[0] = (type == PAM_PROMPT_ECHO_ON);
-			*num = 1;
-			sshbuf_free(buffer);
-			return (0);
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			free(*info);
-			*info = msg; /* transfer ownership */
-			msg = NULL;
-			ctxt->pam_done = SshPamAgain;
-			sshbuf_free(buffer);
-			return (0);
-		case PAM_ACCT_EXPIRED:
-		case PAM_MAXTRIES:
-			if (type == PAM_ACCT_EXPIRED)
-				sshpam_account_status = 0;
-			if (type == PAM_MAXTRIES)
-				sshpam_set_maxtries_reached(1);
+			*अङ्कः = 1;
+			sshbuf_free(बफर);
+			प्रत्यागम (0);
+		पक्ष PAM_ERROR_सन्देशः:
+		पक्ष PAM_TEXT_INFO:
+			मुक्त(*info);
+			*info = सन्देशः; /* transfer ownership */
+			सन्देशः = रिक्त;
+			ctxt->pam_समाप्तम् = SshPamAgain;
+			sshbuf_free(बफर);
+			प्रत्यागम (0);
+		पक्ष PAM_ACCT_EXPIRED:
+		पक्ष PAM_MAXTRIES:
+			यदि (type == PAM_ACCT_EXPIRED)
+				sshpam_account_स्थितिः = 0;
+			यदि (type == PAM_MAXTRIES)
+				sshpam_समुच्चयः_maxtries_reached(1);
 			/* FALLTHROUGH */
-		case PAM_AUTH_ERR:
+		पक्ष PAM_AUTH_ERR:
 			debug3("PAM: %s", pam_strerror(sshpam_handle, type));
 			/* FALLTHROUGH */
-		case PAM_SUCCESS:
-			if (type == PAM_SUCCESS) {
-				if (!sshpam_authctxt->valid ||
+		पक्ष PAM_SUCCESS:
+			यदि (type == PAM_SUCCESS) {
+				यदि (!sshpam_authctxt->valid ||
 				    (sshpam_authctxt->pw->pw_uid == 0 &&
-				    options.permit_root_login != PERMIT_YES))
+				    options.permit_मूलम्_login != PERMIT_YES))
 					fatal("Internal error: PAM auth "
 					    "succeeded when it should have "
 					    "failed");
-				import_environments(buffer);
-				ctxt->pam_done = SshPamAuthenticated;
-				free(msg);
-				sshbuf_free(buffer);
-				return (0);
+				import_environments(बफर);
+				ctxt->pam_समाप्तम् = SshPamAuthenticated;
+				मुक्त(सन्देशः);
+				sshbuf_free(बफर);
+				प्रत्यागम (0);
 			}
-			error("PAM: %s for %s%.100s from %.100s", msg,
+			error("PAM: %s for %s%.100s from %.100s", सन्देशः,
 			    sshpam_authctxt->valid ? "" : "illegal user ",
 			    sshpam_authctxt->user, sshpam_rhost);
 			/* FALLTHROUGH */
-		default:
-			free(msg);
-			ctxt->pam_done = SshPamError;
-			sshbuf_free(buffer);
-			return (-1);
+		स्वभाव:
+			मुक्त(सन्देशः);
+			ctxt->pam_समाप्तम् = SshPamError;
+			sshbuf_free(बफर);
+			प्रत्यागम (-1);
 		}
 	}
-	sshbuf_free(buffer);
-	return (-1);
+	sshbuf_free(बफर);
+	प्रत्यागम (-1);
 }
 
 /*
@@ -936,78 +936,78 @@ sshpam_query(void *ctx, char **name, char **info,
  * Used to mitigate timing attacks against crypt(3)/PAM stacks that
  * vary processing time in proportion to password length.
  */
-static char *
-fake_password(const char *wire_password)
+स्थिर वर्ण *
+fake_password(ध्रुव वर्ण *wire_password)
 {
-	const char junk[] = "\b\n\r\177INCORRECT";
-	char *ret = NULL;
-	size_t i, l = wire_password != NULL ? strlen(wire_password) : 0;
+	ध्रुव वर्ण junk[] = "\b\n\r\177INCORRECT";
+	वर्ण *ret = रिक्त;
+	आकार_t i, l = wire_password != रिक्त ? वाक्यदैर्घ्यम्(wire_password) : 0;
 
-	if (l >= INT_MAX)
+	यदि (l >= अधिकतम_पूर्णाङ्कः)
 		fatal_f("password length too long: %zu", l);
 
-	ret = malloc(l + 1);
-	if (ret == NULL)
-		return NULL;
-	for (i = 0; i < l; i++)
-		ret[i] = junk[i % (sizeof(junk) - 1)];
+	ret = स्मृतिं_देहि(l + 1);
+	यदि (ret == रिक्त)
+		प्रत्यागम रिक्त;
+	प्रति (i = 0; i < l; i++)
+		ret[i] = junk[i % (परिमाण(junk) - 1)];
 	ret[i] = '\0';
-	return ret;
+	प्रत्यागम ret;
 }
 
-static int
-sshpam_respond(void *ctx, u_int num, char **resp)
+स्थिर पूर्णाङ्क
+sshpam_respond(शून्य *ctx, u_int अङ्कः, वर्ण **resp)
 {
-	struct sshbuf *buffer;
-	struct pam_ctxt *ctxt = ctx;
-	char *fake;
-	int r;
+	संरचना sshbuf *बफर;
+	संरचना pam_ctxt *ctxt = ctx;
+	वर्ण *fake;
+	पूर्णाङ्क r;
 
-	debug2_f("PAM: entering, %u responses", num);
-	switch (ctxt->pam_done) {
-	case SshPamAuthenticated:
+	debug2_f("PAM: entering, %u responses", अङ्कः);
+	विकल्प (ctxt->pam_समाप्तम्) {
+	पक्ष SshPamAuthenticated:
 		sshpam_authenticated = 1;
-		return (0);
-	case SshPamNone:
-		break;
-	case SshPamAgain:
-		return 1;	/* KbdintResultAgain */
-	default:
-		return (-1);
+		प्रत्यागम (0);
+	पक्ष SshPamNone:
+		भङ्ग;
+	पक्ष SshPamAgain:
+		प्रत्यागम 1;	/* KbdintResultAgain */
+	स्वभाव:
+		प्रत्यागम (-1);
 	}
-	if (num != 1) {
-		error("PAM: expected one response, got %u", num);
-		return (-1);
+	यदि (अङ्कः != 1) {
+		error("PAM: expected one response, got %u", अङ्कः);
+		प्रत्यागम (-1);
 	}
-	if ((buffer = sshbuf_new()) == NULL)
+	यदि ((बफर = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if (sshpam_authctxt->valid &&
+	यदि (sshpam_authctxt->valid &&
 	    (sshpam_authctxt->pw->pw_uid != 0 ||
-	    options.permit_root_login == PERMIT_YES)) {
-		if ((r = sshbuf_put_cstring(buffer, *resp)) != 0)
+	    options.permit_मूलम्_login == PERMIT_YES)) {
+		यदि ((r = sshbuf_put_cstring(बफर, *resp)) != 0)
 			fatal_fr(r, "buffer error");
-	} else {
+	} अन्यथा {
 		fake = fake_password(*resp);
-		if ((r = sshbuf_put_cstring(buffer, fake)) != 0)
+		यदि ((r = sshbuf_put_cstring(बफर, fake)) != 0)
 			fatal_fr(r, "buffer error");
-		free(fake);
+		मुक्त(fake);
 	}
-	if (ssh_msg_send(ctxt->pam_psock, PAM_AUTHTOK, buffer) == -1) {
-		sshbuf_free(buffer);
-		return (-1);
+	यदि (ssh_सन्देशः_send(ctxt->pam_psock, PAM_AUTHTOK, बफर) == -1) {
+		sshbuf_free(बफर);
+		प्रत्यागम (-1);
 	}
-	sshbuf_free(buffer);
-	return (1);
+	sshbuf_free(बफर);
+	प्रत्यागम (1);
 }
 
-static void
-sshpam_free_ctx(void *ctxtp)
+स्थिर शून्य
+sshpam_free_ctx(शून्य *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
+	संरचना pam_ctxt *ctxt = ctxtp;
 
 	debug3_f("entering");
 	sshpam_thread_cleanup();
-	free(ctxt);
+	मुक्त(ctxt);
 	/*
 	 * We don't call sshpam_cleanup() here because we may need the PAM
 	 * handle at a later stage, e.g. when setting up a session.  It's
@@ -1016,12 +1016,12 @@ sshpam_free_ctx(void *ctxtp)
 	 */
 }
 
-int
-sshpam_priv_kbdint_authdone(void *ctxtp)
+पूर्णाङ्क
+sshpam_priv_kbdint_authdone(शून्य *ctxtp)
 {
-	struct pam_ctxt *ctxt = ctxtp;
+	संरचना pam_ctxt *ctxt = ctxtp;
 
-	return ctxt->pam_done == SshPamAuthenticated;
+	प्रत्यागम ctxt->pam_समाप्तम् == SshPamAuthenticated;
 }
 
 KbdintDevice sshpam_device = {
@@ -1043,31 +1043,31 @@ KbdintDevice mm_sshpam_device = {
 /*
  * This replaces auth-pam.c
  */
-void
-start_pam(struct ssh *ssh)
+शून्य
+start_pam(संरचना ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (!options.use_pam)
+	यदि (!options.use_pam)
 		fatal("PAM: initialisation requested when UsePAM=no");
 
-	if (sshpam_init(ssh, authctxt) == -1)
+	यदि (sshpam_init(ssh, authctxt) == -1)
 		fatal("PAM: initialisation failed");
 }
 
-void
-finish_pam(void)
+शून्य
+finish_pam(शून्य)
 {
 	sshpam_cleanup();
 }
 
 
 u_int
-do_pam_account(void)
+do_pam_account(शून्य)
 {
 	debug_f("called");
-	if (sshpam_account_status != -1)
-		return (sshpam_account_status);
+	यदि (sshpam_account_स्थितिः != -1)
+		प्रत्यागम (sshpam_account_स्थितिः);
 
 	expose_authinfo(__func__);
 
@@ -1075,56 +1075,56 @@ do_pam_account(void)
 	debug3("PAM: %s pam_acct_mgmt = %d (%s)", __func__, sshpam_err,
 	    pam_strerror(sshpam_handle, sshpam_err));
 
-	if (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
-		sshpam_account_status = 0;
-		return (sshpam_account_status);
+	यदि (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
+		sshpam_account_स्थितिः = 0;
+		प्रत्यागम (sshpam_account_स्थितिः);
 	}
 
-	if (sshpam_err == PAM_NEW_AUTHTOK_REQD)
+	यदि (sshpam_err == PAM_NEW_AUTHTOK_REQD)
 		sshpam_password_change_required(1);
 
-	sshpam_account_status = 1;
-	return (sshpam_account_status);
+	sshpam_account_स्थितिः = 1;
+	प्रत्यागम (sshpam_account_स्थितिः);
 }
 
-void
-do_pam_setcred(void)
+शून्य
+do_pam_setcred(शून्य)
 {
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_CONV,
+	    (ध्रुव शून्य *)&store_conv);
+	यदि (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	debug("PAM: establishing credentials");
 	sshpam_err = pam_setcred(sshpam_handle, PAM_ESTABLISH_CRED);
-	if (sshpam_err == PAM_SUCCESS) {
+	यदि (sshpam_err == PAM_SUCCESS) {
 		sshpam_cred_established = 1;
-		return;
+		प्रत्यागम;
 	}
-	if (sshpam_authenticated)
+	यदि (sshpam_authenticated)
 		fatal("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
-	else
+	अन्यथा
 		debug("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 }
 
-void
-do_pam_session(struct ssh *ssh)
+शून्य
+do_pam_session(संरचना ssh *ssh)
 {
 	debug3("PAM: opening session");
 
 	expose_authinfo(__func__);
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_CONV,
+	    (ध्रुव शून्य *)&store_conv);
+	यदि (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	sshpam_err = pam_open_session(sshpam_handle, 0);
-	if (sshpam_err == PAM_SUCCESS)
+	यदि (sshpam_err == PAM_SUCCESS)
 		sshpam_session_open = 1;
-	else {
+	अन्यथा {
 		sshpam_session_open = 0;
 		auth_restrict_session(ssh);
 		error("PAM: pam_open_session(): %s",
@@ -1133,10 +1133,10 @@ do_pam_session(struct ssh *ssh)
 
 }
 
-int
-is_pam_session_open(void)
+पूर्णाङ्क
+is_pam_session_open(शून्य)
 {
-	return sshpam_session_open;
+	प्रत्यागम sshpam_session_open;
 }
 
 /*
@@ -1144,46 +1144,46 @@ is_pam_session_open(void)
  * modules can handle things like Kerberos/GSI credentials that appear
  * during the ssh authentication process.
  */
-int
-do_pam_putenv(char *name, char *value)
+पूर्णाङ्क
+do_pam_putenv(वर्ण *name, वर्ण *मानम्)
 {
-	int ret = 1;
-	char *compound;
-	size_t len;
+	पूर्णाङ्क ret = 1;
+	वर्ण *compound;
+	आकार_t len;
 
-	len = strlen(name) + strlen(value) + 2;
+	len = वाक्यदैर्घ्यम्(name) + वाक्यदैर्घ्यम्(मानम्) + 2;
 	compound = xmalloc(len);
 
-	snprintf(compound, len, "%s=%s", name, value);
+	snprintf(compound, len, "%s=%s", name, मानम्);
 	ret = pam_putenv(sshpam_handle, compound);
-	free(compound);
+	मुक्त(compound);
 
-	return (ret);
+	प्रत्यागम (ret);
 }
 
-char **
-fetch_pam_child_environment(void)
+वर्ण **
+fetch_pam_child_environment(शून्य)
 {
-	return sshpam_env;
+	प्रत्यागम sshpam_env;
 }
 
-char **
-fetch_pam_environment(void)
+वर्ण **
+fetch_pam_environment(शून्य)
 {
-	return (pam_getenvlist(sshpam_handle));
+	प्रत्यागम (pam_getenvlist(sshpam_handle));
 }
 
-void
-free_pam_environment(char **env)
+शून्य
+free_pam_environment(वर्ण **env)
 {
-	char **envp;
+	वर्ण **envp;
 
-	if (env == NULL)
-		return;
+	यदि (env == रिक्त)
+		प्रत्यागम;
 
-	for (envp = env; *envp; envp++)
-		free(*envp);
-	free(env);
+	प्रति (envp = env; *envp; envp++)
+		मुक्त(*envp);
+	मुक्त(env);
 }
 
 /*
@@ -1191,74 +1191,74 @@ free_pam_environment(char **env)
  * echo-off prompts are for the password and stores messages for later
  * display.
  */
-static int
-sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
-    struct pam_response **resp, void *data)
+स्थिर पूर्णाङ्क
+sshpam_passwd_conv(पूर्णाङ्क n, sshpam_const संरचना pam_सन्देशः **सन्देशः,
+    संरचना pam_response **resp, शून्य *दत्त)
 {
-	struct pam_response *reply;
-	int r, i;
-	size_t len;
+	संरचना pam_response *प्रत्युत्तरम्;
+	पूर्णाङ्क r, i;
+	आकार_t len;
 
 	debug3_f("PAM: called with %d messages", n);
 
-	*resp = NULL;
+	*resp = रिक्त;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	यदि (n <= 0 || n > PAM_MAX_अङ्कः_सन्देशः)
+		प्रत्यागम (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	यदि ((प्रत्युत्तरम् = शून्यस्मृतिं_देहि(n, परिमाण(*प्रत्युत्तरम्))) == रिक्त)
+		प्रत्यागम (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
-		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
-		case PAM_PROMPT_ECHO_OFF:
-			if (sshpam_password == NULL)
-				goto fail;
-			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
-				goto fail;
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		case PAM_ERROR_MSG:
-		case PAM_TEXT_INFO:
-			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-			if (len > 0) {
-				if ((r = sshbuf_putf(loginmsg, "%s\n",
-				    PAM_MSG_MEMBER(msg, i, msg))) != 0)
+	प्रति (i = 0; i < n; ++i) {
+		विकल्प (PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः_style)) {
+		पक्ष PAM_PROMPT_ECHO_OFF:
+			यदि (sshpam_password == रिक्त)
+				गच्छ fail;
+			यदि ((प्रत्युत्तरम्[i].resp = strdup(sshpam_password)) == रिक्त)
+				गच्छ fail;
+			प्रत्युत्तरम्[i].resp_retcode = PAM_SUCCESS;
+			भङ्ग;
+		पक्ष PAM_ERROR_सन्देशः:
+		पक्ष PAM_TEXT_INFO:
+			len = वाक्यदैर्घ्यम्(PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः));
+			यदि (len > 0) {
+				यदि ((r = sshbuf_putf(loginmsg, "%s\n",
+				    PAM_सन्देशः_MEMBER(सन्देशः, i, सन्देशः))) != 0)
 					fatal("%s: buffer error: %s",
 					    __func__, ssh_err(r));
 			}
-			if ((reply[i].resp = strdup("")) == NULL)
-				goto fail;
-			reply[i].resp_retcode = PAM_SUCCESS;
-			break;
-		default:
-			goto fail;
+			यदि ((प्रत्युत्तरम्[i].resp = strdup("")) == रिक्त)
+				गच्छ fail;
+			प्रत्युत्तरम्[i].resp_retcode = PAM_SUCCESS;
+			भङ्ग;
+		स्वभाव:
+			गच्छ fail;
 		}
 	}
-	*resp = reply;
-	return (PAM_SUCCESS);
+	*resp = प्रत्युत्तरम्;
+	प्रत्यागम (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
-		free(reply[i].resp);
+	प्रति(i = 0; i < n; i++) {
+		मुक्त(प्रत्युत्तरम्[i].resp);
 	}
-	free(reply);
-	return (PAM_CONV_ERR);
+	मुक्त(प्रत्युत्तरम्);
+	प्रत्यागम (PAM_CONV_ERR);
 }
 
-static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
+स्थिर संरचना pam_conv passwd_conv = { sshpam_passwd_conv, रिक्त };
 
 /*
  * Attempt password authentication via PAM
  */
-int
-sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+पूर्णाङ्क
+sshpam_auth_passwd(Authctxt *authctxt, ध्रुव वर्ण *password)
 {
-	int flags = (options.permit_empty_passwd == 0 ?
+	पूर्णाङ्क flags = (options.permit_रिक्तानि_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
-	char *fake = NULL;
+	वर्ण *fake = रिक्त;
 
-	if (!options.use_pam || sshpam_handle == NULL)
+	यदि (!options.use_pam || sshpam_handle == रिक्त)
 		fatal("PAM: %s called when PAM disabled or failed to "
 		    "initialise.", __func__);
 
@@ -1270,50 +1270,50 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 	 * by PermitRootLogin, use an invalid password to prevent leaking
 	 * information via timing (eg if the PAM config has a delay on fail).
 	 */
-	if (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
-	    options.permit_root_login != PERMIT_YES))
+	यदि (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
+	    options.permit_मूलम्_login != PERMIT_YES))
 		sshpam_password = fake = fake_password(password);
 
-	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
-	    (const void *)&passwd_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	sshpam_err = pam_समुच्चयः_item(sshpam_handle, PAM_CONV,
+	    (ध्रुव शून्य *)&passwd_conv);
+	यदि (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: %s: failed to set PAM_CONV: %s", __func__,
 		    pam_strerror(sshpam_handle, sshpam_err));
 
 	expose_authinfo(__func__);
 
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
-	sshpam_password = NULL;
-	free(fake);
-	if (sshpam_err == PAM_SUCCESS)
+	sshpam_password = रिक्त;
+	मुक्त(fake);
+	यदि (sshpam_err == PAM_SUCCESS)
 		sshpam_err = check_pam_user(authctxt);
-	if (sshpam_err == PAM_MAXTRIES)
-		sshpam_set_maxtries_reached(1);
-	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
+	यदि (sshpam_err == PAM_MAXTRIES)
+		sshpam_समुच्चयः_maxtries_reached(1);
+	यदि (sshpam_err == PAM_SUCCESS && authctxt->valid) {
 		debug("PAM: password authentication accepted for %.100s",
 		    authctxt->user);
-		return 1;
-	} else {
+		प्रत्यागम 1;
+	} अन्यथा {
 		debug("PAM: password authentication failed for %.100s: %s",
 		    authctxt->valid ? authctxt->user : "an illegal user",
 		    pam_strerror(sshpam_handle, sshpam_err));
-		return 0;
+		प्रत्यागम 0;
 	}
 }
 
-int
-sshpam_get_maxtries_reached(void)
+पूर्णाङ्क
+sshpam_get_maxtries_reached(शून्य)
 {
-	return sshpam_maxtries_reached;
+	प्रत्यागम sshpam_maxtries_reached;
 }
 
-void
-sshpam_set_maxtries_reached(int reached)
+शून्य
+sshpam_समुच्चयः_maxtries_reached(पूर्णाङ्क reached)
 {
-	if (reached == 0 || sshpam_maxtries_reached)
-		return;
+	यदि (reached == 0 || sshpam_maxtries_reached)
+		प्रत्यागम;
 	sshpam_maxtries_reached = 1;
 	options.password_authentication = 0;
 	options.kbd_interactive_authentication = 0;
 }
-#endif /* USE_PAM */
+#यदि_अन्तः /* USE_PAM */

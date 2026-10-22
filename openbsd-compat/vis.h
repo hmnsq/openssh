@@ -34,65 +34,65 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#अन्तर्भाव "includes.h"
+#यदि !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#ifndef _VIS_H_
-#define	_VIS_H_
+#यदि_अपरिभाषितम् _VIS_H_
+#परिभाषय	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <limits.h>
 
 /*
  * to select alternate encoding format
  */
-#define	VIS_OCTAL	0x01	/* use octal \ddd format */
-#define	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
+#परिभाषय	VIS_OCTAL	0x01	/* use octal \ddd format */
+#परिभाषय	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
 
 /*
  * to alter set of characters encoded (default is to encode all
  * non-graphic except space, tab, and newline).
  */
-#define	VIS_SP		0x04	/* also encode space */
-#define	VIS_TAB		0x08	/* also encode tab */
-#define	VIS_NL		0x10	/* also encode newline */
-#define	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
-#define	VIS_SAFE	0x20	/* only encode "unsafe" characters */
-#define	VIS_DQ		0x200	/* backslash-escape double quotes */
-#define	VIS_ALL		0x400	/* encode all characters */
+#परिभाषय	VIS_SP		0x04	/* also encode space */
+#परिभाषय	VIS_TAB		0x08	/* also encode tab */
+#परिभाषय	VIS_NL		0x10	/* also encode newline */
+#परिभाषय	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
+#परिभाषय	VIS_SAFE	0x20	/* only encode "unsafe" characters */
+#परिभाषय	VIS_DQ		0x200	/* backslash-escape double quotes */
+#परिभाषय	VIS_ALL		0x400	/* encode all characters */
 
 /*
  * other
  */
-#define	VIS_NOSLASH	0x40	/* inhibit printing '\' */
-#define	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
+#परिभाषय	VIS_NOSLASH	0x40	/* inhibit printing '\' */
+#परिभाषय	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
 
 /*
  * unvis return codes
  */
-#define	UNVIS_VALID	 1	/* character valid */
-#define	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
-#define	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
-#define	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
-#define	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
+#परिभाषय	UNVIS_VALID	 1	/* character valid */
+#परिभाषय	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
+#परिभाषय	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
+#परिभाषय	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
+#परिभाषय	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
 
 /*
  * unvis flags
  */
-#define	UNVIS_END	1	/* no more characters */
+#परिभाषय	UNVIS_अन्तः	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+वर्ण	*vis(वर्ण *, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क);
+पूर्णाङ्क	strvis(वर्ण *, ध्रुव वर्ण *, पूर्णाङ्क);
+पूर्णाङ्क	stravis(वर्ण **, ध्रुव वर्ण *, पूर्णाङ्क);
+पूर्णाङ्क	strnvis(वर्ण *, ध्रुव वर्ण *, आकार_t, पूर्णाङ्क)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+पूर्णाङ्क	strvisx(वर्ण *, ध्रुव वर्ण *, आकार_t, पूर्णाङ्क)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+पूर्णाङ्क	strunvis(वर्ण *, ध्रुव वर्ण *);
+पूर्णाङ्क	unvis(वर्ण *, वर्ण, पूर्णाङ्क *, पूर्णाङ्क);
+ssize_t strnunvis(वर्ण *, ध्रुव वर्ण *, आकार_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
-#endif /* !_VIS_H_ */
+#यदि_अन्तः /* !_VIS_H_ */
 
-#endif /* !HAVE_STRNVIS || BROKEN_STRNVIS */
+#यदि_अन्तः /* !HAVE_STRNVIS || BROKEN_STRNVIS */

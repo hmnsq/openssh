@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#यदि_अपरिभाषितम् पत्तनम्_LINUX_H
+#परिभाषय पत्तनम्_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#यदि_परिभाषितम् WITH_SELINUX
+पूर्णाङ्क ssh_selinux_enabled(शून्य);
+शून्य ssh_selinux_सज्जता_pty(वर्ण *, ध्रुव वर्ण *);
+शून्य ssh_selinux_सज्जता_exec_context(वर्ण *);
+शून्य ssh_selinux_change_context(ध्रुव वर्ण *);
+शून्य ssh_selinux_setfscreatecon(ध्रुव वर्ण *);
+#यदि_अन्तः
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#यदि_परिभाषितम् LINUX_OOM_ADJUST
+शून्य oom_adjust_restore(शून्य);
+शून्य oom_adjust_सज्जता(शून्य);
+#यदि_अन्तः
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#यदि_परिभाषितम् LINUX_MEMLOCK_ONFAULT
+शून्य memlock_onfault_सज्जता(शून्य);
+#यदि_अन्तः
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#यदि_परिभाषितम् SYSTEMD_NOTIFY
+शून्य ssh_systemd_notify_ready(शून्य);
+शून्य ssh_systemd_notify_reload(शून्य);
+#यदि_अन्तः
 
-#endif /* ! _PORT_LINUX_H */
+#यदि_अन्तः /* ! _PORT_LINUX_H */

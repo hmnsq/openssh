@@ -5,56 +5,56 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "xmalloc.h"
 
-void test_strdelim(void);
+शून्य test_strdelim(शून्य);
 
-void
-test_strdelim(void)
+शून्य
+test_strdelim(शून्य)
 {
-	char *orig, *str, *cp;
+	वर्ण *orig, *str, *cp;
 
-#define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#परिभाषय START_STRING(x)	orig = str = xstrdup(x)
+#परिभाषय समाप्तम्_STRING()	मुक्त(orig)
 
 	TEST_START("empty");
 	START_STRING("");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX arguable */
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("whitespace");
 	START_STRING("	");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
 	ASSERT_STRING_EQ(str, "");
-	DONE_STRING();
-	TEST_DONE();
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("trivial");
 	START_STRING("blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("trivial whitespace");
 	START_STRING("blob   ");
@@ -63,9 +63,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("multi");
 	START_STRING("blob1 blob2");
@@ -74,11 +74,11 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("multi whitespace");
 	START_STRING("blob1	 	blob2  	 	");
@@ -89,9 +89,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("multi equals");
 	START_STRING("blob1=blob2");
@@ -100,11 +100,11 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("multi too many equals");
 	START_STRING("blob1==blob2");
@@ -116,19 +116,19 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");	/* XXX should (but can't) reject */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("multi equals strdelimw");
 	START_STRING("blob1=blob2");
 	cp = strdelimw(&str);
 	ASSERT_STRING_EQ(cp, "blob1=blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	cp = strdelimw(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("quoted");
 	START_STRING("\"blob\"");
@@ -136,9 +136,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("quoted multi");
 	START_STRING("\"blob1\" blob2");
@@ -147,11 +147,11 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("quoted multi reverse");
 	START_STRING("blob1 \"blob2\"");
@@ -163,9 +163,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(str, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("quoted multi middle");
 	START_STRING("blob1 \"blob2\" blob3");
@@ -176,16 +176,16 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob3");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("badquote");
 	START_STRING("\"blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	DONE_STRING();
-	TEST_DONE();
+	ASSERT_PTR_EQ(cp, रिक्त);
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 	TEST_START("oops quote");
 	START_STRING("\"blob\\\"");
@@ -193,7 +193,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob\\");	/* XXX wrong */
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	DONE_STRING();
-	TEST_DONE();
+	समाप्तम्_STRING();
+	TEST_समाप्तम्();
 
 }

@@ -58,123 +58,123 @@
 
 /* special marker for no message */
 
-#define SSH_MSG_NONE					0
+#परिभाषय SSH_सन्देशः_NONE					0
 
 /* ranges */
 
-#define SSH2_MSG_TRANSPORT_MIN				1
-#define SSH2_MSG_TRANSPORT_MAX				49
-#define SSH2_MSG_USERAUTH_MIN				50
-#define SSH2_MSG_USERAUTH_MAX				79
-#define SSH2_MSG_USERAUTH_PER_METHOD_MIN		60
-#define SSH2_MSG_USERAUTH_PER_METHOD_MAX		SSH2_MSG_USERAUTH_MAX
-#define SSH2_MSG_CONNECTION_MIN				80
-#define SSH2_MSG_CONNECTION_MAX				127
-#define SSH2_MSG_RESERVED_MIN				128
-#define SSH2_MSG_RESERVED_MAX				191
-#define SSH2_MSG_LOCAL_MIN				192
-#define SSH2_MSG_LOCAL_MAX				255
-#define SSH2_MSG_MIN					1
-#define SSH2_MSG_MAX					255
+#परिभाषय SSH2_सन्देशः_TRANSPORT_MIN				1
+#परिभाषय SSH2_सन्देशः_TRANSPORT_MAX				49
+#परिभाषय SSH2_सन्देशः_USERAUTH_MIN				50
+#परिभाषय SSH2_सन्देशः_USERAUTH_MAX				79
+#परिभाषय SSH2_सन्देशः_USERAUTH_प्रत्येकम्_विधानम्_MIN		60
+#परिभाषय SSH2_सन्देशः_USERAUTH_प्रत्येकम्_विधानम्_MAX		SSH2_सन्देशः_USERAUTH_MAX
+#परिभाषय SSH2_सन्देशः_CONNECTION_MIN				80
+#परिभाषय SSH2_सन्देशः_CONNECTION_MAX				127
+#परिभाषय SSH2_सन्देशः_RESERVED_MIN				128
+#परिभाषय SSH2_सन्देशः_RESERVED_MAX				191
+#परिभाषय SSH2_सन्देशः_LOCAL_MIN				192
+#परिभाषय SSH2_सन्देशः_LOCAL_MAX				255
+#परिभाषय SSH2_सन्देशः_MIN					1
+#परिभाषय SSH2_सन्देशः_MAX					255
 
 /* transport layer: generic */
 
-#define SSH2_MSG_DISCONNECT				1
-#define SSH2_MSG_IGNORE					2
-#define SSH2_MSG_UNIMPLEMENTED				3
-#define SSH2_MSG_DEBUG					4
-#define SSH2_MSG_SERVICE_REQUEST			5
-#define SSH2_MSG_SERVICE_ACCEPT				6
-#define SSH2_MSG_EXT_INFO				7
-#define SSH2_MSG_NEWCOMPRESS				8
+#परिभाषय SSH2_सन्देशः_DISCONNECT				1
+#परिभाषय SSH2_सन्देशः_IGNORE					2
+#परिभाषय SSH2_सन्देशः_UNIMPLEMENTED				3
+#परिभाषय SSH2_सन्देशः_DEBUG					4
+#परिभाषय SSH2_सन्देशः_SERVICE_REQUEST			5
+#परिभाषय SSH2_सन्देशः_SERVICE_ACCEPT				6
+#परिभाषय SSH2_सन्देशः_EXT_INFO				7
+#परिभाषय SSH2_सन्देशः_NEWCOMPRESS				8
 
 /* transport layer: alg negotiation */
 
-#define SSH2_MSG_KEXINIT				20
-#define SSH2_MSG_NEWKEYS				21
+#परिभाषय SSH2_सन्देशः_KEXINIT				20
+#परिभाषय SSH2_सन्देशः_NEWKEYS				21
 
 /* transport layer: kex specific messages, can be reused */
 
-#define SSH2_MSG_KEXDH_INIT				30
-#define SSH2_MSG_KEXDH_REPLY				31
+#परिभाषय SSH2_सन्देशः_KEXDH_INIT				30
+#परिभाषय SSH2_सन्देशः_KEXDH_प्रत्युत्तरम्				31
 
 /* dh-group-exchange */
-#define SSH2_MSG_KEX_DH_GEX_REQUEST_OLD			30
-#define SSH2_MSG_KEX_DH_GEX_GROUP			31
-#define SSH2_MSG_KEX_DH_GEX_INIT			32
-#define SSH2_MSG_KEX_DH_GEX_REPLY			33
-#define SSH2_MSG_KEX_DH_GEX_REQUEST			34
+#परिभाषय SSH2_सन्देशः_KEX_DH_GEX_REQUEST_OLD			30
+#परिभाषय SSH2_सन्देशः_KEX_DH_GEX_गणः			31
+#परिभाषय SSH2_सन्देशः_KEX_DH_GEX_INIT			32
+#परिभाषय SSH2_सन्देशः_KEX_DH_GEX_प्रत्युत्तरम्			33
+#परिभाषय SSH2_सन्देशः_KEX_DH_GEX_REQUEST			34
 
 /* ecdh */
-#define SSH2_MSG_KEX_ECDH_INIT				30
-#define SSH2_MSG_KEX_ECDH_REPLY				31
+#परिभाषय SSH2_सन्देशः_KEX_ECDH_INIT				30
+#परिभाषय SSH2_सन्देशः_KEX_ECDH_प्रत्युत्तरम्				31
 
 /* transport layer: OpenSSH extensions */
-#define SSH2_MSG_PING					192
-#define SSH2_MSG_PONG					193
+#परिभाषय SSH2_सन्देशः_PING					192
+#परिभाषय SSH2_सन्देशः_PONG					193
 
 /* user authentication: generic */
 
-#define SSH2_MSG_USERAUTH_REQUEST			50
-#define SSH2_MSG_USERAUTH_FAILURE			51
-#define SSH2_MSG_USERAUTH_SUCCESS			52
-#define SSH2_MSG_USERAUTH_BANNER			53
+#परिभाषय SSH2_सन्देशः_USERAUTH_REQUEST			50
+#परिभाषय SSH2_सन्देशः_USERAUTH_FAILURE			51
+#परिभाषय SSH2_सन्देशः_USERAUTH_SUCCESS			52
+#परिभाषय SSH2_सन्देशः_USERAUTH_BANNER			53
 
 /* user authentication: method specific, can be reused */
 
-#define SSH2_MSG_USERAUTH_PK_OK				60
-#define SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ		60
-#define SSH2_MSG_USERAUTH_INFO_REQUEST			60
-#define SSH2_MSG_USERAUTH_INFO_RESPONSE			61
+#परिभाषय SSH2_सन्देशः_USERAUTH_PK_OK				60
+#परिभाषय SSH2_सन्देशः_USERAUTH_PASSWD_CHANGEREQ		60
+#परिभाषय SSH2_सन्देशः_USERAUTH_INFO_REQUEST			60
+#परिभाषय SSH2_सन्देशः_USERAUTH_INFO_RESPONSE			61
 
 /* connection protocol: generic */
 
-#define SSH2_MSG_GLOBAL_REQUEST				80
-#define SSH2_MSG_REQUEST_SUCCESS			81
-#define SSH2_MSG_REQUEST_FAILURE			82
+#परिभाषय SSH2_सन्देशः_GLOBAL_REQUEST				80
+#परिभाषय SSH2_सन्देशः_REQUEST_SUCCESS			81
+#परिभाषय SSH2_सन्देशः_REQUEST_FAILURE			82
 
 /* channel related messages */
 
-#define SSH2_MSG_CHANNEL_OPEN				90
-#define SSH2_MSG_CHANNEL_OPEN_CONFIRMATION		91
-#define SSH2_MSG_CHANNEL_OPEN_FAILURE			92
-#define SSH2_MSG_CHANNEL_WINDOW_ADJUST			93
-#define SSH2_MSG_CHANNEL_DATA				94
-#define SSH2_MSG_CHANNEL_EXTENDED_DATA			95
-#define SSH2_MSG_CHANNEL_EOF				96
-#define SSH2_MSG_CHANNEL_CLOSE				97
-#define SSH2_MSG_CHANNEL_REQUEST			98
-#define SSH2_MSG_CHANNEL_SUCCESS			99
-#define SSH2_MSG_CHANNEL_FAILURE			100
+#परिभाषय SSH2_सन्देशः_CHANNEL_OPEN				90
+#परिभाषय SSH2_सन्देशः_CHANNEL_OPEN_CONFIRMATION		91
+#परिभाषय SSH2_सन्देशः_CHANNEL_OPEN_FAILURE			92
+#परिभाषय SSH2_सन्देशः_CHANNEL_गवाक्षः_ADJUST			93
+#परिभाषय SSH2_सन्देशः_CHANNEL_दत्त				94
+#परिभाषय SSH2_सन्देशः_CHANNEL_EXTENDED_दत्त			95
+#परिभाषय SSH2_सन्देशः_CHANNEL_EOF				96
+#परिभाषय SSH2_सन्देशः_CHANNEL_CLOSE				97
+#परिभाषय SSH2_सन्देशः_CHANNEL_REQUEST			98
+#परिभाषय SSH2_सन्देशः_CHANNEL_SUCCESS			99
+#परिभाषय SSH2_सन्देशः_CHANNEL_FAILURE			100
 
 /* disconnect reason code */
 
-#define SSH2_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT	1
-#define SSH2_DISCONNECT_PROTOCOL_ERROR			2
-#define SSH2_DISCONNECT_KEY_EXCHANGE_FAILED		3
-#define SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
-#define SSH2_DISCONNECT_RESERVED			4
-#define SSH2_DISCONNECT_MAC_ERROR			5
-#define SSH2_DISCONNECT_COMPRESSION_ERROR		6
-#define SSH2_DISCONNECT_SERVICE_NOT_AVAILABLE		7
-#define SSH2_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED	8
-#define SSH2_DISCONNECT_HOST_KEY_NOT_VERIFIABLE		9
-#define SSH2_DISCONNECT_CONNECTION_LOST			10
-#define SSH2_DISCONNECT_BY_APPLICATION			11
-#define SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
-#define SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
-#define SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE	14
-#define SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
+#परिभाषय SSH2_DISCONNECT_HOST_NOT_ALLOWED_गन्तव्यम्_CONNECT	1
+#परिभाषय SSH2_DISCONNECT_PROTOCOL_ERROR			2
+#परिभाषय SSH2_DISCONNECT_कुञ्चिका_EXCHANGE_FAILED		3
+#परिभाषय SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
+#परिभाषय SSH2_DISCONNECT_RESERVED			4
+#परिभाषय SSH2_DISCONNECT_MAC_ERROR			5
+#परिभाषय SSH2_DISCONNECT_COMPRESSION_ERROR		6
+#परिभाषय SSH2_DISCONNECT_SERVICE_NOT_उपलब्धम्		7
+#परिभाषय SSH2_DISCONNECT_PROTOCOL_संस्करणम्_NOT_SUPPORTED	8
+#परिभाषय SSH2_DISCONNECT_HOST_कुञ्चिका_NOT_VERIFIABLE		9
+#परिभाषय SSH2_DISCONNECT_CONNECTION_नष्टम्			10
+#परिभाषय SSH2_DISCONNECT_BY_APPLICATION			11
+#परिभाषय SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
+#परिभाषय SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
+#परिभाषय SSH2_DISCONNECT_NO_अधिकम्_AUTH_METHODS_उपलब्धम्	14
+#परिभाषय SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
 
 /* misc */
 
-#define SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
-#define SSH2_OPEN_CONNECT_FAILED			2
-#define SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
-#define SSH2_OPEN_RESOURCE_SHORTAGE			4
+#परिभाषय SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
+#परिभाषय SSH2_OPEN_CONNECT_FAILED			2
+#परिभाषय SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
+#परिभाषय SSH2_OPEN_RESOURCE_SHORTAGE			4
 
-#define SSH2_EXTENDED_DATA_STDERR			1
+#परिभाषय SSH2_EXTENDED_दत्त_STDERR			1
 
 /* Certificate types for OpenSSH certificate keys extension */
-#define SSH2_CERT_TYPE_USER				1
-#define SSH2_CERT_TYPE_HOST				2
+#परिभाषय SSH2_CERT_TYPE_USER				1
+#परिभाषय SSH2_CERT_TYPE_HOST				2

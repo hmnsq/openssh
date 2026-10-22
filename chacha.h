@@ -6,31 +6,31 @@ D. J. Bernstein
 Public domain.
 */
 
-#ifndef CHACHA_H
-#define CHACHA_H
+#यदि_अपरिभाषितम् CHACHA_H
+#परिभाषय CHACHA_H
 
-#include <sys/types.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdlib.h>
 
-struct chacha_ctx {
-	u_int input[16];
+संरचना chacha_ctx {
+	u_int निवेशः[16];
 };
 
-#define CHACHA_MINKEYLEN	16
-#define CHACHA_NONCELEN		8
-#define CHACHA_CTRLEN		8
-#define CHACHA_STATELEN		(CHACHA_NONCELEN+CHACHA_CTRLEN)
-#define CHACHA_BLOCKLEN		64
+#परिभाषय CHACHA_MINKEYLEN	16
+#परिभाषय CHACHA_NONCELEN		8
+#परिभाषय CHACHA_CTRLEN		8
+#परिभाषय CHACHA_STATELEN		(CHACHA_NONCELEN+CHACHA_CTRLEN)
+#परिभाषय CHACHA_BLOCKLEN		64
 
-void chacha_keysetup(struct chacha_ctx *x, const u_char *k, u_int kbits)
+शून्य chacha_keysetup(संरचना chacha_ctx *x, ध्रुव u_char *k, u_int kbits)
     __attribute__((__bounded__(__minbytes__, 2, CHACHA_MINKEYLEN)));
-void chacha_ivsetup(struct chacha_ctx *x, const u_char *iv, const u_char *ctr)
+शून्य chacha_ivsetup(संरचना chacha_ctx *x, ध्रुव u_char *iv, ध्रुव u_char *ctr)
     __attribute__((__bounded__(__minbytes__, 2, CHACHA_NONCELEN)))
     __attribute__((__bounded__(__minbytes__, 3, CHACHA_CTRLEN)));
-void chacha_encrypt_bytes(struct chacha_ctx *x, const u_char *m,
-    u_char *c, u_int bytes)
+शून्य chacha_encrypt_अष्टकानि(संरचना chacha_ctx *x, ध्रुव u_char *m,
+    u_char *c, u_int अष्टकानि)
     __attribute__((__bounded__(__buffer__, 2, 4)))
     __attribute__((__bounded__(__buffer__, 3, 4)));
 
-#endif	/* CHACHA_H */
+#यदि_अन्तः	/* CHACHA_H */
 

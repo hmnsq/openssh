@@ -27,117 +27,117 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#यदि_परिभाषितम् WITH_OPENSSL
+#अन्तर्भाव "openbsd-compat/openssl-compat.h"
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/ec.h>
+#अन्तर्भाव <openssl/ecdsa.h>
+#अन्तर्भाव <openssl/evp.h>
 
-#include <string.h>
-#include <stdio.h> /* needed for DEBUG_SK only */
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdio.h> /* needed for DEBUG_SK only */
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "digest.h"
+#परिभाषय SSHKEY_आन्तरिकम्
+#अन्तर्भाव "sshkey.h"
 
 /* Reuse some ECDSA internals */
-extern struct sshkey_impl_funcs sshkey_ecdsa_funcs;
+बाह्य संरचना sshkey_impl_funcs sshkey_ecdsa_funcs;
 
-static void
-ssh_ecdsa_sk_cleanup(struct sshkey *k)
+स्थिर शून्य
+ssh_ecdsa_sk_cleanup(संरचना sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ecdsa_funcs.cleanup(k);
 }
 
-static int
-ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_equal(ध्रुव संरचना sshkey *a, ध्रुव संरचना sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ecdsa_funcs.equal(a, b))
-		return 0;
-	return 1;
+	यदि (!sshkey_sk_fields_equal(a, b))
+		प्रत्यागम 0;
+	यदि (!sshkey_ecdsa_funcs.equal(a, b))
+		प्रत्यागम 0;
+	प्रत्यागम 1;
 }
 
-static int
-ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_serialize_लौकिकम्(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	यदि ((r = sshkey_ecdsa_funcs.serialize_लौकिकम्(कुञ्चिका, b, opts)) != 0)
+		प्रत्यागम r;
+	यदि ((r = sshkey_serialize_sk(कुञ्चिका, b)) != 0)
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_serialize_वैयक्तिकम्(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	यदि (!sshkey_is_cert(कुञ्चिका)) {
+		यदि ((r = sshkey_ecdsa_funcs.serialize_लौकिकम्(कुञ्चिका,
 		    b, opts)) != 0)
-			return r;
+			प्रत्यागम r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	यदि ((r = sshkey_serialize_वैयक्तिकम्_sk(कुञ्चिका, b)) != 0)
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_copy_लौकिकम्(ध्रुव संरचना sshkey *from, संरचना sshkey *गन्तव्यम्)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	यदि ((r = sshkey_ecdsa_funcs.copy_लौकिकम्(from, गन्तव्यम्)) != 0)
+		प्रत्यागम r;
+	यदि ((r = sshkey_copy_लौकिकम्_sk(from, गन्तव्यम्)) != 0)
+		प्रत्यागम r;
+	प्रत्यागम 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_deserialize_लौकिकम्(ध्रुव वर्ण *ktype, संरचना sshbuf *b,
+    संरचना sshkey *कुञ्चिका)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	यदि ((r = sshkey_ecdsa_funcs.deserialize_लौकिकम्(ktype, b, कुञ्चिका)) != 0)
+		प्रत्यागम r;
+	यदि ((r = sshkey_deserialize_sk(b, कुञ्चिका)) != 0)
+		प्रत्यागम r;
+	प्रत्यागम 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_deserialize_वैयक्तिकम्(ध्रुव वर्ण *ktype, संरचना sshbuf *b,
+    संरचना sshkey *कुञ्चिका)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	यदि (!sshkey_is_cert(कुञ्चिका)) {
+		यदि ((r = sshkey_ecdsa_funcs.deserialize_लौकिकम्(ktype,
+		    b, कुञ्चिका)) != 0)
+			प्रत्यागम r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
+	यदि ((r = sshkey_वैयक्तिकम्_deserialize_sk(b, कुञ्चिका)) != 0)
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
@@ -152,29 +152,29 @@ ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
  * that the hash of the signed message is present within the clientData
  * structure without needing to implement any JSON parsing.
  */
-static int
-webauthn_check_prepare_hash(const u_char *data, size_t datalen,
-    const char *origin, const struct sshbuf *wrapper,
-    uint8_t flags, const struct sshbuf *extensions,
-    u_char *msghash, size_t msghashlen)
+स्थिर पूर्णाङ्क
+webauthn_check_prepare_hash(ध्रुव u_char *दत्त, आकार_t datalen,
+    ध्रुव वर्ण *origin, ध्रुव संरचना sshbuf *wrapper,
+    uint8_t flags, ध्रुव संरचना sshbuf *extensions,
+    u_char *msghash, आकार_t msghashlen)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *chall = NULL, *m = NULL;
+	पूर्णाङ्क r = SSH_ERR_आन्तरिकम्_ERROR;
+	संरचना sshbuf *chall = रिक्त, *m = रिक्त;
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (chall = sshbuf_from(data, datalen)) == NULL) {
+	यदि ((m = sshbuf_new()) == रिक्त ||
+	    (chall = sshbuf_from(दत्त, datalen)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 	/*
 	 * Ensure origin contains no quote character and that the flags are
 	 * consistent with what we received
 	 */
-	if (strchr(origin, '\"') != NULL ||
+	यदि (strchr(origin, '\"') != रिक्त ||
 	    (flags & 0x40) != 0 /* AD */ ||
 	    ((flags & 0x80) == 0 /* ED */) != (sshbuf_len(extensions) == 0)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
 	/*
@@ -183,269 +183,269 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	 * structure. The crossOrigin flag and any additional extension
 	 * fields present are ignored.
 	 */
-#define WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
-#define WEBAUTHN_1	"\",\"origin\":\""
-#define WEBAUTHN_2	"\""
-	if ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
+#परिभाषय WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
+#परिभाषय WEBAUTHN_1	"\",\"origin\":\""
+#परिभाषय WEBAUTHN_2	"\""
+	यदि ((r = sshbuf_put(m, WEBAUTHN_0, परिमाण(WEBAUTHN_0) - 1)) != 0 ||
 	    (r = sshbuf_dtourlb64(chall, m, 0)) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_1, sizeof(WEBAUTHN_1) - 1)) != 0 ||
-	    (r = sshbuf_put(m, origin, strlen(origin))) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_2, sizeof(WEBAUTHN_2) - 1)) != 0)
-		goto out;
-#ifdef DEBUG_SK
+	    (r = sshbuf_put(m, WEBAUTHN_1, परिमाण(WEBAUTHN_1) - 1)) != 0 ||
+	    (r = sshbuf_put(m, origin, वाक्यदैर्घ्यम्(origin))) != 0 ||
+	    (r = sshbuf_put(m, WEBAUTHN_2, परिमाण(WEBAUTHN_2) - 1)) != 0)
+		गच्छ बहिर्गमनम्;
+#यदि_परिभाषितम् DEBUG_SK
 	fprintf(stderr, "%s: received origin: %s\n", __func__, origin);
 	fprintf(stderr, "%s: received clientData:\n", __func__);
 	sshbuf_dump(wrapper, stderr);
 	fprintf(stderr, "%s: expected clientData preamble:\n", __func__);
 	sshbuf_dump(m, stderr);
-#endif
+#यदि_अन्तः
 	/* Check that the supplied clientData has the preamble we expect */
-	if ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
-		goto out;
+	यदि ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
+		गच्छ बहिर्गमनम्;
 
 	/* Prepare hash of clientData */
-	if ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
+	यदि ((r = ssh_digest_बफर(SSH_DIGEST_SHA256, wrapper,
 	    msghash, msghashlen)) != 0)
-		goto out;
+		गच्छ बहिर्गमनम्;
 
 	/* success */
 	r = 0;
- out:
+ बहिर्गमनम्:
 	sshbuf_free(chall);
 	sshbuf_free(m);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-ssh_ecdsa_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+स्थिर पूर्णाङ्क
+ssh_ecdsa_sk_verify(ध्रुव संरचना sshkey *कुञ्चिका,
+    ध्रुव u_char *sig, आकार_t siglen,
+    ध्रुव u_char *दत्त, आकार_t dlen, ध्रुव वर्ण *alg, u_int compat,
+    संरचना sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	EVP_MD_CTX *md_ctx = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
+	ECDSA_SIG *esig = रिक्त;
+	EVP_MD_CTX *md_ctx = रिक्त;
+	BIGNUM *sig_r = रिक्त, *sig_s = रिक्त;
 	u_char sig_flags;
 	u_char msghash[32], apphash[32];
-	u_int sig_counter;
-	u_char *sigb = NULL, *cp;
-	int is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
-	struct sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
-	struct sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
-	char *ktype = NULL, *webauthn_origin = NULL;
-	struct sshkey_sig_details *details = NULL;
-#ifdef DEBUG_SK
-	char *tmp = NULL;
-#endif
+	u_int sig_गणक;
+	u_char *sigb = रिक्त, *cp;
+	पूर्णाङ्क is_webauthn = 0, ret = SSH_ERR_आन्तरिकम्_ERROR, len = 0;
+	संरचना sshbuf *b = रिक्त, *sigbuf = रिक्त, *original_signed = रिक्त;
+	संरचना sshbuf *webauthn_wrapper = रिक्त, *webauthn_exts = रिक्त;
+	वर्ण *ktype = रिक्त, *webauthn_origin = रिक्त;
+	संरचना sshkey_sig_details *details = रिक्त;
+#यदि_परिभाषितम् DEBUG_SK
+	वर्ण *tmp = रिक्त;
+#यदि_अन्तः
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	यदि (detailsp != रिक्त)
+		*detailsp = रिक्त;
+	यदि (कुञ्चिका == रिक्त || कुञ्चिका->pkey == रिक्त ||
+	    sshkey_type_plain(कुञ्चिका->type) != कुञ्चिका_ECDSA_SK ||
+	    sig == रिक्त || siglen == 0)
+		प्रत्यागम SSH_ERR_INVALID_तर्कः;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
-		return SSH_ERR_INTERNAL_ERROR;
+	यदि (कुञ्चिका->ecdsa_nid != NID_X9_62_prime256v1)
+		प्रत्यागम SSH_ERR_आन्तरिकम्_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	यदि ((b = sshbuf_from(sig, siglen)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	यदि ((details = शून्यस्मृतिं_देहि(1, परिमाण(*details))) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	यदि (sshbuf_get_cstring(b, &ktype, रिक्त) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
-	    strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
+	यदि (वाक्यं_तुलय(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
+	    वाक्यं_तुलय(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
 	      == 0)
 		is_webauthn = 1;
-	else if (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
+	अन्यथा यदि (वाक्यं_तुलय(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (sshbuf_froms(b, &sigbuf) != 0 ||
+	यदि (sshbuf_froms(b, &sigbuf) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
-	    sshbuf_get_u32(b, &sig_counter) != 0) {
+	    sshbuf_get_u32(b, &sig_गणक) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (is_webauthn) {
-		if (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
+	यदि (is_webauthn) {
+		यदि (sshbuf_get_cstring(b, &webauthn_origin, रिक्त) != 0 ||
 		    sshbuf_froms(b, &webauthn_wrapper) != 0 ||
 		    sshbuf_froms(b, &webauthn_exts) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ बहिर्गमनम्;
 		}
 	}
-	if (sshbuf_len(b) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	यदि (sshbuf_len(b) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_दत्त;
+		गच्छ बहिर्गमनम्;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	यदि (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	यदि (sshbuf_len(sigbuf) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_दत्त;
+		गच्छ बहिर्गमनम्;
 	}
 
-#ifdef DEBUG_SK
+#यदि_परिभाषितम् DEBUG_SK
 	fprintf(stderr, "%s: data: (len %zu)\n", __func__, dlen);
 	/* sshbuf_dump_data(data, datalen, stderr); */
 	fprintf(stderr, "%s: sig_r: %s\n", __func__, (tmp = BN_bn2hex(sig_r)));
-	free(tmp);
+	मुक्त(tmp);
 	fprintf(stderr, "%s: sig_s: %s\n", __func__, (tmp = BN_bn2hex(sig_s)));
-	free(tmp);
+	मुक्त(tmp);
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
-	    __func__, sig_flags, sig_counter);
-	if (is_webauthn) {
+	    __func__, sig_flags, sig_गणक);
+	यदि (is_webauthn) {
 		fprintf(stderr, "%s: webauthn origin: %s\n", __func__,
 		    webauthn_origin);
 		fprintf(stderr, "%s: webauthn_wrapper:\n", __func__);
 		sshbuf_dump(webauthn_wrapper, stderr);
 	}
-#endif
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+#यदि_अन्तः
+	यदि ((esig = ECDSA_SIG_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	यदि (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = रिक्त; /* transferred */
 
 	/* Reconstruct data that was supposedly signed */
-	if ((original_signed = sshbuf_new()) == NULL) {
+	यदि ((original_signed = sshbuf_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if (is_webauthn) {
-		if ((ret = webauthn_check_prepare_hash(data, dlen,
+	यदि (is_webauthn) {
+		यदि ((ret = webauthn_check_prepare_hash(दत्त, dlen,
 		    webauthn_origin, webauthn_wrapper, sig_flags, webauthn_exts,
-		    msghash, sizeof(msghash))) != 0)
-			goto out;
-	} else if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash))) != 0)
-		goto out;
+		    msghash, परिमाण(msghash))) != 0)
+			गच्छ बहिर्गमनम्;
+	} अन्यथा यदि ((ret = ssh_digest_स्मृतिः(SSH_DIGEST_SHA256, दत्त, dlen,
+	    msghash, परिमाण(msghash))) != 0)
+		गच्छ बहिर्गमनम्;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
-		goto out;
-#ifdef DEBUG_SK
+	यदि ((ret = ssh_digest_स्मृतिः(SSH_DIGEST_SHA256, कुञ्चिका->sk_application,
+	    वाक्यदैर्घ्यम्(कुञ्चिका->sk_application), apphash, परिमाण(apphash))) != 0)
+		गच्छ बहिर्गमनम्;
+#यदि_परिभाषितम् DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_दत्त(apphash, परिमाण(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
-#endif
-	if ((ret = sshbuf_put(original_signed,
-	    apphash, sizeof(apphash))) != 0 ||
+	sshbuf_dump_दत्त(msghash, परिमाण(msghash), stderr);
+#यदि_अन्तः
+	यदि ((ret = sshbuf_put(original_signed,
+	    apphash, परिमाण(apphash))) != 0 ||
 	    (ret = sshbuf_put_u8(original_signed, sig_flags)) != 0 ||
-	    (ret = sshbuf_put_u32(original_signed, sig_counter)) != 0 ||
+	    (ret = sshbuf_put_u32(original_signed, sig_गणक)) != 0 ||
 	    (ret = sshbuf_putb(original_signed, webauthn_exts)) != 0 ||
-	    (ret = sshbuf_put(original_signed, msghash, sizeof(msghash))) != 0)
-		goto out;
-	details->sk_counter = sig_counter;
+	    (ret = sshbuf_put(original_signed, msghash, परिमाण(msghash))) != 0)
+		गच्छ बहिर्गमनम्;
+	details->sk_गणक = sig_गणक;
 	details->sk_flags = sig_flags;
-#ifdef DEBUG_SK
+#यदि_परिभाषितम् DEBUG_SK
 	fprintf(stderr, "%s: signed buf:\n", __func__);
 	sshbuf_dump(original_signed, stderr);
-#endif
+#यदि_अन्तः
 
-	if ((md_ctx = EVP_MD_CTX_new()) == NULL) {
+	यदि ((md_ctx = EVP_MD_CTX_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	यदि ((len = i2d_ECDSA_SIG(esig, रिक्त)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	यदि ((sigb = शून्यस्मृतिं_देहि(1, len)) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	यदि (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-#ifdef DEBUG_SK
+#यदि_परिभाषितम् DEBUG_SK
 	fprintf(stderr, "%s: signed hash:\n", __func__);
-	sshbuf_dump_data(sigb, len, stderr);
-#endif
+	sshbuf_dump_दत्त(sigb, len, stderr);
+#यदि_अन्तः
 	/* Verify it */
-	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
-	    key->pkey) != 1) {
+	यदि (EVP_DigestVerifyInit(md_ctx, रिक्त, EVP_sha256(), रिक्त,
+	    कुञ्चिका->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
-	switch (EVP_DigestVerify(md_ctx, sigb, len,
+	विकल्प (EVP_DigestVerify(md_ctx, sigb, len,
 	    sshbuf_ptr(original_signed), sshbuf_len(original_signed))) {
-	case 1:
+	पक्ष 1:
 		ret = 0;
-		break;
-	case 0:
+		भङ्ग;
+	पक्ष 0:
 		ret = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
-	default:
+		गच्छ बहिर्गमनम्;
+	स्वभाव:
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 	/* success */
-	if (detailsp != NULL) {
+	यदि (detailsp != रिक्त) {
 		*detailsp = details;
-		details = NULL;
+		details = रिक्त;
 	}
- out:
-	explicit_bzero(&sig_flags, sizeof(sig_flags));
-	explicit_bzero(&sig_counter, sizeof(sig_counter));
-	explicit_bzero(msghash, sizeof(msghash));
-	explicit_bzero(apphash, sizeof(apphash));
+ बहिर्गमनम्:
+	explicit_bzero(&sig_flags, परिमाण(sig_flags));
+	explicit_bzero(&sig_गणक, परिमाण(sig_गणक));
+	explicit_bzero(msghash, परिमाण(msghash));
+	explicit_bzero(apphash, परिमाण(apphash));
 	sshkey_sig_details_free(details);
 	sshbuf_free(webauthn_wrapper);
 	sshbuf_free(webauthn_exts);
-	free(webauthn_origin);
+	मुक्त(webauthn_origin);
 	sshbuf_free(original_signed);
 	sshbuf_free(sigbuf);
 	sshbuf_free(b);
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
+	मुक्त(ktype);
 	freezero(sigb, len);
 	EVP_MD_CTX_free(md_ctx);
-	return ret;
+	प्रत्यागम ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+स्थिर ध्रुव संरचना sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
+	/* .size = */		रिक्त,
+	/* .alloc = */		रिक्त,
 	/* .cleanup = */	ssh_ecdsa_sk_cleanup,
 	/* .equal = */		ssh_ecdsa_sk_equal,
-	/* .ssh_serialize_public = */ ssh_ecdsa_sk_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_ecdsa_sk_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_ecdsa_sk_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_ecdsa_sk_deserialize_private,
-	/* .generate = */	NULL,
-	/* .copy_public = */	ssh_ecdsa_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .ssh_serialize_public = */ ssh_ecdsa_sk_serialize_लौकिकम्,
+	/* .ssh_deserialize_public = */ ssh_ecdsa_sk_deserialize_लौकिकम्,
+	/* .ssh_serialize_private = */ ssh_ecdsa_sk_serialize_वैयक्तिकम्,
+	/* .ssh_deserialize_private = */ ssh_ecdsa_sk_deserialize_वैयक्तिकम्,
+	/* .generate = */	रिक्त,
+	/* .copy_public = */	ssh_ecdsa_sk_copy_लौकिकम्,
+	/* .sign = */		रिक्त,
 	/* .verify = */		ssh_ecdsa_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_impl = {
+ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		कुञ्चिका_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -453,11 +453,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
+ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		कुञ्चिका_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -465,11 +465,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
+ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		कुञ्चिका_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -477,15 +477,15 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
+ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		कुञ्चिका_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
 	/* .keybits = */	256,
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
-#endif /* WITH_OPENSSL */
+#यदि_अन्तः /* WITH_OPENSSL */

@@ -29,129 +29,129 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+बाह्य शून्य *__real_malloc(आकार_t);
+बाह्य शून्य *__real_calloc(आकार_t, आकार_t);
+बाह्य शून्य *__real_realloc(शून्य *, आकार_t);
+बाह्य शून्य __real_free(शून्य *);
+बाह्य वर्ण *__real_strdup(ध्रुव वर्ण *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+संरचना arena_ग्रन्थिः {
+	शून्य *ptr;
+	संरचना arena_ग्रन्थिः *अग्र;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+स्थिर संरचना arena_ग्रन्थिः *arena_शीर्ष;
+स्थिर पूर्णाङ्क tracking;
 
-static inline void
-arena_track(void *p)
+स्थिर अन्तःस्थ शून्य
+arena_track(शून्य *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	संरचना arena_ग्रन्थिः *n;
+	यदि (!tracking || p == रिक्त)
+		प्रत्यागम;
+	n = (संरचना arena_ग्रन्थिः *)__real_malloc(परिमाण(*n));
+	यदि (n == रिक्त)
+		प्रत्यागम;
 	n->ptr = p;
-	n->next = arena_head;
-	arena_head = n;
+	n->अग्र = arena_शीर्ष;
+	arena_शीर्ष = n;
 }
 
-static inline void
-arena_untrack(void *p)
+स्थिर अन्तःस्थ शून्य
+arena_untrack(शून्य *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
-			*pp = n->next;
+	संरचना arena_ग्रन्थिः **pp;
+	यदि (p == रिक्त)
+		प्रत्यागम;
+	प्रति (pp = &arena_शीर्ष; *pp != रिक्त; pp = &(*pp)->अग्र) {
+		यदि ((*pp)->ptr == p) {
+			संरचना arena_ग्रन्थिः *n = *pp;
+			*pp = n->अग्र;
 			__real_free(n);
-			return;
+			प्रत्यागम;
 		}
 	}
 }
 
-void *
-__wrap_malloc(size_t size)
+शून्य *
+__wrap_malloc(आकार_t आकार)
 {
-	void *p = __real_malloc(size);
+	शून्य *p = __real_malloc(आकार);
 	arena_track(p);
-	return p;
+	प्रत्यागम p;
 }
 
-void *
-__wrap_calloc(size_t nmemb, size_t size)
+शून्य *
+__wrap_calloc(आकार_t nmemb, आकार_t आकार)
 {
-	void *p = __real_calloc(nmemb, size);
+	शून्य *p = __real_calloc(nmemb, आकार);
 	arena_track(p);
-	return p;
+	प्रत्यागम p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+शून्य *
+__wrap_realloc(शून्य *ptr, आकार_t आकार)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	शून्य *p = __real_realloc(ptr, आकार);
 	arena_track(p);
-	return p;
+	प्रत्यागम p;
 }
 
-void
-__wrap_free(void *ptr)
+शून्य
+__wrap_free(शून्य *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+वर्ण *
+__wrap_strdup(ध्रुव वर्ण *s)
 {
-	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
-	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
-	memcpy(p, s, len);
+	आकार_t len;
+	वर्ण *p;
+	यदि (s == रिक्त)
+		प्रत्यागम रिक्त;
+	len = वाक्यदैर्घ्यम्(s) + 1;
+	p = (वर्ण *)__real_malloc(len);
+	यदि (p == रिक्त)
+		प्रत्यागम रिक्त;
+	स्मृतिं_प्रतिलिख(p, s, len);
 	arena_track(p);
-	return p;
+	प्रत्यागम p;
 }
 
-void
-fuzz_arena_begin(void)
+शून्य
+fuzz_arena_begin(शून्य)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+शून्य
+fuzz_arena_release(शून्य)
 {
-	struct arena_node *n;
+	संरचना arena_ग्रन्थिः *n;
 	tracking = 0;
-	while (arena_head != NULL) {
-		n = arena_head;
-		arena_head = n->next;
+	यावत् (arena_शीर्ष != रिक्त) {
+		n = arena_शीर्ष;
+		arena_शीर्ष = n->अग्र;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+शून्य
+fuzz_arena_cleanup(शून्य)
 {
-	struct arena_node *n;
+	संरचना arena_ग्रन्थिः *n;
 	tracking = 0;
-	while (arena_head != NULL) {
-		n = arena_head;
-		arena_head = n->next;
+	यावत् (arena_शीर्ष != रिक्त) {
+		n = arena_शीर्ष;
+		arena_शीर्ष = n->अग्र;
 		__real_free(n->ptr);
 		__real_free(n);
 	}

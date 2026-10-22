@@ -19,29 +19,29 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtonum.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifndef HAVE_STRTONUM
-#include <stdlib.h>
-#include <limits.h>
-#include <errno.h>
+#यदि_अपरिभाषितम् HAVE_STRTONUM
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <errno.h>
 
-#define INVALID		1
-#define TOOSMALL	2
-#define TOOLARGE	3
+#परिभाषय INVALID		1
+#परिभाषय TOOSMALL	2
+#परिभाषय TOOLARGE	3
 
-long long
-strtonum(const char *numstr, long long minval, long long maxval,
-    const char **errstrp)
+दीर्घ दीर्घ
+strtonum(ध्रुव वर्ण *numstr, दीर्घ दीर्घ minval, दीर्घ दीर्घ maxval,
+    ध्रुव वर्ण **errstrp)
 {
-	long long ll = 0;
-	char *ep;
-	int error = 0;
-	struct errval {
-		const char *errstr;
-		int err;
+	दीर्घ दीर्घ ll = 0;
+	वर्ण *ep;
+	पूर्णाङ्क error = 0;
+	संरचना errval {
+		ध्रुव वर्ण *errstr;
+		पूर्णाङ्क err;
 	} ev[4] = {
-		{ NULL,		0 },
+		{ रिक्त,		0 },
 		{ "invalid",	EINVAL },
 		{ "too small",	ERANGE },
 		{ "too large",	ERANGE },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	यदि (minval > maxval)
 		error = INVALID;
-	else {
+	अन्यथा {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		यदि (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		अन्यथा यदि ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		अन्यथा यदि ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	यदि (errstrp != रिक्त)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	यदि (error)
 		ll = 0;
 
-	return (ll);
+	प्रत्यागम (ll);
 }
 
-#endif /* HAVE_STRTONUM */
+#यदि_अन्तः /* HAVE_STRTONUM */

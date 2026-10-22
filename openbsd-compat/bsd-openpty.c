@@ -32,123 +32,123 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#अन्तर्भाव "includes.h"
+#यदि !defined(HAVE_OPENPTY)
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
 
-#include <sys/stat.h>
-#ifdef HAVE_SYS_IOCTL_H
+#अन्तर्भाव <sys/stat.h>
+#यदि_परिभाषितम् HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
-#endif
+#यदि_अन्तः
 
-#ifdef HAVE_FCNTL_H
+#यदि_परिभाषितम् HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
+#यदि_अन्तः
 
-#include <util.h>
+#अन्तर्भाव <util.h>
 
-#ifdef HAVE_PTY_H
+#यदि_परिभाषितम् HAVE_PTY_H
 # include <pty.h>
-#endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#यदि_अन्तः
+#यदि defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
-#endif
+#यदि_अन्तः
 
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#include "misc.h"
-#include "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "log.h"
 
-#ifndef O_NOCTTY
-#define O_NOCTTY 0
-#endif
+#यदि_अपरिभाषितम् O_NOCTTY
+#परिभाषय O_NOCTTY 0
+#यदि_अन्तः
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#यदि defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+स्थिर पूर्णाङ्क
+openpty_streams(पूर्णाङ्क *amaster, पूर्णाङ्क *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
-	char *pts;
+	पूर्णाङ्क ptm;
+	वर्ण *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	यदि ((ptm = उद्घाटय("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		प्रत्यागम (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	यदि (grantpt(ptm) < 0)
+		प्रत्यागम (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	यदि (unlockpt(ptm) < 0)
+		प्रत्यागम (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	यदि ((pts = ptsname(ptm)) == रिक्त)
+		प्रत्यागम (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	यदि ((*aslave = उद्घाटय(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		प्रत्यागम (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# यदि defined(I_FIND) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	यदि (ioctl(*aslave, I_FIND, "ptem") != 0)
+		प्रत्यागम 0;
 # endif
 
 	/*
 	 * Try to push the appropriate streams modules, as described
 	 * in Solaris pts(7).
 	 */
-	ioctl(*aslave, I_PUSH, "ptem");
-	ioctl(*aslave, I_PUSH, "ldterm");
+	ioctl(*aslave, I_प्रक्षिप, "ptem");
+	ioctl(*aslave, I_प्रक्षिप, "ldterm");
 # ifndef __hpux
-	ioctl(*aslave, I_PUSH, "ttcompat");
+	ioctl(*aslave, I_प्रक्षिप, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	प्रत्यागम (0);
 }
-#endif
+#यदि_अन्तः
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
-   const struct winsize *winp)
+पूर्णाङ्क
+openpty(पूर्णाङ्क *amaster, पूर्णाङ्क *aslave, वर्ण *name, ध्रुव संरचना termios *termp,
+   ध्रुव संरचना winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#यदि defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
-	char *slave;
+	वर्ण *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	यदि ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == रिक्त)
+		प्रत्यागम (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	यदि ((*aslave = उद्घाटय(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		प्रत्यागम (-1);
 	}
-	return (0);
+	प्रत्यागम (0);
 
-#elif defined(HAVE_DEV_PTMX)
+#नोचेद्यदि defined(HAVE_DEV_PTMX)
 
-#ifdef SSHD_ACQUIRES_CTTY
+#यदि_परिभाषितम् SSHD_ACQUIRES_CTTY
 	/*
 	 * On some (most? all?) SysV based systems with STREAMS based terminals,
 	 * sshd will acquire a controlling terminal when it pushes the "ptem"
@@ -159,81 +159,81 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
-	char *junk_name;
+	पूर्णाङ्क r, fd;
+	स्थिर पूर्णाङ्क junk_ptyfd = -1, junk_ttyfd;
+	वर्ण *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	यदि (junk_ptyfd == -1 && (fd = उद्घाटय(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
-#endif
+	} अन्यथा
+		प्रत्यागम r;
+#यदि_अन्तः
 
-	return openpty_streams(amaster, aslave);
+	प्रत्यागम openpty_streams(amaster, aslave);
 
-#elif defined(HAVE_DEV_PTS_AND_PTC)
+#नोचेद्यदि defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
-	const char *ttname;
+	ध्रुव वर्ण *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	यदि ((*amaster = उद्घाटय("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		प्रत्यागम (-1);
+	यदि ((ttname = ttyname(*amaster)) == रिक्त)
+		प्रत्यागम (-1);
+	यदि ((*aslave = उद्घाटय(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		प्रत्यागम (-1);
 	}
-	return (0);
+	प्रत्यागम (0);
 
-#else
+#अन्यथा
 	/* BSD-style pty code. */
-	char ptbuf[64], ttbuf[64];
-	int i;
-	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
+	वर्ण ptbuf[64], ttbuf[64];
+	पूर्णाङ्क i;
+	ध्रुव वर्ण *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
-	struct termios tio;
+	ध्रुव वर्ण *ptyminors = "0123456789abcdef";
+	पूर्णाङ्क अङ्कः_minors = वाक्यदैर्घ्यम्(ptyminors);
+	पूर्णाङ्क अङ्कः_ptys = वाक्यदैर्घ्यम्(ptymajors) * अङ्कः_minors;
+	संरचना termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
-		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
-		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
+	प्रति (i = 0; i < अङ्कः_ptys; i++) {
+		snprintf(ptbuf, परिमाण(ptbuf), "/dev/pty%c%c",
+		    ptymajors[i / अङ्कः_minors], ptyminors[i % अङ्कः_minors]);
+		snprintf(ttbuf, परिमाण(ttbuf), "/dev/tty%c%c",
+		    ptymajors[i / अङ्कः_minors], ptyminors[i % अङ्कः_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		यदि ((*amaster = उद्घाटय(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
-			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
-			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
-				continue;
+			snprintf(ptbuf, परिमाण(ptbuf), "/dev/ptyp%d", i);
+			snprintf(ttbuf, परिमाण(ttbuf), "/dev/ttyp%d", i);
+			यदि ((*amaster = उद्घाटय(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+				अनुवर्त;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		यदि ((*aslave = उद्घाटय(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			प्रत्यागम (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		यदि (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		प्रत्यागम (0);
 	}
-	return (-1);
-#endif
+	प्रत्यागम (-1);
+#यदि_अन्तः
 }
 
-#endif /* !defined(HAVE_OPENPTY) */
+#यदि_अन्तः /* !defined(HAVE_OPENPTY) */
 

@@ -23,311 +23,311 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <sys/uio.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <time.h>
 
-#include "stdlib.h"
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "dispatch.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "digest.h"
-#include "kex.h"
+#अन्तर्भाव "stdlib.h"
+#अन्तर्भाव "atomicio.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "ssh2.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "dispatch.h"
+#अन्तर्भाव "pathnames.h"
+#अन्तर्भाव "ssherr.h"
+#यदि_परिभाषितम् GSSAPI
+#अन्तर्भाव "ssh-gss.h"
+#यदि_अन्तः
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "digest.h"
+#अन्तर्भाव "kex.h"
 
 /* import */
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
+बाह्य ServerOptions options;
+बाह्य संरचना sshbuf *loginmsg;
 
 /* methods */
 
-extern Authmethod method_none;
-extern Authmethod method_pubkey;
-extern Authmethod method_passwd;
-extern Authmethod method_kbdint;
-extern Authmethod method_hostbased;
-#ifdef GSSAPI
-extern Authmethod method_gssapi;
-#endif
+बाह्य Authmethod विधानम्_none;
+बाह्य Authmethod विधानम्_pubkey;
+बाह्य Authmethod विधानम्_passwd;
+बाह्य Authmethod विधानम्_kbdint;
+बाह्य Authmethod विधानम्_hostbased;
+#यदि_परिभाषितम् GSSAPI
+बाह्य Authmethod विधानम्_gssapi;
+#यदि_अन्तः
 
 Authmethod *authmethods[] = {
-	&method_none,
-	&method_pubkey,
-#ifdef GSSAPI
-	&method_gssapi,
-#endif
-	&method_passwd,
-	&method_kbdint,
-	&method_hostbased,
-	NULL
+	&विधानम्_none,
+	&विधानम्_pubkey,
+#यदि_परिभाषितम् GSSAPI
+	&विधानम्_gssapi,
+#यदि_अन्तः
+	&विधानम्_passwd,
+	&विधानम्_kbdint,
+	&विधानम्_hostbased,
+	रिक्त
 };
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+स्थिर पूर्णाङ्क निवेशः_service_request(पूर्णाङ्क, uint32_t, संरचना ssh *);
+स्थिर पूर्णाङ्क निवेशः_userauth_request(पूर्णाङ्क, uint32_t, संरचना ssh *);
 
 /* helper */
-static Authmethod *authmethod_byname(const char *);
-static Authmethod *authmethod_lookup(Authctxt *, const char *);
-static char *authmethods_get(Authctxt *authctxt);
+स्थिर Authmethod *authmethod_byname(ध्रुव वर्ण *);
+स्थिर Authmethod *authmethod_lookup(Authctxt *, ध्रुव वर्ण *);
+स्थिर वर्ण *authmethods_get(Authctxt *authctxt);
 
-#define MATCH_NONE	0	/* method or submethod mismatch */
-#define MATCH_METHOD	1	/* method matches (no submethod specified) */
-#define MATCH_BOTH	2	/* method and submethod match */
-#define MATCH_PARTIAL	3	/* method matches, submethod can't be checked */
-static int list_starts_with(const char *, const char *, const char *);
+#परिभाषय मेलनम्_NONE	0	/* method or submethod mismatch */
+#परिभाषय मेलनम्_विधानम्	1	/* method matches (no submethod specified) */
+#परिभाषय मेलनम्_BOTH	2	/* method and submethod match */
+#परिभाषय मेलनम्_PARTIAL	3	/* method matches, submethod can't be checked */
+स्थिर पूर्णाङ्क list_starts_with(ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *);
 
-char *
-auth2_read_banner(void)
+वर्ण *
+auth2_read_banner(शून्य)
 {
-	struct stat st;
-	char *banner = NULL;
-	size_t len, n;
-	int fd;
+	संरचना stat st;
+	वर्ण *banner = रिक्त;
+	आकार_t len, n;
+	पूर्णाङ्क fd;
 
-	if ((fd = open(options.banner, O_RDONLY)) == -1)
-		return (NULL);
-	if (fstat(fd, &st) == -1) {
+	यदि ((fd = उद्घाटय(options.banner, O_RDONLY)) == -1)
+		प्रत्यागम (रिक्त);
+	यदि (fstat(fd, &st) == -1) {
 		close(fd);
-		return (NULL);
+		प्रत्यागम (रिक्त);
 	}
-	if (st.st_size <= 0 || st.st_size > 1*1024*1024) {
+	यदि (st.st_size <= 0 || st.st_size > 1*1024*1024) {
 		close(fd);
-		return (NULL);
+		प्रत्यागम (रिक्त);
 	}
 
-	len = (size_t)st.st_size;		/* truncate */
+	len = (आकार_t)st.st_size;		/* truncate */
 	banner = xmalloc(len + 1);
-	n = atomicio(read, fd, banner, len);
+	n = atomicio(पठ, fd, banner, len);
 	close(fd);
 
-	if (n != len) {
-		free(banner);
-		return (NULL);
+	यदि (n != len) {
+		मुक्त(banner);
+		प्रत्यागम (रिक्त);
 	}
 	banner[n] = '\0';
 
-	return (banner);
+	प्रत्यागम (banner);
 }
 
-static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+स्थिर शून्य
+userauth_send_banner(संरचना ssh *ssh, ध्रुव वर्ण *सन्देशः)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	यदि ((r = sshpkt_start(ssh, SSH2_सन्देशः_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, सन्देशः)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 	debug_f("sent");
 }
 
-static void
-userauth_banner(struct ssh *ssh)
+स्थिर शून्य
+userauth_banner(संरचना ssh *ssh)
 {
-	char *banner = NULL;
+	वर्ण *banner = रिक्त;
 
-	if (options.banner == NULL)
-		return;
+	यदि (options.banner == रिक्त)
+		प्रत्यागम;
 
-	if ((banner = mm_auth2_read_banner()) == NULL)
-		goto done;
+	यदि ((banner = mm_auth2_read_banner()) == रिक्त)
+		गच्छ समाप्तम्;
 	userauth_send_banner(ssh, banner);
 
-done:
-	free(banner);
+समाप्तम्:
+	मुक्त(banner);
 }
 
 /*
  * loop until authctxt->success == TRUE
  */
-void
-do_authentication2(struct ssh *ssh)
+शून्य
+do_authentication2(संरचना ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
-	ssh->authctxt = NULL;
+	यदि (ssh->kex->ext_info_c)
+		ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_EXT_INFO, &kex_निवेशः_ext_info);
+	ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_SERVICE_REQUEST, &निवेशः_service_request);
+	ssh_dispatch_सततम्_fatal(ssh, DISPATCH_खण्डम्, &authctxt->success);
+	ssh->authctxt = रिक्त;
 }
 
-static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+स्थिर पूर्णाङ्क
+निवेशः_service_request(पूर्णाङ्क type, uint32_t seq, संरचना ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *service = NULL;
-	int r, acceptit = 0;
+	वर्ण *service = रिक्त;
+	पूर्णाङ्क r, acceptit = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	यदि ((r = sshpkt_get_cstring(ssh, &service, रिक्त)) != 0 ||
+	    (r = sshpkt_get_अन्तः(ssh)) != 0)
+		गच्छ बहिर्गमनम्;
 
-	if (authctxt == NULL)
+	यदि (authctxt == रिक्त)
 		fatal("input_service_request: no authctxt");
 
-	if (strcmp(service, "ssh-userauth") == 0) {
-		if (!authctxt->success) {
+	यदि (वाक्यं_तुलय(service, "ssh-userauth") == 0) {
+		यदि (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_USERAUTH_REQUEST,
+			    &निवेशः_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
-	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+	यदि (acceptit) {
+		यदि ((r = sshpkt_start(ssh, SSH2_सन्देशः_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			goto out;
-	} else {
+			गच्छ बहिर्गमनम्;
+	} अन्यथा {
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
- out:
-	free(service);
-	return r;
+ बहिर्गमनम्:
+	मुक्त(service);
+	प्रत्यागम r;
 }
 
-#define MIN_FAIL_DELAY_SECONDS 0.005
-#define MAX_FAIL_DELAY_SECONDS 5.0
-static double
-user_specific_delay(const char *user)
+#परिभाषय MIN_FAIL_DELAY_SECONDS 0.005
+#परिभाषय MAX_FAIL_DELAY_SECONDS 5.0
+स्थिर द्विगुण
+user_specific_delay(ध्रुव वर्ण *user)
 {
-	char b[512];
-	size_t len = ssh_digest_bytes(SSH_DIGEST_SHA512);
+	वर्ण b[512];
+	आकार_t len = ssh_digest_अष्टकानि(SSH_DIGEST_SHA512);
 	u_char *hash = xmalloc(len);
-	double delay;
+	द्विगुण delay;
 
-	(void)snprintf(b, sizeof b, "%llu%s",
-	    (unsigned long long)options.timing_secret, user);
-	if (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
+	(शून्य)snprintf(b, परिमाण b, "%llu%s",
+	    (अचिह्नित दीर्घ दीर्घ)options.timing_secret, user);
+	यदि (ssh_digest_स्मृतिः(SSH_DIGEST_SHA512, b, वाक्यदैर्घ्यम्(b), hash, len) != 0)
 		fatal_f("ssh_digest_memory");
 	/* 0-4.2 ms of delay */
-	delay = (double)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
+	delay = (द्विगुण)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
 	freezero(hash, len);
 	debug3_f("user specific delay %0.3lfms", delay*1000);
-	return MIN_FAIL_DELAY_SECONDS + delay;
+	प्रत्यागम MIN_FAIL_DELAY_SECONDS + delay;
 }
 
-static void
-ensure_minimum_time_since(double start, double seconds)
+स्थिर शून्य
+ensure_minimum_time_since(द्विगुण start, द्विगुण seconds)
 {
-	struct timespec ts;
-	double elapsed = monotime_double() - start, req = seconds, remain;
+	संरचना timespec ts;
+	द्विगुण elapsed = monotime_double() - start, req = seconds, remain;
 
-	if (elapsed > MAX_FAIL_DELAY_SECONDS) {
+	यदि (elapsed > MAX_FAIL_DELAY_SECONDS) {
 		debug3_f("elapsed %0.3lfms exceeded the max delay "
 		    "requested %0.3lfms)", elapsed*1000, req*1000);
-		return;
+		प्रत्यागम;
 	}
 
 	/* if we've already passed the requested time, scale up */
-	while ((remain = seconds - elapsed) < 0.0)
+	यावत् ((remain = seconds - elapsed) < 0.0)
 		seconds *= 2;
 
 	ts.tv_sec = remain;
 	ts.tv_nsec = (remain - ts.tv_sec) * 1000000000;
 	debug3_f("elapsed %0.3lfms, delaying %0.3lfms (requested %0.3lfms)",
 	    elapsed*1000, remain*1000, req*1000);
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, रिक्त);
 }
 
-void
-auth_failure_delay(Authctxt *authctxt, double tstart)
+शून्य
+auth_failure_delay(Authctxt *authctxt, द्विगुण tstart)
 {
 	ensure_minimum_time_since(tstart, user_specific_delay(authctxt->user));
 }
 
-static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+स्थिर पूर्णाङ्क
+निवेशः_userauth_request(पूर्णाङ्क type, uint32_t seq, संरचना ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
-	int r, authenticated = 0;
-	double tstart = monotime_double();
+	Authmethod *m = रिक्त;
+	वर्ण *user = रिक्त, *service = रिक्त, *विधानम् = रिक्त, *style = रिक्त;
+	पूर्णाङ्क r, authenticated = 0;
+	द्विगुण tstart = monotime_double();
 
-	if (authctxt == NULL)
+	यदि (authctxt == रिक्त)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
-		goto out;
-	debug("userauth-request for user %s service %s method %s", user, service, method);
+	यदि ((r = sshpkt_get_cstring(ssh, &user, रिक्त)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &service, रिक्त)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &विधानम्, रिक्त)) != 0)
+		गच्छ बहिर्गमनम्;
+	debug("userauth-request for user %s service %s method %s", user, service, विधानम्);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
-	if ((style = strchr(user, ':')) != NULL)
+	यदि ((style = strchr(user, ':')) != रिक्त)
 		*style++ = 0;
 
-	if (authctxt->attempt >= 1024)
+	यदि (authctxt->attempt >= 1024)
 		auth_maxtries_exceeded(ssh);
-	if (authctxt->attempt++ == 0) {
+	यदि (authctxt->attempt++ == 0) {
 		/* setup auth context */
 		authctxt->pw = mm_getpwnamallow(ssh, user);
 		authctxt->user = xstrdup(user);
 		authctxt->service = xstrdup(service);
-		authctxt->style = style ? xstrdup(style) : NULL;
-		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
+		authctxt->style = style ? xstrdup(style) : रिक्त;
+		यदि (authctxt->pw && वाक्यं_तुलय(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
-		} else {
+		} अन्यथा {
 			authctxt->valid = 0;
 			/* Invalid user, fake password information */
 			authctxt->pw = fakepw();
-#ifdef SSH_AUDIT_EVENTS
+#यदि_परिभाषितम् SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_INVALID_USER);
-#endif
+#यदि_अन्तः
 		}
-#ifdef USE_PAM
-		if (options.use_pam)
+#यदि_परिभाषितम् USE_PAM
+		यदि (options.use_pam)
 			mm_start_pam(ssh);
-#endif
-		ssh_packet_set_log_preamble(ssh, "%suser %s",
+#यदि_अन्तः
+		ssh_packet_समुच्चयः_log_preamble(ssh, "%suser %s",
 		    authctxt->valid ? "authenticating " : "invalid ", user);
 		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
 		mm_inform_authserv(service, style);
 		userauth_banner(ssh);
-		if ((r = kex_server_update_ext_info(ssh)) != 0)
+		यदि ((r = kex_server_update_ext_info(ssh)) != 0)
 			fatal_fr(r, "kex_server_update_ext_info failed");
-		if (auth2_setup_methods_lists(authctxt) != 0)
+		यदि (auth2_सज्जता_methods_lists(authctxt) != 0)
 			ssh_packet_disconnect(ssh,
 			    "no authentication methods enabled");
-	} else if (strcmp(user, authctxt->user) != 0 ||
-	    strcmp(service, authctxt->service) != 0) {
+	} अन्यथा यदि (वाक्यं_तुलय(user, authctxt->user) != 0 ||
+	    वाक्यं_तुलय(service, authctxt->service) != 0) {
 		ssh_packet_disconnect(ssh, "Change of username or service "
 		    "not allowed: (%s,%s) -> (%s,%s)",
 		    authctxt->user, authctxt->service, user, service);
@@ -335,12 +335,12 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	/* reset state */
 	auth2_challenge_stop(ssh);
 
-#ifdef GSSAPI
+#यदि_परिभाषितम् GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-#endif
+	ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_USERAUTH_GSSAPI_TOKEN, रिक्त);
+	ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, रिक्त);
+#यदि_अन्तः
 
 	auth2_authctxt_reset_info(authctxt);
 	authctxt->postponed = 0;
@@ -348,127 +348,127 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	authctxt->auth_failure_already_counted = 0;
 
 	/* try to authenticate user */
-	m = authmethod_lookup(authctxt, method);
-	if (m != NULL && authctxt->failures < options.max_authtries) {
-		debug2("input_userauth_request: try method %s", method);
-		authenticated =	m->userauth(ssh, method);
+	m = authmethod_lookup(authctxt, विधानम्);
+	यदि (m != रिक्त && authctxt->failures < options.max_authtries) {
+		debug2("input_userauth_request: try method %s", विधानम्);
+		authenticated =	m->userauth(ssh, विधानम्);
 	}
-	if (!authctxt->authenticated && strcmp(method, "none") != 0)
+	यदि (!authctxt->authenticated && वाक्यं_तुलय(विधानम्, "none") != 0)
 		auth_failure_delay(authctxt, tstart);
 
-	userauth_finish(ssh, authenticated, method, NULL);
+	userauth_finish(ssh, authenticated, विधानम्, रिक्त);
 	r = 0;
- out:
-	free(service);
-	free(user);
-	free(method);
-	return r;
+ बहिर्गमनम्:
+	मुक्त(service);
+	मुक्त(user);
+	मुक्त(विधानम्);
+	प्रत्यागम r;
 }
 
-void
-userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
-    const char *submethod)
+शून्य
+userauth_finish(संरचना ssh *ssh, पूर्णाङ्क authenticated, ध्रुव वर्ण *packet_विधानम्,
+    ध्रुव वर्ण *submethod)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	const char *method = packet_method;
-	char *methods;
-	int r, partial = 0;
+	Authmethod *m = रिक्त;
+	ध्रुव वर्ण *विधानम् = packet_विधानम्;
+	वर्ण *methods;
+	पूर्णाङ्क r, partial = 0;
 
-	if (authenticated) {
-		if (!authctxt->valid) {
+	यदि (authenticated) {
+		यदि (!authctxt->valid) {
 			fatal("INTERNAL ERROR: authenticated invalid user %s",
 			    authctxt->user);
 		}
-		if (authctxt->postponed)
+		यदि (authctxt->postponed)
 			fatal("INTERNAL ERROR: authenticated and postponed");
 		/* prefer primary authmethod name to possible synonym */
-		if ((m = authmethod_byname(method)) == NULL)
-			fatal("INTERNAL ERROR: bad method %s", method);
-		method = m->cfg->name;
+		यदि ((m = authmethod_byname(विधानम्)) == रिक्त)
+			fatal("INTERNAL ERROR: bad method %s", विधानम्);
+		विधानम् = m->cfg->name;
 	}
 
 	/* Special handling for root */
-	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	यदि (authenticated && authctxt->pw->pw_uid == 0 &&
+	    !auth_मूलम्_allowed(ssh, विधानम्)) {
 		authenticated = 0;
-#ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
-#endif
+#यदि_परिभाषितम् SSH_AUDIT_EVENTS
+		mm_audit_event(ssh, SSH_LOGIN_मूलम्_DENIED);
+#यदि_अन्तः
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
-		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+	यदि (authenticated && options.अङ्कः_auth_methods != 0) {
+		यदि (!auth2_update_methods_lists(authctxt, विधानम्, submethod)) {
 			authenticated = 0;
 			partial = 1;
 		}
 	}
 
 	/* Log before sending the reply */
-	auth_log(ssh, authenticated, partial, method, submethod);
+	auth_log(ssh, authenticated, partial, विधानम्, submethod);
 
 	/* Update information exposed to session */
-	if (authenticated || partial)
-		auth2_update_session_info(authctxt, method, submethod);
+	यदि (authenticated || partial)
+		auth2_update_session_info(authctxt, विधानम्, submethod);
 
-	if (authctxt->postponed)
-		return;
+	यदि (authctxt->postponed)
+		प्रत्यागम;
 
-#ifdef USE_PAM
-	if (options.use_pam && authenticated) {
-		int r, success = mm_do_pam_account();
+#यदि_परिभाषितम् USE_PAM
+	यदि (options.use_pam && authenticated) {
+		पूर्णाङ्क r, success = mm_do_pam_account();
 
 		/* If PAM returned a message, send it to the user. */
-		if (sshbuf_len(loginmsg) > 0) {
-			if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
+		यदि (sshbuf_len(loginmsg) > 0) {
+			यदि ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 			userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
-			if ((r = ssh_packet_write_wait(ssh)) != 0) {
+			यदि ((r = ssh_packet_write_wait(ssh)) != 0) {
 				sshpkt_fatal(ssh, r,
 				    "%s: send PAM banner", __func__);
 			}
 		}
-		if (!success) {
+		यदि (!success) {
 			fatal("Access denied for user %s by PAM account "
 			    "configuration", authctxt->user);
 		}
 	}
-#endif
+#यदि_अन्तः
 
-	if (authenticated == 1) {
+	यदि (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_समुच्चयः(ssh, SSH2_सन्देशः_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		यदि ((r = sshpkt_start(ssh, SSH2_सन्देशः_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
 		/* now we can break out */
 		authctxt->success = 1;
-		ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
-	} else {
+		ssh_packet_समुच्चयः_log_preamble(ssh, "user %s", authctxt->user);
+	} अन्यथा {
 		/* Allow initial try of "none" auth without failure penalty */
-		if (!partial && !authctxt->server_caused_failure &&
+		यदि (!partial && !authctxt->server_caused_failure &&
 		    !authctxt->auth_failure_already_counted &&
-		    (authctxt->attempt > 1 || strcmp(method, "none") != 0))
+		    (authctxt->attempt > 1 || वाक्यं_तुलय(विधानम्, "none") != 0))
 			authctxt->failures++;
-		if (authctxt->failures >= options.max_authtries) {
-#ifdef SSH_AUDIT_EVENTS
+		यदि (authctxt->failures >= options.max_authtries) {
+#यदि_परिभाषितम् SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_LOGIN_EXCEED_MAXTRIES);
-#endif
+#यदि_अन्तः
 			auth_maxtries_exceeded(ssh);
 		}
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		यदि ((r = sshpkt_start(ssh, SSH2_सन्देशः_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send failure packet");
-		free(methods);
+		मुक्त(methods);
 	}
 }
 
@@ -477,9 +477,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  * methods list. Returns 1 if allowed, or no methods lists configured.
  * 0 otherwise.
  */
-int
-auth2_method_allowed(Authctxt *authctxt, const char *method,
-    const char *submethod)
+पूर्णाङ्क
+auth2_विधानम्_allowed(Authctxt *authctxt, ध्रुव वर्ण *विधानम्,
+    ध्रुव वर्ण *submethod)
 {
 	u_int i;
 
@@ -487,79 +487,79 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
-		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (list_starts_with(authctxt->auth_methods[i], method,
-		    submethod) != MATCH_NONE)
-			return 1;
+	यदि (options.अङ्कः_auth_methods == 0)
+		प्रत्यागम 1;
+	प्रति (i = 0; i < authctxt->अङ्कः_auth_methods; i++) {
+		यदि (list_starts_with(authctxt->auth_methods[i], विधानम्,
+		    submethod) != मेलनम्_NONE)
+			प्रत्यागम 1;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static char *
+स्थिर वर्ण *
 authmethods_get(Authctxt *authctxt)
 {
-	struct sshbuf *b;
-	char *list;
-	int i, r;
+	संरचना sshbuf *b;
+	वर्ण *list;
+	पूर्णाङ्क i, r;
 
-	if ((b = sshbuf_new()) == NULL)
+	यदि ((b = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(authmethods[i]->cfg->name, "none") == 0)
-			continue;
-		if (authmethods[i]->cfg->enabled == NULL ||
+	प्रति (i = 0; authmethods[i] != रिक्त; i++) {
+		यदि (वाक्यं_तुलय(authmethods[i]->cfg->name, "none") == 0)
+			अनुवर्त;
+		यदि (authmethods[i]->cfg->enabled == रिक्त ||
 		    *(authmethods[i]->cfg->enabled) == 0)
-			continue;
-		if (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
-		    NULL))
-			continue;
-		if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
+			अनुवर्त;
+		यदि (!auth2_विधानम्_allowed(authctxt, authmethods[i]->cfg->name,
+		    रिक्त))
+			अनुवर्त;
+		यदि ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
 		    authmethods[i]->cfg->name)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	यदि ((list = sshbuf_dup_string(b)) == रिक्त)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	प्रत्यागम list;
 }
 
-static Authmethod *
-authmethod_byname(const char *name)
+स्थिर Authmethod *
+authmethod_byname(ध्रुव वर्ण *name)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	if (name == NULL)
+	यदि (name == रिक्त)
 		fatal_f("NULL authentication method name");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(name, authmethods[i]->cfg->name) == 0 ||
-		    (authmethods[i]->cfg->synonym != NULL &&
-		    strcmp(name, authmethods[i]->cfg->synonym) == 0))
-			return authmethods[i];
+	प्रति (i = 0; authmethods[i] != रिक्त; i++) {
+		यदि (वाक्यं_तुलय(name, authmethods[i]->cfg->name) == 0 ||
+		    (authmethods[i]->cfg->synonym != रिक्त &&
+		    वाक्यं_तुलय(name, authmethods[i]->cfg->synonym) == 0))
+			प्रत्यागम authmethods[i];
 	}
 	debug_f("unrecognized authentication method name: %s", name);
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static Authmethod *
-authmethod_lookup(Authctxt *authctxt, const char *name)
+स्थिर Authmethod *
+authmethod_lookup(Authctxt *authctxt, ध्रुव वर्ण *name)
 {
-	Authmethod *method;
+	Authmethod *विधानम्;
 
-	if ((method = authmethod_byname(name)) == NULL)
-		return NULL;
+	यदि ((विधानम् = authmethod_byname(name)) == रिक्त)
+		प्रत्यागम रिक्त;
 
-	if (method->cfg->enabled == NULL || *(method->cfg->enabled) == 0) {
+	यदि (विधानम्->cfg->enabled == रिक्त || *(विधानम्->cfg->enabled) == 0) {
 		debug3_f("method %s not enabled", name);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
-	if (!auth2_method_allowed(authctxt, method->cfg->name, NULL)) {
+	यदि (!auth2_विधानम्_allowed(authctxt, विधानम्->cfg->name, रिक्त)) {
 		debug3_f("method %s not allowed "
 		    "by AuthenticationMethods", name);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
-	return method;
+	प्रत्यागम विधानम्;
 }
 
 /*
@@ -569,70 +569,70 @@ authmethod_lookup(Authctxt *authctxt, const char *name)
  * has been requested. For this reason, all tests for whether multiple is
  * enabled should consult options.num_auth_methods directly.
  */
-int
-auth2_setup_methods_lists(Authctxt *authctxt)
+पूर्णाङ्क
+auth2_सज्जता_methods_lists(Authctxt *authctxt)
 {
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
-	    strcmp(options.auth_methods[0], "any") == 0) {
-		free(options.auth_methods[0]);
-		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+	यदि (options.अङ्कः_auth_methods == 1 &&
+	    वाक्यं_तुलय(options.auth_methods[0], "any") == 0) {
+		मुक्त(options.auth_methods[0]);
+		options.auth_methods[0] = रिक्त;
+		options.अङ्कः_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
-		return 0;
+	यदि (options.अङ्कः_auth_methods == 0)
+		प्रत्यागम 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
-	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
-		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
+	authctxt->auth_methods = xcalloc(options.अङ्कः_auth_methods,
+	    परिमाण(*authctxt->auth_methods));
+	authctxt->अङ्कः_auth_methods = 0;
+	प्रति (i = 0; i < options.अङ्कः_auth_methods; i++) {
+		यदि (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
 			    options.auth_methods[i]);
-			continue;
+			अनुवर्त;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->अङ्कः_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->अङ्कः_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	यदि (authctxt->अङ्कः_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
-		return -1;
+		प्रत्यागम -1;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-list_starts_with(const char *methods, const char *method,
-    const char *submethod)
+स्थिर पूर्णाङ्क
+list_starts_with(ध्रुव वर्ण *methods, ध्रुव वर्ण *विधानम्,
+    ध्रुव वर्ण *submethod)
 {
-	size_t l = strlen(method);
-	int match;
-	const char *p;
+	आकार_t l = वाक्यदैर्घ्यम्(विधानम्);
+	पूर्णाङ्क मेलनम्;
+	ध्रुव वर्ण *p;
 
-	if (strncmp(methods, method, l) != 0)
-		return MATCH_NONE;
+	यदि (वाक्ये_तुलय(methods, विधानम्, l) != 0)
+		प्रत्यागम मेलनम्_NONE;
 	p = methods + l;
-	match = MATCH_METHOD;
-	if (*p == ':') {
-		if (!submethod)
-			return MATCH_PARTIAL;
-		l = strlen(submethod);
+	मेलनम् = मेलनम्_विधानम्;
+	यदि (*p == ':') {
+		यदि (!submethod)
+			प्रत्यागम मेलनम्_PARTIAL;
+		l = वाक्यदैर्घ्यम्(submethod);
 		p += 1;
-		if (strncmp(submethod, p, l))
-			return MATCH_NONE;
+		यदि (वाक्ये_तुलय(submethod, p, l))
+			प्रत्यागम मेलनम्_NONE;
 		p += l;
-		match = MATCH_BOTH;
+		मेलनम् = मेलनम्_BOTH;
 	}
-	if (*p != ',' && *p != '\0')
-		return MATCH_NONE;
-	return match;
+	यदि (*p != ',' && *p != '\0')
+		प्रत्यागम मेलनम्_NONE;
+	प्रत्यागम मेलनम्;
 }
 
 /*
@@ -640,24 +640,24 @@ list_starts_with(const char *methods, const char *method,
  * Returns 0 if the list of methods did not start with that method or 1
  * if it did.
  */
-static int
-remove_method(char **methods, const char *method, const char *submethod)
+स्थिर पूर्णाङ्क
+remove_विधानम्(वर्ण **methods, ध्रुव वर्ण *विधानम्, ध्रुव वर्ण *submethod)
 {
-	char *omethods = *methods, *p;
-	size_t l = strlen(method);
-	int match;
+	वर्ण *omethods = *methods, *p;
+	आकार_t l = वाक्यदैर्घ्यम्(विधानम्);
+	पूर्णाङ्क मेलनम्;
 
-	match = list_starts_with(omethods, method, submethod);
-	if (match != MATCH_METHOD && match != MATCH_BOTH)
-		return 0;
+	मेलनम् = list_starts_with(omethods, विधानम्, submethod);
+	यदि (मेलनम् != मेलनम्_विधानम् && मेलनम् != मेलनम्_BOTH)
+		प्रत्यागम 0;
 	p = omethods + l;
-	if (submethod && match == MATCH_BOTH)
-		p += 1 + strlen(submethod); /* include colon */
-	if (*p == ',')
+	यदि (submethod && मेलनम् == मेलनम्_BOTH)
+		p += 1 + वाक्यदैर्घ्यम्(submethod); /* include colon */
+	यदि (*p == ',')
 		p++;
 	*methods = xstrdup(p);
-	free(omethods);
-	return 1;
+	मुक्त(omethods);
+	प्रत्यागम 1;
 }
 
 /*
@@ -666,55 +666,55 @@ remove_method(char **methods, const char *method, const char *submethod)
  * in any list, then authentication is deemed successful.
  * Returns 1 if the method completed any authentication list or 0 otherwise.
  */
-int
-auth2_update_methods_lists(Authctxt *authctxt, const char *method,
-    const char *submethod)
+पूर्णाङ्क
+auth2_update_methods_lists(Authctxt *authctxt, ध्रुव वर्ण *विधानम्,
+    ध्रुव वर्ण *submethod)
 {
-	u_int i, found = 0;
+	u_int i, प्राप्तम् = 0;
 
-	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (!remove_method(&(authctxt->auth_methods[i]), method,
+	debug3_f("updating methods list after \"%s\"", विधानम्);
+	प्रति (i = 0; i < authctxt->अङ्कः_auth_methods; i++) {
+		यदि (!remove_विधानम्(&(authctxt->auth_methods[i]), विधानम्,
 		    submethod))
-			continue;
-		found = 1;
-		if (*authctxt->auth_methods[i] == '\0') {
+			अनुवर्त;
+		प्राप्तम् = 1;
+		यदि (*authctxt->auth_methods[i] == '\0') {
 			debug2("authentication methods list %d complete", i);
-			return 1;
+			प्रत्यागम 1;
 		}
 		debug3("authentication methods list %d remaining: \"%s\"",
 		    i, authctxt->auth_methods[i]);
 	}
 	/* This should not happen, but would be bad if it did */
-	if (!found)
+	यदि (!प्राप्तम्)
 		fatal_f("method not in AuthenticationMethods");
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* Reset method-specific information */
-void auth2_authctxt_reset_info(Authctxt *authctxt)
+शून्य auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
-	authctxt->auth_method_info = NULL;
+	sshkey_free(authctxt->auth_विधानम्_कुञ्चिका);
+	मुक्त(authctxt->auth_विधानम्_info);
+	authctxt->auth_विधानम्_कुञ्चिका = रिक्त;
+	authctxt->auth_विधानम्_info = रिक्त;
 }
 
 /* Record auth method-specific information for logs */
-void
-auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+शून्य
+auth2_लेखः_info(Authctxt *authctxt, ध्रुव वर्ण *fmt, ...)
 {
 	va_list ap;
-	int i;
+	पूर्णाङ्क i;
 
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_info = NULL;
+	मुक्त(authctxt->auth_विधानम्_info);
+	authctxt->auth_विधानम्_info = रिक्त;
 
 	va_start(ap, fmt);
-	i = vasprintf(&authctxt->auth_method_info, fmt, ap);
+	i = vasprintf(&authctxt->auth_विधानम्_info, fmt, ap);
 	va_end(ap);
 
-	if (i == -1)
+	यदि (i == -1)
 		fatal_f("vasprintf failed");
 }
 
@@ -723,95 +723,95 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * and to ensure that the same key is not subsequently accepted again for
  * multiple authentication.
  */
-void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+शून्य
+auth2_लेखः_कुञ्चिका(Authctxt *authctxt, पूर्णाङ्क authenticated,
+    ध्रुव संरचना sshkey *कुञ्चिका)
 {
-	struct sshkey **tmp, *dup;
-	int r;
+	संरचना sshkey **tmp, *dup;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	यदि ((r = sshkey_from_वैयक्तिकम्(कुञ्चिका, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_विधानम्_कुञ्चिका);
+	authctxt->auth_विधानम्_कुञ्चिका = dup;
 
-	if (!authenticated)
-		return;
+	यदि (!authenticated)
+		प्रत्यागम;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	यदि ((r = sshkey_from_वैयक्तिकम्(कुञ्चिका, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	यदि (authctxt->nprev_कुञ्चिकाः >= अधिकतम_पूर्णाङ्कः ||
+	    (tmp = recallocarray(authctxt->पूर्व_कुञ्चिकाः, authctxt->nprev_कुञ्चिकाः,
+	    authctxt->nprev_कुञ्चिकाः + 1, परिमाण(*authctxt->पूर्व_कुञ्चिकाः))) == रिक्त)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->पूर्व_कुञ्चिकाः = tmp;
+	authctxt->पूर्व_कुञ्चिकाः[authctxt->nprev_कुञ्चिकाः] = dup;
+	authctxt->nprev_कुञ्चिकाः++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
-int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+पूर्णाङ्क
+auth2_कुञ्चिका_already_प्रयुक्तम्(Authctxt *authctxt, ध्रुव संरचना sshkey *कुञ्चिका)
 {
 	u_int i;
-	char *fp;
+	वर्ण *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	प्रति (i = 0; i < authctxt->nprev_कुञ्चिकाः; i++) {
+		यदि (sshkey_equal_लौकिकम्(कुञ्चिका, authctxt->पूर्व_कुञ्चिकाः[i])) {
+			fp = sshkey_fingerprint(authctxt->पूर्व_कुञ्चिकाः[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
-			    fp == NULL ? "UNKNOWN" : fp);
-			free(fp);
-			return 1;
+			    sshkey_type(authctxt->पूर्व_कुञ्चिकाः[i]),
+			    fp == रिक्त ? "UNKNOWN" : fp);
+			मुक्त(fp);
+			प्रत्यागम 1;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 /*
  * Updates authctxt->session_info with details of authentication. Should be
  * whenever an authentication method succeeds.
  */
-void
-auth2_update_session_info(Authctxt *authctxt, const char *method,
-    const char *submethod)
+शून्य
+auth2_update_session_info(Authctxt *authctxt, ध्रुव वर्ण *विधानम्,
+    ध्रुव वर्ण *submethod)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if (authctxt->session_info == NULL) {
-		if ((authctxt->session_info = sshbuf_new()) == NULL)
+	यदि (authctxt->session_info == रिक्त) {
+		यदि ((authctxt->session_info = sshbuf_new()) == रिक्त)
 			fatal_f("sshbuf_new");
 	}
 
 	/* Append method[/submethod] */
-	if ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
-	    method, submethod == NULL ? "" : "/",
-	    submethod == NULL ? "" : submethod)) != 0)
+	यदि ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
+	    विधानम्, submethod == रिक्त ? "" : "/",
+	    submethod == रिक्त ? "" : submethod)) != 0)
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+	यदि (authctxt->auth_विधानम्_कुञ्चिका != रिक्त) {
+		यदि ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		    (r = sshkey_format_text(authctxt->auth_विधानम्_कुञ्चिका,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}
 
-	if (authctxt->auth_method_info != NULL) {
+	यदि (authctxt->auth_विधानम्_info != रिक्त) {
 		/* Ensure no ambiguity here */
-		if (strchr(authctxt->auth_method_info, '\n') != NULL)
+		यदि (strchr(authctxt->auth_विधानम्_info, '\n') != रिक्त)
 			fatal_f("auth_method_info contains \\n");
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		यदि ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
 		    (r = sshbuf_putf(authctxt->session_info, "%s",
-		    authctxt->auth_method_info)) != 0) {
+		    authctxt->auth_विधानम्_info)) != 0) {
 			fatal_fr(r, "append method info");
 		}
 	}
-	if ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
+	यदि ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
 		fatal_fr(r, "append");
 }
 

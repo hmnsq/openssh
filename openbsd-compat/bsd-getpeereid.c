@@ -14,60 +14,60 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#यदि !defined(HAVE_GETPEEREID)
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/socket.h>
 
-#include <unistd.h>
+#अन्तर्भाव <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#यदि defined(SO_PEERCRED)
+पूर्णाङ्क
+getpeereid(पूर्णाङ्क s, uid_t *euid, gid_t *gid)
 {
-	struct ucred cred;
-	socklen_t len = sizeof(cred);
+	संरचना ucred cred;
+	socklen_t len = परिमाण(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	यदि (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		प्रत्यागम (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	प्रत्यागम (0);
 }
-#elif defined(HAVE_GETPEERUCRED)
+#नोचेद्यदि defined(HAVE_GETPEERUCRED)
 
-#ifdef HAVE_UCRED_H
+#यदि_परिभाषितम् HAVE_UCRED_H
 # include <ucred.h>
-#endif
+#यदि_अन्तः
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+पूर्णाङ्क
+getpeereid(पूर्णाङ्क s, uid_t *euid, gid_t *gid)
 {
-	ucred_t *ucred = NULL;
+	ucred_t *ucred = रिक्त;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	यदि (getpeerucred(s, &ucred) == -1)
+		प्रत्यागम (-1);
+	यदि ((*euid = ucred_geteuid(ucred)) == -1)
+		प्रत्यागम (-1);
+	यदि ((*gid = ucred_getrgid(ucred)) == -1)
+		प्रत्यागम (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	प्रत्यागम (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#अन्यथा
+पूर्णाङ्क
+getpeereid(पूर्णाङ्क s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	प्रत्यागम (0);
 }
-#endif /* defined(SO_PEERCRED) */
+#यदि_अन्तः /* defined(SO_PEERCRED) */
 
-#endif /* !defined(HAVE_GETPEEREID) */
+#यदि_अन्तः /* !defined(HAVE_GETPEEREID) */

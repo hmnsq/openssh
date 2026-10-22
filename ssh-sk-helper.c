@@ -25,293 +25,293 @@
  * protocol changes.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <errno.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "msg.h"
-#include "uidswap.h"
-#include "ssherr.h"
-#include "ssh-sk.h"
-#include "ssh-pkcs11.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "authfd.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "msg.h"
+#अन्तर्भाव "uidswap.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "ssh-sk.h"
+#अन्तर्भाव "ssh-pkcs11.h"
 
-#ifdef ENABLE_SK
-extern char *__progname;
+#यदि_परिभाषितम् ENABLE_SK
+बाह्य वर्ण *__progname;
 
-static struct sshbuf *reply_error(int r, char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)));
+स्थिर संरचना sshbuf *प्रत्युत्तरम्_error(पूर्णाङ्क r, वर्ण *fmt, ...)
+    __attribute__((__format__ (प्रारूप_लिख, 2, 3)));
 
-static struct sshbuf *
-reply_error(int r, char *fmt, ...)
+स्थिर संरचना sshbuf *
+प्रत्युत्तरम्_error(पूर्णाङ्क r, वर्ण *fmt, ...)
 {
-	char *msg;
+	वर्ण *सन्देशः;
 	va_list ap;
-	struct sshbuf *resp;
+	संरचना sshbuf *resp;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&सन्देशः, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", __progname, msg);
-	free(msg);
+	debug("%s: %s", __progname, सन्देशः);
+	मुक्त(सन्देशः);
 
-	if (r >= 0)
+	यदि (r >= 0)
 		fatal_f("invalid error code %d", r);
 
-	if ((resp = sshbuf_new()) == NULL)
+	यदि ((resp = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
+	यदि (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
 	    sshbuf_put_u32(resp, (u_int)-r) != 0)
 		fatal("%s: buffer error", __progname);
-	return resp;
+	प्रत्यागम resp;
 }
 
 /* If the specified string is zero length, then free it and replace with NULL */
-static void
-null_empty(char **s)
+स्थिर शून्य
+null_रिक्तानि(वर्ण **s)
 {
-	if (s == NULL || *s == NULL || **s != '\0')
-		return;
+	यदि (s == रिक्त || *s == रिक्त || **s != '\0')
+		प्रत्यागम;
 
-	free(*s);
-	*s = NULL;
+	मुक्त(*s);
+	*s = रिक्त;
 }
 
 /* stubs */
-int
-pkcs11_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+पूर्णाङ्क
+pkcs11_sign(संरचना sshkey *कुञ्चिका,
+    u_char **sigp, आकार_t *lenp,
+    ध्रुव u_char *दत्त, आकार_t datalen,
+    ध्रुव वर्ण *alg, ध्रुव वर्ण *sk_provider,
+    ध्रुव वर्ण *sk_pin, u_int compat)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	प्रत्यागम SSH_ERR_आन्तरिकम्_ERROR;
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+शून्य
+pkcs11_कुञ्चिका_free(संरचना sshkey *कुञ्चिका)
 {
 }
 
-static struct sshbuf *
-process_sign(struct sshbuf *req)
+स्थिर संरचना sshbuf *
+process_sign(संरचना sshbuf *req)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	पूर्णाङ्क r = SSH_ERR_आन्तरिकम्_ERROR;
+	संरचना sshbuf *resp, *kbuf;
+	संरचना sshkey *कुञ्चिका = रिक्त;
 	uint32_t compat;
-	const u_char *message;
-	u_char *sig = NULL;
-	size_t msglen, siglen = 0;
-	char *provider = NULL, *pin = NULL;
+	ध्रुव u_char *सन्देशः_2;
+	u_char *sig = रिक्त;
+	आकार_t msglen, siglen = 0;
+	वर्ण *provider = रिक्त, *pin = रिक्त;
 
-	if ((r = sshbuf_froms(req, &kbuf)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(req, &message, &msglen)) != 0 ||
-	    (r = sshbuf_get_cstring(req, NULL, NULL)) != 0 || /* alg */
+	यदि ((r = sshbuf_froms(req, &kbuf)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, रिक्त)) != 0 ||
+	    (r = sshbuf_get_string_प्रत्यक्षम्(req, &सन्देशः_2, &msglen)) != 0 ||
+	    (r = sshbuf_get_cstring(req, रिक्त, रिक्त)) != 0 || /* alg */
 	    (r = sshbuf_get_u32(req, &compat)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0)
+	    (r = sshbuf_get_cstring(req, &pin, रिक्त)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	यदि (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	यदि ((r = sshkey_वैयक्तिकम्_deserialize(kbuf, &कुञ्चिका)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	यदि (!sshkey_is_sk(कुञ्चिका)) {
 		fatal("%s: Unsupported key type %s",
-		    __progname, sshkey_ssh_name(key));
+		    __progname, sshkey_ssh_name(कुञ्चिका));
 	}
 
 	debug_f("ready to sign with key %s, provider %s: "
-	    "msg len %zu, compat 0x%lx", sshkey_type(key),
+	    "msg len %zu, compat 0x%lx", sshkey_type(कुञ्चिका),
 	    provider, msglen, (u_long)compat);
 
-	null_empty(&pin);
+	null_रिक्तानि(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
-	    message, msglen, compat, pin)) != 0) {
-		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
-		goto out;
+	यदि ((r = sshsk_sign(provider, कुञ्चिका, &sig, &siglen,
+	    सन्देशः_2, msglen, compat, pin)) != 0) {
+		resp = प्रत्युत्तरम्_error(r, "Signing failed: %s", ssh_err(r));
+		गच्छ बहिर्गमनम्;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	यदि ((resp = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
+	यदि ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
- out:
-	sshkey_free(key);
+ बहिर्गमनम्:
+	sshkey_free(कुञ्चिका);
 	sshbuf_free(kbuf);
-	free(provider);
-	if (sig != NULL)
+	मुक्त(provider);
+	यदि (sig != रिक्त)
 		freezero(sig, siglen);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	यदि (pin != रिक्त)
+		freezero(pin, वाक्यदैर्घ्यम्(pin));
+	प्रत्यागम resp;
 }
 
-static struct sshbuf *
-process_enroll(struct sshbuf *req)
+स्थिर संरचना sshbuf *
+process_enroll(संरचना sshbuf *req)
 {
-	int r;
+	पूर्णाङ्क r;
 	u_int type;
-	char *provider, *application, *pin, *device, *userid;
+	वर्ण *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
-	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	संरचना sshbuf *challenge, *attest, *kbuf, *resp;
+	संरचना sshkey *कुञ्चिका;
 
-	if ((attest = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL)
+	यदि ((attest = sshbuf_new()) == रिक्त ||
+	    (kbuf = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_u32(req, &type)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &application, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &userid, NULL)) != 0 ||
+	यदि ((r = sshbuf_get_u32(req, &type)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &application, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &userid, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u8(req, &flags)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, रिक्त)) != 0 ||
 	    (r = sshbuf_froms(req, &challenge)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	यदि (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if (type > INT_MAX)
+	यदि (type > अधिकतम_पूर्णाङ्कः)
 		fatal("%s: bad type %u", __progname, type);
-	if (sshbuf_len(challenge) == 0) {
+	यदि (sshbuf_len(challenge) == 0) {
 		sshbuf_free(challenge);
-		challenge = NULL;
+		challenge = रिक्त;
 	}
-	null_empty(&device);
-	null_empty(&userid);
-	null_empty(&pin);
+	null_रिक्तानि(&device);
+	null_रिक्तानि(&userid);
+	null_रिक्तानि(&pin);
 
-	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
-	    flags, pin, challenge, &key, attest)) != 0) {
-		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
-		goto out;
+	यदि ((r = sshsk_enroll((पूर्णाङ्क)type, provider, device, application, userid,
+	    flags, pin, challenge, &कुञ्चिका, attest)) != 0) {
+		resp = प्रत्युत्तरम्_error(r, "Enrollment failed: %s", ssh_err(r));
+		गच्छ बहिर्गमनम्;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	यदि ((resp = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	यदि ((r = sshkey_वैयक्तिकम्_serialize(कुञ्चिका, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
+	यदि ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, attest)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
- out:
-	sshkey_free(key);
+ बहिर्गमनम्:
+	sshkey_free(कुञ्चिका);
 	sshbuf_free(kbuf);
 	sshbuf_free(attest);
 	sshbuf_free(challenge);
-	free(provider);
-	free(application);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	मुक्त(provider);
+	मुक्त(application);
+	यदि (pin != रिक्त)
+		freezero(pin, वाक्यदैर्घ्यम्(pin));
 
-	return resp;
+	प्रत्यागम resp;
 }
 
-static struct sshbuf *
-process_load_resident(struct sshbuf *req)
+स्थिर संरचना sshbuf *
+process_आरोपय_resident(संरचना sshbuf *req)
 {
-	int r;
-	char *provider, *pin, *device;
-	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
-	size_t nsrks = 0, i;
+	पूर्णाङ्क r;
+	वर्ण *provider, *pin, *device;
+	संरचना sshbuf *kbuf, *resp;
+	संरचना sshsk_resident_कुञ्चिका **srks = रिक्त;
+	आकार_t nsrks = 0, i;
 	u_int flags;
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	यदि ((kbuf = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	यदि ((r = sshbuf_get_cstring(req, &provider, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u32(req, &flags)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	यदि (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	null_empty(&device);
-	null_empty(&pin);
+	null_रिक्तानि(&device);
+	null_रिक्तानि(&pin);
 
-	if ((r = sshsk_load_resident(provider, device, pin, flags,
+	यदि ((r = sshsk_आरोपय_resident(provider, device, pin, flags,
 	    &srks, &nsrks)) != 0) {
-		resp = reply_error(r, "sshsk_load_resident failed: %s",
+		resp = प्रत्युत्तरम्_error(r, "sshsk_load_resident failed: %s",
 		    ssh_err(r));
-		goto out;
+		गच्छ बहिर्गमनम्;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	यदि ((resp = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	यदि ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_आरोपय_RESIDENT)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
-	for (i = 0; i < nsrks; i++) {
+	प्रति (i = 0; i < nsrks; i++) {
 		debug_f("key %zu %s %s uidlen %zu", i,
-		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
+		    sshkey_type(srks[i]->कुञ्चिका), srks[i]->कुञ्चिका->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		यदि ((r = sshkey_वैयक्तिकम्_serialize(srks[i]->कुञ्चिका, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
-		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
+		यदि ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
 		    (r = sshbuf_put_string(resp, srks[i]->user_id,
 		    srks[i]->user_id_len)) != 0)
 			fatal_r(r, "%s: compose key", __progname);
 	}
 
- out:
-	sshsk_free_resident_keys(srks, nsrks);
+ बहिर्गमनम्:
+	sshsk_free_resident_कुञ्चिकाः(srks, nsrks);
 	sshbuf_free(kbuf);
-	free(provider);
-	free(device);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
-	return resp;
+	मुक्त(provider);
+	मुक्त(device);
+	यदि (pin != रिक्त)
+		freezero(pin, वाक्यदैर्घ्यम्(pin));
+	प्रत्यागम resp;
 }
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	struct sshbuf *req, *resp;
-	int in, out, ch, r, vflag = 0;
+	संरचना sshbuf *req, *resp;
+	पूर्णाङ्क अन्तर्, बहिर्गमनम्, ch, r, vflag = 0;
 	u_int rtype, ll = 0;
-	uint8_t version, log_stderr = 0;
+	uint8_t संस्करणम्, log_stderr = 0;
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	यावत् ((ch = getopt(argc, argv, "v")) != -1) {
+		विकल्प (ch) {
+		पक्ष 'v':
 			vflag = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			यदि (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			अन्यथा यदि (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
-			exit(1);
+			निर्गच्छ(1);
 		}
 	}
 	log_init(__progname, log_level, log_facility, vflag);
@@ -321,63 +321,63 @@ main(int argc, char **argv)
 	 * providers not to fiddle with stdin/out.
 	 */
 	closefrom(STDERR_FILENO + 1);
-	if ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
+	यदि ((अन्तर् = dup(STDIN_FILENO)) == -1 || (बहिर्गमनम् = dup(STDOUT_FILENO)) == -1)
 		fatal("%s: dup: %s", __progname, strerror(errno));
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	sanitise_stdfd(); /* resets to /dev/null */
 
-	if ((req = sshbuf_new()) == NULL)
+	यदि ((req = sshbuf_new()) == रिक्त)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	यदि (ssh_सन्देशः_recv(अन्तर्, req) < 0)
 		fatal("ssh_msg_recv failed");
-	close(in);
+	close(अन्तर्);
 	debug_f("received message len %zu", sshbuf_len(req));
 
-	if ((r = sshbuf_get_u8(req, &version)) != 0)
+	यदि ((r = sshbuf_get_u8(req, &संस्करणम्)) != 0)
 		fatal_r(r, "%s: parse version", __progname);
-	if (version != SSH_SK_HELPER_VERSION) {
+	यदि (संस्करणम् != SSH_SK_HELPER_संस्करणम्) {
 		fatal("unsupported version: received %d, expected %d",
-		    version, SSH_SK_HELPER_VERSION);
+		    संस्करणम्, SSH_SK_HELPER_संस्करणम्);
 	}
 
-	if ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
+	यदि ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
 	    (r = sshbuf_get_u8(req, &log_stderr)) != 0 ||
 	    (r = sshbuf_get_u32(req, &ll)) != 0)
 		fatal_r(r, "%s: parse", __progname);
 
-	if (!vflag && log_level_name((LogLevel)ll) != NULL)
+	यदि (!vflag && log_level_name((LogLevel)ll) != रिक्त)
 		log_init(__progname, (LogLevel)ll, log_facility, log_stderr);
 
-	switch (rtype) {
-	case SSH_SK_HELPER_SIGN:
+	विकल्प (rtype) {
+	पक्ष SSH_SK_HELPER_SIGN:
 		resp = process_sign(req);
-		break;
-	case SSH_SK_HELPER_ENROLL:
+		भङ्ग;
+	पक्ष SSH_SK_HELPER_ENROLL:
 		resp = process_enroll(req);
-		break;
-	case SSH_SK_HELPER_LOAD_RESIDENT:
-		resp = process_load_resident(req);
-		break;
-	default:
+		भङ्ग;
+	पक्ष SSH_SK_HELPER_आरोपय_RESIDENT:
+		resp = process_आरोपय_resident(req);
+		भङ्ग;
+	स्वभाव:
 		fatal("%s: unsupported request type %u", __progname, rtype);
 	}
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	यदि (ssh_सन्देशः_send(बहिर्गमनम्, SSH_SK_HELPER_संस्करणम्, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
-	close(out);
+	close(बहिर्गमनम्);
 
-	return (0);
+	प्रत्यागम (0);
 }
-#else /* ENABLE_SK */
+#अन्यथा /* ENABLE_SK */
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
 	fprintf(stderr, "ssh-sk-helper: disabled at compile time\n");
-	return -1;
+	प्रत्यागम -1;
 }
-#endif /* ENABLE_SK */
+#यदि_अन्तः /* ENABLE_SK */

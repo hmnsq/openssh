@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+शून्य test_parse(शून्य);
+शून्य test_convtime(शून्य);
+शून्य test_expand(शून्य);
+शून्य test_argv(शून्य);
+शून्य test_strdelim(शून्य);
+शून्य test_hpdelim(शून्य);
+शून्य test_ptimeout(शून्य);
+शून्य test_xextendf(शून्य);
+शून्य test_misc(शून्य);
 
-void
-tests(void)
+शून्य
+tests(शून्य)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+शून्य
+benchmarks(शून्य)
 {
-	printf("no benchmarks\n");
+	प्रारूप_लिख("no benchmarks\n");
 }

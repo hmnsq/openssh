@@ -26,28 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ATOMICIO_H
-#define _ATOMICIO_H
+#यदि_अपरिभाषितम् _ATOMICIO_H
+#परिभाषय _ATOMICIO_H
 
-struct iovec;
+संरचना iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+आकार_t
+atomicio6(ssize_t (*f) (पूर्णाङ्क, शून्य *, आकार_t), पूर्णाङ्क fd, शून्य *_s, आकार_t n,
+    पूर्णाङ्क (*cb)(शून्य *, आकार_t), शून्य *);
+आकार_t	atomicio(ssize_t (*)(पूर्णाङ्क, शून्य *, आकार_t), पूर्णाङ्क, शून्य *, आकार_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#परिभाषय vwrite (ssize_t (*)(पूर्णाङ्क, शून्य *, आकार_t))लिख
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+आकार_t
+atomiciov6(ssize_t (*f) (पूर्णाङ्क, ध्रुव संरचना iovec *, पूर्णाङ्क), पूर्णाङ्क fd,
+    ध्रुव संरचना iovec *_iov, पूर्णाङ्क iovcnt, पूर्णाङ्क (*cb)(शून्य *, आकार_t), शून्य *);
+आकार_t	atomiciov(ssize_t (*)(पूर्णाङ्क, ध्रुव संरचना iovec *, पूर्णाङ्क),
+    पूर्णाङ्क, ध्रुव संरचना iovec *, पूर्णाङ्क);
 
-#endif /* _ATOMICIO_H */
+#यदि_अन्तः /* _ATOMICIO_H */

@@ -16,52 +16,52 @@
 
 /* $OpenBSD: krl.h,v 1.11 2026/03/03 09:57:25 dtucker Exp $ */
 
-#ifndef _KRL_H
-#define _KRL_H
+#यदि_अपरिभाषितम् _KRL_H
+#परिभाषय _KRL_H
 
 /* Functions to manage key revocation lists */
 
-#define KRL_MAGIC		"SSHKRL\n\0"
-#define KRL_FORMAT_VERSION	1
+#परिभाषय KRL_MAGIC		"SSHKRL\n\0"
+#परिभाषय KRL_FORMAT_संस्करणम्	1
 
 /* KRL section types */
-#define KRL_SECTION_CERTIFICATES	1
-#define KRL_SECTION_EXPLICIT_KEY	2
-#define KRL_SECTION_FINGERPRINT_SHA1	3
-#define KRL_SECTION_SIGNATURE		4
-#define KRL_SECTION_FINGERPRINT_SHA256	5
-#define KRL_SECTION_EXTENSION		255
+#परिभाषय KRL_SECTION_CERTIFICATES	1
+#परिभाषय KRL_SECTION_EXPLICIT_कुञ्चिका	2
+#परिभाषय KRL_SECTION_FINGERPRINT_SHA1	3
+#परिभाषय KRL_SECTION_SIGNATURE		4
+#परिभाषय KRL_SECTION_FINGERPRINT_SHA256	5
+#परिभाषय KRL_SECTION_EXTENSION		255
 
 /* KRL_SECTION_CERTIFICATES subsection types */
-#define KRL_SECTION_CERT_SERIAL_LIST	0x20
-#define KRL_SECTION_CERT_SERIAL_RANGE	0x21
-#define KRL_SECTION_CERT_SERIAL_BITMAP	0x22
-#define KRL_SECTION_CERT_KEY_ID		0x23
-#define KRL_SECTION_CERT_EXTENSION	0x39
+#परिभाषय KRL_SECTION_CERT_SERIAL_LIST	0x20
+#परिभाषय KRL_SECTION_CERT_SERIAL_RANGE	0x21
+#परिभाषय KRL_SECTION_CERT_SERIAL_BITMAP	0x22
+#परिभाषय KRL_SECTION_CERT_कुञ्चिका_ID		0x23
+#परिभाषय KRL_SECTION_CERT_EXTENSION	0x39
 
-struct sshkey;
-struct sshbuf;
-struct ssh_krl;
+संरचना sshkey;
+संरचना sshbuf;
+संरचना ssh_krl;
 
-struct ssh_krl *ssh_krl_init(void);
-void ssh_krl_free(struct ssh_krl *krl);
-void ssh_krl_set_version(struct ssh_krl *krl, uint64_t version);
-int ssh_krl_set_comment(struct ssh_krl *krl, const char *comment);
-int ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t serial);
-int ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi);
-int ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl,
-    const struct sshkey *ca_key, const char *key_id);
-int ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf);
-int ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp);
-int ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_file_contains_key(const char *path, const struct sshkey *key);
-int krl_dump(struct ssh_krl *krl, FILE *f);
+संरचना ssh_krl *ssh_krl_init(शून्य);
+शून्य ssh_krl_free(संरचना ssh_krl *krl);
+शून्य ssh_krl_समुच्चयः_संस्करणम्(संरचना ssh_krl *krl, uint64_t संस्करणम्);
+पूर्णाङ्क ssh_krl_समुच्चयः_comment(संरचना ssh_krl *krl, ध्रुव वर्ण *comment);
+पूर्णाङ्क ssh_krl_revoke_cert_by_serial(संरचना ssh_krl *krl,
+    ध्रुव संरचना sshkey *ca_कुञ्चिका, uint64_t serial);
+पूर्णाङ्क ssh_krl_revoke_cert_by_serial_range(संरचना ssh_krl *krl,
+    ध्रुव संरचना sshkey *ca_कुञ्चिका, uint64_t lo, uint64_t hi);
+पूर्णाङ्क ssh_krl_revoke_cert_by_कुञ्चिका_id(संरचना ssh_krl *krl,
+    ध्रुव संरचना sshkey *ca_कुञ्चिका, ध्रुव वर्ण *कुञ्चिका_id);
+पूर्णाङ्क ssh_krl_revoke_कुञ्चिका_explicit(संरचना ssh_krl *krl, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क ssh_krl_revoke_कुञ्चिका_sha1(संरचना ssh_krl *krl, ध्रुव u_char *p, आकार_t len);
+पूर्णाङ्क ssh_krl_revoke_कुञ्चिका_sha256(संरचना ssh_krl *krl, ध्रुव u_char *p, आकार_t len);
+पूर्णाङ्क ssh_krl_revoke_कुञ्चिका(संरचना ssh_krl *krl, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क ssh_krl_गन्तव्यम्_blob(संरचना ssh_krl *krl, संरचना sshbuf *buf);
+पूर्णाङ्क ssh_krl_from_blob(संरचना sshbuf *buf, संरचना ssh_krl **krlp);
+पूर्णाङ्क ssh_krl_check_कुञ्चिका(संरचना ssh_krl *krl, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क ssh_krl_file_अन्तर्भवति_कुञ्चिका(ध्रुव वर्ण *मार्गः, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क krl_dump(संरचना ssh_krl *krl, FILE *f);
 
-#endif /* _KRL_H */
+#यदि_अन्तः /* _KRL_H */
 

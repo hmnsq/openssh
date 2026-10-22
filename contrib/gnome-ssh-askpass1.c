@@ -43,99 +43,99 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <gnome.h>
-#include <X11/Xlib.h>
-#include <gdk/gdkx.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <gnome.h>
+#अन्तर्भाव <X11/Xlib.h>
+#अन्तर्भाव <gdk/gdkx.h>
 
-void
-report_failed_grab (void)
+शून्य
+report_failed_grab (शून्य)
 {
 	GtkWidget *err;
 
-	err = gnome_message_box_new("Could not grab keyboard or mouse.\n"
+	err = gnome_सन्देशः_box_new("Could not grab keyboard or mouse.\n"
 		"A malicious client may be eavesdropping on your session.",
-				    GNOME_MESSAGE_BOX_ERROR, "EXIT", NULL);
-	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
-	gtk_object_set(GTK_OBJECT(err), "type", GTK_WINDOW_POPUP, NULL);
+				    GNOME_सन्देशः_BOX_ERROR, "EXIT", रिक्त);
+	gtk_गवाक्षः_समुच्चयः_position(GTK_गवाक्षः(err), GTK_WIN_POS_CENTER);
+	gtk_object_समुच्चयः(GTK_OBJECT(err), "type", GTK_गवाक्षः_POPUP, रिक्त);
 
-	gnome_dialog_run_and_close(GNOME_DIALOG(err));
+	gnome_dialog_सततम्_and_close(GNOME_DIALOG(err));
 }
 
-int
-passphrase_dialog(char *message)
+पूर्णाङ्क
+passphrase_dialog(वर्ण *सन्देशः_2)
 {
-	char *passphrase;
-	char **messages;
-	int result, i, grab_server, grab_pointer;
-	GtkWidget *dialog, *entry, *label;
+	वर्ण *passphrase;
+	वर्ण **messages;
+	पूर्णाङ्क परिणाम, i, grab_server, grab_pointer;
+	GtkWidget *dialog, *प्रविष्टिः, *label;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != रिक्त);
+	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != रिक्त);
 
 	dialog = gnome_dialog_new("OpenSSH", GNOME_STOCK_BUTTON_OK,
-	    GNOME_STOCK_BUTTON_CANCEL, NULL);
+	    GNOME_STOCK_BUTTON_CANCEL, रिक्त);
 
-	messages = g_strsplit(message, "\\n", 0);
-	if (messages)
-		for(i = 0; messages[i]; i++) {
+	messages = g_strsplit(सन्देशः_2, "\\n", 0);
+	यदि (messages)
+		प्रति(i = 0; messages[i]; i++) {
 			label = gtk_label_new(messages[i]);
 			gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
 			    label, FALSE, FALSE, 0);
 		}
 
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox), entry, FALSE,
+	प्रविष्टिः = gtk_प्रविष्टिः_new();
+	gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox), प्रविष्टिः, FALSE,
 	    FALSE, 0);
-	gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-	gtk_widget_grab_focus(entry);
+	gtk_प्रविष्टिः_समुच्चयः_visibility(GTK_प्रविष्टिः(प्रविष्टिः), FALSE);
+	gtk_widget_grab_focus(प्रविष्टिः);
 
 	/* Center window and prepare for grab */
-	gtk_object_set(GTK_OBJECT(dialog), "type", GTK_WINDOW_POPUP, NULL);
-	gnome_dialog_set_default(GNOME_DIALOG(dialog), 0);
-	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
-	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
+	gtk_object_समुच्चयः(GTK_OBJECT(dialog), "type", GTK_गवाक्षः_POPUP, रिक्त);
+	gnome_dialog_समुच्चयः_default(GNOME_DIALOG(dialog), 0);
+	gtk_गवाक्षः_समुच्चयः_position (GTK_गवाक्षः(dialog), GTK_WIN_POS_CENTER);
+	gtk_गवाक्षः_समुच्चयः_policy(GTK_गवाक्षः(dialog), FALSE, FALSE, TRUE);
 	gnome_dialog_close_hides(GNOME_DIALOG(dialog), TRUE);
-	gtk_container_set_border_width(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
+	gtk_container_समुच्चयः_border_विस्तारः(GTK_CONTAINER(GNOME_DIALOG(dialog)->vbox),
 	    GNOME_PAD);
 	gtk_widget_show_all(dialog);
 
 	/* Grab focus */
-	if (grab_server)
+	यदि (grab_server)
 		XGrabServer(GDK_DISPLAY());
-	if (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
-	    NULL, NULL, GDK_CURRENT_TIME))
-		goto nograb;
-	if (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
-		goto nograbkb;
+	यदि (grab_pointer && gdk_pointer_grab(dialog->गवाक्षः, TRUE, 0,
+	    रिक्त, रिक्त, GDK_CURRENT_TIME))
+		गच्छ nograb;
+	यदि (gdk_keyboard_grab(dialog->गवाक्षः, FALSE, GDK_CURRENT_TIME))
+		गच्छ nograbkb;
 
 	/* Make <enter> close dialog */
-	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(entry));
+	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(प्रविष्टिः));
 
 	/* Run dialog */
-	result = gnome_dialog_run(GNOME_DIALOG(dialog));
+	परिणाम = gnome_dialog_सततम्(GNOME_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	यदि (grab_server)
 		XUngrabServer(GDK_DISPLAY());
-	if (grab_pointer)
+	यदि (grab_pointer)
 		gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	passphrase = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (result == 0)
-		puts(passphrase);
+	passphrase = gtk_प्रविष्टिः_get_text(GTK_प्रविष्टिः(प्रविष्टिः));
+	यदि (परिणाम == 0)
+		पङ्क्तिं_लिख(passphrase);
 		
 	/* Zero passphrase in memory */
-	memset(passphrase, '\0', strlen(passphrase));
-	gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
+	स्मृतिं_पूरय(passphrase, '\0', वाक्यदैर्घ्यम्(passphrase));
+	gtk_प्रविष्टिः_समुच्चयः_text(GTK_प्रविष्टिः(प्रविष्टिः), passphrase);
 			
 	gnome_dialog_close(GNOME_DIALOG(dialog));
-	return (result == 0 ? 0 : -1);
+	प्रत्यागम (परिणाम == 0 ? 0 : -1);
 
 	/*
 	 * At least one grab failed - ungrab what we got, and report the
@@ -144,29 +144,29 @@ passphrase_dialog(char *message)
  nograbkb:
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
  nograb:
-	if (grab_server)
+	यदि (grab_server)
 		XUngrabServer(GDK_DISPLAY());
 	gnome_dialog_close(GNOME_DIALOG(dialog));
 	
 	report_failed_grab();
-	return (-1);
+	प्रत्यागम (-1);
 }
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+मुख्यम्(पूर्णाङ्क argc, वर्ण **argv)
 {
-	char *message;
-	int result;
+	वर्ण *सन्देशः_2;
+	पूर्णाङ्क परिणाम;
 
 	gnome_init("GNOME ssh-askpass", "0.1", argc, argv);
 
-	if (argc == 2)
-		message = argv[1];
-	else
-		message = "Enter your OpenSSH passphrase:";
+	यदि (argc == 2)
+		सन्देशः_2 = argv[1];
+	अन्यथा
+		सन्देशः_2 = "Enter your OpenSSH passphrase:";
 
 	setvbuf(stdout, 0, _IONBF, 0);
-	result = passphrase_dialog(message);
+	परिणाम = passphrase_dialog(सन्देशः_2);
 
-	return (result);
+	प्रत्यागम (परिणाम);
 }

@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
-#ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
+#अन्तर्भाव "config.h"
+#यदि_परिभाषितम् NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
-#endif
+#यदि_अन्तः
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#यदि_अपरिभाषितम्	SYS_वृक्षः_H
+#परिभाषय	SYS_वृक्षः_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -61,695 +61,695 @@
  * The maximum height of a red-black tree is 2lg (n+1).
  */
 
-#define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+#परिभाषय SPLAY_शीर्ष(name, type)						\
+संरचना name {								\
+	संरचना type *sph_मूलम्; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#परिभाषय SPLAY_INITIALIZER(मूलम्)						\
+	{ रिक्त }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#परिभाषय SPLAY_INIT(मूलम्) कुरु {						\
+	(मूलम्)->sph_मूलम् = रिक्त;					\
+} यावत् (0)
 
-#define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+#परिभाषय SPLAY_प्रविष्टिः(type)						\
+संरचना {								\
+	संरचना type *spe_वामः; /* left element */			\
+	संरचना type *spe_दक्षिणः; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#परिभाषय SPLAY_वामः(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.spe_वामः
+#परिभाषय SPLAY_दक्षिणः(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.spe_दक्षिणः
+#परिभाषय SPLAY_मूलम्(शीर्ष)		(शीर्ष)->sph_मूलम्
+#परिभाषय SPLAY_रिक्तानि(शीर्ष)		(SPLAY_मूलम्(शीर्ष) == रिक्त)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#परिभाषय SPLAY_ROTATE_दक्षिणः(शीर्ष, tmp, क्षेत्रम्) कुरु {			\
+	SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = SPLAY_दक्षिणः(tmp, क्षेत्रम्);	\
+	SPLAY_दक्षिणः(tmp, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;			\
+	(शीर्ष)->sph_मूलम् = tmp;						\
+} यावत् (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#परिभाषय SPLAY_ROTATE_वामः(शीर्ष, tmp, क्षेत्रम्) कुरु {			\
+	SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = SPLAY_वामः(tmp, क्षेत्रम्);	\
+	SPLAY_वामः(tmp, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;			\
+	(शीर्ष)->sph_मूलम् = tmp;						\
+} यावत् (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#परिभाषय SPLAY_LINKLEFT(शीर्ष, tmp, क्षेत्रम्) कुरु {				\
+	SPLAY_वामः(tmp, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;			\
+	tmp = (शीर्ष)->sph_मूलम्;						\
+	(शीर्ष)->sph_मूलम् = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);		\
+} यावत् (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#परिभाषय SPLAY_LINKRIGHT(शीर्ष, tmp, क्षेत्रम्) कुरु {				\
+	SPLAY_दक्षिणः(tmp, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;			\
+	tmp = (शीर्ष)->sph_मूलम्;						\
+	(शीर्ष)->sph_मूलम् = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+} यावत् (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#परिभाषय SPLAY_ASSEMBLE(शीर्ष, ग्रन्थिः, वामः, दक्षिणः, क्षेत्रम्) कुरु {		\
+	SPLAY_दक्षिणः(वामः, क्षेत्रम्) = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+	SPLAY_वामः(दक्षिणः, क्षेत्रम्) = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);\
+	SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = SPLAY_दक्षिणः(ग्रन्थिः, क्षेत्रम्);	\
+	SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = SPLAY_वामः(ग्रन्थिः, क्षेत्रम्);	\
+} यावत् (0)
 
 /* Generates prototypes and inline functions */
 
-#define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+#परिभाषय SPLAY_PROTOTYPE(name, type, क्षेत्रम्, cmp)				\
+शून्य name##_SPLAY(संरचना name *, संरचना type *);			\
+शून्य name##_SPLAY_MINMAX(संरचना name *, पूर्णाङ्क);				\
+संरचना type *name##_SPLAY_INSERT(संरचना name *, संरचना type *);		\
+संरचना type *name##_SPLAY_REMOVE(संरचना name *, संरचना type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+स्थिर __inline संरचना type *						\
+name##_SPLAY_FIND(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	यदि (SPLAY_रिक्तानि(शीर्ष))						\
+		प्रत्यागम(रिक्त);						\
+	name##_SPLAY(शीर्ष, elm);					\
+	यदि ((cmp)(elm, (शीर्ष)->sph_मूलम्) == 0)				\
+		प्रत्यागम (शीर्ष->sph_मूलम्);				\
+	प्रत्यागम (रिक्त);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+स्थिर __inline संरचना type *						\
+name##_SPLAY_NEXT(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	name##_SPLAY(शीर्ष, elm);					\
+	यदि (SPLAY_दक्षिणः(elm, क्षेत्रम्) != रिक्त) {				\
+		elm = SPLAY_दक्षिणः(elm, क्षेत्रम्);				\
+		यावत् (SPLAY_वामः(elm, क्षेत्रम्) != रिक्त) {		\
+			elm = SPLAY_वामः(elm, क्षेत्रम्);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} अन्यथा								\
+		elm = रिक्त;						\
+	प्रत्यागम (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+स्थिर __inline संरचना type *						\
+name##_SPLAY_MIN_MAX(संरचना name *शीर्ष, पूर्णाङ्क val)			\
 {									\
-	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+	name##_SPLAY_MINMAX(शीर्ष, val);					\
+        प्रत्यागम (SPLAY_मूलम्(शीर्ष));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
-#define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+#परिभाषय SPLAY_GENERATE(name, type, क्षेत्रम्, cmp)				\
+संरचना type *								\
+name##_SPLAY_INSERT(संरचना name *शीर्ष, संरचना type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
-	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+    यदि (SPLAY_रिक्तानि(शीर्ष)) {						\
+	    SPLAY_वामः(elm, क्षेत्रम्) = SPLAY_दक्षिणः(elm, क्षेत्रम्) = रिक्त;	\
+    } अन्यथा {								\
+	    पूर्णाङ्क __comp;							\
+	    name##_SPLAY(शीर्ष, elm);					\
+	    __comp = (cmp)(elm, (शीर्ष)->sph_मूलम्);			\
+	    यदि(__comp < 0) {						\
+		    SPLAY_वामः(elm, क्षेत्रम्) = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);\
+		    SPLAY_दक्षिणः(elm, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;		\
+		    SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = रिक्त;		\
+	    } अन्यथा यदि (__comp > 0) {					\
+		    SPLAY_दक्षिणः(elm, क्षेत्रम्) = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);\
+		    SPLAY_वामः(elm, क्षेत्रम्) = (शीर्ष)->sph_मूलम्;		\
+		    SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = रिक्त;	\
+	    } अन्यथा							\
+		    प्रत्यागम ((शीर्ष)->sph_मूलम्);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (शीर्ष)->sph_मूलम् = (elm);						\
+    प्रत्यागम (रिक्त);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+संरचना type *								\
+name##_SPLAY_REMOVE(संरचना name *शीर्ष, संरचना type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
-			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+	संरचना type *__tmp;						\
+	यदि (SPLAY_रिक्तानि(शीर्ष))						\
+		प्रत्यागम (रिक्त);						\
+	name##_SPLAY(शीर्ष, elm);					\
+	यदि ((cmp)(elm, (शीर्ष)->sph_मूलम्) == 0) {			\
+		यदि (SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) == रिक्त) {	\
+			(शीर्ष)->sph_मूलम् = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);\
+		} अन्यथा {						\
+			__tmp = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+			(शीर्ष)->sph_मूलम् = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);\
+			name##_SPLAY(शीर्ष, elm);			\
+			SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) = __tmp;	\
 		}							\
-		return (elm);						\
+		प्रत्यागम (elm);						\
 	}								\
-	return (NULL);							\
+	प्रत्यागम (रिक्त);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+शून्य									\
+name##_SPLAY(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	संरचना type __node, *__left, *__right, *__tmp;			\
+	पूर्णाङ्क __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_वामः(&__node, क्षेत्रम्) = SPLAY_दक्षिणः(&__node, क्षेत्रम्) = रिक्त;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	यावत् ((__comp = (cmp)(elm, (शीर्ष)->sph_मूलम्))) {		\
+		यदि (__comp < 0) {					\
+			__tmp = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+			यदि (__tmp == रिक्त)				\
+				भङ्ग;					\
+			यदि ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_दक्षिणः(शीर्ष, __tmp, क्षेत्रम्);	\
+				यदि (SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) == रिक्त)\
+					भङ्ग;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(शीर्ष, __right, क्षेत्रम्);		\
+		} अन्यथा यदि (__comp > 0) {				\
+			__tmp = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+			यदि (__tmp == रिक्त)				\
+				भङ्ग;					\
+			यदि ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_वामः(शीर्ष, __tmp, क्षेत्रम्);	\
+				यदि (SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) == रिक्त)\
+					भङ्ग;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(शीर्ष, __left, क्षेत्रम्);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(शीर्ष, &__node, __left, __right, क्षेत्रम्);		\
 }									\
 									\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+शून्य name##_SPLAY_MINMAX(संरचना name *शीर्ष, पूर्णाङ्क __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	संरचना type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_वामः(&__node, क्षेत्रम्) = SPLAY_दक्षिणः(&__node, क्षेत्रम्) = रिक्त;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	यावत् (1) {							\
+		यदि (__comp < 0) {					\
+			__tmp = SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+			यदि (__tmp == रिक्त)				\
+				भङ्ग;					\
+			यदि (__comp < 0){				\
+				SPLAY_ROTATE_दक्षिणः(शीर्ष, __tmp, क्षेत्रम्);	\
+				यदि (SPLAY_वामः((शीर्ष)->sph_मूलम्, क्षेत्रम्) == रिक्त)\
+					भङ्ग;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(शीर्ष, __right, क्षेत्रम्);		\
+		} अन्यथा यदि (__comp > 0) {				\
+			__tmp = SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्);	\
+			यदि (__tmp == रिक्त)				\
+				भङ्ग;					\
+			यदि (__comp > 0) {				\
+				SPLAY_ROTATE_वामः(शीर्ष, __tmp, क्षेत्रम्);	\
+				यदि (SPLAY_दक्षिणः((शीर्ष)->sph_मूलम्, क्षेत्रम्) == रिक्त)\
+					भङ्ग;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(शीर्ष, __left, क्षेत्रम्);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(शीर्ष, &__node, __left, __right, क्षेत्रम्);		\
 }
 
-#define SPLAY_NEGINF	-1
-#define SPLAY_INF	1
+#परिभाषय SPLAY_NEGINF	-1
+#परिभाषय SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
-#define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
-#define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
-#define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#परिभाषय SPLAY_निवेशय(name, x, y)	name##_SPLAY_INSERT(x, y)
+#परिभाषय SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
+#परिभाषय SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
+#परिभाषय SPLAY_अग्र(name, x, y)		name##_SPLAY_NEXT(x, y)
+#परिभाषय SPLAY_MIN(name, x)		(SPLAY_रिक्तानि(x) ? रिक्त	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#परिभाषय SPLAY_MAX(name, x)		(SPLAY_रिक्तानि(x) ? रिक्त	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
-#define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
-	     (x) = SPLAY_NEXT(name, head, x))
+#परिभाषय SPLAY_FOREACH(x, name, शीर्ष)					\
+	प्रति ((x) = SPLAY_MIN(name, शीर्ष);				\
+	     (x) != रिक्त;						\
+	     (x) = SPLAY_अग्र(name, शीर्ष, x))
 
 /* Macros that define a red-black tree */
-#define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+#परिभाषय RB_शीर्ष(name, type)						\
+संरचना name {								\
+	संरचना type *rbh_मूलम्; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#परिभाषय RB_INITIALIZER(मूलम्)						\
+	{ रिक्त }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#परिभाषय RB_INIT(मूलम्) कुरु {						\
+	(मूलम्)->rbh_मूलम् = रिक्त;					\
+} यावत् (0)
 
-#define RB_BLACK	0
-#define RB_RED		1
-#define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+#परिभाषय RB_BLACK	0
+#परिभाषय RB_RED		1
+#परिभाषय RB_प्रविष्टिः(type)							\
+संरचना {								\
+	संरचना type *rbe_वामः;		/* left element */		\
+	संरचना type *rbe_दक्षिणः;		/* right element */		\
+	संरचना type *rbe_parent;	/* parent element */		\
+	पूर्णाङ्क rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
-#define RB_PARENT(elm, field)		(elm)->field.rbe_parent
-#define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#परिभाषय RB_वामः(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.rbe_वामः
+#परिभाषय RB_दक्षिणः(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.rbe_दक्षिणः
+#परिभाषय RB_PARENT(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.rbe_parent
+#परिभाषय RB_COLOR(elm, क्षेत्रम्)		(elm)->क्षेत्रम्.rbe_color
+#परिभाषय RB_मूलम्(शीर्ष)			(शीर्ष)->rbh_मूलम्
+#परिभाषय RB_रिक्तानि(शीर्ष)			(RB_मूलम्(शीर्ष) == रिक्त)
 
-#define RB_SET(elm, parent, field) do {					\
-	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
-	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+#परिभाषय RB_समुच्चयः(elm, parent, क्षेत्रम्) कुरु {					\
+	RB_PARENT(elm, क्षेत्रम्) = parent;					\
+	RB_वामः(elm, क्षेत्रम्) = RB_दक्षिणः(elm, क्षेत्रम्) = रिक्त;		\
+	RB_COLOR(elm, क्षेत्रम्) = RB_RED;					\
+} यावत् (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
-	RB_COLOR(black, field) = RB_BLACK;				\
-	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+#परिभाषय RB_समुच्चयः_BLACKRED(black, red, क्षेत्रम्) कुरु {				\
+	RB_COLOR(black, क्षेत्रम्) = RB_BLACK;				\
+	RB_COLOR(red, क्षेत्रम्) = RB_RED;					\
+} यावत् (0)
 
-#ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
-#endif
+#यदि_अपरिभाषितम् RB_AUGMENT
+#परिभाषय RB_AUGMENT(x)	कुरु {} यावत् (0)
+#यदि_अन्तः
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#परिभाषय RB_ROTATE_वामः(शीर्ष, elm, tmp, क्षेत्रम्) कुरु {			\
+	(tmp) = RB_दक्षिणः(elm, क्षेत्रम्);					\
+	यदि ((RB_दक्षिणः(elm, क्षेत्रम्) = RB_वामः(tmp, क्षेत्रम्))) {		\
+		RB_PARENT(RB_वामः(tmp, क्षेत्रम्), क्षेत्रम्) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	यदि ((RB_PARENT(tmp, क्षेत्रम्) = RB_PARENT(elm, क्षेत्रम्))) {		\
+		यदि ((elm) == RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्))	\
+			RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्) = (tmp);	\
+		अन्यथा							\
+			RB_दक्षिणः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्) = (tmp);	\
+	} अन्यथा								\
+		(शीर्ष)->rbh_मूलम् = (tmp);				\
+	RB_वामः(tmp, क्षेत्रम्) = (elm);					\
+	RB_PARENT(elm, क्षेत्रम्) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	यदि ((RB_PARENT(tmp, क्षेत्रम्)))					\
+		RB_AUGMENT(RB_PARENT(tmp, क्षेत्रम्));			\
+} यावत् (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#परिभाषय RB_ROTATE_दक्षिणः(शीर्ष, elm, tmp, क्षेत्रम्) कुरु {			\
+	(tmp) = RB_वामः(elm, क्षेत्रम्);					\
+	यदि ((RB_वामः(elm, क्षेत्रम्) = RB_दक्षिणः(tmp, क्षेत्रम्))) {		\
+		RB_PARENT(RB_दक्षिणः(tmp, क्षेत्रम्), क्षेत्रम्) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	यदि ((RB_PARENT(tmp, क्षेत्रम्) = RB_PARENT(elm, क्षेत्रम्))) {		\
+		यदि ((elm) == RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्))	\
+			RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्) = (tmp);	\
+		अन्यथा							\
+			RB_दक्षिणः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्) = (tmp);	\
+	} अन्यथा								\
+		(शीर्ष)->rbh_मूलम् = (tmp);				\
+	RB_दक्षिणः(tmp, क्षेत्रम्) = (elm);					\
+	RB_PARENT(elm, क्षेत्रम्) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	यदि ((RB_PARENT(tmp, क्षेत्रम्)))					\
+		RB_AUGMENT(RB_PARENT(tmp, क्षेत्रम्));			\
+} यावत् (0)
 
 /* Generates prototypes and inline functions */
-#define	RB_PROTOTYPE(name, type, field, cmp)				\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
-#define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+#परिभाषय	RB_PROTOTYPE(name, type, क्षेत्रम्, cmp)				\
+	RB_PROTOTYPE_आन्तरिकम्(name, type, क्षेत्रम्, cmp,)
+#परिभाषय	RB_PROTOTYPE_STATIC(name, type, क्षेत्रम्, cmp)			\
+	RB_PROTOTYPE_आन्तरिकम्(name, type, क्षेत्रम्, cmp, __attribute__((__unused__)) स्थिर)
+#परिभाषय RB_PROTOTYPE_आन्तरिकम्(name, type, क्षेत्रम्, cmp, attr)		\
+attr शून्य name##_RB_INSERT_COLOR(संरचना name *, संरचना type *);		\
+attr शून्य name##_RB_REMOVE_COLOR(संरचना name *, संरचना type *, संरचना type *);\
+attr संरचना type *name##_RB_REMOVE(संरचना name *, संरचना type *);	\
+attr संरचना type *name##_RB_INSERT(संरचना name *, संरचना type *);	\
+attr संरचना type *name##_RB_FIND(संरचना name *, संरचना type *);		\
+attr संरचना type *name##_RB_NFIND(संरचना name *, संरचना type *);	\
+attr संरचना type *name##_RB_NEXT(संरचना type *);			\
+attr संरचना type *name##_RB_PREV(संरचना type *);			\
+attr संरचना type *name##_RB_MINMAX(संरचना name *, पूर्णाङ्क);			\
 									\
 
 /* Main rb operation.
  * Moves node close to the key of elm to top
  */
-#define	RB_GENERATE(name, type, field, cmp)				\
-	RB_GENERATE_INTERNAL(name, type, field, cmp,)
-#define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+#परिभाषय	RB_GENERATE(name, type, क्षेत्रम्, cmp)				\
+	RB_GENERATE_आन्तरिकम्(name, type, क्षेत्रम्, cmp,)
+#परिभाषय	RB_GENERATE_STATIC(name, type, क्षेत्रम्, cmp)			\
+	RB_GENERATE_आन्तरिकम्(name, type, क्षेत्रम्, cmp, __attribute__((__unused__)) स्थिर)
+#परिभाषय RB_GENERATE_आन्तरिकम्(name, type, क्षेत्रम्, cmp, attr)		\
+attr शून्य								\
+name##_RB_INSERT_COLOR(संरचना name *शीर्ष, संरचना type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
-	    RB_COLOR(parent, field) == RB_RED) {			\
-		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+	संरचना type *parent, *gparent, *tmp;				\
+	यावत् ((parent = RB_PARENT(elm, क्षेत्रम्)) &&			\
+	    RB_COLOR(parent, क्षेत्रम्) == RB_RED) {			\
+		gparent = RB_PARENT(parent, क्षेत्रम्);			\
+		यदि (parent == RB_वामः(gparent, क्षेत्रम्)) {		\
+			tmp = RB_दक्षिणः(gparent, क्षेत्रम्);			\
+			यदि (tmp && RB_COLOR(tmp, क्षेत्रम्) == RB_RED) {	\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_BLACK;	\
+				RB_समुच्चयः_BLACKRED(parent, gparent, क्षेत्रम्);\
 				elm = gparent;				\
-				continue;				\
+				अनुवर्त;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
+			यदि (RB_दक्षिणः(parent, क्षेत्रम्) == elm) {		\
+				RB_ROTATE_वामः(शीर्ष, parent, tmp, क्षेत्रम्);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+			RB_समुच्चयः_BLACKRED(parent, gparent, क्षेत्रम्);	\
+			RB_ROTATE_दक्षिणः(शीर्ष, gparent, tmp, क्षेत्रम्);	\
+		} अन्यथा {						\
+			tmp = RB_वामः(gparent, क्षेत्रम्);			\
+			यदि (tmp && RB_COLOR(tmp, क्षेत्रम्) == RB_RED) {	\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_BLACK;	\
+				RB_समुच्चयः_BLACKRED(parent, gparent, क्षेत्रम्);\
 				elm = gparent;				\
-				continue;				\
+				अनुवर्त;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
+			यदि (RB_वामः(parent, क्षेत्रम्) == elm) {		\
+				RB_ROTATE_दक्षिणः(शीर्ष, parent, tmp, क्षेत्रम्);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_समुच्चयः_BLACKRED(parent, gparent, क्षेत्रम्);	\
+			RB_ROTATE_वामः(शीर्ष, gparent, tmp, क्षेत्रम्);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(शीर्ष->rbh_मूलम्, क्षेत्रम्) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr शून्य								\
+name##_RB_REMOVE_COLOR(संरचना name *शीर्ष, संरचना type *parent, संरचना type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+	संरचना type *tmp;						\
+	यावत् ((elm == रिक्त || RB_COLOR(elm, क्षेत्रम्) == RB_BLACK) &&	\
+	    elm != RB_मूलम्(शीर्ष)) {					\
+		यदि (RB_वामः(parent, क्षेत्रम्) == elm) {			\
+			tmp = RB_दक्षिणः(parent, क्षेत्रम्);			\
+			यदि (RB_COLOR(tmp, क्षेत्रम्) == RB_RED) {		\
+				RB_समुच्चयः_BLACKRED(tmp, parent, क्षेत्रम्);	\
+				RB_ROTATE_वामः(शीर्ष, parent, tmp, क्षेत्रम्);\
+				tmp = RB_दक्षिणः(parent, क्षेत्रम्);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
+			यदि ((RB_वामः(tmp, क्षेत्रम्) == रिक्त ||		\
+			    RB_COLOR(RB_वामः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK) &&\
+			    (RB_दक्षिणः(tmp, क्षेत्रम्) == रिक्त ||		\
+			    RB_COLOR(RB_दक्षिणः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK)) {\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_RED;		\
 				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
-						RB_COLOR(oleft, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+				parent = RB_PARENT(elm, क्षेत्रम्);		\
+			} अन्यथा {					\
+				यदि (RB_दक्षिणः(tmp, क्षेत्रम्) == रिक्त ||	\
+				    RB_COLOR(RB_दक्षिणः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK) {\
+					संरचना type *oleft;		\
+					यदि ((oleft = RB_वामः(tmp, क्षेत्रम्)))\
+						RB_COLOR(oleft, क्षेत्रम्) = RB_BLACK;\
+					RB_COLOR(tmp, क्षेत्रम्) = RB_RED;	\
+					RB_ROTATE_दक्षिणः(शीर्ष, tmp, oleft, क्षेत्रम्);\
+					tmp = RB_दक्षिणः(parent, क्षेत्रम्);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_COLOR(parent, क्षेत्रम्);\
+				RB_COLOR(parent, क्षेत्रम्) = RB_BLACK;	\
+				यदि (RB_दक्षिणः(tmp, क्षेत्रम्))		\
+					RB_COLOR(RB_दक्षिणः(tmp, क्षेत्रम्), क्षेत्रम्) = RB_BLACK;\
+				RB_ROTATE_वामः(शीर्ष, parent, tmp, क्षेत्रम्);\
+				elm = RB_मूलम्(शीर्ष);			\
+				भङ्ग;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+		} अन्यथा {						\
+			tmp = RB_वामः(parent, क्षेत्रम्);			\
+			यदि (RB_COLOR(tmp, क्षेत्रम्) == RB_RED) {		\
+				RB_समुच्चयः_BLACKRED(tmp, parent, क्षेत्रम्);	\
+				RB_ROTATE_दक्षिणः(शीर्ष, parent, tmp, क्षेत्रम्);\
+				tmp = RB_वामः(parent, क्षेत्रम्);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
+			यदि ((RB_वामः(tmp, क्षेत्रम्) == रिक्त ||		\
+			    RB_COLOR(RB_वामः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK) &&\
+			    (RB_दक्षिणः(tmp, क्षेत्रम्) == रिक्त ||		\
+			    RB_COLOR(RB_दक्षिणः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK)) {\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_RED;		\
 				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
-						RB_COLOR(oright, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+				parent = RB_PARENT(elm, क्षेत्रम्);		\
+			} अन्यथा {					\
+				यदि (RB_वामः(tmp, क्षेत्रम्) == रिक्त ||	\
+				    RB_COLOR(RB_वामः(tmp, क्षेत्रम्), क्षेत्रम्) == RB_BLACK) {\
+					संरचना type *oright;		\
+					यदि ((oright = RB_दक्षिणः(tmp, क्षेत्रम्)))\
+						RB_COLOR(oright, क्षेत्रम्) = RB_BLACK;\
+					RB_COLOR(tmp, क्षेत्रम्) = RB_RED;	\
+					RB_ROTATE_वामः(शीर्ष, tmp, oright, क्षेत्रम्);\
+					tmp = RB_वामः(parent, क्षेत्रम्);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, क्षेत्रम्) = RB_COLOR(parent, क्षेत्रम्);\
+				RB_COLOR(parent, क्षेत्रम्) = RB_BLACK;	\
+				यदि (RB_वामः(tmp, क्षेत्रम्))		\
+					RB_COLOR(RB_वामः(tmp, क्षेत्रम्), क्षेत्रम्) = RB_BLACK;\
+				RB_ROTATE_दक्षिणः(शीर्ष, parent, tmp, क्षेत्रम्);\
+				elm = RB_मूलम्(शीर्ष);			\
+				भङ्ग;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
-		RB_COLOR(elm, field) = RB_BLACK;			\
+	यदि (elm)							\
+		RB_COLOR(elm, क्षेत्रम्) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr संरचना type *							\
+name##_RB_REMOVE(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
-		parent = RB_PARENT(elm, field);				\
-		color = RB_COLOR(elm, field);				\
-		if (child)						\
-			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
+	संरचना type *child, *parent, *old = elm;			\
+	पूर्णाङ्क color;							\
+	यदि (RB_वामः(elm, क्षेत्रम्) == रिक्त)				\
+		child = RB_दक्षिणः(elm, क्षेत्रम्);				\
+	अन्यथा यदि (RB_दक्षिणः(elm, क्षेत्रम्) == रिक्त)				\
+		child = RB_वामः(elm, क्षेत्रम्);				\
+	अन्यथा {								\
+		संरचना type *वामः;					\
+		elm = RB_दक्षिणः(elm, क्षेत्रम्);				\
+		यावत् ((वामः = RB_वामः(elm, क्षेत्रम्)))			\
+			elm = वामः;					\
+		child = RB_दक्षिणः(elm, क्षेत्रम्);				\
+		parent = RB_PARENT(elm, क्षेत्रम्);				\
+		color = RB_COLOR(elm, क्षेत्रम्);				\
+		यदि (child)						\
+			RB_PARENT(child, क्षेत्रम्) = parent;		\
+		यदि (parent) {						\
+			यदि (RB_वामः(parent, क्षेत्रम्) == elm)		\
+				RB_वामः(parent, क्षेत्रम्) = child;		\
+			अन्यथा						\
+				RB_दक्षिणः(parent, क्षेत्रम्) = child;	\
 			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
+		} अन्यथा							\
+			RB_मूलम्(शीर्ष) = child;				\
+		यदि (RB_PARENT(elm, क्षेत्रम्) == old)			\
 			parent = elm;					\
-		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
-			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+		(elm)->क्षेत्रम् = (old)->क्षेत्रम्;				\
+		यदि (RB_PARENT(old, क्षेत्रम्)) {				\
+			यदि (RB_वामः(RB_PARENT(old, क्षेत्रम्), क्षेत्रम्) == old)\
+				RB_वामः(RB_PARENT(old, क्षेत्रम्), क्षेत्रम्) = elm;\
+			अन्यथा						\
+				RB_दक्षिणः(RB_PARENT(old, क्षेत्रम्), क्षेत्रम्) = elm;\
+			RB_AUGMENT(RB_PARENT(old, क्षेत्रम्));		\
+		} अन्यथा							\
+			RB_मूलम्(शीर्ष) = elm;				\
+		RB_PARENT(RB_वामः(old, क्षेत्रम्), क्षेत्रम्) = elm;		\
+		यदि (RB_दक्षिणः(old, क्षेत्रम्))				\
+			RB_PARENT(RB_दक्षिणः(old, क्षेत्रम्), क्षेत्रम्) = elm;	\
+		यदि (parent) {						\
+			वामः = parent;					\
+			कुरु {						\
+				RB_AUGMENT(वामः);			\
+			} यावत् ((वामः = RB_PARENT(वामः, क्षेत्रम्)));	\
 		}							\
-		goto color;						\
+		गच्छ color;						\
 	}								\
-	parent = RB_PARENT(elm, field);					\
-	color = RB_COLOR(elm, field);					\
-	if (child)							\
-		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
+	parent = RB_PARENT(elm, क्षेत्रम्);					\
+	color = RB_COLOR(elm, क्षेत्रम्);					\
+	यदि (child)							\
+		RB_PARENT(child, क्षेत्रम्) = parent;			\
+	यदि (parent) {							\
+		यदि (RB_वामः(parent, क्षेत्रम्) == elm)			\
+			RB_वामः(parent, क्षेत्रम्) = child;			\
+		अन्यथा							\
+			RB_दक्षिणः(parent, क्षेत्रम्) = child;		\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	} अन्यथा								\
+		RB_मूलम्(शीर्ष) = child;					\
 color:									\
-	if (color == RB_BLACK)						\
-		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	यदि (color == RB_BLACK)						\
+		name##_RB_REMOVE_COLOR(शीर्ष, parent, child);		\
+	प्रत्यागम (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr संरचना type *							\
+name##_RB_INSERT(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
+	संरचना type *tmp;						\
+	संरचना type *parent = रिक्त;					\
+	पूर्णाङ्क comp = 0;							\
+	tmp = RB_मूलम्(शीर्ष);						\
+	यावत् (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		यदि (comp < 0)						\
+			tmp = RB_वामः(tmp, क्षेत्रम्);			\
+		अन्यथा यदि (comp > 0)					\
+			tmp = RB_दक्षिणः(tmp, क्षेत्रम्);			\
+		अन्यथा							\
+			प्रत्यागम (tmp);					\
 	}								\
-	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
+	RB_समुच्चयः(elm, parent, क्षेत्रम्);					\
+	यदि (parent != रिक्त) {						\
+		यदि (comp < 0)						\
+			RB_वामः(parent, क्षेत्रम्) = elm;			\
+		अन्यथा							\
+			RB_दक्षिणः(parent, क्षेत्रम्) = elm;			\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
-	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	} अन्यथा								\
+		RB_मूलम्(शीर्ष) = elm;					\
+	name##_RB_INSERT_COLOR(शीर्ष, elm);				\
+	प्रत्यागम (रिक्त);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr संरचना type *							\
+name##_RB_FIND(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	संरचना type *tmp = RB_मूलम्(शीर्ष);				\
+	पूर्णाङ्क comp;							\
+	यावत् (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		यदि (comp < 0)						\
+			tmp = RB_वामः(tmp, क्षेत्रम्);			\
+		अन्यथा यदि (comp > 0)					\
+			tmp = RB_दक्षिणः(tmp, क्षेत्रम्);			\
+		अन्यथा							\
+			प्रत्यागम (tmp);					\
 	}								\
-	return (NULL);							\
+	प्रत्यागम (रिक्त);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr संरचना type *							\
+name##_RB_NFIND(संरचना name *शीर्ष, संरचना type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	संरचना type *tmp = RB_मूलम्(शीर्ष);				\
+	संरचना type *res = रिक्त;					\
+	पूर्णाङ्क comp;							\
+	यावत् (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		यदि (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_वामः(tmp, क्षेत्रम्);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		अन्यथा यदि (comp > 0)					\
+			tmp = RB_दक्षिणः(tmp, क्षेत्रम्);			\
+		अन्यथा							\
+			प्रत्यागम (tmp);					\
 	}								\
-	return (res);							\
+	प्रत्यागम (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr संरचना type *							\
+name##_RB_NEXT(संरचना type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	यदि (RB_दक्षिणः(elm, क्षेत्रम्)) {					\
+		elm = RB_दक्षिणः(elm, क्षेत्रम्);				\
+		यावत् (RB_वामः(elm, क्षेत्रम्))				\
+			elm = RB_वामः(elm, क्षेत्रम्);			\
+	} अन्यथा {							\
+		यदि (RB_PARENT(elm, क्षेत्रम्) &&				\
+		    (elm == RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्)))	\
+			elm = RB_PARENT(elm, क्षेत्रम्);			\
+		अन्यथा {							\
+			यावत् (RB_PARENT(elm, क्षेत्रम्) &&			\
+			    (elm == RB_दक्षिणः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्)))\
+				elm = RB_PARENT(elm, क्षेत्रम्);		\
+			elm = RB_PARENT(elm, क्षेत्रम्);			\
 		}							\
 	}								\
-	return (elm);							\
+	प्रत्यागम (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr संरचना type *							\
+name##_RB_PREV(संरचना type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	यदि (RB_वामः(elm, क्षेत्रम्)) {					\
+		elm = RB_वामः(elm, क्षेत्रम्);				\
+		यावत् (RB_दक्षिणः(elm, क्षेत्रम्))				\
+			elm = RB_दक्षिणः(elm, क्षेत्रम्);			\
+	} अन्यथा {							\
+		यदि (RB_PARENT(elm, क्षेत्रम्) &&				\
+		    (elm == RB_दक्षिणः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्)))	\
+			elm = RB_PARENT(elm, क्षेत्रम्);			\
+		अन्यथा {							\
+			यावत् (RB_PARENT(elm, क्षेत्रम्) &&			\
+			    (elm == RB_वामः(RB_PARENT(elm, क्षेत्रम्), क्षेत्रम्)))\
+				elm = RB_PARENT(elm, क्षेत्रम्);		\
+			elm = RB_PARENT(elm, क्षेत्रम्);			\
 		}							\
 	}								\
-	return (elm);							\
+	प्रत्यागम (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr संरचना type *							\
+name##_RB_MINMAX(संरचना name *शीर्ष, पूर्णाङ्क val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
+	संरचना type *tmp = RB_मूलम्(शीर्ष);				\
+	संरचना type *parent = रिक्त;					\
+	यावत् (tmp) {							\
 		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+		यदि (val < 0)						\
+			tmp = RB_वामः(tmp, क्षेत्रम्);			\
+		अन्यथा							\
+			tmp = RB_दक्षिणः(tmp, क्षेत्रम्);			\
 	}								\
-	return (parent);						\
+	प्रत्यागम (parent);						\
 }
 
-#define RB_NEGINF	-1
-#define RB_INF	1
+#परिभाषय RB_NEGINF	-1
+#परिभाषय RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
-#define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
-#define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
-#define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
-#define RB_NEXT(name, x, y)	name##_RB_NEXT(y)
-#define RB_PREV(name, x, y)	name##_RB_PREV(y)
-#define RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
-#define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
+#परिभाषय RB_निवेशय(name, x, y)	name##_RB_INSERT(x, y)
+#परिभाषय RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
+#परिभाषय RB_FIND(name, x, y)	name##_RB_FIND(x, y)
+#परिभाषय RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
+#परिभाषय RB_अग्र(name, x, y)	name##_RB_NEXT(y)
+#परिभाषय RB_पूर्व(name, x, y)	name##_RB_PREV(y)
+#परिभाषय RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
+#परिभाषय RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
-#define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+#परिभाषय RB_FOREACH(x, name, शीर्ष)					\
+	प्रति ((x) = RB_MIN(name, शीर्ष);					\
+	     (x) != रिक्त;						\
 	     (x) = name##_RB_NEXT(x))
 
-#define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+#परिभाषय RB_FOREACH_SAFE(x, name, शीर्ष, y)				\
+	प्रति ((x) = RB_MIN(name, शीर्ष);					\
+	    ((x) != रिक्त) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
-#define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+#परिभाषय RB_FOREACH_REVERSE(x, name, शीर्ष)				\
+	प्रति ((x) = RB_MAX(name, शीर्ष);					\
+	     (x) != रिक्त;						\
 	     (x) = name##_RB_PREV(x))
 
-#define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+#परिभाषय RB_FOREACH_REVERSE_SAFE(x, name, शीर्ष, y)			\
+	प्रति ((x) = RB_MAX(name, शीर्ष);					\
+	    ((x) != रिक्त) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
-#endif	/* _SYS_TREE_H_ */
+#यदि_अन्तः	/* _SYS_TREE_H_ */

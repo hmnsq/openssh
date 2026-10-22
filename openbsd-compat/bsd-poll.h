@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#यदि_अपरिभाषितम्	_COMPAT_POLL_H_
+#परिभाषय	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#यदि_अपरिभाषितम् HAVE_STRUCT_POLLFD_FD
+प्रकारनिर्देश संरचना pollfd {
+	पूर्णाङ्क	fd;
+	ह्रस्व	events;
+	ह्रस्व	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#यदि_अपरिभाषितम् POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#यदि_अन्तः
+#यदि_अपरिभाषितम् POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#यदि_अन्तः
+#यदि_अपरिभाषितम् POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#यदि_अन्तः
+#यदि_अपरिभाषितम् POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#यदि_अन्तः
+#यदि_अपरिभाषितम् POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#यदि_अन्तः
+#यदि_अपरिभाषितम् POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#यदि_अन्तः
 
-#if 0
+#यदि 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#परिभाषय	POLLRDNORM	0x0040
+#परिभाषय POLLNORM	POLLRDNORM
+#परिभाषय POLLWRNORM      POLLOUT
+#परिभाषय	POLLRDBAND	0x0080
+#परिभाषय	POLLWRBAND	0x0100
+#यदि_अन्तः
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#परिभाषय INFTIM		(-1)	/* not standard */
+#यदि_अन्तः /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#यदि_अपरिभाषितम् HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+प्रकारनिर्देश अचिह्नित दीर्घ	nfds_t;
+# अन्यथा
+प्रकारनिर्देश अचिह्नित पूर्णाङ्क	nfds_t;
 # endif
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#यदि_अपरिभाषितम् HAVE_POLL
+पूर्णाङ्क   poll(संरचना pollfd *, nfds_t, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#यदि_अपरिभाषितम् HAVE_PPOLL
+पूर्णाङ्क   ppoll(संरचना pollfd *, nfds_t, ध्रुव संरचना timespec *, ध्रुव sigset_t *);
+#यदि_अन्तः
 
-#endif /* !_COMPAT_POLL_H_ */
+#यदि_अन्तः /* !_COMPAT_POLL_H_ */

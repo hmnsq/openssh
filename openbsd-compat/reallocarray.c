@@ -17,28 +17,28 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/reallocarray.c */
 
-#include "includes.h"
-#ifndef HAVE_REALLOCARRAY
+#अन्तर्भाव "includes.h"
+#यदि_अपरिभाषितम् HAVE_REALLOCARRAY
 
-#include <sys/types.h>
-#include <errno.h>
-#include <stdint.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW	((size_t)1 << (sizeof(size_t) * 4))
+#परिभाषय MUL_NO_अतिप्रवाहः	((आकार_t)1 << (परिमाण(आकार_t) * 4))
 
-void *
-reallocarray(void *optr, size_t nmemb, size_t size)
+शून्य *
+reallocarray(शून्य *optr, आकार_t nmemb, आकार_t आकार)
 {
-	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    nmemb > 0 && SIZE_MAX / nmemb < size) {
+	यदि ((nmemb >= MUL_NO_अतिप्रवाहः || आकार >= MUL_NO_अतिप्रवाहः) &&
+	    nmemb > 0 && SIZE_MAX / nmemb < आकार) {
 		errno = ENOMEM;
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
-	return realloc(optr, size * nmemb);
+	प्रत्यागम realloc(optr, आकार * nmemb);
 }
-#endif /* HAVE_REALLOCARRAY */
+#यदि_अन्तः /* HAVE_REALLOCARRAY */

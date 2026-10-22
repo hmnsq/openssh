@@ -40,24 +40,24 @@
  * IF IBM IS APPRISED OF THE POSSIBILITY OF SUCH DAMAGES.
  */
 
-#ifndef _BSD_BASE64_H
-#define _BSD_BASE64_H
+#यदि_अपरिभाषितम् _BSD_BASE64_H
+#परिभाषय _BSD_BASE64_H
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifndef HAVE___B64_NTOP
+#यदि_अपरिभाषितम् HAVE___B64_NTOP
 # ifndef HAVE_B64_NTOP
-int b64_ntop(u_char const *src, size_t srclength, char *target,
-    size_t targsize);
+पूर्णाङ्क b64_ntop(u_char ध्रुव *src, आकार_t srclength, वर्ण *target,
+    आकार_t targsize);
 # endif /* !HAVE_B64_NTOP */
 # define __b64_ntop(a,b,c,d) b64_ntop(a,b,c,d)
-#endif /* HAVE___B64_NTOP */
+#यदि_अन्तः /* HAVE___B64_NTOP */
 
-#ifndef HAVE___B64_PTON
+#यदि_अपरिभाषितम् HAVE___B64_PTON
 # ifndef HAVE_B64_PTON
-int b64_pton(char const *src, u_char *target, size_t targsize);
+पूर्णाङ्क b64_pton(वर्ण ध्रुव *src, u_char *target, आकार_t targsize);
 # endif /* !HAVE_B64_PTON */
 # define __b64_pton(a,b,c) b64_pton(a,b,c)
-#endif /* HAVE___B64_PTON */
+#यदि_अन्तः /* HAVE___B64_PTON */
 
-#endif /* _BSD_BASE64_H */
+#यदि_अन्तः /* _BSD_BASE64_H */

@@ -22,75 +22,75 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifndef OPENSSL_HAS_ED25519
+#यदि_अपरिभाषितम् OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "crypto_api.h"
+#अन्तर्भाव "crypto_api.h"
 
 /* OpenSSH compatibility glue for the small libsodium API subset below. */
-#define ACQUIRE_FENCE (void)0
-#define COMPILER_ASSERT(x) (void)sizeof(char[(x) ? 1 : -1])
+#परिभाषय ACQUIRE_FENCE (शून्य)0
+#परिभाषय COMPILER_ASSERT(x) (शून्य)परिमाण(वर्ण[(x) ? 1 : -1])
 
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 # include <openssl/sha.h>
-typedef SHA512_CTX crypto_hash_sha512_state;
-#else
-typedef SHA2_CTX crypto_hash_sha512_state;
-#endif
+प्रकारनिर्देश SHA512_CTX crypto_hash_sha512_state;
+#अन्यथा
+प्रकारनिर्देश SHA2_CTX crypto_hash_sha512_state;
+#यदि_अन्तः
 
-static int
+स्थिर पूर्णाङ्क
 crypto_hash_sha512_init(crypto_hash_sha512_state *state)
 {
-#ifdef WITH_OPENSSL
+#यदि_परिभाषितम् WITH_OPENSSL
 	SHA512_Init(state);
-#else
+#अन्यथा
 	SHA512Init(state);
-#endif
-	return 0;
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
-static int
+स्थिर पूर्णाङ्क
 crypto_hash_sha512_update(crypto_hash_sha512_state *state,
-    const unsigned char *in, unsigned long long inlen)
+    ध्रुव अचिह्नित वर्ण *अन्तर्, अचिह्नित दीर्घ दीर्घ inlen)
 {
-#ifdef WITH_OPENSSL
-	SHA512_Update(state, in, inlen);
-#else
-	SHA512Update(state, in, inlen);
-#endif
-	return 0;
+#यदि_परिभाषितम् WITH_OPENSSL
+	SHA512_Update(state, अन्तर्, inlen);
+#अन्यथा
+	SHA512Update(state, अन्तर्, inlen);
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
-static int
-crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned char *out)
+स्थिर पूर्णाङ्क
+crypto_hash_sha512_final(crypto_hash_sha512_state *state, अचिह्नित वर्ण *बहिर्गमनम्)
 {
-#ifdef WITH_OPENSSL
-	SHA512_Final(out, state);
-#else
-	SHA512Final(out, state);
-#endif
-	return 0;
+#यदि_परिभाषितम् WITH_OPENSSL
+	SHA512_Final(बहिर्गमनम्, state);
+#अन्यथा
+	SHA512Final(बहिर्गमनम्, state);
+#यदि_अन्तः
+	प्रत्यागम 0;
 }
 
-static int
-sodium_is_zero(const unsigned char *n, size_t nlen)
+स्थिर पूर्णाङ्क
+sodium_is_zero(ध्रुव अचिह्नित वर्ण *n, आकार_t nlen)
 {
-	size_t i;
-	volatile unsigned char d = 0;
+	आकार_t i;
+	चञ्चल अचिह्नित वर्ण d = 0;
 
-	for (i = 0; i < nlen; i++)
+	प्रति (i = 0; i < nlen; i++)
 		d |= n[i];
-	return 1 & ((d - 1) >> 8);
+	प्रत्यागम 1 & ((d - 1) >> 8);
 }
 
-#ifndef ed25519_ref10_H
-#define ed25519_ref10_H
+#यदि_अपरिभाषितम् ed25519_ref10_H
+#परिभाषय ed25519_ref10_H
 
 
 
@@ -99,19 +99,19 @@ sodium_is_zero(const unsigned char *n, size_t nlen)
  Here the field is \Z/(2^255-19).
  */
 
-#ifdef HAVE_TI_MODE
-typedef uint64_t fe25519[5];
-#else
-typedef int32_t fe25519[10];
-#endif
+#यदि_परिभाषितम् HAVE_TI_बहुलकम्
+प्रकारनिर्देश uint64_t fe25519[5];
+#अन्यथा
+प्रकारनिर्देश int32_t fe25519[10];
+#यदि_अन्तः
 
-static void fe25519_invert(fe25519 out, const fe25519 z);
-static void fe25519_frombytes(fe25519 h, const unsigned char *s);
-static void fe25519_tobytes(unsigned char *s, const fe25519 h);
+स्थिर शून्य fe25519_invert(fe25519 बहिर्गमनम्, ध्रुव fe25519 z);
+स्थिर शून्य fe25519_frombytes(fe25519 h, ध्रुव अचिह्नित वर्ण *s);
+स्थिर शून्य fe25519_tobytes(अचिह्नित वर्ण *s, ध्रुव fe25519 h);
 
-#ifdef HAVE_TI_MODE
-#else
-#endif
+#यदि_परिभाषितम् HAVE_TI_बहुलकम्
+#अन्यथा
+#यदि_अन्तः
 
 /*
  ge means group element.
@@ -127,33 +127,33 @@ static void fe25519_tobytes(unsigned char *s, const fe25519 h);
  ge25519_precomp (Duif): (y+x,y-x,2dxy)
  */
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
 } ge25519_p2;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p3;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p1p1;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     fe25519 yplusx;
     fe25519 yminusx;
     fe25519 xy2d;
 } ge25519_precomp;
 
-typedef struct {
+प्रकारनिर्देश संरचना {
     fe25519 YplusX;
     fe25519 YminusX;
     fe25519 Z;
@@ -161,35 +161,35 @@ typedef struct {
 } ge25519_cached;
 
 
-static void ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h);
+स्थिर शून्य ge25519_p3_tobytes(अचिह्नित वर्ण *s, ध्रुव ge25519_p3 *h);
 
-static int ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
+स्थिर पूर्णाङ्क ge25519_frombytes(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *s);
 
-static int ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
+स्थिर पूर्णाङ्क ge25519_frombytes_negate_vartime(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *s);
 
-static void ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p);
+स्थिर शून्य ge25519_p1p1_गन्तव्यम्_p2(ge25519_p2 *r, ध्रुव ge25519_p1p1 *p);
 
-static void ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p);
+स्थिर शून्य ge25519_p1p1_गन्तव्यम्_p3(ge25519_p3 *r, ध्रुव ge25519_p1p1 *p);
 
-static void ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p);
+स्थिर शून्य ge25519_p2_गन्तव्यम्_p3(ge25519_p3 *r, ध्रुव ge25519_p2 *p);
 
-static void ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+स्थिर शून्य ge25519_p3_सङ्कलय(ge25519_p3 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_p3 *q);
 
-static void ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+स्थिर शून्य ge25519_p3_sub(ge25519_p3 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_p3 *q);
 
-static void ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a);
+स्थिर शून्य ge25519_scalarmult_आधारः(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *a);
 
-static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                       const ge25519_p3 *A,
-                                       const unsigned char *b);
-
-
-
-static int ge25519_is_canonical(const unsigned char *s);
+स्थिर शून्य ge25519_double_scalarmult_vartime(ge25519_p2 *r, ध्रुव अचिह्नित वर्ण *a,
+                                       ध्रुव ge25519_p3 *A,
+                                       ध्रुव अचिह्नित वर्ण *b);
 
 
 
-static int ge25519_has_small_order(const ge25519_p3 *p);
+स्थिर पूर्णाङ्क ge25519_is_canonical(ध्रुव अचिह्नित वर्ण *s);
+
+
+
+स्थिर पूर्णाङ्क ge25519_has_small_क्रमः(ध्रुव ge25519_p3 *p);
 
 
 
@@ -206,37 +206,37 @@ static int ge25519_has_small_order(const ge25519_p3 *p);
  */
 
 
-static void sc25519_reduce(unsigned char s[64]);
+स्थिर शून्य sc25519_reduce(अचिह्नित वर्ण s[64]);
 
 
-static void sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-                    const unsigned char b[32], const unsigned char c[32]);
+स्थिर शून्य sc25519_muladd(अचिह्नित वर्ण s[32], ध्रुव अचिह्नित वर्ण a[32],
+                    ध्रुव अचिह्नित वर्ण b[32], ध्रुव अचिह्नित वर्ण c[32]);
 
-static int sc25519_is_canonical(const unsigned char s[32]);
+स्थिर पूर्णाङ्क sc25519_is_canonical(ध्रुव अचिह्नित वर्ण s[32]);
 
-#endif
+#यदि_अन्तः
 
 
 /*
  h = 0
  */
 
-static inline void
+स्थिर अन्तःस्थ शून्य
 fe25519_0(fe25519 h)
 {
-    memset(&h[0], 0, 10 * sizeof h[0]);
+    स्मृतिं_पूरय(&h[0], 0, 10 * परिमाण h[0]);
 }
 
 /*
  h = 1
  */
 
-static inline void
+स्थिर अन्तःस्थ शून्य
 fe25519_1(fe25519 h)
 {
     h[0] = 1;
     h[1] = 0;
-    memset(&h[2], 0, 8 * sizeof h[0]);
+    स्मृतिं_पूरय(&h[2], 0, 8 * परिमाण h[0]);
 }
 
 /*
@@ -251,8 +251,8 @@ fe25519_1(fe25519 h)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline void
-fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
+स्थिर अन्तःस्थ शून्य
+fe25519_सङ्कलय(fe25519 h, ध्रुव fe25519 f, ध्रुव fe25519 g)
 {
     int32_t h0 = f[0] + g[0];
     int32_t h1 = f[1] + g[1];
@@ -289,8 +289,8 @@ fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static void
-fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
+स्थिर शून्य
+fe25519_sub(fe25519 h, ध्रुव fe25519 f, ध्रुव fe25519 g)
 {
     int32_t h0 = f[0] - g[0];
     int32_t h1 = f[1] - g[1];
@@ -325,8 +325,8 @@ fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
  */
 
-static inline void
-fe25519_neg(fe25519 h, const fe25519 f)
+स्थिर अन्तःस्थ शून्य
+fe25519_neg(fe25519 h, ध्रुव fe25519 f)
 {
     int32_t h0 = -f[0];
     int32_t h1 = -f[1];
@@ -358,10 +358,10 @@ fe25519_neg(fe25519 h, const fe25519 f)
  Preconditions: b in {0,1}.
  */
 
-static void
-fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
+स्थिर शून्य
+fe25519_cmov(fe25519 f, ध्रुव fe25519 g, अचिह्नित पूर्णाङ्क b)
 {
-    uint32_t mask = (uint32_t) (-(int32_t) b);
+    uint32_t आवरणम् = (uint32_t) (-(int32_t) b);
     int32_t  f0, f1, f2, f3, f4, f5, f6, f7, f8, f9;
     int32_t  x0, x1, x2, x3, x4, x5, x6, x7, x8, x9;
 
@@ -387,20 +387,20 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
     x8 = f8 ^ g[8];
     x9 = f9 ^ g[9];
 
-#ifdef HAVE_INLINE_ASM
-    __asm__ __volatile__("" : "+r"(mask));
-#endif
+#यदि_परिभाषितम् HAVE_INLINE_ASM
+    __asm__ __volatile__("" : "+r"(आवरणम्));
+#यदि_अन्तः
 
-    x0 &= mask;
-    x1 &= mask;
-    x2 &= mask;
-    x3 &= mask;
-    x4 &= mask;
-    x5 &= mask;
-    x6 &= mask;
-    x7 &= mask;
-    x8 &= mask;
-    x9 &= mask;
+    x0 &= आवरणम्;
+    x1 &= आवरणम्;
+    x2 &= आवरणम्;
+    x3 &= आवरणम्;
+    x4 &= आवरणम्;
+    x5 &= आवरणम्;
+    x6 &= आवरणम्;
+    x7 &= आवरणम्;
+    x8 &= आवरणम्;
+    x9 &= आवरणम्;
 
     f[0] = f0 ^ x0;
     f[1] = f1 ^ x1;
@@ -419,10 +419,10 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
  h = f
  */
 
-static inline void
-fe25519_copy(fe25519 h, const fe25519 f)
+स्थिर अन्तःस्थ शून्य
+fe25519_copy(fe25519 h, ध्रुव fe25519 f)
 {
-    memcpy(h, f, 10 * sizeof h[0]);
+    स्मृतिं_प्रतिलिख(h, f, 10 * परिमाण h[0]);
 }
 
 /*
@@ -433,14 +433,14 @@ fe25519_copy(fe25519 h, const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_isnegative(const fe25519 f)
+स्थिर अन्तःस्थ पूर्णाङ्क
+fe25519_isnegative(ध्रुव fe25519 f)
 {
-    unsigned char s[32];
+    अचिह्नित वर्ण s[32];
 
     fe25519_tobytes(s, f);
 
-    return s[0] & 1;
+    प्रत्यागम s[0] & 1;
 }
 
 /*
@@ -451,14 +451,14 @@ fe25519_isnegative(const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_iszero(const fe25519 f)
+स्थिर अन्तःस्थ पूर्णाङ्क
+fe25519_iszero(ध्रुव fe25519 f)
 {
-    unsigned char s[32];
+    अचिह्नित वर्ण s[32];
 
     fe25519_tobytes(s, f);
 
-    return sodium_is_zero(s, 32);
+    प्रत्यागम sodium_is_zero(s, 32);
 }
 
 /*
@@ -493,8 +493,8 @@ fe25519_iszero(const fe25519 f)
  With tighter constraints on inputs can squeeze carries into int32.
  */
 
-static void
-fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
+स्थिर शून्य
+fe25519_mul(fe25519 h, ध्रुव fe25519 f, ध्रुव fe25519 g)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -763,8 +763,8 @@ fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq(fe25519 h, const fe25519 f)
+स्थिर शून्य
+fe25519_sq(fe25519 h, ध्रुव fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -935,8 +935,8 @@ fe25519_sq(fe25519 h, const fe25519 f)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq2(fe25519 h, const fe25519 f)
+स्थिर शून्य
+fe25519_sq2(fe25519 h, ध्रुव fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -1109,29 +1109,29 @@ fe25519_sq2(fe25519 h, const fe25519 f)
 
 
 
-static inline uint64_t
-load_3(const unsigned char *in)
+स्थिर अन्तःस्थ uint64_t
+आरोपय_3(ध्रुव अचिह्नित वर्ण *अन्तर्)
 {
-    uint64_t result;
+    uint64_t परिणाम;
 
-    result = (uint64_t) in[0];
-    result |= ((uint64_t) in[1]) << 8;
-    result |= ((uint64_t) in[2]) << 16;
+    परिणाम = (uint64_t) अन्तर्[0];
+    परिणाम |= ((uint64_t) अन्तर्[1]) << 8;
+    परिणाम |= ((uint64_t) अन्तर्[2]) << 16;
 
-    return result;
+    प्रत्यागम परिणाम;
 }
 
-static inline uint64_t
-load_4(const unsigned char *in)
+स्थिर अन्तःस्थ uint64_t
+आरोपय_4(ध्रुव अचिह्नित वर्ण *अन्तर्)
 {
-    uint64_t result;
+    uint64_t परिणाम;
 
-    result = (uint64_t) in[0];
-    result |= ((uint64_t) in[1]) << 8;
-    result |= ((uint64_t) in[2]) << 16;
-    result |= ((uint64_t) in[3]) << 24;
+    परिणाम = (uint64_t) अन्तर्[0];
+    परिणाम |= ((uint64_t) अन्तर्[1]) << 8;
+    परिणाम |= ((uint64_t) अन्तर्[2]) << 16;
+    परिणाम |= ((uint64_t) अन्तर्[3]) << 24;
 
-    return result;
+    प्रत्यागम परिणाम;
 }
 
 /*
@@ -1143,24 +1143,24 @@ load_4(const unsigned char *in)
  * via "private/ed25519_ref10.h".
  */
 
-#ifdef HAVE_TI_MODE
-#else
+#यदि_परिभाषितम् HAVE_TI_बहुलकम्
+#अन्यथा
 /* sqrt(-1) */
-static const fe25519 fe25519_sqrtm1 = {
+स्थिर ध्रुव fe25519 fe25519_sqrtm1 = {
     -32595792, -7943725,  9377950,  3500415, 12389472, -272473, -25146209, -2005654, 326686, 11406482
 };
 
 /* sqrt(-486664) */
 
 /* 37095705934669439343138083508754565189542113879843219016388785533085940283555 */
-static const fe25519 ed25519_d = {
+स्थिर ध्रुव fe25519 ed25519_d = {
     -10913610, 13857413, -15372611, 6949391,   114729, -8787816, -6275908, -3247719, -18696448, -12055116
 };
 
 /* 2 * d =
  * 16295367250680780974490674513165176452449235426866156013048779062215315747161
  */
-static const fe25519 ed25519_d2 = {
+स्थिर ध्रुव fe25519 ed25519_d2 = {
     -21827239, -5839606,  -30745221, 13898782, 229458, 15978800, -12551817, -6495438, 29715968, 9444199 };
 
 /* A = 486662 */
@@ -1177,19 +1177,19 @@ static const fe25519 ed25519_d2 = {
  Ignores top bit of s.
  */
 
-void
-fe25519_frombytes(fe25519 h, const unsigned char *s)
+शून्य
+fe25519_frombytes(fe25519 h, ध्रुव अचिह्नित वर्ण *s)
 {
-    int64_t h0 = load_4(s);
-    int64_t h1 = load_3(s + 4) << 6;
-    int64_t h2 = load_3(s + 7) << 5;
-    int64_t h3 = load_3(s + 10) << 3;
-    int64_t h4 = load_3(s + 13) << 2;
-    int64_t h5 = load_4(s + 16);
-    int64_t h6 = load_3(s + 20) << 7;
-    int64_t h7 = load_3(s + 23) << 5;
-    int64_t h8 = load_3(s + 26) << 4;
-    int64_t h9 = (load_3(s + 29) & 8388607) << 2;
+    int64_t h0 = आरोपय_4(s);
+    int64_t h1 = आरोपय_3(s + 4) << 6;
+    int64_t h2 = आरोपय_3(s + 7) << 5;
+    int64_t h3 = आरोपय_3(s + 10) << 3;
+    int64_t h4 = आरोपय_3(s + 13) << 2;
+    int64_t h5 = आरोपय_4(s + 16);
+    int64_t h6 = आरोपय_3(s + 20) << 7;
+    int64_t h7 = आरोपय_3(s + 23) << 5;
+    int64_t h8 = आरोपय_3(s + 26) << 4;
+    int64_t h9 = (आरोपय_3(s + 29) & 8388607) << 2;
 
     int64_t carry0;
     int64_t carry1;
@@ -1271,8 +1271,8 @@ fe25519_frombytes(fe25519 h, const unsigned char *s)
  so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
 
-static void
-fe25519_reduce(fe25519 h, const fe25519 f)
+स्थिर शून्य
+fe25519_reduce(fe25519 h, ध्रुव fe25519 f)
 {
     int32_t h0 = f[0];
     int32_t h1 = f[1];
@@ -1354,8 +1354,8 @@ fe25519_reduce(fe25519 h, const fe25519 f)
  Goal: Output h0+...+2^230 h9.
  */
 
-void
-fe25519_tobytes(unsigned char *s, const fe25519 h)
+शून्य
+fe25519_tobytes(अचिह्नित वर्ण *s, ध्रुव fe25519 h)
 {
     fe25519 t;
 
@@ -1393,17 +1393,17 @@ fe25519_tobytes(unsigned char *s, const fe25519 h)
     s[30] = t[9] >> 10;
     s[31] = t[9] >> 18;
 }
-#endif
+#यदि_अन्तः
 
 
 /*
  * Inversion - sets out to 0 if z=0
  */
-void
-fe25519_invert(fe25519 out, const fe25519 z)
+शून्य
+fe25519_invert(fe25519 बहिर्गमनम्, ध्रुव fe25519 z)
 {
     fe25519 t0, t1, t2, t3;
-    int     i;
+    पूर्णाङ्क     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1413,53 +1413,53 @@ fe25519_invert(fe25519 out, const fe25519 z)
     fe25519_sq(t2, t0);
     fe25519_mul(t1, t1, t2);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 5; ++i) {
+    प्रति (i = 1; i < 5; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 10; ++i) {
+    प्रति (i = 1; i < 10; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 20; ++i) {
+    प्रति (i = 1; i < 20; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 11; ++i) {
+    प्रति (i = 1; i < 11; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 50; ++i) {
+    प्रति (i = 1; i < 50; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 100; ++i) {
+    प्रति (i = 1; i < 100; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 51; ++i) {
+    प्रति (i = 1; i < 51; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 6; ++i) {
+    प्रति (i = 1; i < 6; ++i) {
         fe25519_sq(t1, t1);
     }
-    fe25519_mul(out, t1, t0);
+    fe25519_mul(बहिर्गमनम्, t1, t0);
 }
 
 /*
  * returns z^((p-5)/8) = z^(2^252-3)
  * used to compute square roots since we have p=5 (mod 8); see Cohen and Frey.
  */
-static void
-fe25519_pow22523(fe25519 out, const fe25519 z)
+स्थिर शून्य
+fe25519_pow22523(fe25519 बहिर्गमनम्, ध्रुव fe25519 z)
 {
     fe25519 t0, t1, t2;
-    int     i;
+    पूर्णाङ्क     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1469,41 +1469,41 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
     fe25519_sq(t0, t0);
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 5; ++i) {
+    प्रति (i = 1; i < 5; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 10; ++i) {
+    प्रति (i = 1; i < 10; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 20; ++i) {
+    प्रति (i = 1; i < 20; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 11; ++i) {
+    प्रति (i = 1; i < 11; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 50; ++i) {
+    प्रति (i = 1; i < 50; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 100; ++i) {
+    प्रति (i = 1; i < 100; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 51; ++i) {
+    प्रति (i = 1; i < 51; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t0, t0);
     fe25519_sq(t0, t0);
-    fe25519_mul(out, t0, z);
+    fe25519_mul(बहिर्गमनम्, t0, z);
 }
 
 
@@ -1515,59 +1515,59 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
  r = p + q
  */
 
-static void
-ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+स्थिर शून्य
+ge25519_सङ्कलय_cached(ge25519_p1p1 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_cached *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_सङ्कलय(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->YplusX);
     fe25519_mul(r->Y, r->Y, q->YminusX);
     fe25519_mul(r->T, q->T2d, p->T);
     fe25519_mul(r->X, p->Z, q->Z);
-    fe25519_add(t0, r->X, r->X);
+    fe25519_सङ्कलय(t0, r->X, r->X);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
-    fe25519_add(r->Z, t0, r->T);
+    fe25519_सङ्कलय(r->Y, r->Z, r->Y);
+    fe25519_सङ्कलय(r->Z, t0, r->T);
     fe25519_sub(r->T, t0, r->T);
 }
 
-static void
-slide_vartime(signed char *r, const unsigned char *a)
+स्थिर शून्य
+slide_vartime(चिह्नित वर्ण *r, ध्रुव अचिह्नित वर्ण *a)
 {
-    int i;
-    int b;
-    int k;
-    int ribs;
-    int cmp;
+    पूर्णाङ्क i;
+    पूर्णाङ्क b;
+    पूर्णाङ्क k;
+    पूर्णाङ्क ribs;
+    पूर्णाङ्क cmp;
 
-    for (i = 0; i < 256; ++i) {
+    प्रति (i = 0; i < 256; ++i) {
         r[i] = 1 & (a[i >> 3] >> (i & 7));
     }
-    for (i = 0; i < 256; ++i) {
-        if (! r[i]) {
-            continue;
+    प्रति (i = 0; i < 256; ++i) {
+        यदि (! r[i]) {
+            अनुवर्त;
         }
-        for (b = 1; b <= 6 && i + b < 256; ++b) {
-            if (! r[i + b]) {
-                continue;
+        प्रति (b = 1; b <= 6 && i + b < 256; ++b) {
+            यदि (! r[i + b]) {
+                अनुवर्त;
             }
             ribs = r[i + b] << b;
             cmp = r[i] + ribs;
-            if (cmp <= 15) {
+            यदि (cmp <= 15) {
                 r[i] = cmp;
                 r[i + b] = 0;
-            } else {
+            } अन्यथा {
                 cmp = r[i] - ribs;
-                if (cmp < -15) {
-                    break;
+                यदि (cmp < -15) {
+                    भङ्ग;
                 }
                 r[i] = cmp;
-                for (k = i + b; k < 256; ++k) {
-                    if (! r[k]) {
+                प्रति (k = i + b; k < 256; ++k) {
+                    यदि (! r[k]) {
                         r[k] = 1;
-                        break;
+                        भङ्ग;
                     }
                     r[k] = 0;
                 }
@@ -1576,25 +1576,25 @@ slide_vartime(signed char *r, const unsigned char *a)
     }
 }
 
-static volatile unsigned char optblocker_u8;
+स्थिर चञ्चल अचिह्नित वर्ण optblocker_u8;
 
-int
-ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
+पूर्णाङ्क
+ge25519_frombytes(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *s)
 {
     fe25519 u;
     fe25519 v;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_मूलम्_check, p_मूलम्_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    पूर्णाङ्क     has_m_मूलम्, has_p_मूलम्;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
     fe25519_sq(u, h->Y);
     fe25519_mul(v, u, ed25519_d);
     fe25519_sub(u, u, h->Z); /* u = y^2-1 */
-    fe25519_add(v, v, h->Z); /* v = dy^2+1 */
+    fe25519_सङ्कलय(v, v, h->Z); /* v = dy^2+1 */
 
     fe25519_mul(h->X, u, v);
     fe25519_pow22523(h->X, h->X);
@@ -1602,35 +1602,35 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-    has_m_root = fe25519_iszero(m_root_check);
-    has_p_root = fe25519_iszero(p_root_check);
+    fe25519_sub(m_मूलम्_check, vxx, u); /* vx^2-u */
+    fe25519_सङ्कलय(p_मूलम्_check, vxx, u); /* vx^2+u */
+    has_m_मूलम् = fe25519_iszero(m_मूलम्_check);
+    has_p_मूलम् = fe25519_iszero(p_मूलम्_check);
     fe25519_mul(x_sqrtm1, h->X, fe25519_sqrtm1); /* x*sqrt(-1) */
-    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_root);
+    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_मूलम्);
 
     fe25519_neg(negx, h->X);
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    प्रत्यागम (has_m_मूलम् | has_p_मूलम्) - 1;
 }
 
-int
-ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
+पूर्णाङ्क
+ge25519_frombytes_negate_vartime(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *s)
 {
     fe25519 u;
     fe25519 v;
     fe25519 v3;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_मूलम्_check, p_मूलम्_check;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
     fe25519_sq(u, h->Y);
     fe25519_mul(v, u, ed25519_d);
     fe25519_sub(u, u, h->Z); /* u = y^2-1 */
-    fe25519_add(v, v, h->Z); /* v = dy^2+1 */
+    fe25519_सङ्कलय(v, v, h->Z); /* v = dy^2+1 */
 
     fe25519_sq(v3, v);
     fe25519_mul(v3, v3, v); /* v3 = v^3 */
@@ -1644,41 +1644,41 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
-        fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
-            return -1;
+    fe25519_sub(m_मूलम्_check, vxx, u); /* vx^2-u */
+    यदि (fe25519_iszero(m_मूलम्_check) == 0) {
+        fe25519_सङ्कलय(p_मूलम्_check, vxx, u); /* vx^2+u */
+        यदि (fe25519_iszero(p_मूलम्_check) == 0) {
+            प्रत्यागम -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);
     }
 
-    if (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
+    यदि (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
         fe25519_neg(h->X, h->X);
     }
     fe25519_mul(h->T, h->X, h->Y);
 
-    return 0;
+    प्रत्यागम 0;
 }
 
 /*
  r = p + q
  */
 
-static void
-ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+स्थिर शून्य
+ge25519_सङ्कलय_precomp(ge25519_p1p1 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_precomp *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_सङ्कलय(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->yplusx);
     fe25519_mul(r->Y, r->Y, q->yminusx);
     fe25519_mul(r->T, q->xy2d, p->T);
-    fe25519_add(t0, p->Z, p->Z);
+    fe25519_सङ्कलय(t0, p->Z, p->Z);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
-    fe25519_add(r->Z, t0, r->T);
+    fe25519_सङ्कलय(r->Y, r->Z, r->Y);
+    fe25519_सङ्कलय(r->Z, t0, r->T);
     fe25519_sub(r->T, t0, r->T);
 }
 
@@ -1686,29 +1686,29 @@ ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp 
  r = p - q
  */
 
-static void
-ge25519_sub_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+स्थिर शून्य
+ge25519_sub_precomp(ge25519_p1p1 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_precomp *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_सङ्कलय(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->yminusx);
     fe25519_mul(r->Y, r->Y, q->yplusx);
     fe25519_mul(r->T, q->xy2d, p->T);
-    fe25519_add(t0, p->Z, p->Z);
+    fe25519_सङ्कलय(t0, p->Z, p->Z);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
+    fe25519_सङ्कलय(r->Y, r->Z, r->Y);
     fe25519_sub(r->Z, t0, r->T);
-    fe25519_add(r->T, t0, r->T);
+    fe25519_सङ्कलय(r->T, t0, r->T);
 }
 
 /*
  r = p
  */
 
-void
-ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
+शून्य
+ge25519_p1p1_गन्तव्यम्_p2(ge25519_p2 *r, ध्रुव ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1719,8 +1719,8 @@ ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
  r = p
  */
 
-void
-ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
+शून्य
+ge25519_p1p1_गन्तव्यम्_p3(ge25519_p3 *r, ध्रुव ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1731,8 +1731,8 @@ ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
 /*
  r = p
  */
-void
-ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
+शून्य
+ge25519_p2_गन्तव्यम्_p3(ge25519_p3 *r, ध्रुव ge25519_p2 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -1740,7 +1740,7 @@ ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
     fe25519_mul(r->T, p->X, p->Y);
 }
 
-static void
+स्थिर शून्य
 ge25519_p2_0(ge25519_p2 *h)
 {
     fe25519_0(h->X);
@@ -1752,23 +1752,23 @@ ge25519_p2_0(ge25519_p2 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p2_dbl(ge25519_p1p1 *r, const ge25519_p2 *p)
+स्थिर शून्य
+ge25519_p2_dbl(ge25519_p1p1 *r, ध्रुव ge25519_p2 *p)
 {
     fe25519 t0;
 
     fe25519_sq(r->X, p->X);
     fe25519_sq(r->Z, p->Y);
     fe25519_sq2(r->T, p->Z);
-    fe25519_add(r->Y, p->X, p->Y);
+    fe25519_सङ्कलय(r->Y, p->X, p->Y);
     fe25519_sq(t0, r->Y);
-    fe25519_add(r->Y, r->Z, r->X);
+    fe25519_सङ्कलय(r->Y, r->Z, r->X);
     fe25519_sub(r->Z, r->Z, r->X);
     fe25519_sub(r->X, t0, r->Y);
     fe25519_sub(r->T, r->T, r->Z);
 }
 
-static void
+स्थिर शून्य
 ge25519_p3_0(ge25519_p3 *h)
 {
     fe25519_0(h->X);
@@ -1782,10 +1782,10 @@ ge25519_p3_0(ge25519_p3 *h)
  r = p
  */
 
-static void
-ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
+स्थिर शून्य
+ge25519_p3_गन्तव्यम्_cached(ge25519_cached *r, ध्रुव ge25519_p3 *p)
 {
-    fe25519_add(r->YplusX, p->Y, p->X);
+    fe25519_सङ्कलय(r->YplusX, p->Y, p->X);
     fe25519_sub(r->YminusX, p->Y, p->X);
     fe25519_copy(r->Z, p->Z);
     fe25519_mul(r->T2d, p->T, ed25519_d2);
@@ -1796,16 +1796,16 @@ ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
  r = p
  */
 
-static void
-ge25519_p3_to_p2(ge25519_p2 *r, const ge25519_p3 *p)
+स्थिर शून्य
+ge25519_p3_गन्तव्यम्_p2(ge25519_p2 *r, ध्रुव ge25519_p3 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
     fe25519_copy(r->Z, p->Z);
 }
 
-void
-ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
+शून्य
+ge25519_p3_tobytes(अचिह्नित वर्ण *s, ध्रुव ge25519_p3 *h)
 {
     fe25519 recip;
     fe25519 x;
@@ -1822,15 +1822,15 @@ ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p3_dbl(ge25519_p1p1 *r, const ge25519_p3 *p)
+स्थिर शून्य
+ge25519_p3_dbl(ge25519_p1p1 *r, ध्रुव ge25519_p3 *p)
 {
     ge25519_p2 q;
-    ge25519_p3_to_p2(&q, p);
+    ge25519_p3_गन्तव्यम्_p2(&q, p);
     ge25519_p2_dbl(r, &q);
 }
 
-static void
+स्थिर शून्य
 ge25519_precomp_0(ge25519_precomp *h)
 {
     fe25519_1(h->yplusx);
@@ -1838,46 +1838,46 @@ ge25519_precomp_0(ge25519_precomp *h)
     fe25519_0(h->xy2d);
 }
 
-static unsigned char
-equal(signed char b, signed char c)
+स्थिर अचिह्नित वर्ण
+equal(चिह्नित वर्ण b, चिह्नित वर्ण c)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#यदि defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     int32_t b32 = (int32_t) b, c32 = (int32_t) c, q32, z32;
     __asm__ ("xorl %0,%0\n movl $1,%1\n cmpb %b3,%b2\n cmovel %1,%0" :
              "=&r"(z32), "=&r"(q32) : "q"(b32), "q"(c32) : "cc");
-    return (unsigned char) z32;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
-    unsigned char z;
+    प्रत्यागम (अचिह्नित वर्ण) z32;
+#नोचेद्यदि defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    अचिह्नित वर्ण z;
     __asm__ ("and %w0,%w1,255\n cmp %w0,%w2,uxtb\n cset %w0,eq" :
              "=&r"(z) : "r"(b), "r"(c) : "cc");
-    return z;
-#else
-    const unsigned char x  = (unsigned char) b ^ (unsigned char) c; /* 0: yes; 1..255: no */
+    प्रत्यागम z;
+#अन्यथा
+    ध्रुव अचिह्नित वर्ण x  = (अचिह्नित वर्ण) b ^ (अचिह्नित वर्ण) c; /* 0: yes; 1..255: no */
     uint32_t            y  = (uint32_t) x; /* 0: yes; 1..255: no */
 
     y--;
-    return ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
-#endif
+    प्रत्यागम ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+#यदि_अन्तः
 }
 
-static unsigned char
-negative(signed char b)
+स्थिर अचिह्नित वर्ण
+negative(चिह्नित वर्ण b)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#यदि defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     __asm__ ("shrb $7,%0" : "+r"(b) : : "cc");
-    return b;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    प्रत्यागम b;
+#नोचेद्यदि defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     uint8_t x;
     __asm__ ("ubfx %w0,%w1,7,1" : "=r"(x) : "r"(b) : );
-    return x;
-#else
-    const uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
-    return ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
-#endif
+    प्रत्यागम x;
+#अन्यथा
+    ध्रुव uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
+    प्रत्यागम ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+#यदि_अन्तः
 }
 
-static void
-ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
+स्थिर शून्य
+ge25519_cmov(ge25519_precomp *t, ध्रुव ge25519_precomp *u, अचिह्नित वर्ण b)
 {
     fe25519_cmov(t->yplusx, u->yplusx, b);
     fe25519_cmov(t->yminusx, u->yminusx, b);
@@ -1885,12 +1885,12 @@ ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
 }
 
 
-static void
-ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed char b)
+स्थिर शून्य
+ge25519_cmov8(ge25519_precomp *t, ध्रुव ge25519_precomp precomp[8], ध्रुव चिह्नित वर्ण b)
 {
     ge25519_precomp     minust;
-    const unsigned char bnegative = negative(b);
-    const unsigned char babs      = b - (((-bnegative) & b) * ((signed char) 1 << 1));
+    ध्रुव अचिह्नित वर्ण bnegative = negative(b);
+    ध्रुव अचिह्नित वर्ण babs      = b - (((-bnegative) & b) * ((चिह्नित वर्ण) 1 << 1));
 
     ge25519_precomp_0(t);
     ge25519_cmov(t, &precomp[0], equal(babs, 1));
@@ -1907,12 +1907,12 @@ ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed
     ge25519_cmov(t, &minust, bnegative);
 }
 
-static void
-ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
+स्थिर शून्य
+ge25519_cmov8_आधारः(ge25519_precomp *t, ध्रुव पूर्णाङ्क pos, ध्रुव चिह्नित वर्ण b)
 {
-    static const ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
-#ifdef HAVE_TI_MODE
-#else
+    स्थिर ध्रुव ge25519_precomp आधारः[32][8] = { /* base[i][j] = (j+1)*256^i*B */
+#यदि_परिभाषितम् HAVE_TI_बहुलकम्
+#अन्यथा
 { /* 0/31 */
   {
     { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
@@ -3257,9 +3257,9 @@ ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
     { -20430234, 14955537, -24126347, 8124619, -5369288, -5990470, 30468147, -13900640, 18423289, 4177476 }
   }
 }
-#endif
+#यदि_अन्तः
     };
-    ge25519_cmov8(t, base[pos], b);
+    ge25519_cmov8(t, आधारः[pos], b);
 }
 
 
@@ -3267,22 +3267,22 @@ ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
  r = p - q
  */
 
-static void
-ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+स्थिर शून्य
+ge25519_sub_cached(ge25519_p1p1 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_cached *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_सङ्कलय(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->YminusX);
     fe25519_mul(r->Y, r->Y, q->YplusX);
     fe25519_mul(r->T, q->T2d, p->T);
     fe25519_mul(r->X, p->Z, q->Z);
-    fe25519_add(t0, r->X, r->X);
+    fe25519_सङ्कलय(t0, r->X, r->X);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
+    fe25519_सङ्कलय(r->Y, r->Z, r->Y);
     fe25519_sub(r->Z, t0, r->T);
-    fe25519_add(r->T, t0, r->T);
+    fe25519_सङ्कलय(r->T, t0, r->T);
 }
 
 /* LCOV_EXCL_START */
@@ -3297,13 +3297,13 @@ ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
  Only used for signatures verification.
  */
 
-void
-ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                  const ge25519_p3 *A, const unsigned char *b)
+शून्य
+ge25519_double_scalarmult_vartime(ge25519_p2 *r, ध्रुव अचिह्नित वर्ण *a,
+                                  ध्रुव ge25519_p3 *A, ध्रुव अचिह्नित वर्ण *b)
 {
-    static const ge25519_precomp Bi[8] = {
-#ifdef HAVE_TI_MODE
-#else
+    स्थिर ध्रुव ge25519_precomp Bi[8] = {
+#यदि_परिभाषितम् HAVE_TI_बहुलकम्
+#अन्यथा
 {
   { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
   { -12545711, 934262, -2722910, 3049990, -727428, 9406986, 12720692, 5043384, 19500929, -15469378 },
@@ -3344,80 +3344,80 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
   { -24326370, 15950226, -31801215, -14592823, -11662737, -5090925, 1573892, -2625887, 2198790, -15804619 },
   { -3099351, 10324967, -2241613, 7453183, -5446979, -2735503, -13812022, -16236442, -32461234, -12290683 }
 }
-#endif
+#यदि_अन्तः
     };
-    signed char    aslide[256];
-    signed char    bslide[256];
+    चिह्नित वर्ण    aslide[256];
+    चिह्नित वर्ण    bslide[256];
     ge25519_cached Ai[8]; /* A,3A,5A,7A,9A,11A,13A,15A */
     ge25519_p1p1   t;
     ge25519_p3     u;
     ge25519_p3     A2;
-    int            i;
+    पूर्णाङ्क            i;
 
     slide_vartime(aslide, a);
     slide_vartime(bslide, b);
 
-    ge25519_p3_to_cached(&Ai[0], A);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[0], A);
 
     ge25519_p3_dbl(&t, A);
-    ge25519_p1p1_to_p3(&A2, &t);
+    ge25519_p1p1_गन्तव्यम्_p3(&A2, &t);
 
-    ge25519_add_cached(&t, &A2, &Ai[0]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[1], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[0]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[1], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[1]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[2], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[1]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[2], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[2]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[3], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[2]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[3], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[3]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[4], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[3]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[4], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[4]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[5], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[4]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[5], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[5]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[6], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[5]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[6], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[6]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[7], &u);
+    ge25519_सङ्कलय_cached(&t, &A2, &Ai[6]);
+    ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+    ge25519_p3_गन्तव्यम्_cached(&Ai[7], &u);
 
     ge25519_p2_0(r);
 
-    for (i = 255; i >= 0; --i) {
-        if (aslide[i] || bslide[i]) {
-            break;
+    प्रति (i = 255; i >= 0; --i) {
+        यदि (aslide[i] || bslide[i]) {
+            भङ्ग;
         }
     }
 
-    for (; i >= 0; --i) {
+    प्रति (; i >= 0; --i) {
         ge25519_p2_dbl(&t, r);
 
-        if (aslide[i] > 0) {
-            ge25519_p1p1_to_p3(&u, &t);
-            ge25519_add_cached(&t, &u, &Ai[aslide[i] / 2]);
-        } else if (aslide[i] < 0) {
-            ge25519_p1p1_to_p3(&u, &t);
+        यदि (aslide[i] > 0) {
+            ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+            ge25519_सङ्कलय_cached(&t, &u, &Ai[aslide[i] / 2]);
+        } अन्यथा यदि (aslide[i] < 0) {
+            ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
             ge25519_sub_cached(&t, &u, &Ai[(-aslide[i]) / 2]);
         }
 
-        if (bslide[i] > 0) {
-            ge25519_p1p1_to_p3(&u, &t);
-            ge25519_add_precomp(&t, &u, &Bi[bslide[i] / 2]);
-        } else if (bslide[i] < 0) {
-            ge25519_p1p1_to_p3(&u, &t);
+        यदि (bslide[i] > 0) {
+            ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
+            ge25519_सङ्कलय_precomp(&t, &u, &Bi[bslide[i] / 2]);
+        } अन्यथा यदि (bslide[i] < 0) {
+            ge25519_p1p1_गन्तव्यम्_p3(&u, &t);
             ge25519_sub_precomp(&t, &u, &Bi[(-bslide[i]) / 2]);
         }
 
-        ge25519_p1p1_to_p2(r, &t);
+        ge25519_p1p1_गन्तव्यम्_p2(r, &t);
     }
 }
 
@@ -3442,17 +3442,17 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
  a[31] <= 127
  */
 
-void
-ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
+शून्य
+ge25519_scalarmult_आधारः(ge25519_p3 *h, ध्रुव अचिह्नित वर्ण *a)
 {
-    signed char     e[64];
-    signed char     carry;
+    चिह्नित वर्ण     e[64];
+    चिह्नित वर्ण     carry;
     ge25519_p1p1    r;
     ge25519_p2      s;
     ge25519_precomp t;
-    int             i;
+    पूर्णाङ्क             i;
 
-    for (i = 0; i < 32; ++i) {
+    प्रति (i = 0; i < 32; ++i) {
         e[2 * i + 0] = (a[i] >> 0) & 15;
         e[2 * i + 1] = (a[i] >> 4) & 15;
     }
@@ -3460,44 +3460,44 @@ ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
     /* e[63] is between 0 and 7 */
 
     carry = 0;
-    for (i = 0; i < 63; ++i) {
+    प्रति (i = 0; i < 63; ++i) {
         e[i] += carry;
         carry = e[i] + 8;
         carry >>= 4;
-        e[i] -= carry * ((signed char) 1 << 4);
+        e[i] -= carry * ((चिह्नित वर्ण) 1 << 4);
     }
     e[63] += carry;
     /* each e[i] is between -8 and 8 */
 
     ge25519_p3_0(h);
 
-    for (i = 1; i < 64; i += 2) {
-        ge25519_cmov8_base(&t, i / 2, e[i]);
-        ge25519_add_precomp(&r, h, &t);
-        ge25519_p1p1_to_p3(h, &r);
+    प्रति (i = 1; i < 64; i += 2) {
+        ge25519_cmov8_आधारः(&t, i / 2, e[i]);
+        ge25519_सङ्कलय_precomp(&r, h, &t);
+        ge25519_p1p1_गन्तव्यम्_p3(h, &r);
     }
 
     ge25519_p3_dbl(&r, h);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_गन्तव्यम्_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_गन्तव्यम्_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_गन्तव्यम्_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p3(h, &r);
+    ge25519_p1p1_गन्तव्यम्_p3(h, &r);
 
-    for (i = 0; i < 64; i += 2) {
-        ge25519_cmov8_base(&t, i / 2, e[i]);
-        ge25519_add_precomp(&r, h, &t);
-        ge25519_p1p1_to_p3(h, &r);
+    प्रति (i = 0; i < 64; i += 2) {
+        ge25519_cmov8_आधारः(&t, i / 2, e[i]);
+        ge25519_सङ्कलय_precomp(&r, h, &t);
+        ge25519_p1p1_गन्तव्यम्_p3(h, &r);
     }
 }
 
 /* r = 2p */
 
 /* r = -p */
-static void
-ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
+स्थिर शून्य
+ge25519_p3_neg(ge25519_p3 *r, ध्रुव ge25519_p3 *p)
 {
     fe25519_neg(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -3506,25 +3506,25 @@ ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
 }
 
 /* r = p+q */
-void
-ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+शून्य
+ge25519_p3_सङ्कलय(ge25519_p3 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_p3 *q)
 {
     ge25519_cached q_cached;
     ge25519_p1p1   p1p1;
 
-    ge25519_p3_to_cached(&q_cached, q);
-    ge25519_add_cached(&p1p1, p, &q_cached);
-    ge25519_p1p1_to_p3(r, &p1p1);
+    ge25519_p3_गन्तव्यम्_cached(&q_cached, q);
+    ge25519_सङ्कलय_cached(&p1p1, p, &q_cached);
+    ge25519_p1p1_गन्तव्यम्_p3(r, &p1p1);
 }
 
 /* r = p-q */
-void
-ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+शून्य
+ge25519_p3_sub(ge25519_p3 *r, ध्रुव ge25519_p3 *p, ध्रुव ge25519_p3 *q)
 {
     ge25519_p3 q_neg;
 
     ge25519_p3_neg(&q_neg, q);
-    ge25519_p3_add(r, p, &q_neg);
+    ge25519_p3_सङ्कलय(r, p, &q_neg);
 }
 
 /* r = r*(2^n)+q */
@@ -3533,29 +3533,29 @@ ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 
 
 
-int
-ge25519_is_canonical(const unsigned char *s)
+पूर्णाङ्क
+ge25519_is_canonical(ध्रुव अचिह्नित वर्ण *s)
 {
-    unsigned char c;
-    unsigned char d;
-    unsigned int  i;
+    अचिह्नित वर्ण c;
+    अचिह्नित वर्ण d;
+    अचिह्नित पूर्णाङ्क  i;
 
     c = (s[31] & 0x7f) ^ 0x7f;
-    for (i = 30; i > 0; i--) {
+    प्रति (i = 30; i > 0; i--) {
         c |= s[i] ^ 0xff;
     }
-    c = (((unsigned int) c) - 1U) >> 8;
-    d = (0xed - 1U - (unsigned int) s[0]) >> 8;
+    c = (((अचिह्नित पूर्णाङ्क) c) - 1U) >> 8;
+    d = (0xed - 1U - (अचिह्नित पूर्णाङ्क) s[0]) >> 8;
 
-    return 1 - (c & d & 1);
+    प्रत्यागम 1 - (c & d & 1);
 }
 
-int
-ge25519_has_small_order(const ge25519_p3 *p)
+पूर्णाङ्क
+ge25519_has_small_क्रमः(ध्रुव ge25519_p3 *p)
 {
     fe25519 y_sqrtm1;
     fe25519 c;
-    int     ret = 0;
+    पूर्णाङ्क     ret = 0;
 
     ret |= fe25519_iszero(p->X);
     ret |= fe25519_iszero(p->Y);
@@ -3563,10 +3563,10 @@ ge25519_has_small_order(const ge25519_p3 *p)
     fe25519_mul(y_sqrtm1, p->Y, fe25519_sqrtm1);
     fe25519_sub(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
-    fe25519_add(c, y_sqrtm1, p->X);
+    fe25519_सङ्कलय(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
 
-    return ret;
+    प्रत्यागम ret;
 }
 
 /*
@@ -3591,48 +3591,48 @@ ge25519_has_small_order(const ge25519_p3 *p)
  where l = 2^252 + 27742317777372353535851937790883648493.
  */
 
-void
-sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-               const unsigned char b[32], const unsigned char c[32])
+शून्य
+sc25519_muladd(अचिह्नित वर्ण s[32], ध्रुव अचिह्नित वर्ण a[32],
+               ध्रुव अचिह्नित वर्ण b[32], ध्रुव अचिह्नित वर्ण c[32])
 {
-    int64_t a0  = 2097151 & load_3(a);
-    int64_t a1  = 2097151 & (load_4(a + 2) >> 5);
-    int64_t a2  = 2097151 & (load_3(a + 5) >> 2);
-    int64_t a3  = 2097151 & (load_4(a + 7) >> 7);
-    int64_t a4  = 2097151 & (load_4(a + 10) >> 4);
-    int64_t a5  = 2097151 & (load_3(a + 13) >> 1);
-    int64_t a6  = 2097151 & (load_4(a + 15) >> 6);
-    int64_t a7  = 2097151 & (load_3(a + 18) >> 3);
-    int64_t a8  = 2097151 & load_3(a + 21);
-    int64_t a9  = 2097151 & (load_4(a + 23) >> 5);
-    int64_t a10 = 2097151 & (load_3(a + 26) >> 2);
-    int64_t a11 = (load_4(a + 28) >> 7);
+    int64_t a0  = 2097151 & आरोपय_3(a);
+    int64_t a1  = 2097151 & (आरोपय_4(a + 2) >> 5);
+    int64_t a2  = 2097151 & (आरोपय_3(a + 5) >> 2);
+    int64_t a3  = 2097151 & (आरोपय_4(a + 7) >> 7);
+    int64_t a4  = 2097151 & (आरोपय_4(a + 10) >> 4);
+    int64_t a5  = 2097151 & (आरोपय_3(a + 13) >> 1);
+    int64_t a6  = 2097151 & (आरोपय_4(a + 15) >> 6);
+    int64_t a7  = 2097151 & (आरोपय_3(a + 18) >> 3);
+    int64_t a8  = 2097151 & आरोपय_3(a + 21);
+    int64_t a9  = 2097151 & (आरोपय_4(a + 23) >> 5);
+    int64_t a10 = 2097151 & (आरोपय_3(a + 26) >> 2);
+    int64_t a11 = (आरोपय_4(a + 28) >> 7);
 
-    int64_t b0  = 2097151 & load_3(b);
-    int64_t b1  = 2097151 & (load_4(b + 2) >> 5);
-    int64_t b2  = 2097151 & (load_3(b + 5) >> 2);
-    int64_t b3  = 2097151 & (load_4(b + 7) >> 7);
-    int64_t b4  = 2097151 & (load_4(b + 10) >> 4);
-    int64_t b5  = 2097151 & (load_3(b + 13) >> 1);
-    int64_t b6  = 2097151 & (load_4(b + 15) >> 6);
-    int64_t b7  = 2097151 & (load_3(b + 18) >> 3);
-    int64_t b8  = 2097151 & load_3(b + 21);
-    int64_t b9  = 2097151 & (load_4(b + 23) >> 5);
-    int64_t b10 = 2097151 & (load_3(b + 26) >> 2);
-    int64_t b11 = (load_4(b + 28) >> 7);
+    int64_t b0  = 2097151 & आरोपय_3(b);
+    int64_t b1  = 2097151 & (आरोपय_4(b + 2) >> 5);
+    int64_t b2  = 2097151 & (आरोपय_3(b + 5) >> 2);
+    int64_t b3  = 2097151 & (आरोपय_4(b + 7) >> 7);
+    int64_t b4  = 2097151 & (आरोपय_4(b + 10) >> 4);
+    int64_t b5  = 2097151 & (आरोपय_3(b + 13) >> 1);
+    int64_t b6  = 2097151 & (आरोपय_4(b + 15) >> 6);
+    int64_t b7  = 2097151 & (आरोपय_3(b + 18) >> 3);
+    int64_t b8  = 2097151 & आरोपय_3(b + 21);
+    int64_t b9  = 2097151 & (आरोपय_4(b + 23) >> 5);
+    int64_t b10 = 2097151 & (आरोपय_3(b + 26) >> 2);
+    int64_t b11 = (आरोपय_4(b + 28) >> 7);
 
-    int64_t c0  = 2097151 & load_3(c);
-    int64_t c1  = 2097151 & (load_4(c + 2) >> 5);
-    int64_t c2  = 2097151 & (load_3(c + 5) >> 2);
-    int64_t c3  = 2097151 & (load_4(c + 7) >> 7);
-    int64_t c4  = 2097151 & (load_4(c + 10) >> 4);
-    int64_t c5  = 2097151 & (load_3(c + 13) >> 1);
-    int64_t c6  = 2097151 & (load_4(c + 15) >> 6);
-    int64_t c7  = 2097151 & (load_3(c + 18) >> 3);
-    int64_t c8  = 2097151 & load_3(c + 21);
-    int64_t c9  = 2097151 & (load_4(c + 23) >> 5);
-    int64_t c10 = 2097151 & (load_3(c + 26) >> 2);
-    int64_t c11 = (load_4(c + 28) >> 7);
+    int64_t c0  = 2097151 & आरोपय_3(c);
+    int64_t c1  = 2097151 & (आरोपय_4(c + 2) >> 5);
+    int64_t c2  = 2097151 & (आरोपय_3(c + 5) >> 2);
+    int64_t c3  = 2097151 & (आरोपय_4(c + 7) >> 7);
+    int64_t c4  = 2097151 & (आरोपय_4(c + 10) >> 4);
+    int64_t c5  = 2097151 & (आरोपय_3(c + 13) >> 1);
+    int64_t c6  = 2097151 & (आरोपय_4(c + 15) >> 6);
+    int64_t c7  = 2097151 & (आरोपय_3(c + 18) >> 3);
+    int64_t c8  = 2097151 & आरोपय_3(c + 21);
+    int64_t c9  = 2097151 & (आरोपय_4(c + 23) >> 5);
+    int64_t c10 = 2097151 & (आरोपय_3(c + 26) >> 2);
+    int64_t c11 = (आरोपय_4(c + 28) >> 7);
 
     int64_t s0;
     int64_t s1;
@@ -4101,33 +4101,33 @@ sc25519_muladd(unsigned char s[32], const unsigned char a[32],
  Overwrites s in place.
  */
 
-void
-sc25519_reduce(unsigned char s[64])
+शून्य
+sc25519_reduce(अचिह्नित वर्ण s[64])
 {
-    int64_t s0  = 2097151 & load_3(s);
-    int64_t s1  = 2097151 & (load_4(s + 2) >> 5);
-    int64_t s2  = 2097151 & (load_3(s + 5) >> 2);
-    int64_t s3  = 2097151 & (load_4(s + 7) >> 7);
-    int64_t s4  = 2097151 & (load_4(s + 10) >> 4);
-    int64_t s5  = 2097151 & (load_3(s + 13) >> 1);
-    int64_t s6  = 2097151 & (load_4(s + 15) >> 6);
-    int64_t s7  = 2097151 & (load_3(s + 18) >> 3);
-    int64_t s8  = 2097151 & load_3(s + 21);
-    int64_t s9  = 2097151 & (load_4(s + 23) >> 5);
-    int64_t s10 = 2097151 & (load_3(s + 26) >> 2);
-    int64_t s11 = 2097151 & (load_4(s + 28) >> 7);
-    int64_t s12 = 2097151 & (load_4(s + 31) >> 4);
-    int64_t s13 = 2097151 & (load_3(s + 34) >> 1);
-    int64_t s14 = 2097151 & (load_4(s + 36) >> 6);
-    int64_t s15 = 2097151 & (load_3(s + 39) >> 3);
-    int64_t s16 = 2097151 & load_3(s + 42);
-    int64_t s17 = 2097151 & (load_4(s + 44) >> 5);
-    int64_t s18 = 2097151 & (load_3(s + 47) >> 2);
-    int64_t s19 = 2097151 & (load_4(s + 49) >> 7);
-    int64_t s20 = 2097151 & (load_4(s + 52) >> 4);
-    int64_t s21 = 2097151 & (load_3(s + 55) >> 1);
-    int64_t s22 = 2097151 & (load_4(s + 57) >> 6);
-    int64_t s23 = (load_4(s + 60) >> 3);
+    int64_t s0  = 2097151 & आरोपय_3(s);
+    int64_t s1  = 2097151 & (आरोपय_4(s + 2) >> 5);
+    int64_t s2  = 2097151 & (आरोपय_3(s + 5) >> 2);
+    int64_t s3  = 2097151 & (आरोपय_4(s + 7) >> 7);
+    int64_t s4  = 2097151 & (आरोपय_4(s + 10) >> 4);
+    int64_t s5  = 2097151 & (आरोपय_3(s + 13) >> 1);
+    int64_t s6  = 2097151 & (आरोपय_4(s + 15) >> 6);
+    int64_t s7  = 2097151 & (आरोपय_3(s + 18) >> 3);
+    int64_t s8  = 2097151 & आरोपय_3(s + 21);
+    int64_t s9  = 2097151 & (आरोपय_4(s + 23) >> 5);
+    int64_t s10 = 2097151 & (आरोपय_3(s + 26) >> 2);
+    int64_t s11 = 2097151 & (आरोपय_4(s + 28) >> 7);
+    int64_t s12 = 2097151 & (आरोपय_4(s + 31) >> 4);
+    int64_t s13 = 2097151 & (आरोपय_3(s + 34) >> 1);
+    int64_t s14 = 2097151 & (आरोपय_4(s + 36) >> 6);
+    int64_t s15 = 2097151 & (आरोपय_3(s + 39) >> 3);
+    int64_t s16 = 2097151 & आरोपय_3(s + 42);
+    int64_t s17 = 2097151 & (आरोपय_4(s + 44) >> 5);
+    int64_t s18 = 2097151 & (आरोपय_3(s + 47) >> 2);
+    int64_t s19 = 2097151 & (आरोपय_4(s + 49) >> 7);
+    int64_t s20 = 2097151 & (आरोपय_4(s + 52) >> 4);
+    int64_t s21 = 2097151 & (आरोपय_3(s + 55) >> 1);
+    int64_t s22 = 2097151 & (आरोपय_4(s + 57) >> 6);
+    int64_t s23 = (आरोपय_4(s + 60) >> 3);
 
     int64_t carry0;
     int64_t carry1;
@@ -4425,26 +4425,26 @@ sc25519_reduce(unsigned char s[64])
     s[31] = s11 >> 17;
 }
 
-int
-sc25519_is_canonical(const unsigned char s[32])
+पूर्णाङ्क
+sc25519_is_canonical(ध्रुव अचिह्नित वर्ण s[32])
 {
     /* 2^252+27742317777372353535851937790883648493 */
-    static const unsigned char L[32] = {
+    स्थिर ध्रुव अचिह्नित वर्ण L[32] = {
         0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7,
         0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10
     };
-    unsigned char c = 0;
-    unsigned char n = 1;
-    unsigned int  i = 32;
+    अचिह्नित वर्ण c = 0;
+    अचिह्नित वर्ण n = 1;
+    अचिह्नित पूर्णाङ्क  i = 32;
 
-    do {
+    कुरु {
         i--;
         c |= ((s[i] - L[i]) >> 8) & n;
         n &= ((s[i] ^ L[i]) - 1) >> 8;
-    } while (i != 0);
+    } यावत् (i != 0);
 
-    return (c != 0);
+    प्रत्यागम (c != 0);
 }
 
 /* montgomery to edwards */
@@ -4461,68 +4461,68 @@ sc25519_is_canonical(const unsigned char s[32])
 
 /* Ristretto group */
 
-#ifndef sign_ed25519_ref10_H
-#define sign_ed25519_ref10_H
+#यदि_अपरिभाषितम् sign_ed25519_ref10_H
+#परिभाषय sign_ed25519_ref10_H
 
 
-static void _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
-                                      int prehashed);
+स्थिर शून्य _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
+                                      पूर्णाङ्क prehashed);
 
-static int _crypto_sign_ed25519_detached(unsigned char *sig,
-                                  unsigned long long *siglen_p,
-                                  const unsigned char *m,
-                                  unsigned long long mlen,
-                                  const unsigned char *sk, int prehashed);
+स्थिर पूर्णाङ्क _crypto_sign_ed25519_detached(अचिह्नित वर्ण *sig,
+                                  अचिह्नित दीर्घ दीर्घ *siglen_p,
+                                  ध्रुव अचिह्नित वर्ण *m,
+                                  अचिह्नित दीर्घ दीर्घ mlen,
+                                  ध्रुव अचिह्नित वर्ण *sk, पूर्णाङ्क prehashed);
 
-static int _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                         const unsigned char *m,
-                                         unsigned long long   mlen,
-                                         const unsigned char *pk,
-                                         int prehashed);
-#endif
+स्थिर पूर्णाङ्क _crypto_sign_ed25519_verify_detached(ध्रुव अचिह्नित वर्ण *sig,
+                                         ध्रुव अचिह्नित वर्ण *m,
+                                         अचिह्नित दीर्घ दीर्घ   mlen,
+                                         ध्रुव अचिह्नित वर्ण *pk,
+                                         पूर्णाङ्क prehashed);
+#यदि_अन्तः
 
 
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-                                 const unsigned char *seed)
+पूर्णाङ्क
+crypto_sign_ed25519_बीजम्_keypair(अचिह्नित वर्ण *pk, अचिह्नित वर्ण *sk,
+                                 ध्रुव अचिह्नित वर्ण *बीजम्)
 {
     ge25519_p3 A;
 
-    crypto_hash_sha512(sk, seed, 32);
+    crypto_hash_sha512(sk, बीजम्, 32);
     sk[0] &= 248;
     sk[31] &= 127;
     sk[31] |= 64;
 
-    ge25519_scalarmult_base(&A, sk);
+    ge25519_scalarmult_आधारः(&A, sk);
     ge25519_p3_tobytes(pk, &A);
 
-    memmove(sk, seed, 32);
+    memmove(sk, बीजम्, 32);
     memmove(sk + 32, pk, 32);
 
-    return 0;
+    प्रत्यागम 0;
 }
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+पूर्णाङ्क
+crypto_sign_ed25519_keypair(अचिह्नित वर्ण *pk, अचिह्नित वर्ण *sk)
 {
-    unsigned char seed[32];
-    int           ret;
+    अचिह्नित वर्ण बीजम्[32];
+    पूर्णाङ्क           ret;
 
-    arc4random_buf(seed, sizeof seed);
-    ret = crypto_sign_ed25519_seed_keypair(pk, sk, seed);
-    explicit_bzero(seed, sizeof seed);
+    arc4random_buf(बीजम्, परिमाण बीजम्);
+    ret = crypto_sign_ed25519_बीजम्_keypair(pk, sk, बीजम्);
+    explicit_bzero(बीजम्, परिमाण बीजम्);
 
-    return ret;
+    प्रत्यागम ret;
 }
 
 
 
 
-static void
-_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
+स्थिर शून्य
+_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, पूर्णाङ्क prehashed)
 {
-    static const unsigned char DOM2PREFIX[32 + 2] = {
+    स्थिर ध्रुव अचिह्नित वर्ण DOM2_उपसर्गः[32 + 2] = {
         'S', 'i', 'g', 'E', 'd', '2', '5', '5', '1', '9', ' ',
         'n', 'o', ' ',
         'E', 'd', '2', '5', '5', '1', '9', ' ',
@@ -4530,52 +4530,52 @@ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
     };
 
     crypto_hash_sha512_init(hs);
-    if (prehashed) {
-        crypto_hash_sha512_update(hs, DOM2PREFIX, sizeof DOM2PREFIX);
+    यदि (prehashed) {
+        crypto_hash_sha512_update(hs, DOM2_उपसर्गः, परिमाण DOM2_उपसर्गः);
     }
 }
 
-static inline void
-_crypto_sign_ed25519_clamp(unsigned char k[32])
+स्थिर अन्तःस्थ शून्य
+_crypto_sign_ed25519_clamp(अचिह्नित वर्ण k[32])
 {
     k[0] &= 248;
     k[31] &= 127;
     k[31] |= 64;
 }
 
-#ifdef ED25519_NONDETERMINISTIC
+#यदि_परिभाषितम् ED25519_NONDETERMINISTIC
 /* r = hash(k || K || noise || pad || M) (mod q) */
-static void
+स्थिर शून्य
 _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
-                                    unsigned char tmp[64],
-                                    const unsigned char az[64])
+                                    अचिह्नित वर्ण tmp[64],
+                                    ध्रुव अचिह्नित वर्ण az[64])
 {
     crypto_hash_sha512_update(hs, az, 64);
     randombytes_buf(tmp, 32);
-    memset(tmp + 32, 0, 32);
+    स्मृतिं_पूरय(tmp + 32, 0, 32);
     crypto_hash_sha512_update(hs, tmp, 64);
 }
-#endif
+#यदि_अन्तः
 
-int
-_crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                              const unsigned char *m, unsigned long long mlen,
-                              const unsigned char *sk, int prehashed)
+पूर्णाङ्क
+_crypto_sign_ed25519_detached(अचिह्नित वर्ण *sig, अचिह्नित दीर्घ दीर्घ *siglen_p,
+                              ध्रुव अचिह्नित वर्ण *m, अचिह्नित दीर्घ दीर्घ mlen,
+                              ध्रुव अचिह्नित वर्ण *sk, पूर्णाङ्क prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            az[64];
-    unsigned char            nonce[64];
-    unsigned char            hram[64];
+    अचिह्नित वर्ण            az[64];
+    अचिह्नित वर्ण            nonce[64];
+    अचिह्नित वर्ण            hram[64];
     ge25519_p3               R;
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
 
     crypto_hash_sha512(az, sk, 32);
-#ifdef ED25519_NONDETERMINISTIC
+#यदि_परिभाषितम् ED25519_NONDETERMINISTIC
     _crypto_sign_ed25519_synthetic_r_hv(&hs, nonce /* tmp */, az);
-#else
+#अन्यथा
     crypto_hash_sha512_update(&hs, az + 32, 32);
-#endif
+#यदि_अन्तः
 
     crypto_hash_sha512_update(&hs, m, mlen);
     crypto_hash_sha512_final(&hs, nonce);
@@ -4583,7 +4583,7 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     memmove(sig + 32, sk + 32, 32);
 
     sc25519_reduce(nonce);
-    ge25519_scalarmult_base(&R, nonce);
+    ge25519_scalarmult_आधारः(&R, nonce);
     ge25519_p3_tobytes(sig, &R);
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
@@ -4595,35 +4595,35 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     _crypto_sign_ed25519_clamp(az);
     sc25519_muladd(sig + 32, hram, az, nonce);
 
-    explicit_bzero(az, sizeof az);
-    explicit_bzero(nonce, sizeof nonce);
+    explicit_bzero(az, परिमाण az);
+    explicit_bzero(nonce, परिमाण nonce);
 
-    if (siglen_p != NULL) {
+    यदि (siglen_p != रिक्त) {
         *siglen_p = 64U;
     }
-    return 0;
+    प्रत्यागम 0;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                             const unsigned char *m, unsigned long long mlen,
-                             const unsigned char *sk)
+पूर्णाङ्क
+crypto_sign_ed25519_detached(अचिह्नित वर्ण *sig, अचिह्नित दीर्घ दीर्घ *siglen_p,
+                             ध्रुव अचिह्नित वर्ण *m, अचिह्नित दीर्घ दीर्घ mlen,
+                             ध्रुव अचिह्नित वर्ण *sk)
 {
-    return _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
+    प्रत्यागम _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
 }
 
 
 
 
-int
-_crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                     const unsigned char *m,
-                                     unsigned long long   mlen,
-                                     const unsigned char *pk,
-                                     int prehashed)
+पूर्णाङ्क
+_crypto_sign_ed25519_verify_detached(ध्रुव अचिह्नित वर्ण *sig,
+                                     ध्रुव अचिह्नित वर्ण *m,
+                                     अचिह्नित दीर्घ दीर्घ   mlen,
+                                     ध्रुव अचिह्नित वर्ण *pk,
+                                     पूर्णाङ्क prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            h[64];
+    अचिह्नित वर्ण            h[64];
     ge25519_p3               check;
     ge25519_p3               expected_r;
     ge25519_p3               A;
@@ -4631,26 +4631,26 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     ge25519_p2               sb_ah_p2;
 
     ACQUIRE_FENCE;
-#ifdef ED25519_COMPAT
-    if (sig[63] & 224) {
-        return -1;
+#यदि_परिभाषितम् ED25519_COMPAT
+    यदि (sig[63] & 224) {
+        प्रत्यागम -1;
     }
-#else
-    if ((sig[63] & 240) != 0 &&
+#अन्यथा
+    यदि ((sig[63] & 240) != 0 &&
         sc25519_is_canonical(sig + 32) == 0) {
-        return -1;
+        प्रत्यागम -1;
     }
-    if (ge25519_is_canonical(pk) == 0) {
-        return -1;
+    यदि (ge25519_is_canonical(pk) == 0) {
+        प्रत्यागम -1;
     }
-#endif
-    if (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
-        ge25519_has_small_order(&A) != 0) {
-        return -1;
+#यदि_अन्तः
+    यदि (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
+        ge25519_has_small_क्रमः(&A) != 0) {
+        प्रत्यागम -1;
     }
-    if (ge25519_frombytes(&expected_r, sig) != 0 ||
-        ge25519_has_small_order(&expected_r) != 0) {
-        return -1;
+    यदि (ge25519_frombytes(&expected_r, sig) != 0 ||
+        ge25519_has_small_क्रमः(&expected_r) != 0) {
+        प्रत्यागम -1;
     }
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
     crypto_hash_sha512_update(&hs, sig, 32);
@@ -4660,20 +4660,20 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     sc25519_reduce(h);
 
     ge25519_double_scalarmult_vartime(&sb_ah_p2, h, &A, sig + 32);
-    ge25519_p2_to_p3(&sb_ah, &sb_ah_p2);
+    ge25519_p2_गन्तव्यम्_p3(&sb_ah, &sb_ah_p2);
     ge25519_p3_sub(&check, &expected_r, &sb_ah);
 
-    return ge25519_has_small_order(&check) - 1;
+    प्रत्यागम ge25519_has_small_क्रमः(&check) - 1;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                    const unsigned char *m,
-                                    unsigned long long   mlen,
-                                    const unsigned char *pk)
+पूर्णाङ्क
+crypto_sign_ed25519_verify_detached(ध्रुव अचिह्नित वर्ण *sig,
+                                    ध्रुव अचिह्नित वर्ण *m,
+                                    अचिह्नित दीर्घ दीर्घ   mlen,
+                                    ध्रुव अचिह्नित वर्ण *pk)
 {
-    return _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
+    प्रत्यागम _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
 }
 
 
-#endif /* OPENSSL_HAS_ED25519 */
+#यदि_अन्तः /* OPENSSL_HAS_ED25519 */

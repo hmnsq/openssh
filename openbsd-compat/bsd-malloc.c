@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#undef malloc
-#undef calloc
-#undef realloc
+#अन्तर्भाव "config.h"
+#अपरिभाषय स्मृतिं_देहि
+#अपरिभाषय शून्यस्मृतिं_देहि
+#अपरिभाषय realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#यदि defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+शून्य *
+rpl_malloc(आकार_t आकार)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	यदि (आकार == 0)
+		आकार = 1;
+	प्रत्यागम स्मृतिं_देहि(आकार);
 }
-#endif
+#यदि_अन्तः
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#यदि defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+शून्य *
+rpl_calloc(आकार_t nmemb, आकार_t आकार)
 {
-	if (nmemb == 0)
+	यदि (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	यदि (आकार == 0)
+		आकार = 1;
+	प्रत्यागम शून्यस्मृतिं_देहि(nmemb, आकार);
 }
-#endif
+#यदि_अन्तः
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#यदि defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+शून्य *
+rpl_realloc(शून्य *ptr, आकार_t आकार)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	यदि (आकार == 0)
+		आकार = 1;
+	यदि (ptr == 0)
+		प्रत्यागम स्मृतिं_देहि(आकार);
+	प्रत्यागम realloc(ptr, आकार);
 }
-#endif
+#यदि_अन्तः

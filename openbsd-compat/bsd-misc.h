@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#यदि_अपरिभाषितम् _BSD_MISC_H
+#परिभाषय _BSD_MISC_H
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+वर्ण *ssh_get_progname(वर्ण *);
+पूर्णाङ्क बीजम्_from_prngd(अचिह्नित वर्ण *, आकार_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#यदि_अपरिभाषितम् HAVE_SETSID
+#परिभाषय setsid() setpgrp(0, getpid())
+#यदि_अन्तः /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#यदि_अपरिभाषितम् HAVE_SETENV
+पूर्णाङ्क setenv(ध्रुव वर्ण *, ध्रुव वर्ण *, पूर्णाङ्क);
+#यदि_अन्तः /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#यदि_अपरिभाषितम् HAVE_SETLOGIN
+पूर्णाङ्क setlogin(ध्रुव वर्ण *);
+#यदि_अन्तः /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#यदि_अपरिभाषितम् HAVE_INNETGR
+पूर्णाङ्क innetgr(ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *);
+#यदि_अन्तः /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#यदि !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+पूर्णाङ्क seteuid(uid_t);
+#यदि_अन्तः /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#यदि !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+पूर्णाङ्क setegid(uid_t);
+#यदि_अन्तः /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#यदि !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ध्रुव वर्ण *strerror(पूर्णाङ्क);
+#यदि_अन्तः
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#यदि !defined(HAVE_SETLINEBUF)
+#परिभाषय setlinebuf(a)	(setvbuf((a), रिक्त, _IOLBF, 0))
+#यदि_अन्तः
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#यदि_अपरिभाषितम् HAVE_UTIMES
+#यदि_अपरिभाषितम् HAVE_STRUCT_TIMEVAL
+संरचना timeval {
+	दीर्घ tv_sec;
+	दीर्घ tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#यदि_अन्तः /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+पूर्णाङ्क utimes(ध्रुव वर्ण *, संरचना timeval *);
+#यदि_अन्तः /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#यदि_अपरिभाषितम् HAVE_DIRFD
+पूर्णाङ्क dirfd(शून्य *);
+#यदि_अन्तः
 
-#ifndef AT_FDCWD
+#यदि_अपरिभाषितम् AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#यदि_अपरिभाषितम् HAVE_FCHMODAT
+पूर्णाङ्क fchmodat(पूर्णाङ्क, ध्रुव वर्ण *, बहुलकम्_t, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#यदि_अपरिभाषितम् HAVE_FCHOWNAT
+पूर्णाङ्क fchownat(पूर्णाङ्क, ध्रुव वर्ण *, uid_t, gid_t, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#यदि_परिभाषितम् HAVE_FSTATAT
+पूर्णाङ्क fstatat(पूर्णाङ्क, ध्रुव वर्ण *, संरचना stat *, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#यदि_परिभाषितम् HAVE_UNLINKAT
+पूर्णाङ्क unlinkat(पूर्णाङ्क, ध्रुव वर्ण *, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#यदि_अपरिभाषितम् HAVE_TRUNCATE
+पूर्णाङ्क truncate (ध्रुव वर्ण *, off_t);
+#यदि_अन्तः /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#यदि_अपरिभाषितम् HAVE_STRUCT_TIMESPEC
+संरचना timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	दीर्घ	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#यदि_अन्तः /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#यदि !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+पूर्णाङ्क nanosleep(ध्रुव संरचना timespec *, संरचना timespec *);
+#यदि_अन्तः
 
-#ifndef HAVE_UTIMENSAT
+#यदि_अपरिभाषितम् HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+पूर्णाङ्क utimensat(पूर्णाङ्क, ध्रुव वर्ण *, ध्रुव संरचना timespec[2], पूर्णाङ्क);
+#यदि_अन्तः /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#यदि_अपरिभाषितम् HAVE_USLEEP
+पूर्णाङ्क usleep(अचिह्नित पूर्णाङ्क useconds);
+#यदि_अन्तः
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#यदि_अपरिभाषितम् HAVE_TCGETPGRP
+pid_t tcgetpgrp(पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#यदि_अपरिभाषितम् HAVE_TCSENDBREAK
+पूर्णाङ्क tcsendbreak(पूर्णाङ्क, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#यदि_अपरिभाषितम् HAVE_UNSETENV
+पूर्णाङ्क unsetenv(ध्रुव वर्ण *);
+#यदि_अन्तः
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#यदि_अपरिभाषितम् HAVE_ISBLANK
+पूर्णाङ्क	isblank(पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_GETPGID
+#यदि_अपरिभाषितम् HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#यदि_अपरिभाषितम् HAVE_PSELECT
+पूर्णाङ्क pselect(पूर्णाङ्क, fd_set *, fd_set *, fd_set *, ध्रुव संरचना timespec *,
+    ध्रुव sigset_t *);
+#यदि_अन्तः
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#यदि_अपरिभाषितम् HAVE_ENDGRENT
+# define endgrent() कुरु { } यावत्(0)
+#यदि_अन्तः
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#यदि_अपरिभाषितम् HAVE_KRB5_GET_ERROR_सन्देशः
+# define krb5_get_error_सन्देशः krb5_get_err_text
+#यदि_अन्तः
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#यदि_अपरिभाषितम् HAVE_KRB5_FREE_ERROR_सन्देशः
+# define krb5_free_error_सन्देशः(a,b) कुरु { } यावत्(0)
+#यदि_अन्तः
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#यदि_अपरिभाषितम् HAVE_PLEDGE
+पूर्णाङ्क pledge(ध्रुव वर्ण *promises, ध्रुव वर्ण *execpromises);
+#यदि_अन्तः
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#यदि_अपरिभाषितम् HAVE_UNVEIL
+पूर्णाङ्क unveil(ध्रुव वर्ण *, ध्रुव वर्ण *);
+#यदि_अन्तः
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#यदि_अपरिभाषितम् HAVE_ERR
+शून्य err(पूर्णाङ्क, ध्रुव वर्ण *, ...) __attribute__((format(प्रारूप_लिख, 2, 3)));
+#यदि_अन्तः
+#यदि_अपरिभाषितम् HAVE_ERRX
+शून्य errx(पूर्णाङ्क, ध्रुव वर्ण *, ...) __attribute__((format(प्रारूप_लिख, 2, 3)));
+#यदि_अन्तः
+#यदि_अपरिभाषितम् HAVE_WARN
+शून्य warn(ध्रुव वर्ण *, ...) __attribute__((format(प्रारूप_लिख, 1, 2)));
+#यदि_अन्तः
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#यदि_अपरिभाषितम् HAVE_LLABS
+दीर्घ दीर्घ llabs(दीर्घ दीर्घ);
+#यदि_अन्तः
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#यदि defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+शून्य bzero(शून्य *, आकार_t);
+#यदि_अन्तः
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#यदि_अपरिभाषितम् HAVE_RAISE
+पूर्णाङ्क उत्थापय(पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifndef HAVE_GETSID
+#यदि_अपरिभाषितम् HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_FLOCK
+#यदि_अपरिभाषितम् HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+पूर्णाङ्क flock(पूर्णाङ्क, पूर्णाङ्क);
+#यदि_अन्तः
 
-#ifdef FFLUSH_NULL_BUG
+#यदि_परिभाषितम् FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#यदि_अन्तः
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#यदि_अपरिभाषितम् HAVE_LOCALTIME_R
+संरचना tm *localtime_r(ध्रुव time_t *, संरचना tm *);
+#यदि_अन्तः
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#यदि_अपरिभाषितम् HAVE_CLOCK_GETTIME
+प्रकारनिर्देश पूर्णाङ्क clockid_t;
+#यदि_अपरिभाषितम् CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#यदि_अन्तः
+पूर्णाङ्क clock_gettime(clockid_t, संरचना timespec *);
+#यदि_अन्तः
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#यदि_अपरिभाषितम् HAVE_REALPATH
+#परिभाषय realpath(x, y)	(sftp_realpath((x), (y)))
+#यदि_अन्तः
 
-#endif /* _BSD_MISC_H */
+#यदि_अन्तः /* _BSD_MISC_H */

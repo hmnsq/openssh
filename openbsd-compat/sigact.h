@@ -42,49 +42,49 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/SigAction.h */
 
-#ifndef _SIGACTION_H
-#define _SIGACTION_H
+#यदि_अपरिभाषितम् _SIGACTION_H
+#परिभाषय _SIGACTION_H
 
-#if !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
+#यदि !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC)
 
-#undef  SIG_BLOCK
-#define SIG_BLOCK       00
+#अपरिभाषय  SIG_BLOCK
+#परिभाषय SIG_BLOCK       00
 
-#undef  SIG_UNBLOCK
-#define SIG_UNBLOCK     01
+#अपरिभाषय  SIG_UNBLOCK
+#परिभाषय SIG_UNBLOCK     01
 
-#undef  SIG_SETMASK
-#define SIG_SETMASK     02
+#अपरिभाषय  SIG_SETMASK
+#परिभाषय SIG_SETMASK     02
 
 /*
  * <bsd/signal.h> is in the Linux 1.2.8 + gcc 2.7.0 configuration,
  * and is useful for testing this header file.
  */
-#if HAVE_BSD_SIGNAL_H
+#यदि HAVE_BSD_SIGNAL_H
 # include <bsd/signal.h>
-#endif
+#यदि_अन्तः
 
-struct sigaction
+संरचना sigaction
 {
-	struct sigvec sv;
+	संरचना sigvec sv;
 };
 
-typedef unsigned long sigset_t;
+प्रकारनिर्देश अचिह्नित दीर्घ sigset_t;
 
-#undef  sa_mask
-#define sa_mask sv.sv_mask
-#undef  sa_handler
-#define sa_handler sv.sv_handler
-#undef  sa_flags
-#define sa_flags sv.sv_flags
+#अपरिभाषय  sa_mask
+#परिभाषय sa_mask sv.sv_आवरणम्
+#अपरिभाषय  sa_handler
+#परिभाषय sa_handler sv.sv_handler
+#अपरिभाषय  sa_flags
+#परिभाषय sa_flags sv.sv_flags
 
-int sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact);
-int sigprocmask (int how, sigset_t *mask, sigset_t *omask);
-int sigemptyset (sigset_t *mask);
-int sigsuspend (sigset_t *mask);
-int sigdelset (sigset_t *mask, int sig);
-int sigaddset (sigset_t *mask, int sig);
+पूर्णाङ्क sigaction(पूर्णाङ्क sig, संरचना sigaction *sigact, संरचना sigaction *osigact);
+पूर्णाङ्क sigprocmask (पूर्णाङ्क how, sigset_t *आवरणम्, sigset_t *omask);
+पूर्णाङ्क sigemptyset (sigset_t *आवरणम्);
+पूर्णाङ्क sigsuspend (sigset_t *आवरणम्);
+पूर्णाङ्क sigdelset (sigset_t *आवरणम्, पूर्णाङ्क sig);
+पूर्णाङ्क sigaddset (sigset_t *आवरणम्, पूर्णाङ्क sig);
 
-#endif /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
+#यदि_अन्तः /* !defined(HAVE_SIGACTION) && defined(HAVE_SIGVEC) */
 
-#endif /* !defined(_SIGACTION_H) */
+#यदि_अन्तः /* !defined(_SIGACTION_H) */

@@ -22,23 +22,23 @@
 
 /* OPENBSD ORIGINAL: include/readpassphrase.h */
 
-#ifndef _READPASSPHRASE_H_
-#define _READPASSPHRASE_H_
+#यदि_अपरिभाषितम् _READPASSPHRASE_H_
+#परिभाषय _READPASSPHRASE_H_
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#यदि_अपरिभाषितम् HAVE_READPASSPHRASE
 
-#define RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
-#define RPP_ECHO_ON     0x01		/* Leave echo on. */
-#define RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
-#define RPP_FORCELOWER  0x04		/* Force input to lower case. */
-#define RPP_FORCEUPPER  0x08		/* Force input to upper case. */
-#define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
-#define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
+#परिभाषय RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
+#परिभाषय RPP_ECHO_ON     0x01		/* Leave echo on. */
+#परिभाषय RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
+#परिभाषय RPP_FORCELOWER  0x04		/* Force input to lower case. */
+#परिभाषय RPP_FORCEUPPER  0x08		/* Force input to upper case. */
+#परिभाषय RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
+#परिभाषय RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
 
-char * readpassphrase(const char *, char *, size_t, int);
+वर्ण * readpassphrase(ध्रुव वर्ण *, वर्ण *, आकार_t, पूर्णाङ्क);
 
-#endif /* HAVE_READPASSPHRASE */
+#यदि_अन्तः /* HAVE_READPASSPHRASE */
 
-#endif /* !_READPASSPHRASE_H_ */
+#यदि_अन्तः /* !_READPASSPHRASE_H_ */

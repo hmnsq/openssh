@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOLL
+#अन्तर्भाव "includes.h"
+#यदि_अपरिभाषितम् HAVE_STRTOLL
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -46,13 +46,13 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-long long
-strtoll(const char *nptr, char **endptr, int base)
+दीर्घ दीर्घ
+strtoll(ध्रुव वर्ण *nptr, वर्ण **endptr, पूर्णाङ्क आधारः)
 {
-	const char *s;
-	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ध्रुव वर्ण *s;
+	दीर्घ दीर्घ acc, cutoff;
+	पूर्णाङ्क c;
+	पूर्णाङ्क neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,25 +60,25 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	कुरु {
+		c = (अचिह्नित वर्ण) *s++;
+	} यावत् (रिक्तम्_वा(c));
+	यदि (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} अन्यथा {
 		neg = 0;
-		if (c == '+')
+		यदि (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	यदि ((आधारः == 0 || आधारः == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		आधारः = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	यदि (आधारः == 0)
+		आधारः = c == '0' ? 8 : 10;
 
 	/*
 	 * Compute the cutoff value between legal numbers and illegal
@@ -99,50 +99,50 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * overflow.
 	 */
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
-	cutlim = cutoff % base;
-	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
-			cutlim -= base;
+	cutlim = cutoff % आधारः;
+	cutoff /= आधारः;
+	यदि (neg) {
+		यदि (cutlim > 0) {
+			cutlim -= आधारः;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	प्रति (acc = 0, any = 0;; c = (अचिह्नित वर्ण) *s++) {
+		यदि (अङ्कः_वा(c))
 			c -= '0';
-		else if (isalpha(c))
+		अन्यथा यदि (अक्षरम्_वा(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		अन्यथा
+			भङ्ग;
+		यदि (c >= आधारः)
+			भङ्ग;
+		यदि (any < 0)
+			अनुवर्त;
+		यदि (neg) {
+			यदि (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} अन्यथा {
 				any = 1;
-				acc *= base;
+				acc *= आधारः;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} अन्यथा {
+			यदि (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} अन्यथा {
 				any = 1;
-				acc *= base;
+				acc *= आधारः;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	यदि (endptr != 0)
+		*endptr = (वर्ण *) (any ? s - 1 : nptr);
+	प्रत्यागम (acc);
 }
-#endif /* HAVE_STRTOLL */
+#यदि_अन्तः /* HAVE_STRTOLL */

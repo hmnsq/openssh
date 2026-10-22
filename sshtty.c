@@ -35,62 +35,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <termios.h>
+#अन्तर्भाव <pwd.h>
 
-#include "sshpty.h"
+#अन्तर्भाव "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+स्थिर संरचना termios _saved_tio;
+स्थिर पूर्णाङ्क अन्तर्_raw_बहुलकम् = 0;
 
-struct termios *
-get_saved_tio(void)
+संरचना termios *
+get_saved_tio(शून्य)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	प्रत्यागम अन्तर्_raw_बहुलकम् ? &_saved_tio : रिक्त;
 }
 
-void
-leave_raw_mode(int quiet)
+शून्य
+leave_raw_बहुलकम्(पूर्णाङ्क quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	यदि (!अन्तर्_raw_बहुलकम्)
+		प्रत्यागम;
+	यदि (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		यदि (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 0;
+	} अन्यथा
+		अन्तर्_raw_बहुलकम् = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+शून्य
+enter_raw_बहुलकम्(पूर्णाङ्क quiet)
 {
-	struct termios tio;
+	संरचना termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	यदि (tcgetattr(fileno(stdin), &tio) == -1) {
+		यदि (!quiet)
 			perror("tcgetattr");
-		return;
+		प्रत्यागम;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
 	tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
-#ifdef IUCLC
+#यदि_परिभाषितम् IUCLC
 	tio.c_iflag &= ~IUCLC;
-#endif
+#यदि_अन्तः
 	tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
-#ifdef IEXTEN
+#यदि_परिभाषितम् IEXTEN
 	tio.c_lflag &= ~IEXTEN;
-#endif
+#यदि_अन्तः
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	यदि (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		यदि (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 1;
+	} अन्यथा
+		अन्तर्_raw_बहुलकम् = 1;
 }

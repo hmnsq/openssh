@@ -15,69 +15,69 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#ifndef WITH_OPENSSL
+#यदि_अपरिभाषितम् WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <string.h>
 
-#include "cipher-aesctr.h"
+#अन्तर्भाव "cipher-aesctr.h"
 
 /*
  * increment counter 'ctr',
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+स्थिर अन्तःस्थ शून्य
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
-#ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
-	u8 x, add = 1;
+#यदि_अपरिभाषितम् CONSTANT_TIME_INCREMENT
+	प्रति (i = len - 1; i >= 0; i--)
+		यदि (++ctr[i])	/* continue on overflow */
+			प्रत्यागम;
+#अन्यथा
+	u8 x, सङ्कलय = 1;
 
-	for (i = len - 1; i >= 0; i--) {
-		ctr[i] += add;
+	प्रति (i = len - 1; i >= 0; i--) {
+		ctr[i] += सङ्कलय;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
 		x = (x | (x >> 4)) & 0xf;
 		x = (x | (x >> 2)) & 0x3;
 		x = (x | (x >> 1)) & 0x1;
-		add *= (x^1);
+		सङ्कलय *= (x^1);
 	}
-#endif
+#यदि_अन्तः
 }
 
-void
-aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
+शून्य
+aesctr_keysetup(aesctr_ctx *x,ध्रुव u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->आवर्तनानि = rijndael_कुञ्चिका_सज्जता_Enc(x->ek, k, kbits);
 }
 
-void
-aesctr_ivsetup(aesctr_ctx *x,const u8 *iv)
+शून्य
+aesctr_ivsetup(aesctr_ctx *x,ध्रुव u8 *iv)
 {
-	memcpy(x->ctr, iv, AES_BLOCK_SIZE);
+	स्मृतिं_प्रतिलिख(x->ctr, iv, AES_खण्डम्_आकार);
 }
 
-void
-aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
+शून्य
+aesctr_encrypt_अष्टकानि(aesctr_ctx *x,ध्रुव u8 *m,u8 *c,u32 अष्टकानि)
 {
 	u32 n = 0;
-	u8 buf[AES_BLOCK_SIZE];
+	u8 buf[AES_खण्डम्_आकार];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
-			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
-			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
+	यावत् ((अष्टकानि--) > 0) {
+		यदि (n == 0) {
+			rijndaelEncrypt(x->ek, x->आवर्तनानि, x->ctr, buf);
+			aesctr_inc(x->ctr, AES_खण्डम्_आकार);
 		}
 		*(c++) = *(m++) ^ buf[n];
-		n = (n + 1) % AES_BLOCK_SIZE;
+		n = (n + 1) % AES_खण्डम्_आकार;
 	}
 }
-#endif /* !WITH_OPENSSL */
+#यदि_अन्तः /* !WITH_OPENSSL */

@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
+#अन्तर्भाव "crypto_api.h"
+#अन्तर्भाव "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+संरचना ed25519_kat {
+	ध्रुव वर्ण *sk;
+	ध्रुव वर्ण *pk;
+	ध्रुव वर्ण *सन्देशः;
+	ध्रुव वर्ण *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+स्थिर ध्रुव संरचना ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,39 +61,39 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+शून्य ed25519_tests(शून्य);
 
-void
-ed25519_tests(void)
+शून्य
+ed25519_tests(शून्य)
 {
-	uint8_t pk[32], sk[64], seed[32], sig[64];
+	uint8_t pk[32], sk[64], बीजम्[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
-	size_t i, msglen;
-	unsigned long long smlen;
+	uint8_t *सन्देशः;
+	आकार_t i, msglen;
+	अचिह्नित दीर्घ दीर्घ smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	प्रति (i = 0; i < परिमाण(ed25519_kats)/परिमाण(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
-		hex2bin(seed, ed25519_kats[i].sk, 32);
+		hex2bin(बीजम्, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
-		ASSERT_INT_EQ(crypto_sign_ed25519_seed_keypair(pk, sk, seed), 0);
+		ASSERT_INT_EQ(crypto_sign_ed25519_बीजम्_keypair(pk, sk, बीजम्), 0);
 		ASSERT_MEM_EQ(pk, expected_pk, 32);
-		TEST_DONE();
+		TEST_समाप्तम्();
 
 		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		msglen = वाक्यदैर्घ्यम्(ed25519_kats[i].सन्देशः) / 2;
+		ASSERT_PTR_NE(सन्देशः = स्मृतिं_देहि(msglen == 0 ? 1 : msglen), रिक्त);
+		hex2bin(सन्देशः, ed25519_kats[i].सन्देशः, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    सन्देशः, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
-		TEST_DONE();
+		    सन्देशः, msglen, pk), 0);
+		मुक्त(सन्देशः);
+		TEST_समाप्तम्();
 	}
 }

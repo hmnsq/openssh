@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <unistd.h>
 
-#ifdef mkstemp
-#undef mkstemp
-#endif
-int mkstemp(char *);
+#यदि_परिभाषितम् mkstemp
+#अपरिभाषय mkstemp
+#यदि_अन्तः
+पूर्णाङ्क mkstemp(वर्ण *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+पूर्णाङ्क
+_ssh_mkstemp(वर्ण *प्रतिरूपम्)
 {
-	mode_t mask;
-	int ret;
+	बहुलकम्_t आवरणम्;
+	पूर्णाङ्क ret;
 
-	mask = umask(0177);
-	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	आवरणम् = umask(0177);
+	ret = mkstemp(प्रतिरूपम्);
+	(शून्य)umask(आवरणम्);
+	प्रत्यागम ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#यदि !defined(HAVE_MKDTEMP)
 
-#define MKTEMP_NAME	0
-#define MKTEMP_FILE	1
-#define MKTEMP_DIR	2
+#परिभाषय MKTEMP_NAME	0
+#परिभाषय MKTEMP_FILE	1
+#परिभाषय MKTEMP_DIR	2
 
-#define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#परिभाषय TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+#परिभाषय अङ्कः_CHARS	(परिमाण(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+स्थिर पूर्णाङ्क
+mktemp_आन्तरिकम्(वर्ण *मार्गः, पूर्णाङ्क slen, पूर्णाङ्क बहुलकम्)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
-	size_t len;
-	int fd;
+	वर्ण *start, *cp, *ep;
+	ध्रुव वर्ण *tempchars = TEMPCHARS;
+	अचिह्नित पूर्णाङ्क r, tries;
+	संरचना stat sb;
+	आकार_t len;
+	पूर्णाङ्क fd;
 
-	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	len = वाक्यदैर्घ्यम्(मार्गः);
+	यदि (len == 0 || slen < 0 || (आकार_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		प्रत्यागम(-1);
 	}
-	ep = path + len - slen;
+	ep = मार्गः + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	प्रति (start = ep; start > मार्गः && start[-1] == 'X'; start--) {
+		यदि (tries < अधिकतम_पूर्णाङ्कः / अङ्कः_CHARS)
+			tries *= अङ्कः_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	कुरु {
+		प्रति (cp = start; cp != ep; cp++) {
+			r = arc4random_एकरूपम्(अङ्कः_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
-			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+		विकल्प (बहुलकम्) {
+		पक्ष MKTEMP_NAME:
+			यदि (lstat(मार्गः, &sb) != 0)
+				प्रत्यागम(errno == ENOENT ? 0 : -1);
+			भङ्ग;
+		पक्ष MKTEMP_FILE:
+			fd = उद्घाटय(मार्गः, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+			यदि (fd != -1 || errno != EEXIST)
+				प्रत्यागम(fd);
+			भङ्ग;
+		पक्ष MKTEMP_DIR:
+			यदि (mkdir(मार्गः, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				प्रत्यागम(0);
+			यदि (errno != EEXIST)
+				प्रत्यागम(-1);
+			भङ्ग;
 		}
-	} while (--tries);
+	} यावत् (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	प्रत्यागम(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#यदि 0
+वर्ण *_mktemp(वर्ण *);
 
-char *
-_mktemp(char *path)
+वर्ण *
+_mktemp(वर्ण *मार्गः)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	यदि (mktemp_आन्तरिकम्(मार्गः, 0, MKTEMP_NAME) == -1)
+		प्रत्यागम(रिक्त);
+	प्रत्यागम(मार्गः);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+वर्ण *
+mktemp(वर्ण *मार्गः)
 {
-	return(_mktemp(path));
+	प्रत्यागम(_mktemp(मार्गः));
 }
-#endif
+#यदि_अन्तः
 
-int
-mkstemp(char *path)
+पूर्णाङ्क
+mkstemp(वर्ण *मार्गः)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
-}
-
-int
-mkstemps(char *path, int slen)
-{
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	प्रत्यागम(mktemp_आन्तरिकम्(मार्गः, 0, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+पूर्णाङ्क
+mkstemps(वर्ण *मार्गः, पूर्णाङ्क slen)
 {
-	int error;
-
-	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	प्रत्यागम(mktemp_आन्तरिकम्(मार्गः, slen, MKTEMP_FILE));
 }
 
-#endif /* !defined(HAVE_MKDTEMP) */
+वर्ण *
+mkdtemp(वर्ण *मार्गः)
+{
+	पूर्णाङ्क error;
+
+	error = mktemp_आन्तरिकम्(मार्गः, 0, MKTEMP_DIR);
+	प्रत्यागम(error ? रिक्त : मार्गः);
+}
+
+#यदि_अन्तः /* !defined(HAVE_MKDTEMP) */

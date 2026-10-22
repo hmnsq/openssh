@@ -18,41 +18,41 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcpy.c */
 
-#include "includes.h"
-#ifndef HAVE_STRLCPY
+#अन्तर्भाव "includes.h"
+#यदि_अपरिभाषितम् HAVE_STRLCPY
 
-#include <sys/types.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <string.h>
 
 /*
  * Copy src to string dst of size siz.  At most siz-1 characters
  * will be copied.  Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
-size_t
-strlcpy(char *dst, const char *src, size_t siz)
+आकार_t
+strlcpy(वर्ण *dst, ध्रुव वर्ण *src, आकार_t siz)
 {
-	char *d = dst;
-	const char *s = src;
-	size_t n = siz;
+	वर्ण *d = dst;
+	ध्रुव वर्ण *s = src;
+	आकार_t n = siz;
 
 	/* Copy as many bytes as will fit */
-	if (n != 0) {
-		while (--n != 0) {
-			if ((*d++ = *s++) == '\0')
-				break;
+	यदि (n != 0) {
+		यावत् (--n != 0) {
+			यदि ((*d++ = *s++) == '\0')
+				भङ्ग;
 		}
 	}
 
 	/* Not enough room in dst, add NUL and traverse rest of src */
-	if (n == 0) {
-		if (siz != 0)
+	यदि (n == 0) {
+		यदि (siz != 0)
 			*d = '\0';		/* NUL-terminate dst */
-		while (*s++)
+		यावत् (*s++)
 			;
 	}
 
-	return(s - src - 1);	/* count does not include NUL */
+	प्रत्यागम(s - src - 1);	/* count does not include NUL */
 }
 
-#endif /* !HAVE_STRLCPY */
+#यदि_अन्तः /* !HAVE_STRLCPY */

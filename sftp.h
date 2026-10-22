@@ -28,74 +28,74 @@
  * draft-ietf-secsh-filexfer-01.txt
  */
 
-/* version */
-#define	SSH2_FILEXFER_VERSION		3
+/*संस्करणम्*/
+#परिभाषय	SSH2_FILEXFER_संस्करणम्		3
 
 /* client to server */
-#define SSH2_FXP_INIT			1
-#define SSH2_FXP_OPEN			3
-#define SSH2_FXP_CLOSE			4
-#define SSH2_FXP_READ			5
-#define SSH2_FXP_WRITE			6
-#define SSH2_FXP_LSTAT			7
-#define SSH2_FXP_STAT_VERSION_0		7
-#define SSH2_FXP_FSTAT			8
-#define SSH2_FXP_SETSTAT		9
-#define SSH2_FXP_FSETSTAT		10
-#define SSH2_FXP_OPENDIR		11
-#define SSH2_FXP_READDIR		12
-#define SSH2_FXP_REMOVE			13
-#define SSH2_FXP_MKDIR			14
-#define SSH2_FXP_RMDIR			15
-#define SSH2_FXP_REALPATH		16
-#define SSH2_FXP_STAT			17
-#define SSH2_FXP_RENAME			18
-#define SSH2_FXP_READLINK		19
-#define SSH2_FXP_SYMLINK		20
+#परिभाषय SSH2_FXP_INIT			1
+#परिभाषय SSH2_FXP_OPEN			3
+#परिभाषय SSH2_FXP_CLOSE			4
+#परिभाषय SSH2_FXP_READ			5
+#परिभाषय SSH2_FXP_WRITE			6
+#परिभाषय SSH2_FXP_LSTAT			7
+#परिभाषय SSH2_FXP_STAT_संस्करणम्_0		7
+#परिभाषय SSH2_FXP_FSTAT			8
+#परिभाषय SSH2_FXP_SETSTAT		9
+#परिभाषय SSH2_FXP_FSETSTAT		10
+#परिभाषय SSH2_FXP_OPENDIR		11
+#परिभाषय SSH2_FXP_READDIR		12
+#परिभाषय SSH2_FXP_REMOVE			13
+#परिभाषय SSH2_FXP_MKDIR			14
+#परिभाषय SSH2_FXP_RMDIR			15
+#परिभाषय SSH2_FXP_REALPATH		16
+#परिभाषय SSH2_FXP_STAT			17
+#परिभाषय SSH2_FXP_RENAME			18
+#परिभाषय SSH2_FXP_READLINK		19
+#परिभाषय SSH2_FXP_SYMLINK		20
 
 /* server to client */
-#define SSH2_FXP_VERSION		2
-#define SSH2_FXP_STATUS			101
-#define SSH2_FXP_HANDLE			102
-#define SSH2_FXP_DATA			103
-#define SSH2_FXP_NAME			104
-#define SSH2_FXP_ATTRS			105
+#परिभाषय SSH2_FXP_संस्करणम्		2
+#परिभाषय SSH2_FXP_स्थितिः			101
+#परिभाषय SSH2_FXP_HANDLE			102
+#परिभाषय SSH2_FXP_दत्त			103
+#परिभाषय SSH2_FXP_NAME			104
+#परिभाषय SSH2_FXP_ATTRS			105
 
-#define SSH2_FXP_EXTENDED		200
-#define SSH2_FXP_EXTENDED_REPLY		201
+#परिभाषय SSH2_FXP_EXTENDED		200
+#परिभाषय SSH2_FXP_EXTENDED_प्रत्युत्तरम्		201
 
-/* attributes */
-#define SSH2_FILEXFER_ATTR_SIZE		0x00000001
-#define SSH2_FILEXFER_ATTR_UIDGID	0x00000002
-#define SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
-#define SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
-#define SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
+/*गुणाः*/
+#परिभाषय SSH2_FILEXFER_ATTR_आकार		0x00000001
+#परिभाषय SSH2_FILEXFER_ATTR_UIDGID	0x00000002
+#परिभाषय SSH2_FILEXFER_ATTR_PERMISSIONS	0x00000004
+#परिभाषय SSH2_FILEXFER_ATTR_ACMODTIME	0x00000008
+#परिभाषय SSH2_FILEXFER_ATTR_EXTENDED	0x80000000
 
 /* portable open modes */
-#define SSH2_FXF_READ			0x00000001
-#define SSH2_FXF_WRITE			0x00000002
-#define SSH2_FXF_APPEND			0x00000004
-#define SSH2_FXF_CREAT			0x00000008
-#define SSH2_FXF_TRUNC			0x00000010
-#define SSH2_FXF_EXCL			0x00000020
+#परिभाषय SSH2_FXF_READ			0x00000001
+#परिभाषय SSH2_FXF_WRITE			0x00000002
+#परिभाषय SSH2_FXF_APPEND			0x00000004
+#परिभाषय SSH2_FXF_CREAT			0x00000008
+#परिभाषय SSH2_FXF_TRUNC			0x00000010
+#परिभाषय SSH2_FXF_EXCL			0x00000020
 
 /* statvfs@openssh.com f_flag flags */
-#define SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
-#define SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
+#परिभाषय SSH2_FXE_STATVFS_ST_RDONLY	0x00000001
+#परिभाषय SSH2_FXE_STATVFS_ST_NOSUID	0x00000002
 
 /* status messages */
-#define SSH2_FX_OK			0
-#define SSH2_FX_EOF			1
-#define SSH2_FX_NO_SUCH_FILE		2
-#define SSH2_FX_PERMISSION_DENIED	3
-#define SSH2_FX_FAILURE			4
-#define SSH2_FX_BAD_MESSAGE		5
-#define SSH2_FX_NO_CONNECTION		6
-#define SSH2_FX_CONNECTION_LOST		7
-#define SSH2_FX_OP_UNSUPPORTED		8
-#define SSH2_FX_MAX			8
+#परिभाषय SSH2_FX_OK			0
+#परिभाषय SSH2_FX_EOF			1
+#परिभाषय SSH2_FX_NO_SUCH_FILE		2
+#परिभाषय SSH2_FX_PERMISSION_DENIED	3
+#परिभाषय SSH2_FX_FAILURE			4
+#परिभाषय SSH2_FX_BAD_सन्देशः		5
+#परिभाषय SSH2_FX_NO_CONNECTION		6
+#परिभाषय SSH2_FX_CONNECTION_नष्टम्		7
+#परिभाषय SSH2_FX_OP_UNSUPPORTED		8
+#परिभाषय SSH2_FX_MAX			8
 
-struct passwd;
+संरचना passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+पूर्णाङ्क	sftp_server_main(पूर्णाङ्क, वर्ण **, संरचना passwd *);
+शून्य	sftp_server_cleanup_exit(पूर्णाङ्क) __attribute__((noreturn));

@@ -51,12 +51,12 @@
    then none of the API changes above take place, and the API is the
    one defined by the PKCS #11 standard.  */
 
-#ifndef PKCS11_H
-#define PKCS11_H 1
+#यदि_अपरिभाषितम् PKCS11_H
+#परिभाषय PKCS11_H 1
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#यदि defined(__cplusplus)
+बाह्य "C" {
+#यदि_अन्तः
 
 
 /* The version of cryptoki we implement.  The revision is changed with
@@ -64,1359 +64,1359 @@ extern "C" {
    version of this file, please consider deleting the revision macro
    (you may use a macro with a different name to keep track of your
    versions).  */
-#define CRYPTOKI_VERSION_MAJOR		3
-#define CRYPTOKI_VERSION_MINOR		0
-#define CRYPTOKI_VERSION_REVISION	0
+#परिभाषय CRYPTOKI_संस्करणम्_MAJOR		3
+#परिभाषय CRYPTOKI_संस्करणम्_MINOR		0
+#परिभाषय CRYPTOKI_संस्करणम्_REVISION	0
 
 
 /* Compatibility interface is default, unless CRYPTOKI_GNU is
    given.  */
-#ifndef CRYPTOKI_GNU
-#ifndef CRYPTOKI_COMPAT
-#define CRYPTOKI_COMPAT 1
-#endif
-#endif
+#यदि_अपरिभाषितम् CRYPTOKI_GNU
+#यदि_अपरिभाषितम् CRYPTOKI_COMPAT
+#परिभाषय CRYPTOKI_COMPAT 1
+#यदि_अन्तः
+#यदि_अन्तः
 
 /* System dependencies.  */
 
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#यदि defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 
 /* There is a matching pop below.  */
-#pragma pack(push, cryptoki, 1)
+#निर्देशः pack(प्रक्षिप, cryptoki, 1)
 
-#ifdef CRYPTOKI_EXPORTS
-#define CK_SPEC __declspec(dllexport)
-#else
-#define CK_SPEC __declspec(dllimport)
-#endif
+#यदि_परिभाषितम् CRYPTOKI_EXPORTS
+#परिभाषय CK_SPEC __declspec(dllexport)
+#अन्यथा
+#परिभाषय CK_SPEC __declspec(dllimport)
+#यदि_अन्तः
 
-#else
+#अन्यथा
 
-#define CK_SPEC
+#परिभाषय CK_SPEC
 
-#endif
+#यदि_अन्तः
 
-#ifdef CRYPTOKI_COMPAT
+#यदि_परिभाषितम् CRYPTOKI_COMPAT
   /* If we are in compatibility mode, switch all exposed names to the
      PKCS #11 variant.  There are corresponding #undefs below.  */
 
-#define ck_flags_t CK_FLAGS
-#define ck_version _CK_VERSION
+#परिभाषय ck_flags_t CK_FLAGS
+#परिभाषय ck_संस्करणम् CK_संस्करणम्
 
-#define ck_info _CK_INFO
-#define cryptoki_version cryptokiVersion
-#define manufacturer_id manufacturerID
-#define library_description libraryDescription
-#define library_version libraryVersion
+#परिभाषय ck_info _CK_INFO
+#परिभाषय cryptoki_संस्करणम् cryptoki_संस्करणम्_2
+#परिभाषय manufacturer_id manufacturerID
+#परिभाषय library_description libraryDescription
+#परिभाषय library_संस्करणम् library_संस्करणम्_2
 
-#define ck_notification_t CK_NOTIFICATION
-#define ck_slot_id_t CK_SLOT_ID
+#परिभाषय ck_notification_t CK_NOTIFICATION
+#परिभाषय ck_slot_id_t CK_SLOT_ID
 
-#define ck_slot_info _CK_SLOT_INFO
-#define slot_description slotDescription
-#define hardware_version hardwareVersion
-#define firmware_version firmwareVersion
+#परिभाषय ck_slot_info _CK_SLOT_INFO
+#परिभाषय slot_description slotDescription
+#परिभाषय hardware_संस्करणम् hardware_संस्करणम्_2
+#परिभाषय firmware_संस्करणम् firmware_संस्करणम्_2
 
-#define ck_token_info _CK_TOKEN_INFO
-#define serial_number serialNumber
-#define max_session_count ulMaxSessionCount
-#define session_count ulSessionCount
-#define max_rw_session_count ulMaxRwSessionCount
-#define rw_session_count ulRwSessionCount
-#define max_pin_len ulMaxPinLen
-#define min_pin_len ulMinPinLen
-#define total_public_memory ulTotalPublicMemory
-#define free_public_memory ulFreePublicMemory
-#define total_private_memory ulTotalPrivateMemory
-#define free_private_memory ulFreePrivateMemory
-#define utc_time utcTime
+#परिभाषय ck_token_info _CK_TOKEN_INFO
+#परिभाषय serial_सङ्ख्या serial_सङ्ख्या_2
+#परिभाषय max_session_गणनम् ul_Max_Session_गणनम्
+#परिभाषय session_गणनम् ul_Session_गणनम्
+#परिभाषय max_rw_session_गणनम् ul_Max_Rw_Session_गणनम्
+#परिभाषय rw_session_गणनम् ul_Rw_Session_गणनम्
+#परिभाषय max_pin_len ulMaxPinLen
+#परिभाषय min_pin_len ulMinPinLen
+#परिभाषय योग_लौकिकम्_स्मृतिः ul_योग_लौकिकम्_स्मृतिः
+#परिभाषय free_लौकिकम्_स्मृतिः ul_Free_लौकिकम्_स्मृतिः
+#परिभाषय योग_वैयक्तिकम्_स्मृतिः ul_योग_वैयक्तिकम्_स्मृतिः
+#परिभाषय free_वैयक्तिकम्_स्मृतिः ul_Free_वैयक्तिकम्_स्मृतिः
+#परिभाषय utc_time utcTime
 
-#define ck_session_handle_t CK_SESSION_HANDLE
-#define ck_user_type_t CK_USER_TYPE
-#define ck_state_t CK_STATE
+#परिभाषय ck_session_handle_t CK_SESSION_HANDLE
+#परिभाषय ck_user_type_t CK_USER_TYPE
+#परिभाषय ck_state_t CK_STATE
 
-#define ck_session_info _CK_SESSION_INFO
-#define slot_id slotID
-#define device_error ulDeviceError
+#परिभाषय ck_session_info _CK_SESSION_INFO
+#परिभाषय slot_id slotID
+#परिभाषय device_error ulDeviceError
 
-#define ck_object_handle_t CK_OBJECT_HANDLE
-#define ck_object_class_t CK_OBJECT_CLASS
-#define ck_hw_feature_type_t CK_HW_FEATURE_TYPE
-#define ck_key_type_t CK_KEY_TYPE
-#define ck_certificate_type_t CK_CERTIFICATE_TYPE
-#define ck_attribute_type_t CK_ATTRIBUTE_TYPE
+#परिभाषय ck_object_handle_t CK_OBJECT_HANDLE
+#परिभाषय ck_object_class_t CK_OBJECT_CLASS
+#परिभाषय ck_hw_feature_type_t CK_HW_FEATURE_TYPE
+#परिभाषय ck_कुञ्चिका_type_t CK_कुञ्चिका_TYPE
+#परिभाषय ck_certificate_type_t CK_CERTIFICATE_TYPE
+#परिभाषय ck_attribute_type_t CK_ATTRIBUTE_TYPE
 
-#define ck_attribute _CK_ATTRIBUTE
-#define value pValue
-#define value_len ulValueLen
+#परिभाषय ck_attribute _CK_ATTRIBUTE
+#परिभाषय मानम् p_मानम्
+#परिभाषय मानम्_len ul_मानम्_Len
 
-#define ck_date _CK_DATE
+#परिभाषय ck_date _CK_DATE
 
-#define ck_mechanism_type_t CK_MECHANISM_TYPE
+#परिभाषय ck_mechanism_type_t CK_MECHANISM_TYPE
 
-#define ck_rsa_pkcs_mgf_type_t CK_RSA_PKCS_MGF_TYPE
+#परिभाषय ck_rsa_pkcs_mgf_type_t CK_RSA_PKCS_MGF_TYPE
 
-#define ck_mechanism _CK_MECHANISM
-#define parameter pParameter
-#define parameter_len ulParameterLen
+#परिभाषय ck_mechanism _CK_MECHANISM
+#परिभाषय parameter pParameter
+#परिभाषय parameter_len ulParameterLen
 
-#define ck_mechanism_info _CK_MECHANISM_INFO
-#define min_key_size ulMinKeySize
-#define max_key_size ulMaxKeySize
+#परिभाषय ck_mechanism_info _CK_MECHANISM_INFO
+#परिभाषय min_कुञ्चिका_आकार ul_Min_कुञ्चिका_आकार
+#परिभाषय max_कुञ्चिका_आकार ul_Max_कुञ्चिका_आकार
 
-#define ck_rv_t CK_RV
-#define ck_notify_t CK_NOTIFY
+#परिभाषय ck_rv_t CK_RV
+#परिभाषय ck_notify_t CK_NOTIFY
 
-#define ck_interface CK_INTERFACE
+#परिभाषय ck_interface CK_INTERFACE
 
-#define ck_function_list _CK_FUNCTION_LIST
-#define ck_function_list_3_0 _CK_FUNCTION_LIST_3_0
+#परिभाषय ck_function_list _CK_FUNCTION_LIST
+#परिभाषय ck_function_list_3_0 _CK_FUNCTION_LIST_3_0
 
-#define ck_createmutex_t CK_CREATEMUTEX
-#define ck_destroymutex_t CK_DESTROYMUTEX
-#define ck_lockmutex_t CK_LOCKMUTEX
-#define ck_unlockmutex_t CK_UNLOCKMUTEX
+#परिभाषय ck_createmutex_t CK_CREATEMUTEX
+#परिभाषय ck_destroymutex_t CK_DESTROYMUTEX
+#परिभाषय ck_lockmutex_t CK_LOCKMUTEX
+#परिभाषय ck_unlockmutex_t CK_UNLOCKMUTEX
 
-#define ck_c_initialize_args _CK_C_INITIALIZE_ARGS
-#define create_mutex CreateMutex
-#define destroy_mutex DestroyMutex
-#define lock_mutex LockMutex
-#define unlock_mutex UnlockMutex
-#define reserved pReserved
+#परिभाषय ck_c_initialize_तर्काः CK_C_INITIALIZE_तर्काः
+#परिभाषय create_mutex CreateMutex
+#परिभाषय destroy_mutex DestroyMutex
+#परिभाषय तालकम्_mutex तालकम्_Mutex
+#परिभाषय unlock_mutex UnlockMutex
+#परिभाषय reserved pReserved
 
-#endif	/* CRYPTOKI_COMPAT */
+#यदि_अन्तः	/* CRYPTOKI_COMPAT */
 
 
-typedef unsigned long ck_flags_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_flags_t;
 
-struct ck_version
+संरचना ck_संस्करणम्
 {
-  unsigned char major;
-  unsigned char minor;
+  अचिह्नित वर्ण major;
+  अचिह्नित वर्ण minor;
 };
 
 
-struct ck_info
+संरचना ck_info
 {
-  struct ck_version cryptoki_version;
-  unsigned char manufacturer_id[32];
+  संरचना ck_संस्करणम् cryptoki_संस्करणम्;
+  अचिह्नित वर्ण manufacturer_id[32];
   ck_flags_t flags;
-  unsigned char library_description[32];
-  struct ck_version library_version;
+  अचिह्नित वर्ण library_description[32];
+  संरचना ck_संस्करणम् library_संस्करणम्;
 };
 
 
-typedef unsigned long ck_notification_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_notification_t;
 
-#define CKN_SURRENDER	(0UL)
-
-
-typedef unsigned long ck_slot_id_t;
+#परिभाषय CKN_SURRENDER	(0UL)
 
 
-struct ck_slot_info
+प्रकारनिर्देश अचिह्नित दीर्घ ck_slot_id_t;
+
+
+संरचना ck_slot_info
 {
-  unsigned char slot_description[64];
-  unsigned char manufacturer_id[32];
+  अचिह्नित वर्ण slot_description[64];
+  अचिह्नित वर्ण manufacturer_id[32];
   ck_flags_t flags;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
+  संरचना ck_संस्करणम् hardware_संस्करणम्;
+  संरचना ck_संस्करणम् firmware_संस्करणम्;
 };
 
 
-#define CKF_TOKEN_PRESENT	(1UL << 0)
-#define CKF_REMOVABLE_DEVICE	(1UL << 1)
-#define CKF_HW_SLOT		(1UL << 2)
-#define CKF_ARRAY_ATTRIBUTE	(1UL << 30)
+#परिभाषय CKF_TOKEN_PRESENT	(1UL << 0)
+#परिभाषय CKF_REMOVABLE_DEVICE	(1UL << 1)
+#परिभाषय CKF_HW_SLOT		(1UL << 2)
+#परिभाषय CKF_ARRAY_ATTRIBUTE	(1UL << 30)
 
 
-struct ck_token_info
+संरचना ck_token_info
 {
-  unsigned char label[32];
-  unsigned char manufacturer_id[32];
-  unsigned char model[16];
-  unsigned char serial_number[16];
+  अचिह्नित वर्ण label[32];
+  अचिह्नित वर्ण manufacturer_id[32];
+  अचिह्नित वर्ण model[16];
+  अचिह्नित वर्ण serial_सङ्ख्या[16];
   ck_flags_t flags;
-  unsigned long max_session_count;
-  unsigned long session_count;
-  unsigned long max_rw_session_count;
-  unsigned long rw_session_count;
-  unsigned long max_pin_len;
-  unsigned long min_pin_len;
-  unsigned long total_public_memory;
-  unsigned long free_public_memory;
-  unsigned long total_private_memory;
-  unsigned long free_private_memory;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
-  unsigned char utc_time[16];
+  अचिह्नित दीर्घ max_session_गणनम्;
+  अचिह्नित दीर्घ session_गणनम्;
+  अचिह्नित दीर्घ max_rw_session_गणनम्;
+  अचिह्नित दीर्घ rw_session_गणनम्;
+  अचिह्नित दीर्घ max_pin_len;
+  अचिह्नित दीर्घ min_pin_len;
+  अचिह्नित दीर्घ योग_लौकिकम्_स्मृतिः;
+  अचिह्नित दीर्घ free_लौकिकम्_स्मृतिः;
+  अचिह्नित दीर्घ योग_वैयक्तिकम्_स्मृतिः;
+  अचिह्नित दीर्घ free_वैयक्तिकम्_स्मृतिः;
+  संरचना ck_संस्करणम् hardware_संस्करणम्;
+  संरचना ck_संस्करणम् firmware_संस्करणम्;
+  अचिह्नित वर्ण utc_time[16];
 };
 
 
-#define CKF_RNG					(1UL << 0)
-#define CKF_WRITE_PROTECTED			(1UL << 1)
-#define CKF_LOGIN_REQUIRED			(1UL << 2)
-#define CKF_USER_PIN_INITIALIZED		(1UL << 3)
-#define CKF_RESTORE_KEY_NOT_NEEDED		(1UL << 5)
-#define CKF_CLOCK_ON_TOKEN			(1UL << 6)
-#define CKF_PROTECTED_AUTHENTICATION_PATH	(1UL << 8)
-#define CKF_DUAL_CRYPTO_OPERATIONS		(1UL << 9)
-#define CKF_TOKEN_INITIALIZED			(1UL << 10)
-#define CKF_SECONDARY_AUTHENTICATION		(1UL << 11)
-#define CKF_USER_PIN_COUNT_LOW			(1UL << 16)
-#define CKF_USER_PIN_FINAL_TRY			(1UL << 17)
-#define CKF_USER_PIN_LOCKED			(1UL << 18)
-#define CKF_USER_PIN_TO_BE_CHANGED		(1UL << 19)
-#define CKF_SO_PIN_COUNT_LOW			(1UL << 20)
-#define CKF_SO_PIN_FINAL_TRY			(1UL << 21)
-#define CKF_SO_PIN_LOCKED			(1UL << 22)
-#define CKF_SO_PIN_TO_BE_CHANGED		(1UL << 23)
+#परिभाषय CKF_RNG					(1UL << 0)
+#परिभाषय CKF_WRITE_PROTECTED			(1UL << 1)
+#परिभाषय CKF_LOGIN_REQUIRED			(1UL << 2)
+#परिभाषय CKF_USER_PIN_INITIALIZED		(1UL << 3)
+#परिभाषय CKF_RESTORE_कुञ्चिका_NOT_NEEDED		(1UL << 5)
+#परिभाषय CKF_CLOCK_ON_TOKEN			(1UL << 6)
+#परिभाषय CKF_PROTECTED_AUTHENTICATION_मार्गः	(1UL << 8)
+#परिभाषय CKF_DUAL_CRYPTO_OPERATIONS		(1UL << 9)
+#परिभाषय CKF_TOKEN_INITIALIZED			(1UL << 10)
+#परिभाषय CKF_SECONDARY_AUTHENTICATION		(1UL << 11)
+#परिभाषय CKF_USER_PIN_गणनम्_नीचः			(1UL << 16)
+#परिभाषय CKF_USER_PIN_FINAL_TRY			(1UL << 17)
+#परिभाषय CKF_USER_PIN_LOCKED			(1UL << 18)
+#परिभाषय CKF_USER_PIN_गन्तव्यम्_BE_परिवर्तितम्		(1UL << 19)
+#परिभाषय CKF_SO_PIN_गणनम्_नीचः			(1UL << 20)
+#परिभाषय CKF_SO_PIN_FINAL_TRY			(1UL << 21)
+#परिभाषय CKF_SO_PIN_LOCKED			(1UL << 22)
+#परिभाषय CKF_SO_PIN_गन्तव्यम्_BE_परिवर्तितम्		(1UL << 23)
 
-#define CK_UNAVAILABLE_INFORMATION	((unsigned long) -1)
-#define CK_EFFECTIVELY_INFINITE		(0UL)
-
-
-typedef unsigned long ck_session_handle_t;
-
-#define CK_INVALID_HANDLE	(0UL)
+#परिभाषय CK_UNAVAILABLE_INFORMATION	((अचिह्नित दीर्घ) -1)
+#परिभाषय CK_EFFECTIVELY_INFINITE		(0UL)
 
 
-typedef unsigned long ck_user_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_session_handle_t;
 
-#define CKU_SO			(0UL)
-#define CKU_USER		(1UL)
-#define CKU_CONTEXT_SPECIFIC	(2UL)
+#परिभाषय CK_INVALID_HANDLE	(0UL)
 
 
-typedef unsigned long ck_state_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_user_type_t;
 
-#define CKS_RO_PUBLIC_SESSION	(0UL)
-#define CKS_RO_USER_FUNCTIONS	(1UL)
-#define CKS_RW_PUBLIC_SESSION	(2UL)
-#define CKS_RW_USER_FUNCTIONS	(3UL)
-#define CKS_RW_SO_FUNCTIONS	(4UL)
+#परिभाषय CKU_SO			(0UL)
+#परिभाषय CKU_USER		(1UL)
+#परिभाषय CKU_CONTEXT_SPECIFIC	(2UL)
 
 
-struct ck_session_info
+प्रकारनिर्देश अचिह्नित दीर्घ ck_state_t;
+
+#परिभाषय CKS_RO_लौकिकम्_SESSION	(0UL)
+#परिभाषय CKS_RO_USER_FUNCTIONS	(1UL)
+#परिभाषय CKS_RW_लौकिकम्_SESSION	(2UL)
+#परिभाषय CKS_RW_USER_FUNCTIONS	(3UL)
+#परिभाषय CKS_RW_SO_FUNCTIONS	(4UL)
+
+
+संरचना ck_session_info
 {
   ck_slot_id_t slot_id;
   ck_state_t state;
   ck_flags_t flags;
-  unsigned long device_error;
+  अचिह्नित दीर्घ device_error;
 };
 
-#define CKF_RW_SESSION		(1UL << 1)
-#define CKF_SERIAL_SESSION	(1UL << 2)
+#परिभाषय CKF_RW_SESSION		(1UL << 1)
+#परिभाषय CKF_SERIAL_SESSION	(1UL << 2)
 
 
-typedef unsigned long ck_object_handle_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_object_handle_t;
 
 
-typedef unsigned long ck_object_class_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_object_class_t;
 
-#define CKO_DATA		(0UL)
-#define CKO_CERTIFICATE		(1UL)
-#define CKO_PUBLIC_KEY		(2UL)
-#define CKO_PRIVATE_KEY		(3UL)
-#define CKO_SECRET_KEY		(4UL)
-#define CKO_HW_FEATURE		(5UL)
-#define CKO_DOMAIN_PARAMETERS	(6UL)
-#define CKO_MECHANISM		(7UL)
-#define CKO_OTP_KEY		(8UL)
-#define CKO_PROFILE		(9UL)
-#define CKO_VENDOR_DEFINED	(1UL << 31)
+#परिभाषय CKO_दत्त		(0UL)
+#परिभाषय CKO_CERTIFICATE		(1UL)
+#परिभाषय CKO_लौकिकम्_कुञ्चिका		(2UL)
+#परिभाषय CKO_वैयक्तिकम्_कुञ्चिका		(3UL)
+#परिभाषय CKO_SECRET_कुञ्चिका		(4UL)
+#परिभाषय CKO_HW_FEATURE		(5UL)
+#परिभाषय CKO_DOMAIN_PARAMETERS	(6UL)
+#परिभाषय CKO_MECHANISM		(7UL)
+#परिभाषय CKO_OTP_कुञ्चिका		(8UL)
+#परिभाषय CKO_PROFILE		(9UL)
+#परिभाषय CKO_VENDOR_DEFINED	(1UL << 31)
 
-#define CKP_INVALID_ID                (0UL)
-#define CKP_BASELINE_PROVIDER         (1UL)
-#define CKP_EXTENDED_PROVIDER         (2UL)
-#define CKP_AUTHENTICATION_TOKEN      (3UL)
-#define CKP_PUBLIC_CERTIFICATES_TOKEN (4UL)
-#define CKP_VENDOR_DEFINED            (1UL << 31)
+#परिभाषय CKP_INVALID_ID                (0UL)
+#परिभाषय CKP_BASELINE_PROVIDER         (1UL)
+#परिभाषय CKP_EXTENDED_PROVIDER         (2UL)
+#परिभाषय CKP_AUTHENTICATION_TOKEN      (3UL)
+#परिभाषय CKP_लौकिकम्_CERTIFICATES_TOKEN (4UL)
+#परिभाषय CKP_VENDOR_DEFINED            (1UL << 31)
 
-typedef unsigned long ck_hw_feature_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_hw_feature_type_t;
 
-#define CKH_MONOTONIC_COUNTER	(1UL)
-#define CKH_CLOCK		(2UL)
-#define CKH_USER_INTERFACE	(3UL)
-#define CKH_VENDOR_DEFINED	(1UL << 31)
+#परिभाषय CKH_MONOTONIC_गणक	(1UL)
+#परिभाषय CKH_CLOCK		(2UL)
+#परिभाषय CKH_USER_INTERFACE	(3UL)
+#परिभाषय CKH_VENDOR_DEFINED	(1UL << 31)
 
 
-typedef unsigned long ck_key_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_कुञ्चिका_type_t;
 
-#define CKK_RSA			(0UL)
-#define CKK_DSA			(1UL)
-#define CKK_DH			(2UL)
-#define CKK_ECDSA		(3UL)
-#define CKK_EC			(3UL)
-#define CKK_X9_42_DH		(4UL)
-#define CKK_KEA			(5UL)
-#define CKK_GENERIC_SECRET	(0x10UL)
-#define CKK_RC2			(0x11UL)
-#define CKK_RC4			(0x12UL)
-#define CKK_DES			(0x13UL)
-#define CKK_DES2		(0x14UL)
-#define CKK_DES3		(0x15UL)
-#define CKK_CAST		(0x16UL)
-#define CKK_CAST3		(0x17UL)
-#define CKK_CAST128		(0x18UL)
-#define CKK_RC5			(0x19UL)
-#define CKK_IDEA		(0x1aUL)
-#define CKK_SKIPJACK		(0x1bUL)
-#define CKK_BATON		(0x1cUL)
-#define CKK_JUNIPER		(0x1dUL)
-#define CKK_CDMF		(0x1eUL)
-#define CKK_AES			(0x1fUL)
-#define CKK_BLOWFISH		(0x20UL)
-#define CKK_TWOFISH		(0x21UL)
-#define CKK_GOSTR3410		(0x30UL)
-#define CKK_GOSTR3411		(0x31UL)
-#define CKK_GOST28147		(0x32UL)
-#define CKK_EC_EDWARDS		(0x40UL)
-#define CKK_EC_MONTGOMERY	(0x41UL)
-#define CKK_HKDF		(0x42UL)
-#define CKK_VENDOR_DEFINED	(1UL << 31)
+#परिभाषय CKK_RSA			(0UL)
+#परिभाषय CKK_DSA			(1UL)
+#परिभाषय CKK_DH			(2UL)
+#परिभाषय CKK_ECDSA		(3UL)
+#परिभाषय CKK_EC			(3UL)
+#परिभाषय CKK_X9_42_DH		(4UL)
+#परिभाषय CKK_KEA			(5UL)
+#परिभाषय CKK_GENERIC_SECRET	(0x10UL)
+#परिभाषय CKK_RC2			(0x11UL)
+#परिभाषय CKK_RC4			(0x12UL)
+#परिभाषय CKK_DES			(0x13UL)
+#परिभाषय CKK_DES2		(0x14UL)
+#परिभाषय CKK_DES3		(0x15UL)
+#परिभाषय CKK_CAST		(0x16UL)
+#परिभाषय CKK_CAST3		(0x17UL)
+#परिभाषय CKK_CAST128		(0x18UL)
+#परिभाषय CKK_RC5			(0x19UL)
+#परिभाषय CKK_IDEA		(0x1aUL)
+#परिभाषय CKK_SKIPJACK		(0x1bUL)
+#परिभाषय CKK_BATON		(0x1cUL)
+#परिभाषय CKK_JUNIPER		(0x1dUL)
+#परिभाषय CKK_CDMF		(0x1eUL)
+#परिभाषय CKK_AES			(0x1fUL)
+#परिभाषय CKK_BLOWFISH		(0x20UL)
+#परिभाषय CKK_TWOFISH		(0x21UL)
+#परिभाषय CKK_GOSTR3410		(0x30UL)
+#परिभाषय CKK_GOSTR3411		(0x31UL)
+#परिभाषय CKK_GOST28147		(0x32UL)
+#परिभाषय CKK_EC_EDWARDS		(0x40UL)
+#परिभाषय CKK_EC_MONTGOMERY	(0x41UL)
+#परिभाषय CKK_HKDF		(0x42UL)
+#परिभाषय CKK_VENDOR_DEFINED	(1UL << 31)
 
 /*
  * A mask for new GOST algorithms.
  * For details visit https://tc26.ru/standarts/perevody/guidelines-the-pkcs-11-extensions-for-implementing-the-gost-r-34-10-2012-and-gost-r-34-11-2012-russian-standards-.html
  */
-#define NSSCK_VENDOR_PKCS11_RU_TEAM     (CKK_VENDOR_DEFINED | 0x54321000)
-#define CK_VENDOR_PKCS11_RU_TEAM_TK26   NSSCK_VENDOR_PKCS11_RU_TEAM
+#परिभाषय NSSCK_VENDOR_PKCS11_RU_TEAM     (CKK_VENDOR_DEFINED | 0x54321000)
+#परिभाषय CK_VENDOR_PKCS11_RU_TEAM_TK26   NSSCK_VENDOR_PKCS11_RU_TEAM
 
-#define CKK_GOSTR3410_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x003)
+#परिभाषय CKK_GOSTR3410_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x003)
 
-typedef unsigned long ck_certificate_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_certificate_type_t;
 
-#define CKC_X_509		(0UL)
-#define CKC_X_509_ATTR_CERT	(1UL)
-#define CKC_WTLS		(2UL)
-#define CKC_VENDOR_DEFINED	(1UL << 31)
-
-
-typedef unsigned long ck_attribute_type_t;
-
-#define CKA_CLASS			(0UL)
-#define CKA_TOKEN			(1UL)
-#define CKA_PRIVATE			(2UL)
-#define CKA_LABEL			(3UL)
-#define CKA_UNIQUE_ID		(4UL)
-#define CKA_APPLICATION			(0x10UL)
-#define CKA_VALUE			(0x11UL)
-#define CKA_OBJECT_ID			(0x12UL)
-#define CKA_CERTIFICATE_TYPE		(0x80UL)
-#define CKA_ISSUER			(0x81UL)
-#define CKA_SERIAL_NUMBER		(0x82UL)
-#define CKA_AC_ISSUER			(0x83UL)
-#define CKA_OWNER			(0x84UL)
-#define CKA_ATTR_TYPES			(0x85UL)
-#define CKA_TRUSTED			(0x86UL)
-#define CKA_CERTIFICATE_CATEGORY	(0x87UL)
-#define CKA_JAVA_MIDP_SECURITY_DOMAIN	(0x88UL)
-#define CKA_URL				(0x89UL)
-#define CKA_HASH_OF_SUBJECT_PUBLIC_KEY	(0x8aUL)
-#define CKA_HASH_OF_ISSUER_PUBLIC_KEY	(0x8bUL)
-#define CKA_CHECK_VALUE			(0x90UL)
-#define CKA_KEY_TYPE			(0x100UL)
-#define CKA_SUBJECT			(0x101UL)
-#define CKA_ID				(0x102UL)
-#define CKA_SENSITIVE			(0x103UL)
-#define CKA_ENCRYPT			(0x104UL)
-#define CKA_DECRYPT			(0x105UL)
-#define CKA_WRAP			(0x106UL)
-#define CKA_UNWRAP			(0x107UL)
-#define CKA_SIGN			(0x108UL)
-#define CKA_SIGN_RECOVER		(0x109UL)
-#define CKA_VERIFY			(0x10aUL)
-#define CKA_VERIFY_RECOVER		(0x10bUL)
-#define CKA_DERIVE			(0x10cUL)
-#define CKA_START_DATE			(0x110UL)
-#define CKA_END_DATE			(0x111UL)
-#define CKA_MODULUS			(0x120UL)
-#define CKA_MODULUS_BITS		(0x121UL)
-#define CKA_PUBLIC_EXPONENT		(0x122UL)
-#define CKA_PRIVATE_EXPONENT		(0x123UL)
-#define CKA_PRIME_1			(0x124UL)
-#define CKA_PRIME_2			(0x125UL)
-#define CKA_EXPONENT_1			(0x126UL)
-#define CKA_EXPONENT_2			(0x127UL)
-#define CKA_COEFFICIENT			(0x128UL)
-#define CKA_PUBLIC_KEY_INFO		(0x129UL)
-#define CKA_PRIME			(0x130UL)
-#define CKA_SUBPRIME			(0x131UL)
-#define CKA_BASE			(0x132UL)
-#define CKA_PRIME_BITS			(0x133UL)
-#define CKA_SUB_PRIME_BITS		(0x134UL)
-#define CKA_VALUE_BITS			(0x160UL)
-#define CKA_VALUE_LEN			(0x161UL)
-#define CKA_EXTRACTABLE			(0x162UL)
-#define CKA_LOCAL			(0x163UL)
-#define CKA_NEVER_EXTRACTABLE		(0x164UL)
-#define CKA_ALWAYS_SENSITIVE		(0x165UL)
-#define CKA_KEY_GEN_MECHANISM		(0x166UL)
-#define CKA_MODIFIABLE			(0x170UL)
-#define CKA_COPYABLE			(0x171UL)
-#define CKA_DESTROYABLE			(0x172UL)
-#define CKA_ECDSA_PARAMS		(0x180UL)
-#define CKA_EC_PARAMS			(0x180UL)
-#define CKA_EC_POINT			(0x181UL)
-#define CKA_SECONDARY_AUTH		(0x200UL)
-#define CKA_AUTH_PIN_FLAGS		(0x201UL)
-#define CKA_ALWAYS_AUTHENTICATE		(0x202UL)
-#define CKA_WRAP_WITH_TRUSTED		(0x210UL)
-#define CKA_GOSTR3410_PARAMS		(0x250UL)
-#define CKA_GOSTR3411_PARAMS		(0x251UL)
-#define CKA_GOST28147_PARAMS		(0x252UL)
-#define CKA_HW_FEATURE_TYPE		(0x300UL)
-#define CKA_RESET_ON_INIT		(0x301UL)
-#define CKA_HAS_RESET			(0x302UL)
-#define CKA_PIXEL_X			(0x400UL)
-#define CKA_PIXEL_Y			(0x401UL)
-#define CKA_RESOLUTION			(0x402UL)
-#define CKA_CHAR_ROWS			(0x403UL)
-#define CKA_CHAR_COLUMNS		(0x404UL)
-#define CKA_COLOR			(0x405UL)
-#define CKA_BITS_PER_PIXEL		(0x406UL)
-#define CKA_CHAR_SETS			(0x480UL)
-#define CKA_ENCODING_METHODS		(0x481UL)
-#define CKA_MIME_TYPES			(0x482UL)
-#define CKA_MECHANISM_TYPE		(0x500UL)
-#define CKA_REQUIRED_CMS_ATTRIBUTES	(0x501UL)
-#define CKA_DEFAULT_CMS_ATTRIBUTES	(0x502UL)
-#define CKA_SUPPORTED_CMS_ATTRIBUTES	(0x503UL)
-#define CKA_WRAP_TEMPLATE		(CKF_ARRAY_ATTRIBUTE | 0x211UL)
-#define CKA_UNWRAP_TEMPLATE		(CKF_ARRAY_ATTRIBUTE | 0x212UL)
-#define CKA_OTP_FORMAT			(0x220UL)
-#define CKA_OTP_LENGTH			(0x221UL)
-#define CKA_OTP_TIME_INTERVAL		(0x222UL)
-#define CKA_OTP_USER_FRIENDLY_MODE	(0x223UL)
-#define CKA_OTP_CHALLENGE_REQUIREMENT	(0x224UL)
-#define CKA_OTP_TIME_REQUIREMENT	(0x225UL)
-#define CKA_OTP_COUNTER_REQUIREMENT	(0x226UL)
-#define CKA_OTP_PIN_REQUIREMENT		(0x227UL)
-#define CKA_OTP_USER_IDENTIFIER		(0x22AUL)
-#define CKA_OTP_SERVICE_IDENTIFIER	(0x22BUL)
-#define CKA_OTP_SERVICE_LOGO		(0x22CUL)
-#define CKA_OTP_SERVICE_LOGO_TYPE	(0x22DUL)
-#define CKA_OTP_COUNTER			(0x22EUL)
-#define CKA_OTP_TIME			(0x22FUL)
-#define CKA_ALLOWED_MECHANISMS		(CKF_ARRAY_ATTRIBUTE | 0x600UL)
-#define CKA_PROFILE_ID			(0x601UL)
-#define CKA_VENDOR_DEFINED		(1UL << 31)
+#परिभाषय CKC_X_509		(0UL)
+#परिभाषय CKC_X_509_ATTR_CERT	(1UL)
+#परिभाषय CKC_WTLS		(2UL)
+#परिभाषय CKC_VENDOR_DEFINED	(1UL << 31)
 
 
-struct ck_attribute
+प्रकारनिर्देश अचिह्नित दीर्घ ck_attribute_type_t;
+
+#परिभाषय CKA_CLASS			(0UL)
+#परिभाषय CKA_TOKEN			(1UL)
+#परिभाषय CKA_वैयक्तिकम्			(2UL)
+#परिभाषय CKA_LABEL			(3UL)
+#परिभाषय CKA_UNIQUE_ID		(4UL)
+#परिभाषय CKA_APPLICATION			(0x10UL)
+#परिभाषय CKA_मानम्			(0x11UL)
+#परिभाषय CKA_OBJECT_ID			(0x12UL)
+#परिभाषय CKA_CERTIFICATE_TYPE		(0x80UL)
+#परिभाषय CKA_ISSUER			(0x81UL)
+#परिभाषय CKA_SERIAL_सङ्ख्या		(0x82UL)
+#परिभाषय CKA_AC_ISSUER			(0x83UL)
+#परिभाषय CKA_OWNER			(0x84UL)
+#परिभाषय CKA_ATTR_TYPES			(0x85UL)
+#परिभाषय CKA_TRUSTED			(0x86UL)
+#परिभाषय CKA_CERTIFICATE_CATEGORY	(0x87UL)
+#परिभाषय CKA_JAVA_MIDP_SECURITY_DOMAIN	(0x88UL)
+#परिभाषय CKA_URL				(0x89UL)
+#परिभाषय CKA_HASH_सम्बन्धि_SUBJECT_लौकिकम्_कुञ्चिका	(0x8aUL)
+#परिभाषय CKA_HASH_सम्बन्धि_ISSUER_लौकिकम्_कुञ्चिका	(0x8bUL)
+#परिभाषय CKA_CHECK_मानम्			(0x90UL)
+#परिभाषय CKA_कुञ्चिका_TYPE			(0x100UL)
+#परिभाषय CKA_SUBJECT			(0x101UL)
+#परिभाषय CKA_ID				(0x102UL)
+#परिभाषय CKA_SENSITIVE			(0x103UL)
+#परिभाषय CKA_ENCRYPT			(0x104UL)
+#परिभाषय CKA_DECRYPT			(0x105UL)
+#परिभाषय CKA_WRAP			(0x106UL)
+#परिभाषय CKA_UNWRAP			(0x107UL)
+#परिभाषय CKA_SIGN			(0x108UL)
+#परिभाषय CKA_SIGN_RECOVER		(0x109UL)
+#परिभाषय CKA_VERIFY			(0x10aUL)
+#परिभाषय CKA_VERIFY_RECOVER		(0x10bUL)
+#परिभाषय CKA_DERIVE			(0x10cUL)
+#परिभाषय CKA_START_DATE			(0x110UL)
+#परिभाषय CKA_अन्तः_DATE			(0x111UL)
+#परिभाषय CKA_MODULUS			(0x120UL)
+#परिभाषय CKA_MODULUS_द्वयङ्काः		(0x121UL)
+#परिभाषय CKA_लौकिकम्_EXPONENT		(0x122UL)
+#परिभाषय CKA_वैयक्तिकम्_EXPONENT		(0x123UL)
+#परिभाषय CKA_अविभाज्यः_1			(0x124UL)
+#परिभाषय CKA_अविभाज्यः_2			(0x125UL)
+#परिभाषय CKA_EXPONENT_1			(0x126UL)
+#परिभाषय CKA_EXPONENT_2			(0x127UL)
+#परिभाषय CKA_COEFFICIENT			(0x128UL)
+#परिभाषय CKA_लौकिकम्_कुञ्चिका_INFO		(0x129UL)
+#परिभाषय CKA_अविभाज्यः			(0x130UL)
+#परिभाषय CKA_SUBPRIME			(0x131UL)
+#परिभाषय CKA_आधारः			(0x132UL)
+#परिभाषय CKA_अविभाज्यः_द्वयङ्काः			(0x133UL)
+#परिभाषय CKA_SUB_अविभाज्यः_द्वयङ्काः		(0x134UL)
+#परिभाषय CKA_मानम्_द्वयङ्काः			(0x160UL)
+#परिभाषय CKA_मानम्_LEN			(0x161UL)
+#परिभाषय CKA_EXTRACTABLE			(0x162UL)
+#परिभाषय CKA_LOCAL			(0x163UL)
+#परिभाषय CKA_NEVER_EXTRACTABLE		(0x164UL)
+#परिभाषय CKA_ALWAYS_SENSITIVE		(0x165UL)
+#परिभाषय CKA_कुञ्चिका_GEN_MECHANISM		(0x166UL)
+#परिभाषय CKA_MODIFIABLE			(0x170UL)
+#परिभाषय CKA_COPYABLE			(0x171UL)
+#परिभाषय CKA_DESTROYABLE			(0x172UL)
+#परिभाषय CKA_ECDSA_PARAMS		(0x180UL)
+#परिभाषय CKA_EC_PARAMS			(0x180UL)
+#परिभाषय CKA_EC_POINT			(0x181UL)
+#परिभाषय CKA_SECONDARY_AUTH		(0x200UL)
+#परिभाषय CKA_AUTH_PIN_FLAGS		(0x201UL)
+#परिभाषय CKA_ALWAYS_AUTHENTICATE		(0x202UL)
+#परिभाषय CKA_WRAP_WITH_TRUSTED		(0x210UL)
+#परिभाषय CKA_GOSTR3410_PARAMS		(0x250UL)
+#परिभाषय CKA_GOSTR3411_PARAMS		(0x251UL)
+#परिभाषय CKA_GOST28147_PARAMS		(0x252UL)
+#परिभाषय CKA_HW_FEATURE_TYPE		(0x300UL)
+#परिभाषय CKA_RESET_ON_INIT		(0x301UL)
+#परिभाषय CKA_HAS_RESET			(0x302UL)
+#परिभाषय CKA_PIXEL_X			(0x400UL)
+#परिभाषय CKA_PIXEL_Y			(0x401UL)
+#परिभाषय CKA_RESOLUTION			(0x402UL)
+#परिभाषय CKA_CHAR_पङ्क्तिकाः			(0x403UL)
+#परिभाषय CKA_CHAR_COLUMNS		(0x404UL)
+#परिभाषय CKA_COLOR			(0x405UL)
+#परिभाषय CKA_द्वयङ्काः_प्रत्येकम्_PIXEL		(0x406UL)
+#परिभाषय CKA_CHAR_SETS			(0x480UL)
+#परिभाषय CKA_ENCODING_METHODS		(0x481UL)
+#परिभाषय CKA_MIME_TYPES			(0x482UL)
+#परिभाषय CKA_MECHANISM_TYPE		(0x500UL)
+#परिभाषय CKA_REQUIRED_CMS_गुणाः	(0x501UL)
+#परिभाषय CKA_DEFAULT_CMS_गुणाः	(0x502UL)
+#परिभाषय CKA_SUPPORTED_CMS_गुणाः	(0x503UL)
+#परिभाषय CKA_WRAP_TEMPLATE		(CKF_ARRAY_ATTRIBUTE | 0x211UL)
+#परिभाषय CKA_UNWRAP_TEMPLATE		(CKF_ARRAY_ATTRIBUTE | 0x212UL)
+#परिभाषय CKA_OTP_FORMAT			(0x220UL)
+#परिभाषय CKA_OTP_दीर्घता			(0x221UL)
+#परिभाषय CKA_OTP_TIME_INTERVAL		(0x222UL)
+#परिभाषय CKA_OTP_USER_FRIENDLY_बहुलकम्	(0x223UL)
+#परिभाषय CKA_OTP_CHALLENGE_REQUIREMENT	(0x224UL)
+#परिभाषय CKA_OTP_TIME_REQUIREMENT	(0x225UL)
+#परिभाषय CKA_OTP_गणक_REQUIREMENT	(0x226UL)
+#परिभाषय CKA_OTP_PIN_REQUIREMENT		(0x227UL)
+#परिभाषय CKA_OTP_USER_IDENTIFIER		(0x22AUL)
+#परिभाषय CKA_OTP_SERVICE_IDENTIFIER	(0x22BUL)
+#परिभाषय CKA_OTP_SERVICE_LOGO		(0x22CUL)
+#परिभाषय CKA_OTP_SERVICE_LOGO_TYPE	(0x22DUL)
+#परिभाषय CKA_OTP_गणक			(0x22EUL)
+#परिभाषय CKA_OTP_TIME			(0x22FUL)
+#परिभाषय CKA_ALLOWED_MECHANISMS		(CKF_ARRAY_ATTRIBUTE | 0x600UL)
+#परिभाषय CKA_PROFILE_ID			(0x601UL)
+#परिभाषय CKA_VENDOR_DEFINED		(1UL << 31)
+
+
+संरचना ck_attribute
 {
   ck_attribute_type_t type;
-  void *value;
-  unsigned long value_len;
+  शून्य *मानम्;
+  अचिह्नित दीर्घ मानम्_len;
 };
 
 
-struct ck_date
+संरचना ck_date
 {
-  unsigned char year[4];
-  unsigned char month[2];
-  unsigned char day[2];
+  अचिह्नित वर्ण year[4];
+  अचिह्नित वर्ण month[2];
+  अचिह्नित वर्ण day[2];
 };
 
 
-typedef unsigned long ck_mechanism_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_mechanism_type_t;
 
-#define CKM_RSA_PKCS_KEY_PAIR_GEN	(0UL)
-#define CKM_RSA_PKCS			(1UL)
-#define CKM_RSA_9796			(2UL)
-#define CKM_RSA_X_509			(3UL)
-#define CKM_MD2_RSA_PKCS		(4UL)
-#define CKM_MD5_RSA_PKCS		(5UL)
-#define CKM_SHA1_RSA_PKCS		(6UL)
-#define CKM_RIPEMD128_RSA_PKCS		(7UL)
-#define CKM_RIPEMD160_RSA_PKCS		(8UL)
-#define CKM_RSA_PKCS_OAEP		(9UL)
-#define CKM_RSA_X9_31_KEY_PAIR_GEN	(0xaUL)
-#define CKM_RSA_X9_31			(0xbUL)
-#define CKM_SHA1_RSA_X9_31		(0xcUL)
-#define CKM_RSA_PKCS_PSS		(0xdUL)
-#define CKM_SHA1_RSA_PKCS_PSS		(0xeUL)
-#define CKM_DSA_KEY_PAIR_GEN		(0x10UL)
-#define	CKM_DSA				(0x11UL)
-#define CKM_DSA_SHA1			(0x12UL)
-#define CKM_DSA_SHA224			(0x13UL)
-#define CKM_DSA_SHA256			(0x14UL)
-#define CKM_DSA_SHA384			(0x15UL)
-#define CKM_DSA_SHA512			(0x16UL)
-#define CKM_DH_PKCS_KEY_PAIR_GEN	(0x20UL)
-#define CKM_DH_PKCS_DERIVE		(0x21UL)
-#define	CKM_X9_42_DH_KEY_PAIR_GEN	(0x30UL)
-#define CKM_X9_42_DH_DERIVE		(0x31UL)
-#define CKM_X9_42_DH_HYBRID_DERIVE	(0x32UL)
-#define CKM_X9_42_MQV_DERIVE		(0x33UL)
-#define CKM_SHA256_RSA_PKCS		(0x40UL)
-#define CKM_SHA384_RSA_PKCS		(0x41UL)
-#define CKM_SHA512_RSA_PKCS		(0x42UL)
-#define CKM_SHA256_RSA_PKCS_PSS		(0x43UL)
-#define CKM_SHA384_RSA_PKCS_PSS		(0x44UL)
-#define CKM_SHA512_RSA_PKCS_PSS		(0x45UL)
-#define CKM_SHA224_RSA_PKCS		(0x46UL)
-#define CKM_SHA224_RSA_PKCS_PSS		(0x47UL)
-#define CKM_SHA3_256_RSA_PKCS		(0x60UL)
-#define CKM_SHA3_384_RSA_PKCS		(0x61UL)
-#define CKM_SHA3_512_RSA_PKCS		(0x62UL)
-#define CKM_SHA3_256_RSA_PKCS_PSS	(0x63UL)
-#define CKM_SHA3_384_RSA_PKCS_PSS	(0x64UL)
-#define CKM_SHA3_512_RSA_PKCS_PSS	(0x65UL)
-#define CKM_SHA3_224_RSA_PKCS		(0x66UL)
-#define CKM_SHA3_224_RSA_PKCS_PSS	(0x67UL)
-#define CKM_RC2_KEY_GEN			(0x100UL)
-#define CKM_RC2_ECB			(0x101UL)
-#define	CKM_RC2_CBC			(0x102UL)
-#define	CKM_RC2_MAC			(0x103UL)
-#define CKM_RC2_MAC_GENERAL		(0x104UL)
-#define CKM_RC2_CBC_PAD			(0x105UL)
-#define CKM_RC4_KEY_GEN			(0x110UL)
-#define CKM_RC4				(0x111UL)
-#define CKM_DES_KEY_GEN			(0x120UL)
-#define CKM_DES_ECB			(0x121UL)
-#define CKM_DES_CBC			(0x122UL)
-#define CKM_DES_MAC			(0x123UL)
-#define CKM_DES_MAC_GENERAL		(0x124UL)
-#define CKM_DES_CBC_PAD			(0x125UL)
-#define CKM_DES2_KEY_GEN		(0x130UL)
-#define CKM_DES3_KEY_GEN		(0x131UL)
-#define CKM_DES3_ECB			(0x132UL)
-#define CKM_DES3_CBC			(0x133UL)
-#define CKM_DES3_MAC			(0x134UL)
-#define CKM_DES3_MAC_GENERAL		(0x135UL)
-#define CKM_DES3_CBC_PAD		(0x136UL)
-#define CKM_DES3_CMAC_GENERAL		(0x137UL)
-#define CKM_DES3_CMAC			(0x138UL)
-#define CKM_CDMF_KEY_GEN		(0x140UL)
-#define CKM_CDMF_ECB			(0x141UL)
-#define CKM_CDMF_CBC			(0x142UL)
-#define CKM_CDMF_MAC			(0x143UL)
-#define CKM_CDMF_MAC_GENERAL		(0x144UL)
-#define CKM_CDMF_CBC_PAD		(0x145UL)
-#define CKM_MD2				(0x200UL)
-#define CKM_MD2_HMAC			(0x201UL)
-#define CKM_MD2_HMAC_GENERAL		(0x202UL)
-#define CKM_MD5				(0x210UL)
-#define CKM_MD5_HMAC			(0x211UL)
-#define CKM_MD5_HMAC_GENERAL		(0x212UL)
-#define CKM_SHA_1			(0x220UL)
-#define CKM_SHA_1_HMAC			(0x221UL)
-#define CKM_SHA_1_HMAC_GENERAL		(0x222UL)
-#define CKM_RIPEMD128			(0x230UL)
-#define CKM_RIPEMD128_HMAC		(0x231UL)
-#define CKM_RIPEMD128_HMAC_GENERAL	(0x232UL)
-#define CKM_RIPEMD160			(0x240UL)
-#define CKM_RIPEMD160_HMAC		(0x241UL)
-#define CKM_RIPEMD160_HMAC_GENERAL	(0x242UL)
-#define CKM_SHA256			(0x250UL)
-#define CKM_SHA256_HMAC			(0x251UL)
-#define CKM_SHA256_HMAC_GENERAL		(0x252UL)
-#define CKM_SHA224			(0x255UL)
-#define CKM_SHA224_HMAC			(0x256UL)
-#define CKM_SHA224_HMAC_GENERAL		(0x257UL)
-#define CKM_SHA384			(0x260UL)
-#define CKM_SHA384_HMAC			(0x261UL)
-#define CKM_SHA384_HMAC_GENERAL		(0x262UL)
-#define CKM_SHA512			(0x270UL)
-#define CKM_SHA512_HMAC			(0x271UL)
-#define CKM_SHA512_HMAC_GENERAL		(0x272UL)
-#define CKM_SHA3_256			(0x2B0UL)
-#define CKM_SHA3_256_HMAC		(0x2B1UL)
-#define CKM_SHA3_256_HMAC_GENERAL	(0x2B2UL)
-#define CKM_SHA3_256_KEY_GEN		(0x2B3UL)
-#define CKM_SHA3_224			(0x2B5UL)
-#define CKM_SHA3_224_HMAC		(0x2B6UL)
-#define CKM_SHA3_224_HMAC_GENERAL	(0x2B7UL)
-#define CKM_SHA3_224_KEY_GEN		(0x2B8UL)
-#define CKM_SHA3_384			(0x2C0UL)
-#define CKM_SHA3_384_HMAC		(0x2C1UL)
-#define CKM_SHA3_384_HMAC_GENERAL	(0x2C2UL)
-#define CKM_SHA3_384_KEY_GEN		(0x2C3UL)
-#define CKM_SHA3_512			(0x2D0UL)
-#define CKM_SHA3_512_HMAC		(0x2D1UL)
-#define CKM_SHA3_512_HMAC_GENERAL	(0x2D2UL)
-#define CKM_SHA3_512_KEY_GEN		(0x2D3UL)
-#define CKM_CAST_KEY_GEN		(0x300UL)
-#define CKM_CAST_ECB			(0x301UL)
-#define CKM_CAST_CBC			(0x302UL)
-#define CKM_CAST_MAC			(0x303UL)
-#define CKM_CAST_MAC_GENERAL		(0x304UL)
-#define CKM_CAST_CBC_PAD		(0x305UL)
-#define CKM_CAST3_KEY_GEN		(0x310UL)
-#define CKM_CAST3_ECB			(0x311UL)
-#define CKM_CAST3_CBC			(0x312UL)
-#define CKM_CAST3_MAC			(0x313UL)
-#define CKM_CAST3_MAC_GENERAL		(0x314UL)
-#define CKM_CAST3_CBC_PAD		(0x315UL)
-#define CKM_CAST5_KEY_GEN		(0x320UL)
-#define CKM_CAST128_KEY_GEN		(0x320UL)
-#define CKM_CAST5_ECB			(0x321UL)
-#define CKM_CAST128_ECB			(0x321UL)
-#define CKM_CAST5_CBC			(0x322UL)
-#define CKM_CAST128_CBC			(0x322UL)
-#define CKM_CAST5_MAC			(0x323UL)
-#define	CKM_CAST128_MAC			(0x323UL)
-#define CKM_CAST5_MAC_GENERAL		(0x324UL)
-#define CKM_CAST128_MAC_GENERAL		(0x324UL)
-#define CKM_CAST5_CBC_PAD		(0x325UL)
-#define CKM_CAST128_CBC_PAD		(0x325UL)
-#define CKM_RC5_KEY_GEN			(0x330UL)
-#define CKM_RC5_ECB			(0x331UL)
-#define CKM_RC5_CBC			(0x332UL)
-#define CKM_RC5_MAC			(0x333UL)
-#define CKM_RC5_MAC_GENERAL		(0x334UL)
-#define CKM_RC5_CBC_PAD			(0x335UL)
-#define CKM_IDEA_KEY_GEN		(0x340UL)
-#define CKM_IDEA_ECB			(0x341UL)
-#define	CKM_IDEA_CBC			(0x342UL)
-#define CKM_IDEA_MAC			(0x343UL)
-#define CKM_IDEA_MAC_GENERAL		(0x344UL)
-#define CKM_IDEA_CBC_PAD		(0x345UL)
-#define CKM_GENERIC_SECRET_KEY_GEN	(0x350UL)
-#define CKM_CONCATENATE_BASE_AND_KEY	(0x360UL)
-#define CKM_CONCATENATE_BASE_AND_DATA	(0x362UL)
-#define CKM_CONCATENATE_DATA_AND_BASE	(0x363UL)
-#define CKM_XOR_BASE_AND_DATA		(0x364UL)
-#define CKM_EXTRACT_KEY_FROM_KEY	(0x365UL)
-#define CKM_SSL3_PRE_MASTER_KEY_GEN	(0x370UL)
-#define CKM_SSL3_MASTER_KEY_DERIVE	(0x371UL)
-#define CKM_SSL3_KEY_AND_MAC_DERIVE	(0x372UL)
-#define CKM_SSL3_MASTER_KEY_DERIVE_DH	(0x373UL)
-#define CKM_TLS_PRE_MASTER_KEY_GEN	(0x374UL)
-#define CKM_TLS_MASTER_KEY_DERIVE	(0x375UL)
-#define CKM_TLS_KEY_AND_MAC_DERIVE	(0x376UL)
-#define CKM_TLS_MASTER_KEY_DERIVE_DH	(0x377UL)
-#define CKM_SSL3_MD5_MAC		(0x380UL)
-#define CKM_SSL3_SHA1_MAC		(0x381UL)
-#define CKM_MD5_KEY_DERIVATION		(0x390UL)
-#define CKM_MD2_KEY_DERIVATION		(0x391UL)
-#define CKM_SHA1_KEY_DERIVATION		(0x392UL)
-#define CKM_PBE_MD2_DES_CBC		(0x3a0UL)
-#define CKM_PBE_MD5_DES_CBC		(0x3a1UL)
-#define CKM_PBE_MD5_CAST_CBC		(0x3a2UL)
-#define CKM_PBE_MD5_CAST3_CBC		(0x3a3UL)
-#define CKM_PBE_MD5_CAST5_CBC		(0x3a4UL)
-#define CKM_PBE_MD5_CAST128_CBC		(0x3a4UL)
-#define CKM_PBE_SHA1_CAST5_CBC		(0x3a5UL)
-#define CKM_PBE_SHA1_CAST128_CBC	(0x3a5UL)
-#define CKM_PBE_SHA1_RC4_128		(0x3a6UL)
-#define CKM_PBE_SHA1_RC4_40		(0x3a7UL)
-#define CKM_PBE_SHA1_DES3_EDE_CBC	(0x3a8UL)
-#define CKM_PBE_SHA1_DES2_EDE_CBC	(0x3a9UL)
-#define CKM_PBE_SHA1_RC2_128_CBC	(0x3aaUL)
-#define CKM_PBE_SHA1_RC2_40_CBC		(0x3abUL)
-#define CKM_PKCS5_PBKD2			(0x3b0UL)
-#define CKM_PBA_SHA1_WITH_SHA1_HMAC	(0x3c0UL)
-#define CKM_KEY_WRAP_LYNKS		(0x400UL)
-#define CKM_KEY_WRAP_SET_OAEP		(0x401UL)
-#define CKM_SKIPJACK_KEY_GEN		(0x1000UL)
-#define CKM_SKIPJACK_ECB64		(0x1001UL)
-#define CKM_SKIPJACK_CBC64		(0x1002UL)
-#define CKM_SKIPJACK_OFB64		(0x1003UL)
-#define CKM_SKIPJACK_CFB64		(0x1004UL)
-#define CKM_SKIPJACK_CFB32		(0x1005UL)
-#define CKM_SKIPJACK_CFB16		(0x1006UL)
-#define CKM_SKIPJACK_CFB8		(0x1007UL)
-#define CKM_SKIPJACK_WRAP		(0x1008UL)
-#define CKM_SKIPJACK_PRIVATE_WRAP	(0x1009UL)
-#define CKM_SKIPJACK_RELAYX		(0x100aUL)
-#define CKM_KEA_KEY_PAIR_GEN		(0x1010UL)
-#define CKM_KEA_KEY_DERIVE		(0x1011UL)
-#define CKM_FORTEZZA_TIMESTAMP		(0x1020UL)
-#define CKM_BATON_KEY_GEN		(0x1030UL)
-#define CKM_BATON_ECB128		(0x1031UL)
-#define CKM_BATON_ECB96			(0x1032UL)
-#define CKM_BATON_CBC128		(0x1033UL)
-#define CKM_BATON_COUNTER		(0x1034UL)
-#define CKM_BATON_SHUFFLE		(0x1035UL)
-#define CKM_BATON_WRAP			(0x1036UL)
-#define CKM_ECDSA_KEY_PAIR_GEN		(0x1040UL)
-#define CKM_EC_KEY_PAIR_GEN		(0x1040UL)
-#define CKM_ECDSA			(0x1041UL)
-#define CKM_ECDSA_SHA1			(0x1042UL)
-#define CKM_ECDSA_SHA224		(0x1043UL)
-#define CKM_ECDSA_SHA256		(0x1044UL)
-#define CKM_ECDSA_SHA384		(0x1045UL)
-#define CKM_ECDSA_SHA512		(0x1046UL)
-#define CKM_ECDSA_SHA3_224		(0x1047UL)
-#define CKM_ECDSA_SHA3_256		(0x1048UL)
-#define CKM_ECDSA_SHA3_384		(0x1049UL)
-#define CKM_ECDSA_SHA3_512		(0x104AUL)
-#define CKM_ECDH1_DERIVE		(0x1050UL)
-#define CKM_ECDH1_COFACTOR_DERIVE	(0x1051UL)
-#define CKM_ECMQV_DERIVE		(0x1052UL)
-#define CKM_EC_EDWARDS_KEY_PAIR_GEN     (0x1055UL)
-#define CKM_EC_MONTGOMERY_KEY_PAIR_GEN  (0x1056UL)
-#define CKM_EDDSA			(0x1057UL)
-#define CKM_JUNIPER_KEY_GEN		(0x1060UL)
-#define CKM_JUNIPER_ECB128		(0x1061UL)
-#define CKM_JUNIPER_CBC128		(0x1062UL)
-#define CKM_JUNIPER_COUNTER		(0x1063UL)
-#define CKM_JUNIPER_SHUFFLE		(0x1064UL)
-#define CKM_JUNIPER_WRAP		(0x1065UL)
-#define CKM_FASTHASH			(0x1070UL)
-#define CKM_AES_KEY_GEN			(0x1080UL)
-#define CKM_AES_ECB			(0x1081UL)
-#define CKM_AES_CBC			(0x1082UL)
-#define CKM_AES_MAC			(0x1083UL)
-#define CKM_AES_MAC_GENERAL		(0x1084UL)
-#define CKM_AES_CBC_PAD			(0x1085UL)
-#define CKM_AES_CTR				(0x1086UL)
-#define CKM_AES_GCM				(0x1087UL)
-#define CKM_AES_CCM				(0x1088UL)
-#define CKM_AES_CTS				(0x1089UL)
-#define CKM_AES_CMAC			(0x108AUL)
-#define CKM_AES_CMAC_GENERAL		(0x108BUL)
-#define CKM_AES_XCBC_MAC		(0x108CUL)
-#define CKM_AES_XCBC_MAC_96		(0x108DUL)
-#define CKM_AES_GMAC			(0x108EUL)
-#define CKM_BLOWFISH_KEY_GEN    (0x1090UL)
-#define CKM_BLOWFISH_CBC        (0x1091UL)
-#define CKM_TWOFISH_KEY_GEN     (0x1092UL)
-#define CKM_TWOFISH_CBC         (0x1093UL)
-#define CKM_DES_ECB_ENCRYPT_DATA	(0x1100UL)
-#define CKM_DES_CBC_ENCRYPT_DATA	(0x1101UL)
-#define CKM_DES3_ECB_ENCRYPT_DATA	(0x1102UL)
-#define CKM_DES3_CBC_ENCRYPT_DATA	(0x1103UL)
-#define CKM_AES_ECB_ENCRYPT_DATA	(0x1104UL)
-#define CKM_AES_CBC_ENCRYPT_DATA	(0x1105UL)
-#define CKM_GOSTR3410_KEY_PAIR_GEN	(0x1200UL)
-#define CKM_GOSTR3410			(0x1201UL)
-#define CKM_GOSTR3410_WITH_GOSTR3411	(0x1202UL)
-#define CKM_GOSTR3410_KEY_WRAP  (0x1203UL)
-#define CKM_GOSTR3410_DERIVE    (0x1204UL)
-#define CKM_GOSTR3410_512_KEY_PAIR_GEN	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x005)
-#define CKM_GOSTR3410_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x006)
-#define CKM_GOSTR3410_12_DERIVE	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x007)
-#define CKM_GOSTR3410_WITH_GOSTR3411_12_256	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x008)
-#define CKM_GOSTR3410_WITH_GOSTR3411_12_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x009)
-#define CKM_GOSTR3411			(0x1210UL)
-#define CKM_GOSTR3411_HMAC      (0x1211UL)
-#define CKM_GOSTR3411_12_256	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x012)
-#define CKM_GOSTR3411_12_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x013)
-#define CKM_GOSTR3411_12_256_HMAC	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x014)
-#define CKM_GOSTR3411_12_512_HMAC	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x015)
-#define CKM_GOST28147_KEY_GEN   (0x1220UL)
-#define CKM_GOST28147_ECB       (0x1221UL)
-#define CKM_GOST28147           (0x1222UL)
-#define CKM_GOST28147_MAC       (0x1223UL)
-#define CKM_GOST28147_KEY_WRAP  (0x1224UL)
+#परिभाषय CKM_RSA_PKCS_कुञ्चिका_PAIR_GEN	(0UL)
+#परिभाषय CKM_RSA_PKCS			(1UL)
+#परिभाषय CKM_RSA_9796			(2UL)
+#परिभाषय CKM_RSA_X_509			(3UL)
+#परिभाषय CKM_MD2_RSA_PKCS		(4UL)
+#परिभाषय CKM_MD5_RSA_PKCS		(5UL)
+#परिभाषय CKM_SHA1_RSA_PKCS		(6UL)
+#परिभाषय CKM_RIPEMD128_RSA_PKCS		(7UL)
+#परिभाषय CKM_RIPEMD160_RSA_PKCS		(8UL)
+#परिभाषय CKM_RSA_PKCS_OAEP		(9UL)
+#परिभाषय CKM_RSA_X9_31_कुञ्चिका_PAIR_GEN	(0xaUL)
+#परिभाषय CKM_RSA_X9_31			(0xbUL)
+#परिभाषय CKM_SHA1_RSA_X9_31		(0xcUL)
+#परिभाषय CKM_RSA_PKCS_PSS		(0xdUL)
+#परिभाषय CKM_SHA1_RSA_PKCS_PSS		(0xeUL)
+#परिभाषय CKM_DSA_कुञ्चिका_PAIR_GEN		(0x10UL)
+#परिभाषय	CKM_DSA				(0x11UL)
+#परिभाषय CKM_DSA_SHA1			(0x12UL)
+#परिभाषय CKM_DSA_SHA224			(0x13UL)
+#परिभाषय CKM_DSA_SHA256			(0x14UL)
+#परिभाषय CKM_DSA_SHA384			(0x15UL)
+#परिभाषय CKM_DSA_SHA512			(0x16UL)
+#परिभाषय CKM_DH_PKCS_कुञ्चिका_PAIR_GEN	(0x20UL)
+#परिभाषय CKM_DH_PKCS_DERIVE		(0x21UL)
+#परिभाषय	CKM_X9_42_DH_कुञ्चिका_PAIR_GEN	(0x30UL)
+#परिभाषय CKM_X9_42_DH_DERIVE		(0x31UL)
+#परिभाषय CKM_X9_42_DH_HYBRID_DERIVE	(0x32UL)
+#परिभाषय CKM_X9_42_MQV_DERIVE		(0x33UL)
+#परिभाषय CKM_SHA256_RSA_PKCS		(0x40UL)
+#परिभाषय CKM_SHA384_RSA_PKCS		(0x41UL)
+#परिभाषय CKM_SHA512_RSA_PKCS		(0x42UL)
+#परिभाषय CKM_SHA256_RSA_PKCS_PSS		(0x43UL)
+#परिभाषय CKM_SHA384_RSA_PKCS_PSS		(0x44UL)
+#परिभाषय CKM_SHA512_RSA_PKCS_PSS		(0x45UL)
+#परिभाषय CKM_SHA224_RSA_PKCS		(0x46UL)
+#परिभाषय CKM_SHA224_RSA_PKCS_PSS		(0x47UL)
+#परिभाषय CKM_SHA3_256_RSA_PKCS		(0x60UL)
+#परिभाषय CKM_SHA3_384_RSA_PKCS		(0x61UL)
+#परिभाषय CKM_SHA3_512_RSA_PKCS		(0x62UL)
+#परिभाषय CKM_SHA3_256_RSA_PKCS_PSS	(0x63UL)
+#परिभाषय CKM_SHA3_384_RSA_PKCS_PSS	(0x64UL)
+#परिभाषय CKM_SHA3_512_RSA_PKCS_PSS	(0x65UL)
+#परिभाषय CKM_SHA3_224_RSA_PKCS		(0x66UL)
+#परिभाषय CKM_SHA3_224_RSA_PKCS_PSS	(0x67UL)
+#परिभाषय CKM_RC2_कुञ्चिका_GEN			(0x100UL)
+#परिभाषय CKM_RC2_ECB			(0x101UL)
+#परिभाषय	CKM_RC2_CBC			(0x102UL)
+#परिभाषय	CKM_RC2_MAC			(0x103UL)
+#परिभाषय CKM_RC2_MAC_GENERAL		(0x104UL)
+#परिभाषय CKM_RC2_CBC_PAD			(0x105UL)
+#परिभाषय CKM_RC4_कुञ्चिका_GEN			(0x110UL)
+#परिभाषय CKM_RC4				(0x111UL)
+#परिभाषय CKM_DES_कुञ्चिका_GEN			(0x120UL)
+#परिभाषय CKM_DES_ECB			(0x121UL)
+#परिभाषय CKM_DES_CBC			(0x122UL)
+#परिभाषय CKM_DES_MAC			(0x123UL)
+#परिभाषय CKM_DES_MAC_GENERAL		(0x124UL)
+#परिभाषय CKM_DES_CBC_PAD			(0x125UL)
+#परिभाषय CKM_DES2_कुञ्चिका_GEN		(0x130UL)
+#परिभाषय CKM_DES3_कुञ्चिका_GEN		(0x131UL)
+#परिभाषय CKM_DES3_ECB			(0x132UL)
+#परिभाषय CKM_DES3_CBC			(0x133UL)
+#परिभाषय CKM_DES3_MAC			(0x134UL)
+#परिभाषय CKM_DES3_MAC_GENERAL		(0x135UL)
+#परिभाषय CKM_DES3_CBC_PAD		(0x136UL)
+#परिभाषय CKM_DES3_CMAC_GENERAL		(0x137UL)
+#परिभाषय CKM_DES3_CMAC			(0x138UL)
+#परिभाषय CKM_CDMF_कुञ्चिका_GEN		(0x140UL)
+#परिभाषय CKM_CDMF_ECB			(0x141UL)
+#परिभाषय CKM_CDMF_CBC			(0x142UL)
+#परिभाषय CKM_CDMF_MAC			(0x143UL)
+#परिभाषय CKM_CDMF_MAC_GENERAL		(0x144UL)
+#परिभाषय CKM_CDMF_CBC_PAD		(0x145UL)
+#परिभाषय CKM_MD2				(0x200UL)
+#परिभाषय CKM_MD2_HMAC			(0x201UL)
+#परिभाषय CKM_MD2_HMAC_GENERAL		(0x202UL)
+#परिभाषय CKM_MD5				(0x210UL)
+#परिभाषय CKM_MD5_HMAC			(0x211UL)
+#परिभाषय CKM_MD5_HMAC_GENERAL		(0x212UL)
+#परिभाषय CKM_SHA_1			(0x220UL)
+#परिभाषय CKM_SHA_1_HMAC			(0x221UL)
+#परिभाषय CKM_SHA_1_HMAC_GENERAL		(0x222UL)
+#परिभाषय CKM_RIPEMD128			(0x230UL)
+#परिभाषय CKM_RIPEMD128_HMAC		(0x231UL)
+#परिभाषय CKM_RIPEMD128_HMAC_GENERAL	(0x232UL)
+#परिभाषय CKM_RIPEMD160			(0x240UL)
+#परिभाषय CKM_RIPEMD160_HMAC		(0x241UL)
+#परिभाषय CKM_RIPEMD160_HMAC_GENERAL	(0x242UL)
+#परिभाषय CKM_SHA256			(0x250UL)
+#परिभाषय CKM_SHA256_HMAC			(0x251UL)
+#परिभाषय CKM_SHA256_HMAC_GENERAL		(0x252UL)
+#परिभाषय CKM_SHA224			(0x255UL)
+#परिभाषय CKM_SHA224_HMAC			(0x256UL)
+#परिभाषय CKM_SHA224_HMAC_GENERAL		(0x257UL)
+#परिभाषय CKM_SHA384			(0x260UL)
+#परिभाषय CKM_SHA384_HMAC			(0x261UL)
+#परिभाषय CKM_SHA384_HMAC_GENERAL		(0x262UL)
+#परिभाषय CKM_SHA512			(0x270UL)
+#परिभाषय CKM_SHA512_HMAC			(0x271UL)
+#परिभाषय CKM_SHA512_HMAC_GENERAL		(0x272UL)
+#परिभाषय CKM_SHA3_256			(0x2B0UL)
+#परिभाषय CKM_SHA3_256_HMAC		(0x2B1UL)
+#परिभाषय CKM_SHA3_256_HMAC_GENERAL	(0x2B2UL)
+#परिभाषय CKM_SHA3_256_कुञ्चिका_GEN		(0x2B3UL)
+#परिभाषय CKM_SHA3_224			(0x2B5UL)
+#परिभाषय CKM_SHA3_224_HMAC		(0x2B6UL)
+#परिभाषय CKM_SHA3_224_HMAC_GENERAL	(0x2B7UL)
+#परिभाषय CKM_SHA3_224_कुञ्चिका_GEN		(0x2B8UL)
+#परिभाषय CKM_SHA3_384			(0x2C0UL)
+#परिभाषय CKM_SHA3_384_HMAC		(0x2C1UL)
+#परिभाषय CKM_SHA3_384_HMAC_GENERAL	(0x2C2UL)
+#परिभाषय CKM_SHA3_384_कुञ्चिका_GEN		(0x2C3UL)
+#परिभाषय CKM_SHA3_512			(0x2D0UL)
+#परिभाषय CKM_SHA3_512_HMAC		(0x2D1UL)
+#परिभाषय CKM_SHA3_512_HMAC_GENERAL	(0x2D2UL)
+#परिभाषय CKM_SHA3_512_कुञ्चिका_GEN		(0x2D3UL)
+#परिभाषय CKM_CAST_कुञ्चिका_GEN		(0x300UL)
+#परिभाषय CKM_CAST_ECB			(0x301UL)
+#परिभाषय CKM_CAST_CBC			(0x302UL)
+#परिभाषय CKM_CAST_MAC			(0x303UL)
+#परिभाषय CKM_CAST_MAC_GENERAL		(0x304UL)
+#परिभाषय CKM_CAST_CBC_PAD		(0x305UL)
+#परिभाषय CKM_CAST3_कुञ्चिका_GEN		(0x310UL)
+#परिभाषय CKM_CAST3_ECB			(0x311UL)
+#परिभाषय CKM_CAST3_CBC			(0x312UL)
+#परिभाषय CKM_CAST3_MAC			(0x313UL)
+#परिभाषय CKM_CAST3_MAC_GENERAL		(0x314UL)
+#परिभाषय CKM_CAST3_CBC_PAD		(0x315UL)
+#परिभाषय CKM_CAST5_कुञ्चिका_GEN		(0x320UL)
+#परिभाषय CKM_CAST128_कुञ्चिका_GEN		(0x320UL)
+#परिभाषय CKM_CAST5_ECB			(0x321UL)
+#परिभाषय CKM_CAST128_ECB			(0x321UL)
+#परिभाषय CKM_CAST5_CBC			(0x322UL)
+#परिभाषय CKM_CAST128_CBC			(0x322UL)
+#परिभाषय CKM_CAST5_MAC			(0x323UL)
+#परिभाषय	CKM_CAST128_MAC			(0x323UL)
+#परिभाषय CKM_CAST5_MAC_GENERAL		(0x324UL)
+#परिभाषय CKM_CAST128_MAC_GENERAL		(0x324UL)
+#परिभाषय CKM_CAST5_CBC_PAD		(0x325UL)
+#परिभाषय CKM_CAST128_CBC_PAD		(0x325UL)
+#परिभाषय CKM_RC5_कुञ्चिका_GEN			(0x330UL)
+#परिभाषय CKM_RC5_ECB			(0x331UL)
+#परिभाषय CKM_RC5_CBC			(0x332UL)
+#परिभाषय CKM_RC5_MAC			(0x333UL)
+#परिभाषय CKM_RC5_MAC_GENERAL		(0x334UL)
+#परिभाषय CKM_RC5_CBC_PAD			(0x335UL)
+#परिभाषय CKM_IDEA_कुञ्चिका_GEN		(0x340UL)
+#परिभाषय CKM_IDEA_ECB			(0x341UL)
+#परिभाषय	CKM_IDEA_CBC			(0x342UL)
+#परिभाषय CKM_IDEA_MAC			(0x343UL)
+#परिभाषय CKM_IDEA_MAC_GENERAL		(0x344UL)
+#परिभाषय CKM_IDEA_CBC_PAD		(0x345UL)
+#परिभाषय CKM_GENERIC_SECRET_कुञ्चिका_GEN	(0x350UL)
+#परिभाषय CKM_CONCATENATE_आधारः_AND_कुञ्चिका	(0x360UL)
+#परिभाषय CKM_CONCATENATE_आधारः_AND_दत्त	(0x362UL)
+#परिभाषय CKM_CONCATENATE_दत्त_AND_आधारः	(0x363UL)
+#परिभाषय CKM_XOR_आधारः_AND_दत्त		(0x364UL)
+#परिभाषय CKM_EXTRACT_कुञ्चिका_FROM_कुञ्चिका	(0x365UL)
+#परिभाषय CKM_SSL3_PRE_MASTER_कुञ्चिका_GEN	(0x370UL)
+#परिभाषय CKM_SSL3_MASTER_कुञ्चिका_DERIVE	(0x371UL)
+#परिभाषय CKM_SSL3_कुञ्चिका_AND_MAC_DERIVE	(0x372UL)
+#परिभाषय CKM_SSL3_MASTER_कुञ्चिका_DERIVE_DH	(0x373UL)
+#परिभाषय CKM_TLS_PRE_MASTER_कुञ्चिका_GEN	(0x374UL)
+#परिभाषय CKM_TLS_MASTER_कुञ्चिका_DERIVE	(0x375UL)
+#परिभाषय CKM_TLS_कुञ्चिका_AND_MAC_DERIVE	(0x376UL)
+#परिभाषय CKM_TLS_MASTER_कुञ्चिका_DERIVE_DH	(0x377UL)
+#परिभाषय CKM_SSL3_MD5_MAC		(0x380UL)
+#परिभाषय CKM_SSL3_SHA1_MAC		(0x381UL)
+#परिभाषय CKM_MD5_कुञ्चिका_DERIVATION		(0x390UL)
+#परिभाषय CKM_MD2_कुञ्चिका_DERIVATION		(0x391UL)
+#परिभाषय CKM_SHA1_कुञ्चिका_DERIVATION		(0x392UL)
+#परिभाषय CKM_PBE_MD2_DES_CBC		(0x3a0UL)
+#परिभाषय CKM_PBE_MD5_DES_CBC		(0x3a1UL)
+#परिभाषय CKM_PBE_MD5_CAST_CBC		(0x3a2UL)
+#परिभाषय CKM_PBE_MD5_CAST3_CBC		(0x3a3UL)
+#परिभाषय CKM_PBE_MD5_CAST5_CBC		(0x3a4UL)
+#परिभाषय CKM_PBE_MD5_CAST128_CBC		(0x3a4UL)
+#परिभाषय CKM_PBE_SHA1_CAST5_CBC		(0x3a5UL)
+#परिभाषय CKM_PBE_SHA1_CAST128_CBC	(0x3a5UL)
+#परिभाषय CKM_PBE_SHA1_RC4_128		(0x3a6UL)
+#परिभाषय CKM_PBE_SHA1_RC4_40		(0x3a7UL)
+#परिभाषय CKM_PBE_SHA1_DES3_EDE_CBC	(0x3a8UL)
+#परिभाषय CKM_PBE_SHA1_DES2_EDE_CBC	(0x3a9UL)
+#परिभाषय CKM_PBE_SHA1_RC2_128_CBC	(0x3aaUL)
+#परिभाषय CKM_PBE_SHA1_RC2_40_CBC		(0x3abUL)
+#परिभाषय CKM_PKCS5_PBKD2			(0x3b0UL)
+#परिभाषय CKM_PBA_SHA1_WITH_SHA1_HMAC	(0x3c0UL)
+#परिभाषय CKM_कुञ्चिका_WRAP_LYNKS		(0x400UL)
+#परिभाषय CKM_कुञ्चिका_WRAP_समुच्चयः_OAEP		(0x401UL)
+#परिभाषय CKM_SKIPJACK_कुञ्चिका_GEN		(0x1000UL)
+#परिभाषय CKM_SKIPJACK_ECB64		(0x1001UL)
+#परिभाषय CKM_SKIPJACK_CBC64		(0x1002UL)
+#परिभाषय CKM_SKIPJACK_OFB64		(0x1003UL)
+#परिभाषय CKM_SKIPJACK_CFB64		(0x1004UL)
+#परिभाषय CKM_SKIPJACK_CFB32		(0x1005UL)
+#परिभाषय CKM_SKIPJACK_CFB16		(0x1006UL)
+#परिभाषय CKM_SKIPJACK_CFB8		(0x1007UL)
+#परिभाषय CKM_SKIPJACK_WRAP		(0x1008UL)
+#परिभाषय CKM_SKIPJACK_वैयक्तिकम्_WRAP	(0x1009UL)
+#परिभाषय CKM_SKIPJACK_RELAYX		(0x100aUL)
+#परिभाषय CKM_KEA_कुञ्चिका_PAIR_GEN		(0x1010UL)
+#परिभाषय CKM_KEA_कुञ्चिका_DERIVE		(0x1011UL)
+#परिभाषय CKM_FORTEZZA_TIMESTAMP		(0x1020UL)
+#परिभाषय CKM_BATON_कुञ्चिका_GEN		(0x1030UL)
+#परिभाषय CKM_BATON_ECB128		(0x1031UL)
+#परिभाषय CKM_BATON_ECB96			(0x1032UL)
+#परिभाषय CKM_BATON_CBC128		(0x1033UL)
+#परिभाषय CKM_BATON_गणक		(0x1034UL)
+#परिभाषय CKM_BATON_SHUFFLE		(0x1035UL)
+#परिभाषय CKM_BATON_WRAP			(0x1036UL)
+#परिभाषय CKM_ECDSA_कुञ्चिका_PAIR_GEN		(0x1040UL)
+#परिभाषय CKM_EC_कुञ्चिका_PAIR_GEN		(0x1040UL)
+#परिभाषय CKM_ECDSA			(0x1041UL)
+#परिभाषय CKM_ECDSA_SHA1			(0x1042UL)
+#परिभाषय CKM_ECDSA_SHA224		(0x1043UL)
+#परिभाषय CKM_ECDSA_SHA256		(0x1044UL)
+#परिभाषय CKM_ECDSA_SHA384		(0x1045UL)
+#परिभाषय CKM_ECDSA_SHA512		(0x1046UL)
+#परिभाषय CKM_ECDSA_SHA3_224		(0x1047UL)
+#परिभाषय CKM_ECDSA_SHA3_256		(0x1048UL)
+#परिभाषय CKM_ECDSA_SHA3_384		(0x1049UL)
+#परिभाषय CKM_ECDSA_SHA3_512		(0x104AUL)
+#परिभाषय CKM_ECDH1_DERIVE		(0x1050UL)
+#परिभाषय CKM_ECDH1_COFACTOR_DERIVE	(0x1051UL)
+#परिभाषय CKM_ECMQV_DERIVE		(0x1052UL)
+#परिभाषय CKM_EC_EDWARDS_कुञ्चिका_PAIR_GEN     (0x1055UL)
+#परिभाषय CKM_EC_MONTGOMERY_कुञ्चिका_PAIR_GEN  (0x1056UL)
+#परिभाषय CKM_EDDSA			(0x1057UL)
+#परिभाषय CKM_JUNIPER_कुञ्चिका_GEN		(0x1060UL)
+#परिभाषय CKM_JUNIPER_ECB128		(0x1061UL)
+#परिभाषय CKM_JUNIPER_CBC128		(0x1062UL)
+#परिभाषय CKM_JUNIPER_गणक		(0x1063UL)
+#परिभाषय CKM_JUNIPER_SHUFFLE		(0x1064UL)
+#परिभाषय CKM_JUNIPER_WRAP		(0x1065UL)
+#परिभाषय CKM_FASTHASH			(0x1070UL)
+#परिभाषय CKM_AES_कुञ्चिका_GEN			(0x1080UL)
+#परिभाषय CKM_AES_ECB			(0x1081UL)
+#परिभाषय CKM_AES_CBC			(0x1082UL)
+#परिभाषय CKM_AES_MAC			(0x1083UL)
+#परिभाषय CKM_AES_MAC_GENERAL		(0x1084UL)
+#परिभाषय CKM_AES_CBC_PAD			(0x1085UL)
+#परिभाषय CKM_AES_CTR				(0x1086UL)
+#परिभाषय CKM_AES_GCM				(0x1087UL)
+#परिभाषय CKM_AES_CCM				(0x1088UL)
+#परिभाषय CKM_AES_CTS				(0x1089UL)
+#परिभाषय CKM_AES_CMAC			(0x108AUL)
+#परिभाषय CKM_AES_CMAC_GENERAL		(0x108BUL)
+#परिभाषय CKM_AES_XCBC_MAC		(0x108CUL)
+#परिभाषय CKM_AES_XCBC_MAC_96		(0x108DUL)
+#परिभाषय CKM_AES_GMAC			(0x108EUL)
+#परिभाषय CKM_BLOWFISH_कुञ्चिका_GEN    (0x1090UL)
+#परिभाषय CKM_BLOWFISH_CBC        (0x1091UL)
+#परिभाषय CKM_TWOFISH_कुञ्चिका_GEN     (0x1092UL)
+#परिभाषय CKM_TWOFISH_CBC         (0x1093UL)
+#परिभाषय CKM_DES_ECB_ENCRYPT_दत्त	(0x1100UL)
+#परिभाषय CKM_DES_CBC_ENCRYPT_दत्त	(0x1101UL)
+#परिभाषय CKM_DES3_ECB_ENCRYPT_दत्त	(0x1102UL)
+#परिभाषय CKM_DES3_CBC_ENCRYPT_दत्त	(0x1103UL)
+#परिभाषय CKM_AES_ECB_ENCRYPT_दत्त	(0x1104UL)
+#परिभाषय CKM_AES_CBC_ENCRYPT_दत्त	(0x1105UL)
+#परिभाषय CKM_GOSTR3410_कुञ्चिका_PAIR_GEN	(0x1200UL)
+#परिभाषय CKM_GOSTR3410			(0x1201UL)
+#परिभाषय CKM_GOSTR3410_WITH_GOSTR3411	(0x1202UL)
+#परिभाषय CKM_GOSTR3410_कुञ्चिका_WRAP  (0x1203UL)
+#परिभाषय CKM_GOSTR3410_DERIVE    (0x1204UL)
+#परिभाषय CKM_GOSTR3410_512_कुञ्चिका_PAIR_GEN	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x005)
+#परिभाषय CKM_GOSTR3410_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x006)
+#परिभाषय CKM_GOSTR3410_12_DERIVE	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x007)
+#परिभाषय CKM_GOSTR3410_WITH_GOSTR3411_12_256	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x008)
+#परिभाषय CKM_GOSTR3410_WITH_GOSTR3411_12_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x009)
+#परिभाषय CKM_GOSTR3411			(0x1210UL)
+#परिभाषय CKM_GOSTR3411_HMAC      (0x1211UL)
+#परिभाषय CKM_GOSTR3411_12_256	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x012)
+#परिभाषय CKM_GOSTR3411_12_512	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x013)
+#परिभाषय CKM_GOSTR3411_12_256_HMAC	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x014)
+#परिभाषय CKM_GOSTR3411_12_512_HMAC	(CK_VENDOR_PKCS11_RU_TEAM_TK26 | 0x015)
+#परिभाषय CKM_GOST28147_कुञ्चिका_GEN   (0x1220UL)
+#परिभाषय CKM_GOST28147_ECB       (0x1221UL)
+#परिभाषय CKM_GOST28147           (0x1222UL)
+#परिभाषय CKM_GOST28147_MAC       (0x1223UL)
+#परिभाषय CKM_GOST28147_कुञ्चिका_WRAP  (0x1224UL)
 
-#define CKM_DSA_PARAMETER_GEN		(0x2000UL)
-#define CKM_DH_PKCS_PARAMETER_GEN	(0x2001UL)
-#define CKM_X9_42_DH_PARAMETER_GEN	(0x2002UL)
-#define CKM_AES_OFB			(0x2104UL)
-#define CKM_AES_CFB64			(0x2105UL)
-#define CKM_AES_CFB8			(0x2106UL)
-#define CKM_AES_CFB128			(0x2107UL)
-#define CKM_AES_CFB1			(0x2108UL)
-#define CKM_AES_KEY_WRAP		(0x2109UL)
-#define CKM_AES_KEY_WRAP_PAD		(0x210AUL)
-#define CKM_XEDDSA			(0x4029UL)
-#define CKM_HKDF_DERIVE			(0x402AUL)
-#define CKM_HKDF_DATA			(0x402BUL)
-#define CKM_HKDF_KEY_GEN		(0x402CUL)
+#परिभाषय CKM_DSA_PARAMETER_GEN		(0x2000UL)
+#परिभाषय CKM_DH_PKCS_PARAMETER_GEN	(0x2001UL)
+#परिभाषय CKM_X9_42_DH_PARAMETER_GEN	(0x2002UL)
+#परिभाषय CKM_AES_OFB			(0x2104UL)
+#परिभाषय CKM_AES_CFB64			(0x2105UL)
+#परिभाषय CKM_AES_CFB8			(0x2106UL)
+#परिभाषय CKM_AES_CFB128			(0x2107UL)
+#परिभाषय CKM_AES_CFB1			(0x2108UL)
+#परिभाषय CKM_AES_कुञ्चिका_WRAP		(0x2109UL)
+#परिभाषय CKM_AES_कुञ्चिका_WRAP_PAD		(0x210AUL)
+#परिभाषय CKM_XEDDSA			(0x4029UL)
+#परिभाषय CKM_HKDF_DERIVE			(0x402AUL)
+#परिभाषय CKM_HKDF_दत्त			(0x402BUL)
+#परिभाषय CKM_HKDF_कुञ्चिका_GEN		(0x402CUL)
 
-#define CKM_VENDOR_DEFINED		(1UL << 31)
+#परिभाषय CKM_VENDOR_DEFINED		(1UL << 31)
 
-struct ck_mechanism
+संरचना ck_mechanism
 {
   ck_mechanism_type_t mechanism;
-  void *parameter;
-  unsigned long parameter_len;
+  शून्य *parameter;
+  अचिह्नित दीर्घ parameter_len;
 };
 
 
-struct ck_mechanism_info
+संरचना ck_mechanism_info
 {
-  unsigned long min_key_size;
-  unsigned long max_key_size;
+  अचिह्नित दीर्घ min_कुञ्चिका_आकार;
+  अचिह्नित दीर्घ max_कुञ्चिका_आकार;
   ck_flags_t flags;
 };
 
-#define CKF_HW			(1UL << 0)
+#परिभाषय CKF_HW			(1UL << 0)
 
-#define CKF_MESSAGE_ENCRYPT	(1UL << 1)
-#define CKF_MESSAGE_DECRYPT	(1UL << 2)
-#define CKF_MESSAGE_SIGN	(1UL << 3)
-#define CKF_MESSAGE_VERIFY	(1UL << 4)
-#define CKF_MULTI_MESSAGE	(1UL << 5)
-#define CKF_FIND_OBJECTS	(1UL << 6)
+#परिभाषय CKF_सन्देशः_ENCRYPT	(1UL << 1)
+#परिभाषय CKF_सन्देशः_DECRYPT	(1UL << 2)
+#परिभाषय CKF_सन्देशः_SIGN	(1UL << 3)
+#परिभाषय CKF_सन्देशः_VERIFY	(1UL << 4)
+#परिभाषय CKF_MULTI_सन्देशः	(1UL << 5)
+#परिभाषय CKF_FIND_OBJECTS	(1UL << 6)
 
-#define CKF_ENCRYPT		(1UL << 8)
-#define CKF_DECRYPT		(1UL << 9)
-#define CKF_DIGEST		(1UL << 10)
-#define CKF_SIGN		(1UL << 11)
-#define CKF_SIGN_RECOVER	(1UL << 12)
-#define CKF_VERIFY		(1UL << 13)
-#define CKF_VERIFY_RECOVER	(1UL << 14)
-#define CKF_GENERATE		(1UL << 15)
-#define CKF_GENERATE_KEY_PAIR	(1UL << 16)
-#define CKF_WRAP		(1UL << 17)
-#define CKF_UNWRAP		(1UL << 18)
-#define CKF_DERIVE		(1UL << 19)
-#define CKF_EXTENSION		(1UL << 31)
+#परिभाषय CKF_ENCRYPT		(1UL << 8)
+#परिभाषय CKF_DECRYPT		(1UL << 9)
+#परिभाषय CKF_DIGEST		(1UL << 10)
+#परिभाषय CKF_SIGN		(1UL << 11)
+#परिभाषय CKF_SIGN_RECOVER	(1UL << 12)
+#परिभाषय CKF_VERIFY		(1UL << 13)
+#परिभाषय CKF_VERIFY_RECOVER	(1UL << 14)
+#परिभाषय CKF_GENERATE		(1UL << 15)
+#परिभाषय CKF_GENERATE_कुञ्चिका_PAIR	(1UL << 16)
+#परिभाषय CKF_WRAP		(1UL << 17)
+#परिभाषय CKF_UNWRAP		(1UL << 18)
+#परिभाषय CKF_DERIVE		(1UL << 19)
+#परिभाषय CKF_EXTENSION		(1UL << 31)
 
-#define CKF_EC_F_P			(1UL << 20)
-#define CKF_EC_F_2M			(1UL << 21)
-#define CKF_EC_ECPARAMETERS	(1UL << 22)
-#define CKF_EC_OID		(1UL << 23)
-#define CKF_EC_NAMEDCURVE	CKF_EC_OID
-#define CKF_EC_UNCOMPRESS	(1UL << 24)
-#define CKF_EC_COMPRESS		(1UL << 25)
-#define CKF_EC_CURVENAME	(1UL << 26)
+#परिभाषय CKF_EC_F_P			(1UL << 20)
+#परिभाषय CKF_EC_F_2M			(1UL << 21)
+#परिभाषय CKF_EC_ECPARAMETERS	(1UL << 22)
+#परिभाषय CKF_EC_OID		(1UL << 23)
+#परिभाषय CKF_EC_NAMEDCURVE	CKF_EC_OID
+#परिभाषय CKF_EC_UNCOMPRESS	(1UL << 24)
+#परिभाषय CKF_EC_COMPRESS		(1UL << 25)
+#परिभाषय CKF_EC_CURVENAME	(1UL << 26)
 
 /* Flags for C_WaitForSlotEvent.  */
-#define CKF_DONT_BLOCK				(1UL)
+#परिभाषय CKF_DONT_खण्डम्				(1UL)
 
 /* Flags for Key derivation */
-#define CKD_NULL			(0x1UL)
-#define CKD_SHA1_KDF			(0x2UL)
-#define CKD_SHA224_KDF			(0x5UL)
-#define CKD_SHA256_KDF			(0x6UL)
-#define CKD_SHA384_KDF			(0x7UL)
-#define CKD_SHA512_KDF			(0x8UL)
+#परिभाषय CKD_NULL			(0x1UL)
+#परिभाषय CKD_SHA1_KDF			(0x2UL)
+#परिभाषय CKD_SHA224_KDF			(0x5UL)
+#परिभाषय CKD_SHA256_KDF			(0x6UL)
+#परिभाषय CKD_SHA384_KDF			(0x7UL)
+#परिभाषय CKD_SHA512_KDF			(0x8UL)
 
-typedef struct CK_ECDH1_DERIVE_PARAMS {
-	unsigned long  kdf;
-	unsigned long  ulSharedDataLen;
-	unsigned char *  pSharedData;
-	unsigned long  ulPublicDataLen;
-	unsigned char *  pPublicData;
+प्रकारनिर्देश संरचना CK_ECDH1_DERIVE_PARAMS {
+	अचिह्नित दीर्घ  kdf;
+	अचिह्नित दीर्घ  ul_Shared_दत्त_Len;
+	अचिह्नित वर्ण *  p_Shared_दत्त;
+	अचिह्नित दीर्घ  ul_लौकिकम्_दत्त_Len;
+	अचिह्नित वर्ण *  p_लौकिकम्_दत्त;
 } CK_ECDH1_DERIVE_PARAMS;
 
-typedef struct CK_ECMQV_DERIVE_PARAMS {
-	unsigned long kdf;
-	unsigned long ulSharedDataLen;
-	unsigned char * pSharedData;
-	unsigned long ulPublicDataLen;
-	unsigned char * pPublicData;
-	unsigned long ulPrivateDataLen;
-	CK_OBJECT_HANDLE hPrivateData;
-	unsigned long ulPublicDataLen2;
-	unsigned char * pPublicData2;
-	CK_OBJECT_HANDLE publicKey;
+प्रकारनिर्देश संरचना CK_ECMQV_DERIVE_PARAMS {
+	अचिह्नित दीर्घ kdf;
+	अचिह्नित दीर्घ ul_Shared_दत्त_Len;
+	अचिह्नित वर्ण * p_Shared_दत्त;
+	अचिह्नित दीर्घ ul_लौकिकम्_दत्त_Len;
+	अचिह्नित वर्ण * p_लौकिकम्_दत्त;
+	अचिह्नित दीर्घ ul_वैयक्तिकम्_दत्त_Len;
+	CK_OBJECT_HANDLE h_वैयक्तिकम्_दत्त;
+	अचिह्नित दीर्घ ul_लौकिकम्_दत्त_Len2;
+	अचिह्नित वर्ण * p_लौकिकम्_Data2;
+	CK_OBJECT_HANDLE लौकिकम्_कुञ्चिका_2;
 } CK_ECMQV_DERIVE_PARAMS;
 
-typedef unsigned long ck_rsa_pkcs_mgf_type_t;
-typedef unsigned long CK_RSA_PKCS_OAEP_SOURCE_TYPE;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_rsa_pkcs_mgf_type_t;
+प्रकारनिर्देश अचिह्नित दीर्घ CK_RSA_PKCS_OAEP_SOURCE_TYPE;
 
-typedef struct CK_RSA_PKCS_OAEP_PARAMS {
+प्रकारनिर्देश संरचना CK_RSA_PKCS_OAEP_PARAMS {
 	CK_MECHANISM_TYPE hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
 	CK_RSA_PKCS_OAEP_SOURCE_TYPE source;
-	void *pSourceData;
-	unsigned long ulSourceDataLen;
+	शून्य *p_Source_दत्त;
+	अचिह्नित दीर्घ ul_Source_दत्त_Len;
 } CK_RSA_PKCS_OAEP_PARAMS;
 
-typedef struct CK_RSA_PKCS_PSS_PARAMS {
+प्रकारनिर्देश संरचना CK_RSA_PKCS_PSS_PARAMS {
 	ck_mechanism_type_t hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
-	unsigned long sLen;
+	अचिह्नित दीर्घ sLen;
 } CK_RSA_PKCS_PSS_PARAMS;
 
-#define CKG_MGF1_SHA1			(0x00000001UL)
-#define CKG_MGF1_SHA224		(0x00000005UL)
-#define CKG_MGF1_SHA256		(0x00000002UL)
-#define CKG_MGF1_SHA384		(0x00000003UL)
-#define CKG_MGF1_SHA512		(0x00000004UL)
-#define CKG_MGF1_SHA3_224	(0x00000006UL)
-#define CKG_MGF1_SHA3_256	(0x00000007UL)
-#define CKG_MGF1_SHA3_384	(0x00000008UL)
-#define CKG_MGF1_SHA3_512	(0x00000009UL)
+#परिभाषय CKG_MGF1_SHA1			(0x00000001UL)
+#परिभाषय CKG_MGF1_SHA224		(0x00000005UL)
+#परिभाषय CKG_MGF1_SHA256		(0x00000002UL)
+#परिभाषय CKG_MGF1_SHA384		(0x00000003UL)
+#परिभाषय CKG_MGF1_SHA512		(0x00000004UL)
+#परिभाषय CKG_MGF1_SHA3_224	(0x00000006UL)
+#परिभाषय CKG_MGF1_SHA3_256	(0x00000007UL)
+#परिभाषय CKG_MGF1_SHA3_384	(0x00000008UL)
+#परिभाषय CKG_MGF1_SHA3_512	(0x00000009UL)
 
-#define CKZ_DATA_SPECIFIED	(0x00000001UL)
+#परिभाषय CKZ_दत्त_SPECIFIED	(0x00000001UL)
 
-typedef struct CK_GCM_PARAMS {
-	void * pIv;
-	unsigned long ulIvLen;
-	unsigned long ulIvBits;
-	void * pAAD;
-	unsigned long ulAADLen;
-	unsigned long ulTagBits;
+प्रकारनिर्देश संरचना CK_GCM_PARAMS {
+	शून्य * pIv;
+	अचिह्नित दीर्घ ulIvLen;
+	अचिह्नित दीर्घ ul_Iv_द्वयङ्काः;
+	शून्य * pAAD;
+	अचिह्नित दीर्घ ulAADLen;
+	अचिह्नित दीर्घ ul_चिह्नकम्_द्वयङ्काः;
 } CK_GCM_PARAMS;
 
-typedef struct CK_CCM_PARAMS {
-	unsigned long ulDataLen;
-	unsigned char *pNonce;
-	unsigned long ulNonceLen;
-	unsigned char *pAAD;
-	unsigned long ulAADLen;
-	unsigned long ulMACLen;
+प्रकारनिर्देश संरचना CK_CCM_PARAMS {
+	अचिह्नित दीर्घ ul_दत्त_Len;
+	अचिह्नित वर्ण *pNonce;
+	अचिह्नित दीर्घ ulNonceLen;
+	अचिह्नित वर्ण *pAAD;
+	अचिह्नित दीर्घ ulAADLen;
+	अचिह्नित दीर्घ ulMACLen;
 } CK_CCM_PARAMS;
 
 /* EDDSA */
-typedef struct CK_EDDSA_PARAMS {
-	unsigned char phFlag;
-	unsigned long ulContextDataLen;
-	unsigned char *pContextData;
+प्रकारनिर्देश संरचना CK_EDDSA_PARAMS {
+	अचिह्नित वर्ण phFlag;
+	अचिह्नित दीर्घ ul_Context_दत्त_Len;
+	अचिह्नित वर्ण *p_Context_दत्त;
 } CK_EDDSA_PARAMS;
 
-typedef CK_EDDSA_PARAMS *CK_EDDSA_PARAMS_PTR;
+प्रकारनिर्देश CK_EDDSA_PARAMS *CK_EDDSA_PARAMS_PTR;
 
 /* XEDDSA */
-typedef struct CK_XEDDSA_PARAMS {
-	unsigned long hash;
+प्रकारनिर्देश संरचना CK_XEDDSA_PARAMS {
+	अचिह्नित दीर्घ hash;
 } CK_XEDDSA_PARAMS;
 
-typedef CK_XEDDSA_PARAMS *CK_XEDDSA_PARAMS_PTR;
+प्रकारनिर्देश CK_XEDDSA_PARAMS *CK_XEDDSA_PARAMS_PTR;
 
-typedef struct CK_AES_CTR_PARAMS {
-    unsigned long ulCounterBits;
-    unsigned char cb[16];
+प्रकारनिर्देश संरचना CK_AES_CTR_PARAMS {
+    अचिह्नित दीर्घ ul_गणक_द्वयङ्काः;
+    अचिह्नित वर्ण cb[16];
 } CK_AES_CTR_PARAMS;
 
-typedef CK_AES_CTR_PARAMS *CK_AES_CTR_PARAMS_PTR;
+प्रकारनिर्देश CK_AES_CTR_PARAMS *CK_AES_CTR_PARAMS_PTR;
 
-typedef unsigned long CK_MAC_GENERAL_PARAMS;
+प्रकारनिर्देश अचिह्नित दीर्घ CK_MAC_GENERAL_PARAMS;
 
-typedef CK_MAC_GENERAL_PARAMS *CK_MAC_GENERAL_PARAMS_PTR;
+प्रकारनिर्देश CK_MAC_GENERAL_PARAMS *CK_MAC_GENERAL_PARAMS_PTR;
 
-typedef unsigned long ck_rv_t;
+प्रकारनिर्देश अचिह्नित दीर्घ ck_rv_t;
 
 
-typedef ck_rv_t (*ck_notify_t) (ck_session_handle_t session,
-				ck_notification_t event, void *application);
+प्रकारनिर्देश ck_rv_t (*ck_notify_t) (ck_session_handle_t session,
+				ck_notification_t event, शून्य *application);
 
-struct ck_interface {
-  char * pInterfaceName;
-  void * pFunctionList;
+संरचना ck_interface {
+  वर्ण * pInterfaceName;
+  शून्य * pFunctionList;
   ck_flags_t flags;
 };
 
-#define CKF_INTERFACE_FORK_SAFE	(0x00000001UL)
+#परिभाषय CKF_INTERFACE_FORK_SAFE	(0x00000001UL)
 
 /* Forward reference.  */
-struct ck_function_list;
-struct ck_function_list_3_0;
+संरचना ck_function_list;
+संरचना ck_function_list_3_0;
 
-#define _CK_DECLARE_FUNCTION(name, args)	\
-typedef ck_rv_t (*CK_ ## name) args;		\
-ck_rv_t CK_SPEC name args
+#परिभाषय _CK_DECLARE_FUNCTION(name, तर्काः)	\
+प्रकारनिर्देश ck_rv_t (*CK_ ## name) तर्काः;		\
+ck_rv_t CK_SPEC name तर्काः
 
-_CK_DECLARE_FUNCTION (C_Initialize, (void *init_args));
-_CK_DECLARE_FUNCTION (C_Finalize, (void *reserved));
-_CK_DECLARE_FUNCTION (C_GetInfo, (struct ck_info *info));
+_CK_DECLARE_FUNCTION (C_Initialize, (शून्य *init_तर्काः));
+_CK_DECLARE_FUNCTION (C_Finalize, (शून्य *reserved));
+_CK_DECLARE_FUNCTION (C_GetInfo, (संरचना ck_info *info));
 _CK_DECLARE_FUNCTION (C_GetFunctionList,
-		      (struct ck_function_list **function_list));
+		      (संरचना ck_function_list **function_list));
 
 _CK_DECLARE_FUNCTION (C_GetSlotList,
-		      (unsigned char token_present, ck_slot_id_t *slot_list,
-		       unsigned long *count));
+		      (अचिह्नित वर्ण token_present, ck_slot_id_t *slot_list,
+		       अचिह्नित दीर्घ *गणनम्));
 _CK_DECLARE_FUNCTION (C_GetSlotInfo,
-		      (ck_slot_id_t slot_id, struct ck_slot_info *info));
+		      (ck_slot_id_t slot_id, संरचना ck_slot_info *info));
 _CK_DECLARE_FUNCTION (C_GetTokenInfo,
-		      (ck_slot_id_t slot_id, struct ck_token_info *info));
+		      (ck_slot_id_t slot_id, संरचना ck_token_info *info));
 _CK_DECLARE_FUNCTION (C_WaitForSlotEvent,
-		      (ck_flags_t flags, ck_slot_id_t *slot, void *reserved));
+		      (ck_flags_t flags, ck_slot_id_t *slot, शून्य *reserved));
 _CK_DECLARE_FUNCTION (C_GetMechanismList,
 		      (ck_slot_id_t slot_id,
 		       ck_mechanism_type_t *mechanism_list,
-		       unsigned long *count));
+		       अचिह्नित दीर्घ *गणनम्));
 _CK_DECLARE_FUNCTION (C_GetMechanismInfo,
 		      (ck_slot_id_t slot_id, ck_mechanism_type_t type,
-		       struct ck_mechanism_info *info));
+		       संरचना ck_mechanism_info *info));
 _CK_DECLARE_FUNCTION (C_InitToken,
-		      (ck_slot_id_t slot_id, unsigned char *pin,
-		       unsigned long pin_len, unsigned char *label));
+		      (ck_slot_id_t slot_id, अचिह्नित वर्ण *pin,
+		       अचिह्नित दीर्घ pin_len, अचिह्नित वर्ण *label));
 _CK_DECLARE_FUNCTION (C_InitPIN,
-		      (ck_session_handle_t session, unsigned char *pin,
-		       unsigned long pin_len));
-_CK_DECLARE_FUNCTION (C_SetPIN,
-		      (ck_session_handle_t session, unsigned char *old_pin,
-		       unsigned long old_len, unsigned char *new_pin,
-		       unsigned long new_len));
+		      (ck_session_handle_t session, अचिह्नित वर्ण *pin,
+		       अचिह्नित दीर्घ pin_len));
+_CK_DECLARE_FUNCTION (C_समुच्चयः_PIN,
+		      (ck_session_handle_t session, अचिह्नित वर्ण *old_pin,
+		       अचिह्नित दीर्घ old_len, अचिह्नित वर्ण *new_pin,
+		       अचिह्नित दीर्घ new_len));
 
 _CK_DECLARE_FUNCTION (C_OpenSession,
 		      (ck_slot_id_t slot_id, ck_flags_t flags,
-		       void *application, ck_notify_t notify,
+		       शून्य *application, ck_notify_t notify,
 		       ck_session_handle_t *session));
 _CK_DECLARE_FUNCTION (C_CloseSession, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CloseAllSessions, (ck_slot_id_t slot_id));
 _CK_DECLARE_FUNCTION (C_GetSessionInfo,
 		      (ck_session_handle_t session,
-		       struct ck_session_info *info));
+		       संरचना ck_session_info *info));
 _CK_DECLARE_FUNCTION (C_GetOperationState,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
-		       unsigned long *operation_state_len));
-_CK_DECLARE_FUNCTION (C_SetOperationState,
+		       अचिह्नित वर्ण *operation_state,
+		       अचिह्नित दीर्घ *operation_state_len));
+_CK_DECLARE_FUNCTION (C_समुच्चयः_Operation_State,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
-		       unsigned long operation_state_len,
-		       ck_object_handle_t encryption_key,
-		       ck_object_handle_t authentication_key));
+		       अचिह्नित वर्ण *operation_state,
+		       अचिह्नित दीर्घ operation_state_len,
+		       ck_object_handle_t encryption_कुञ्चिका,
+		       ck_object_handle_t authentication_कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_Login,
 		      (ck_session_handle_t session, ck_user_type_t user_type,
-		       unsigned char *pin, unsigned long pin_len));
+		       अचिह्नित वर्ण *pin, अचिह्नित दीर्घ pin_len));
 _CK_DECLARE_FUNCTION (C_Logout, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_CreateObject,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
-		       unsigned long count, ck_object_handle_t *object));
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ गणनम्, ck_object_handle_t *object));
 _CK_DECLARE_FUNCTION (C_CopyObject,
 		      (ck_session_handle_t session, ck_object_handle_t object,
-		       struct ck_attribute *templ, unsigned long count,
+		       संरचना ck_attribute *templ, अचिह्नित दीर्घ गणनम्,
 		       ck_object_handle_t *new_object));
 _CK_DECLARE_FUNCTION (C_DestroyObject,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object));
-_CK_DECLARE_FUNCTION (C_GetObjectSize,
+_CK_DECLARE_FUNCTION (C_Get_Object_आकार,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       unsigned long *size));
-_CK_DECLARE_FUNCTION (C_GetAttributeValue,
+		       अचिह्नित दीर्घ *आकार));
+_CK_DECLARE_FUNCTION (C_Get_Attribute_मानम्,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
-		       unsigned long count));
-_CK_DECLARE_FUNCTION (C_SetAttributeValue,
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ गणनम्));
+_CK_DECLARE_FUNCTION (C_समुच्चयः_Attribute_मानम्,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
-		       unsigned long count));
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ गणनम्));
 _CK_DECLARE_FUNCTION (C_FindObjectsInit,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
-		       unsigned long count));
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ गणनम्));
 _CK_DECLARE_FUNCTION (C_FindObjects,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t *object,
-		       unsigned long max_object_count,
-		       unsigned long *object_count));
+		       अचिह्नित दीर्घ max_object_गणनम्,
+		       अचिह्नित दीर्घ *object_गणनम्));
 _CK_DECLARE_FUNCTION (C_FindObjectsFinal,
 		      (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_EncryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_Encrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *encrypted_data,
-		       unsigned long *encrypted_data_len));
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *encrypted_दत्त,
+		       अचिह्नित दीर्घ *encrypted_दत्त_len));
 _CK_DECLARE_FUNCTION (C_EncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
-		       unsigned long *encrypted_part_len));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len,
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_EncryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_encrypted_part,
-		       unsigned long *last_encrypted_part_len));
+		       अचिह्नित वर्ण *चरमः_encrypted_part,
+		       अचिह्नित दीर्घ *चरमः_encrypted_part_len));
 
 _CK_DECLARE_FUNCTION (C_DecryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_Decrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_data,
-		       unsigned long encrypted_data_len,
-		       unsigned char *data, unsigned long *data_len));
+		       अचिह्नित वर्ण *encrypted_दत्त,
+		       अचिह्नित दीर्घ encrypted_दत्त_len,
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ *दत्त_len));
 _CK_DECLARE_FUNCTION (C_DecryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
-		       unsigned long encrypted_part_len,
-		       unsigned char *part, unsigned long *part_len));
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ encrypted_part_len,
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ *part_len));
 _CK_DECLARE_FUNCTION (C_DecryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_part,
-		       unsigned long *last_part_len));
+		       अचिह्नित वर्ण *चरमः_part,
+		       अचिह्नित दीर्घ *चरमः_part_len));
 
 _CK_DECLARE_FUNCTION (C_DigestInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism));
+		       संरचना ck_mechanism *mechanism));
 _CK_DECLARE_FUNCTION (C_Digest,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *digest,
-		       unsigned long *digest_len));
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *digest,
+		       अचिह्नित दीर्घ *digest_len));
 _CK_DECLARE_FUNCTION (C_DigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
-_CK_DECLARE_FUNCTION (C_DigestKey,
-		      (ck_session_handle_t session, ck_object_handle_t key));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len));
+_CK_DECLARE_FUNCTION (C_Digest_कुञ्चिका,
+		      (ck_session_handle_t session, ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_DigestFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *digest,
-		       unsigned long *digest_len));
+		       अचिह्नित वर्ण *digest,
+		       अचिह्नित दीर्घ *digest_len));
 
 _CK_DECLARE_FUNCTION (C_SignInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_Sign,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long *signature_len));
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ *signature_len));
 _CK_DECLARE_FUNCTION (C_SignUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len));
 _CK_DECLARE_FUNCTION (C_SignFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
-		       unsigned long *signature_len));
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ *signature_len));
 _CK_DECLARE_FUNCTION (C_SignRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_SignRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long *signature_len));
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ *signature_len));
 
 _CK_DECLARE_FUNCTION (C_VerifyInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_Verify,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long signature_len));
+		       अचिह्नित वर्ण *दत्त, अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len));
 _CK_DECLARE_FUNCTION (C_VerifyFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
-		       unsigned long signature_len));
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
 _CK_DECLARE_FUNCTION (C_VerifyRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
-		       unsigned long signature_len,
-		       unsigned char *data,
-		       unsigned long *data_len));
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ signature_len,
+		       अचिह्नित वर्ण *दत्त,
+		       अचिह्नित दीर्घ *दत्त_len));
 
 _CK_DECLARE_FUNCTION (C_DigestEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
-		       unsigned long *encrypted_part_len));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len,
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptDigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
-		       unsigned long encrypted_part_len,
-		       unsigned char *part,
-		       unsigned long *part_len));
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ encrypted_part_len,
+		       अचिह्नित वर्ण *part,
+		       अचिह्नित दीर्घ *part_len));
 _CK_DECLARE_FUNCTION (C_SignEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
-		       unsigned long *encrypted_part_len));
+		       अचिह्नित वर्ण *part, अचिह्नित दीर्घ part_len,
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptVerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
-		       unsigned long encrypted_part_len,
-		       unsigned char *part,
-		       unsigned long *part_len));
+		       अचिह्नित वर्ण *encrypted_part,
+		       अचिह्नित दीर्घ encrypted_part_len,
+		       अचिह्नित वर्ण *part,
+		       अचिह्नित दीर्घ *part_len));
 
-_CK_DECLARE_FUNCTION (C_GenerateKey,
+_CK_DECLARE_FUNCTION (C_Generate_कुञ्चिका,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *templ,
-		       unsigned long count,
-		       ck_object_handle_t *key));
-_CK_DECLARE_FUNCTION (C_GenerateKeyPair,
+		       संरचना ck_mechanism *mechanism,
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ गणनम्,
+		       ck_object_handle_t *कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Generate_कुञ्चिका_Pair,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *public_key_template,
-		       unsigned long public_key_attribute_count,
-		       struct ck_attribute *private_key_template,
-		       unsigned long private_key_attribute_count,
-		       ck_object_handle_t *public_key,
-		       ck_object_handle_t *private_key));
-_CK_DECLARE_FUNCTION (C_WrapKey,
+		       संरचना ck_mechanism *mechanism,
+		       संरचना ck_attribute *लौकिकम्_कुञ्चिका_template,
+		       अचिह्नित दीर्घ लौकिकम्_कुञ्चिका_attribute_गणनम्,
+		       संरचना ck_attribute *वैयक्तिकम्_कुञ्चिका_template,
+		       अचिह्नित दीर्घ वैयक्तिकम्_कुञ्चिका_attribute_गणनम्,
+		       ck_object_handle_t *लौकिकम्_कुञ्चिका,
+		       ck_object_handle_t *वैयक्तिकम्_कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Wrap_कुञ्चिका,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t wrapping_key,
-		       ck_object_handle_t key,
-		       unsigned char *wrapped_key,
-		       unsigned long *wrapped_key_len));
-_CK_DECLARE_FUNCTION (C_UnwrapKey,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t wrapping_कुञ्चिका,
+		       ck_object_handle_t कुञ्चिका,
+		       अचिह्नित वर्ण *wrapped_कुञ्चिका,
+		       अचिह्नित दीर्घ *wrapped_कुञ्चिका_len));
+_CK_DECLARE_FUNCTION (C_Unwrap_कुञ्चिका,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t unwrapping_key,
-		       unsigned char *wrapped_key,
-		       unsigned long wrapped_key_len,
-		       struct ck_attribute *templ,
-		       unsigned long attribute_count,
-		       ck_object_handle_t *key));
-_CK_DECLARE_FUNCTION (C_DeriveKey,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t unwrapping_कुञ्चिका,
+		       अचिह्नित वर्ण *wrapped_कुञ्चिका,
+		       अचिह्नित दीर्घ wrapped_कुञ्चिका_len,
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ attribute_गणनम्,
+		       ck_object_handle_t *कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Derive_कुञ्चिका,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t base_key,
-		       struct ck_attribute *templ,
-		       unsigned long attribute_count,
-		       ck_object_handle_t *key));
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t आधारः_कुञ्चिका,
+		       संरचना ck_attribute *templ,
+		       अचिह्नित दीर्घ attribute_गणनम्,
+		       ck_object_handle_t *कुञ्चिका));
 
-_CK_DECLARE_FUNCTION (C_SeedRandom,
-		      (ck_session_handle_t session, unsigned char *seed,
-		       unsigned long seed_len));
+_CK_DECLARE_FUNCTION (C_बीजम्_Random,
+		      (ck_session_handle_t session, अचिह्नित वर्ण *बीजम्,
+		       अचिह्नित दीर्घ बीजम्_len));
 _CK_DECLARE_FUNCTION (C_GenerateRandom,
 		      (ck_session_handle_t session,
-		       unsigned char *random_data,
-		       unsigned long random_len));
+		       अचिह्नित वर्ण *random_data,
+		       अचिह्नित दीर्घ random_len));
 
-_CK_DECLARE_FUNCTION (C_GetFunctionStatus, (ck_session_handle_t session));
+_CK_DECLARE_FUNCTION (C_Get_Function_स्थितिः, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CancelFunction, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_GetInterfaceList,
-		      (struct ck_interface *interfaces_list,
-		       unsigned long *count));
+		      (संरचना ck_interface *interfaces_list,
+		       अचिह्नित दीर्घ *गणनम्));
 _CK_DECLARE_FUNCTION (C_GetInterface,
-		      (unsigned char *interface_name,
-		       struct ck_version *version,
-		       struct ck_interface **interface_ptr,
+		      (अचिह्नित वर्ण *interface_name,
+		       संरचना ck_संस्करणम् *संस्करणम्,
+		       संरचना ck_interface **interface_ptr,
 		       ck_flags_t flags));
 
 _CK_DECLARE_FUNCTION (C_LoginUser,
 		      (ck_session_handle_t session,
 		       ck_user_type_t user_type,
-		       unsigned char *pin,
-		       unsigned long pin_len,
-		       unsigned char *username,
-		       unsigned long username_len));
+		       अचिह्नित वर्ण *pin,
+		       अचिह्नित दीर्घ pin_len,
+		       अचिह्नित वर्ण *username,
+		       अचिह्नित दीर्घ username_len));
 
 _CK_DECLARE_FUNCTION (C_SessionCancel,
 		      (ck_session_handle_t session,
 		       ck_flags_t flags));
 
-_CK_DECLARE_FUNCTION (C_MessageEncryptInit,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Encrypt_Init,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
-_CK_DECLARE_FUNCTION (C_EncryptMessage,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Encrypt_सन्देशः,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *associated_data,
-		       unsigned long associated_data_len,
-		       unsigned char *plaintext,
-		       unsigned long plaintext_len,
-		       unsigned char *ciphertext,
-		       unsigned long *ciphertext_len));
-_CK_DECLARE_FUNCTION (C_EncryptMessageBegin,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *associated_दत्त,
+		       अचिह्नित दीर्घ associated_दत्त_len,
+		       अचिह्नित वर्ण *plaintext,
+		       अचिह्नित दीर्घ plaintext_len,
+		       अचिह्नित वर्ण *ciphertext,
+		       अचिह्नित दीर्घ *ciphertext_len));
+_CK_DECLARE_FUNCTION (C_Encrypt_सन्देशः_Begin,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *associated_data,
-		       unsigned long associated_data_len));
-_CK_DECLARE_FUNCTION (C_EncryptMessageNext,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *associated_दत्त,
+		       अचिह्नित दीर्घ associated_दत्त_len));
+_CK_DECLARE_FUNCTION (C_Encrypt_सन्देशः_अग्र,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *plaintext_part,
-		       unsigned long plaintext_part_len,
-		       unsigned char *ciphertext_part,
-		       unsigned long *ciphertext_part_len,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *plaintext_part,
+		       अचिह्नित दीर्घ plaintext_part_len,
+		       अचिह्नित वर्ण *ciphertext_part,
+		       अचिह्नित दीर्घ *ciphertext_part_len,
 		       ck_flags_t flags));
-_CK_DECLARE_FUNCTION (C_MessageEncryptFinal,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Encrypt_Final,
 		      (ck_session_handle_t session));
 
-_CK_DECLARE_FUNCTION (C_MessageDecryptInit,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Decrypt_Init,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
-_CK_DECLARE_FUNCTION (C_DecryptMessage,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Decrypt_सन्देशः,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *associated_data,
-		       unsigned long associated_data_len,
-		       unsigned char *ciphertext,
-		       unsigned long ciphertext_len,
-		       unsigned char *plaintext,
-		       unsigned long *plaintext_len));
-_CK_DECLARE_FUNCTION (C_DecryptMessageBegin,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *associated_दत्त,
+		       अचिह्नित दीर्घ associated_दत्त_len,
+		       अचिह्नित वर्ण *ciphertext,
+		       अचिह्नित दीर्घ ciphertext_len,
+		       अचिह्नित वर्ण *plaintext,
+		       अचिह्नित दीर्घ *plaintext_len));
+_CK_DECLARE_FUNCTION (C_Decrypt_सन्देशः_Begin,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *associated_data,
-		       unsigned long associated_data_len));
-_CK_DECLARE_FUNCTION (C_DecryptMessageNext,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *associated_दत्त,
+		       अचिह्नित दीर्घ associated_दत्त_len));
+_CK_DECLARE_FUNCTION (C_Decrypt_सन्देशः_अग्र,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *ciphertext_part,
-		       unsigned long ciphertext_part_len,
-		       unsigned char *plaintext_part,
-		       unsigned long *plaintext_part_len,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *ciphertext_part,
+		       अचिह्नित दीर्घ ciphertext_part_len,
+		       अचिह्नित वर्ण *plaintext_part,
+		       अचिह्नित दीर्घ *plaintext_part_len,
 		       ck_flags_t flags));
-_CK_DECLARE_FUNCTION (C_MessageDecryptFinal,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Decrypt_Final,
 		      (ck_session_handle_t session));
 
-_CK_DECLARE_FUNCTION (C_MessageSignInit,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Sign_Init,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
-_CK_DECLARE_FUNCTION (C_SignMessage,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Sign_सन्देशः,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *data,
-		       unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long *signature_len));
-_CK_DECLARE_FUNCTION (C_SignMessageBegin,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *दत्त,
+		       अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ *signature_len));
+_CK_DECLARE_FUNCTION (C_Sign_सन्देशः_Begin,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len));
-_CK_DECLARE_FUNCTION (C_SignMessageNext,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len));
+_CK_DECLARE_FUNCTION (C_Sign_सन्देशः_अग्र,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *data,
-		       unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long *signature_len));
-_CK_DECLARE_FUNCTION (C_MessageSignFinal,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *दत्त,
+		       अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ *signature_len));
+_CK_DECLARE_FUNCTION (C_सन्देशः_Sign_Final,
 		      (ck_session_handle_t session));
 
-_CK_DECLARE_FUNCTION (C_MessageVerifyInit,
+_CK_DECLARE_FUNCTION (C_सन्देशः_Verify_Init,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       ck_object_handle_t key));
-_CK_DECLARE_FUNCTION (C_VerifyMessage,
+		       संरचना ck_mechanism *mechanism,
+		       ck_object_handle_t कुञ्चिका));
+_CK_DECLARE_FUNCTION (C_Verify_सन्देशः,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *data,
-		       unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long signature_len));
-_CK_DECLARE_FUNCTION (C_VerifyMessageBegin,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *दत्त,
+		       अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ signature_len));
+_CK_DECLARE_FUNCTION (C_Verify_सन्देशः_Begin,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len));
-_CK_DECLARE_FUNCTION (C_VerifyMessageNext,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len));
+_CK_DECLARE_FUNCTION (C_Verify_सन्देशः_अग्र,
 		      (ck_session_handle_t session,
-		       void *parameter,
-		       unsigned long parameter_len,
-		       unsigned char *data,
-		       unsigned long data_len,
-		       unsigned char *signature,
-		       unsigned long signature_len));
-_CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
+		       शून्य *parameter,
+		       अचिह्नित दीर्घ parameter_len,
+		       अचिह्नित वर्ण *दत्त,
+		       अचिह्नित दीर्घ दत्त_len,
+		       अचिह्नित वर्ण *signature,
+		       अचिह्नित दीर्घ signature_len));
+_CK_DECLARE_FUNCTION (C_सन्देशः_Verify_Final,
 		      (ck_session_handle_t session));
 
 /* Flags in Message-based encryption/decryption API */
-#define CKF_END_OF_MESSAGE	(0x00000001UL)
+#परिभाषय CKF_अन्तः_सम्बन्धि_सन्देशः	(0x00000001UL)
 
-struct ck_function_list
+संरचना ck_function_list
 {
-  struct ck_version version;
+  संरचना ck_संस्करणम् संस्करणम्;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1428,21 +1428,21 @@ struct ck_function_list
   CK_C_GetMechanismInfo C_GetMechanismInfo;
   CK_C_InitToken C_InitToken;
   CK_C_InitPIN C_InitPIN;
-  CK_C_SetPIN C_SetPIN;
+  CK_C_समुच्चयः_PIN C_समुच्चयः_PIN;
   CK_C_OpenSession C_OpenSession;
   CK_C_CloseSession C_CloseSession;
   CK_C_CloseAllSessions C_CloseAllSessions;
   CK_C_GetSessionInfo C_GetSessionInfo;
   CK_C_GetOperationState C_GetOperationState;
-  CK_C_SetOperationState C_SetOperationState;
+  CK_C_समुच्चयः_Operation_State C_समुच्चयः_Operation_State;
   CK_C_Login C_Login;
   CK_C_Logout C_Logout;
   CK_C_CreateObject C_CreateObject;
   CK_C_CopyObject C_CopyObject;
   CK_C_DestroyObject C_DestroyObject;
-  CK_C_GetObjectSize C_GetObjectSize;
-  CK_C_GetAttributeValue C_GetAttributeValue;
-  CK_C_SetAttributeValue C_SetAttributeValue;
+  CK_C_Get_Object_आकार C_Get_Object_आकार;
+  CK_C_Get_Attribute_मानम् C_Get_Attribute_मानम्;
+  CK_C_समुच्चयः_Attribute_मानम् C_समुच्चयः_Attribute_मानम्;
   CK_C_FindObjectsInit C_FindObjectsInit;
   CK_C_FindObjects C_FindObjects;
   CK_C_FindObjectsFinal C_FindObjectsFinal;
@@ -1457,7 +1457,7 @@ struct ck_function_list
   CK_C_DigestInit C_DigestInit;
   CK_C_Digest C_Digest;
   CK_C_DigestUpdate C_DigestUpdate;
-  CK_C_DigestKey C_DigestKey;
+  CK_C_Digest_कुञ्चिका C_Digest_कुञ्चिका;
   CK_C_DigestFinal C_DigestFinal;
   CK_C_SignInit C_SignInit;
   CK_C_Sign C_Sign;
@@ -1475,21 +1475,21 @@ struct ck_function_list
   CK_C_DecryptDigestUpdate C_DecryptDigestUpdate;
   CK_C_SignEncryptUpdate C_SignEncryptUpdate;
   CK_C_DecryptVerifyUpdate C_DecryptVerifyUpdate;
-  CK_C_GenerateKey C_GenerateKey;
-  CK_C_GenerateKeyPair C_GenerateKeyPair;
-  CK_C_WrapKey C_WrapKey;
-  CK_C_UnwrapKey C_UnwrapKey;
-  CK_C_DeriveKey C_DeriveKey;
-  CK_C_SeedRandom C_SeedRandom;
+  CK_C_Generate_कुञ्चिका C_Generate_कुञ्चिका;
+  CK_C_Generate_कुञ्चिका_Pair C_Generate_कुञ्चिका_Pair;
+  CK_C_Wrap_कुञ्चिका C_Wrap_कुञ्चिका;
+  CK_C_Unwrap_कुञ्चिका C_Unwrap_कुञ्चिका;
+  CK_C_Derive_कुञ्चिका C_Derive_कुञ्चिका;
+  CK_C_बीजम्_Random C_बीजम्_Random;
   CK_C_GenerateRandom C_GenerateRandom;
-  CK_C_GetFunctionStatus C_GetFunctionStatus;
+  CK_C_Get_Function_स्थितिः C_Get_Function_स्थितिः;
   CK_C_CancelFunction C_CancelFunction;
   CK_C_WaitForSlotEvent C_WaitForSlotEvent;
 };
 
-struct ck_function_list_3_0
+संरचना ck_function_list_3_0
 {
-  struct ck_version version;
+  संरचना ck_संस्करणम् संस्करणम्;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1501,21 +1501,21 @@ struct ck_function_list_3_0
   CK_C_GetMechanismInfo C_GetMechanismInfo;
   CK_C_InitToken C_InitToken;
   CK_C_InitPIN C_InitPIN;
-  CK_C_SetPIN C_SetPIN;
+  CK_C_समुच्चयः_PIN C_समुच्चयः_PIN;
   CK_C_OpenSession C_OpenSession;
   CK_C_CloseSession C_CloseSession;
   CK_C_CloseAllSessions C_CloseAllSessions;
   CK_C_GetSessionInfo C_GetSessionInfo;
   CK_C_GetOperationState C_GetOperationState;
-  CK_C_SetOperationState C_SetOperationState;
+  CK_C_समुच्चयः_Operation_State C_समुच्चयः_Operation_State;
   CK_C_Login C_Login;
   CK_C_Logout C_Logout;
   CK_C_CreateObject C_CreateObject;
   CK_C_CopyObject C_CopyObject;
   CK_C_DestroyObject C_DestroyObject;
-  CK_C_GetObjectSize C_GetObjectSize;
-  CK_C_GetAttributeValue C_GetAttributeValue;
-  CK_C_SetAttributeValue C_SetAttributeValue;
+  CK_C_Get_Object_आकार C_Get_Object_आकार;
+  CK_C_Get_Attribute_मानम् C_Get_Attribute_मानम्;
+  CK_C_समुच्चयः_Attribute_मानम् C_समुच्चयः_Attribute_मानम्;
   CK_C_FindObjectsInit C_FindObjectsInit;
   CK_C_FindObjects C_FindObjects;
   CK_C_FindObjectsFinal C_FindObjectsFinal;
@@ -1530,7 +1530,7 @@ struct ck_function_list_3_0
   CK_C_DigestInit C_DigestInit;
   CK_C_Digest C_Digest;
   CK_C_DigestUpdate C_DigestUpdate;
-  CK_C_DigestKey C_DigestKey;
+  CK_C_Digest_कुञ्चिका C_Digest_कुञ्चिका;
   CK_C_DigestFinal C_DigestFinal;
   CK_C_SignInit C_SignInit;
   CK_C_Sign C_Sign;
@@ -1548,14 +1548,14 @@ struct ck_function_list_3_0
   CK_C_DecryptDigestUpdate C_DecryptDigestUpdate;
   CK_C_SignEncryptUpdate C_SignEncryptUpdate;
   CK_C_DecryptVerifyUpdate C_DecryptVerifyUpdate;
-  CK_C_GenerateKey C_GenerateKey;
-  CK_C_GenerateKeyPair C_GenerateKeyPair;
-  CK_C_WrapKey C_WrapKey;
-  CK_C_UnwrapKey C_UnwrapKey;
-  CK_C_DeriveKey C_DeriveKey;
-  CK_C_SeedRandom C_SeedRandom;
+  CK_C_Generate_कुञ्चिका C_Generate_कुञ्चिका;
+  CK_C_Generate_कुञ्चिका_Pair C_Generate_कुञ्चिका_Pair;
+  CK_C_Wrap_कुञ्चिका C_Wrap_कुञ्चिका;
+  CK_C_Unwrap_कुञ्चिका C_Unwrap_कुञ्चिका;
+  CK_C_Derive_कुञ्चिका C_Derive_कुञ्चिका;
+  CK_C_बीजम्_Random C_बीजम्_Random;
   CK_C_GenerateRandom C_GenerateRandom;
-  CK_C_GetFunctionStatus C_GetFunctionStatus;
+  CK_C_Get_Function_स्थितिः C_Get_Function_स्थितिः;
   CK_C_CancelFunction C_CancelFunction;
   CK_C_WaitForSlotEvent C_WaitForSlotEvent;
   /* PKCS #11 3.0 functions */
@@ -1563,339 +1563,339 @@ struct ck_function_list_3_0
   CK_C_GetInterface C_GetInterface;
   CK_C_LoginUser C_LoginUser;
   CK_C_SessionCancel C_SessionCancel;
-  CK_C_MessageEncryptInit C_MessageEncryptInit;
-  CK_C_EncryptMessage C_EncryptMessage;
-  CK_C_EncryptMessageBegin C_EncryptMessageBegin;
-  CK_C_EncryptMessageNext C_EncryptMessageNext;
-  CK_C_MessageEncryptFinal C_MessageEncryptFinal;
-  CK_C_MessageDecryptInit C_MessageDecryptInit;
-  CK_C_DecryptMessage C_DecryptMessage;
-  CK_C_DecryptMessageBegin C_DecryptMessageBegin;
-  CK_C_DecryptMessageNext C_DecryptMessageNext;
-  CK_C_MessageDecryptFinal C_MessageDecryptFinal;
-  CK_C_MessageSignInit C_MessageSignInit;
-  CK_C_SignMessage C_SignMessage;
-  CK_C_SignMessageBegin C_SignMessageBegin;
-  CK_C_SignMessageNext C_SignMessageNext;
-  CK_C_MessageSignFinal C_MessageSignFinal;
-  CK_C_MessageVerifyInit C_MessageVerifyInit;
-  CK_C_VerifyMessage C_VerifyMessage;
-  CK_C_VerifyMessageBegin C_VerifyMessageBegin;
-  CK_C_VerifyMessageNext C_VerifyMessageNext;
-  CK_C_MessageVerifyFinal C_MessageVerifyFinal;
+  CK_C_सन्देशः_Encrypt_Init C_सन्देशः_Encrypt_Init;
+  CK_C_Encrypt_सन्देशः C_Encrypt_सन्देशः;
+  CK_C_Encrypt_सन्देशः_Begin C_Encrypt_सन्देशः_Begin;
+  CK_C_Encrypt_सन्देशः_अग्र C_Encrypt_सन्देशः_अग्र;
+  CK_C_सन्देशः_Encrypt_Final C_सन्देशः_Encrypt_Final;
+  CK_C_सन्देशः_Decrypt_Init C_सन्देशः_Decrypt_Init;
+  CK_C_Decrypt_सन्देशः C_Decrypt_सन्देशः;
+  CK_C_Decrypt_सन्देशः_Begin C_Decrypt_सन्देशः_Begin;
+  CK_C_Decrypt_सन्देशः_अग्र C_Decrypt_सन्देशः_अग्र;
+  CK_C_सन्देशः_Decrypt_Final C_सन्देशः_Decrypt_Final;
+  CK_C_सन्देशः_Sign_Init C_सन्देशः_Sign_Init;
+  CK_C_Sign_सन्देशः C_Sign_सन्देशः;
+  CK_C_Sign_सन्देशः_Begin C_Sign_सन्देशः_Begin;
+  CK_C_Sign_सन्देशः_अग्र C_Sign_सन्देशः_अग्र;
+  CK_C_सन्देशः_Sign_Final C_सन्देशः_Sign_Final;
+  CK_C_सन्देशः_Verify_Init C_सन्देशः_Verify_Init;
+  CK_C_Verify_सन्देशः C_Verify_सन्देशः;
+  CK_C_Verify_सन्देशः_Begin C_Verify_सन्देशः_Begin;
+  CK_C_Verify_सन्देशः_अग्र C_Verify_सन्देशः_अग्र;
+  CK_C_सन्देशः_Verify_Final C_सन्देशः_Verify_Final;
 };
 
 
 
-typedef ck_rv_t (*ck_createmutex_t) (void **mutex);
-typedef ck_rv_t (*ck_destroymutex_t) (void *mutex);
-typedef ck_rv_t (*ck_lockmutex_t) (void *mutex);
-typedef ck_rv_t (*ck_unlockmutex_t) (void *mutex);
+प्रकारनिर्देश ck_rv_t (*ck_createmutex_t) (शून्य **mutex);
+प्रकारनिर्देश ck_rv_t (*ck_destroymutex_t) (शून्य *mutex);
+प्रकारनिर्देश ck_rv_t (*ck_lockmutex_t) (शून्य *mutex);
+प्रकारनिर्देश ck_rv_t (*ck_unlockmutex_t) (शून्य *mutex);
 
 
-struct ck_c_initialize_args
+संरचना ck_c_initialize_तर्काः
 {
   ck_createmutex_t create_mutex;
   ck_destroymutex_t destroy_mutex;
-  ck_lockmutex_t lock_mutex;
+  ck_lockmutex_t तालकम्_mutex;
   ck_unlockmutex_t unlock_mutex;
   ck_flags_t flags;
-  void *reserved;
+  शून्य *reserved;
 };
 
 
-#define CKF_LIBRARY_CANT_CREATE_OS_THREADS	(1UL << 0)
-#define CKF_OS_LOCKING_OK			(1UL << 1)
+#परिभाषय CKF_LIBRARY_CANT_CREATE_OS_तन्तवः	(1UL << 0)
+#परिभाषय CKF_OS_LOCKING_OK			(1UL << 1)
 
-#define CKR_OK					(0UL)
-#define CKR_CANCEL				(1UL)
-#define CKR_HOST_MEMORY				(2UL)
-#define CKR_SLOT_ID_INVALID			(3UL)
-#define CKR_GENERAL_ERROR			(5UL)
-#define CKR_FUNCTION_FAILED			(6UL)
-#define CKR_ARGUMENTS_BAD			(7UL)
-#define CKR_NO_EVENT				(8UL)
-#define CKR_NEED_TO_CREATE_THREADS		(9UL)
-#define CKR_CANT_LOCK				(0xaUL)
-#define CKR_ATTRIBUTE_READ_ONLY			(0x10UL)
-#define CKR_ATTRIBUTE_SENSITIVE			(0x11UL)
-#define CKR_ATTRIBUTE_TYPE_INVALID		(0x12UL)
-#define CKR_ATTRIBUTE_VALUE_INVALID		(0x13UL)
-#define CKR_ACTION_PROHIBITED			(0x1BUL)
-#define CKR_DATA_INVALID			(0x20UL)
-#define CKR_DATA_LEN_RANGE			(0x21UL)
-#define CKR_DEVICE_ERROR			(0x30UL)
-#define CKR_DEVICE_MEMORY			(0x31UL)
-#define CKR_DEVICE_REMOVED			(0x32UL)
-#define CKR_ENCRYPTED_DATA_INVALID		(0x40UL)
-#define CKR_ENCRYPTED_DATA_LEN_RANGE		(0x41UL)
-#define CKR_FUNCTION_CANCELED			(0x50UL)
-#define CKR_FUNCTION_NOT_PARALLEL		(0x51UL)
-#define CKR_FUNCTION_NOT_SUPPORTED		(0x54UL)
-#define CKR_KEY_HANDLE_INVALID			(0x60UL)
-#define CKR_KEY_SIZE_RANGE			(0x62UL)
-#define CKR_KEY_TYPE_INCONSISTENT		(0x63UL)
-#define CKR_KEY_NOT_NEEDED			(0x64UL)
-#define CKR_KEY_CHANGED				(0x65UL)
-#define CKR_KEY_NEEDED				(0x66UL)
-#define CKR_KEY_INDIGESTIBLE			(0x67UL)
-#define CKR_KEY_FUNCTION_NOT_PERMITTED		(0x68UL)
-#define CKR_KEY_NOT_WRAPPABLE			(0x69UL)
-#define CKR_KEY_UNEXTRACTABLE			(0x6aUL)
-#define CKR_MECHANISM_INVALID			(0x70UL)
-#define CKR_MECHANISM_PARAM_INVALID		(0x71UL)
-#define CKR_OBJECT_HANDLE_INVALID		(0x82UL)
-#define CKR_OPERATION_ACTIVE			(0x90UL)
-#define CKR_OPERATION_NOT_INITIALIZED		(0x91UL)
-#define CKR_PIN_INCORRECT			(0xa0UL)
-#define CKR_PIN_INVALID				(0xa1UL)
-#define CKR_PIN_LEN_RANGE			(0xa2UL)
-#define CKR_PIN_EXPIRED				(0xa3UL)
-#define CKR_PIN_LOCKED				(0xa4UL)
-#define CKR_SESSION_CLOSED			(0xb0UL)
-#define CKR_SESSION_COUNT			(0xb1UL)
-#define CKR_SESSION_HANDLE_INVALID		(0xb3UL)
-#define CKR_SESSION_PARALLEL_NOT_SUPPORTED	(0xb4UL)
-#define CKR_SESSION_READ_ONLY			(0xb5UL)
-#define CKR_SESSION_EXISTS			(0xb6UL)
-#define CKR_SESSION_READ_ONLY_EXISTS		(0xb7UL)
-#define CKR_SESSION_READ_WRITE_SO_EXISTS	(0xb8UL)
-#define CKR_SIGNATURE_INVALID			(0xc0UL)
-#define CKR_SIGNATURE_LEN_RANGE			(0xc1UL)
-#define CKR_TEMPLATE_INCOMPLETE			(0xd0UL)
-#define CKR_TEMPLATE_INCONSISTENT		(0xd1UL)
-#define CKR_TOKEN_NOT_PRESENT			(0xe0UL)
-#define CKR_TOKEN_NOT_RECOGNIZED		(0xe1UL)
-#define CKR_TOKEN_WRITE_PROTECTED		(0xe2UL)
-#define	CKR_UNWRAPPING_KEY_HANDLE_INVALID	(0xf0UL)
-#define CKR_UNWRAPPING_KEY_SIZE_RANGE		(0xf1UL)
-#define CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT	(0xf2UL)
-#define CKR_USER_ALREADY_LOGGED_IN		(0x100UL)
-#define CKR_USER_NOT_LOGGED_IN			(0x101UL)
-#define CKR_USER_PIN_NOT_INITIALIZED		(0x102UL)
-#define CKR_USER_TYPE_INVALID			(0x103UL)
-#define CKR_USER_ANOTHER_ALREADY_LOGGED_IN	(0x104UL)
-#define CKR_USER_TOO_MANY_TYPES			(0x105UL)
-#define CKR_WRAPPED_KEY_INVALID			(0x110UL)
-#define CKR_WRAPPED_KEY_LEN_RANGE		(0x112UL)
-#define CKR_WRAPPING_KEY_HANDLE_INVALID		(0x113UL)
-#define CKR_WRAPPING_KEY_SIZE_RANGE		(0x114UL)
-#define CKR_WRAPPING_KEY_TYPE_INCONSISTENT	(0x115UL)
-#define CKR_RANDOM_SEED_NOT_SUPPORTED		(0x120UL)
-#define CKR_RANDOM_NO_RNG			(0x121UL)
-#define CKR_DOMAIN_PARAMS_INVALID		(0x130UL)
-#define CKR_CURVE_NOT_SUPPORTED			(0x140UL)
-#define CKR_BUFFER_TOO_SMALL			(0x150UL)
-#define CKR_SAVED_STATE_INVALID			(0x160UL)
-#define CKR_INFORMATION_SENSITIVE		(0x170UL)
-#define CKR_STATE_UNSAVEABLE			(0x180UL)
-#define CKR_CRYPTOKI_NOT_INITIALIZED		(0x190UL)
-#define CKR_CRYPTOKI_ALREADY_INITIALIZED	(0x191UL)
-#define CKR_MUTEX_BAD				(0x1a0UL)
-#define CKR_MUTEX_NOT_LOCKED			(0x1a1UL)
-#define CKR_FUNCTION_REJECTED			(0x200UL)
-#define CKR_VENDOR_DEFINED			(1UL << 31)
+#परिभाषय CKR_OK					(0UL)
+#परिभाषय CKR_CANCEL				(1UL)
+#परिभाषय CKR_HOST_स्मृतिः				(2UL)
+#परिभाषय CKR_SLOT_ID_INVALID			(3UL)
+#परिभाषय CKR_GENERAL_ERROR			(5UL)
+#परिभाषय CKR_FUNCTION_FAILED			(6UL)
+#परिभाषय CKR_ARGUMENTS_BAD			(7UL)
+#परिभाषय CKR_NO_EVENT				(8UL)
+#परिभाषय CKR_NEED_गन्तव्यम्_CREATE_तन्तवः		(9UL)
+#परिभाषय CKR_CANT_तालकम्				(0xaUL)
+#परिभाषय CKR_ATTRIBUTE_READ_ONLY			(0x10UL)
+#परिभाषय CKR_ATTRIBUTE_SENSITIVE			(0x11UL)
+#परिभाषय CKR_ATTRIBUTE_TYPE_INVALID		(0x12UL)
+#परिभाषय CKR_ATTRIBUTE_मानम्_INVALID		(0x13UL)
+#परिभाषय CKR_ACTION_PROHIBITED			(0x1BUL)
+#परिभाषय CKR_दत्त_INVALID			(0x20UL)
+#परिभाषय CKR_दत्त_LEN_RANGE			(0x21UL)
+#परिभाषय CKR_DEVICE_ERROR			(0x30UL)
+#परिभाषय CKR_DEVICE_स्मृतिः			(0x31UL)
+#परिभाषय CKR_DEVICE_REMOVED			(0x32UL)
+#परिभाषय CKR_ENCRYPTED_दत्त_INVALID		(0x40UL)
+#परिभाषय CKR_ENCRYPTED_दत्त_LEN_RANGE		(0x41UL)
+#परिभाषय CKR_FUNCTION_CANCELED			(0x50UL)
+#परिभाषय CKR_FUNCTION_NOT_PARALLEL		(0x51UL)
+#परिभाषय CKR_FUNCTION_NOT_SUPPORTED		(0x54UL)
+#परिभाषय CKR_कुञ्चिका_HANDLE_INVALID			(0x60UL)
+#परिभाषय CKR_कुञ्चिका_आकार_RANGE			(0x62UL)
+#परिभाषय CKR_कुञ्चिका_TYPE_INCONSISTENT		(0x63UL)
+#परिभाषय CKR_कुञ्चिका_NOT_NEEDED			(0x64UL)
+#परिभाषय CKR_कुञ्चिका_परिवर्तितम्				(0x65UL)
+#परिभाषय CKR_कुञ्चिका_NEEDED				(0x66UL)
+#परिभाषय CKR_कुञ्चिका_INDIGESTIBLE			(0x67UL)
+#परिभाषय CKR_कुञ्चिका_FUNCTION_NOT_PERMITTED		(0x68UL)
+#परिभाषय CKR_कुञ्चिका_NOT_WRAPPABLE			(0x69UL)
+#परिभाषय CKR_कुञ्चिका_UNEXTRACTABLE			(0x6aUL)
+#परिभाषय CKR_MECHANISM_INVALID			(0x70UL)
+#परिभाषय CKR_MECHANISM_PARAM_INVALID		(0x71UL)
+#परिभाषय CKR_OBJECT_HANDLE_INVALID		(0x82UL)
+#परिभाषय CKR_OPERATION_सक्रिय			(0x90UL)
+#परिभाषय CKR_OPERATION_NOT_INITIALIZED		(0x91UL)
+#परिभाषय CKR_PIN_INCORRECT			(0xa0UL)
+#परिभाषय CKR_PIN_INVALID				(0xa1UL)
+#परिभाषय CKR_PIN_LEN_RANGE			(0xa2UL)
+#परिभाषय CKR_PIN_EXPIRED				(0xa3UL)
+#परिभाषय CKR_PIN_LOCKED				(0xa4UL)
+#परिभाषय CKR_SESSION_CLOSED			(0xb0UL)
+#परिभाषय CKR_SESSION_गणनम्			(0xb1UL)
+#परिभाषय CKR_SESSION_HANDLE_INVALID		(0xb3UL)
+#परिभाषय CKR_SESSION_PARALLEL_NOT_SUPPORTED	(0xb4UL)
+#परिभाषय CKR_SESSION_READ_ONLY			(0xb5UL)
+#परिभाषय CKR_SESSION_EXISTS			(0xb6UL)
+#परिभाषय CKR_SESSION_READ_ONLY_EXISTS		(0xb7UL)
+#परिभाषय CKR_SESSION_READ_WRITE_SO_EXISTS	(0xb8UL)
+#परिभाषय CKR_SIGNATURE_INVALID			(0xc0UL)
+#परिभाषय CKR_SIGNATURE_LEN_RANGE			(0xc1UL)
+#परिभाषय CKR_TEMPLATE_INCOMPLETE			(0xd0UL)
+#परिभाषय CKR_TEMPLATE_INCONSISTENT		(0xd1UL)
+#परिभाषय CKR_TOKEN_NOT_PRESENT			(0xe0UL)
+#परिभाषय CKR_TOKEN_NOT_RECOGNIZED		(0xe1UL)
+#परिभाषय CKR_TOKEN_WRITE_PROTECTED		(0xe2UL)
+#परिभाषय	CKR_UNWRAPPING_कुञ्चिका_HANDLE_INVALID	(0xf0UL)
+#परिभाषय CKR_UNWRAPPING_कुञ्चिका_आकार_RANGE		(0xf1UL)
+#परिभाषय CKR_UNWRAPPING_कुञ्चिका_TYPE_INCONSISTENT	(0xf2UL)
+#परिभाषय CKR_USER_ALREADY_LOGGED_अन्तर्		(0x100UL)
+#परिभाषय CKR_USER_NOT_LOGGED_अन्तर्			(0x101UL)
+#परिभाषय CKR_USER_PIN_NOT_INITIALIZED		(0x102UL)
+#परिभाषय CKR_USER_TYPE_INVALID			(0x103UL)
+#परिभाषय CKR_USER_ANOTHER_ALREADY_LOGGED_अन्तर्	(0x104UL)
+#परिभाषय CKR_USER_TOO_MANY_TYPES			(0x105UL)
+#परिभाषय CKR_WRAPPED_कुञ्चिका_INVALID			(0x110UL)
+#परिभाषय CKR_WRAPPED_कुञ्चिका_LEN_RANGE		(0x112UL)
+#परिभाषय CKR_WRAPPING_कुञ्चिका_HANDLE_INVALID		(0x113UL)
+#परिभाषय CKR_WRAPPING_कुञ्चिका_आकार_RANGE		(0x114UL)
+#परिभाषय CKR_WRAPPING_कुञ्चिका_TYPE_INCONSISTENT	(0x115UL)
+#परिभाषय CKR_RANDOM_बीजम्_NOT_SUPPORTED		(0x120UL)
+#परिभाषय CKR_RANDOM_NO_RNG			(0x121UL)
+#परिभाषय CKR_DOMAIN_PARAMS_INVALID		(0x130UL)
+#परिभाषय CKR_वक्रम्_NOT_SUPPORTED			(0x140UL)
+#परिभाषय CKR_बफर_TOO_SMALL			(0x150UL)
+#परिभाषय CKR_SAVED_STATE_INVALID			(0x160UL)
+#परिभाषय CKR_INFORMATION_SENSITIVE		(0x170UL)
+#परिभाषय CKR_STATE_UNSAVEABLE			(0x180UL)
+#परिभाषय CKR_CRYPTOKI_NOT_INITIALIZED		(0x190UL)
+#परिभाषय CKR_CRYPTOKI_ALREADY_INITIALIZED	(0x191UL)
+#परिभाषय CKR_MUTEX_BAD				(0x1a0UL)
+#परिभाषय CKR_MUTEX_NOT_LOCKED			(0x1a1UL)
+#परिभाषय CKR_FUNCTION_REJECTED			(0x200UL)
+#परिभाषय CKR_VENDOR_DEFINED			(1UL << 31)
 
 
 /* Compatibility layer.  */
 
-#ifdef CRYPTOKI_COMPAT
+#यदि_परिभाषितम् CRYPTOKI_COMPAT
 
-#undef CK_DEFINE_FUNCTION
-#define CK_DEFINE_FUNCTION(retval, name) retval CK_SPEC name
+#अपरिभाषय CK_DEFINE_FUNCTION
+#परिभाषय CK_DEFINE_FUNCTION(retval, name) retval CK_SPEC name
 
 /* For NULL.  */
-#include <stddef.h>
+#अन्तर्भाव <stddef.h>
 
-typedef unsigned char CK_BYTE;
-typedef unsigned char CK_CHAR;
-typedef unsigned char CK_UTF8CHAR;
-typedef unsigned char CK_BBOOL;
-typedef unsigned long int CK_ULONG;
-typedef long int CK_LONG;
-typedef CK_BYTE *CK_BYTE_PTR;
-typedef CK_CHAR *CK_CHAR_PTR;
-typedef CK_UTF8CHAR *CK_UTF8CHAR_PTR;
-typedef CK_ULONG *CK_ULONG_PTR;
-typedef void *CK_VOID_PTR;
-typedef void **CK_VOID_PTR_PTR;
-#define CK_FALSE 0
-#define CK_TRUE 1
-#ifndef CK_DISABLE_TRUE_FALSE
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-#endif
+प्रकारनिर्देश अचिह्नित वर्ण CK_BYTE;
+प्रकारनिर्देश अचिह्नित वर्ण CK_CHAR;
+प्रकारनिर्देश अचिह्नित वर्ण CK_UTF8CHAR;
+प्रकारनिर्देश अचिह्नित वर्ण CK_BBOOL;
+प्रकारनिर्देश अचिह्नित दीर्घ पूर्णाङ्क CK_ULONG;
+प्रकारनिर्देश दीर्घ पूर्णाङ्क CK_LONG;
+प्रकारनिर्देश CK_BYTE *CK_BYTE_PTR;
+प्रकारनिर्देश CK_CHAR *CK_CHAR_PTR;
+प्रकारनिर्देश CK_UTF8CHAR *CK_UTF8CHAR_PTR;
+प्रकारनिर्देश CK_ULONG *CK_ULONG_PTR;
+प्रकारनिर्देश शून्य *CK_VOID_PTR;
+प्रकारनिर्देश शून्य **CK_VOID_PTR_PTR;
+#परिभाषय CK_FALSE 0
+#परिभाषय CK_TRUE 1
+#यदि_अपरिभाषितम् CK_DISABLE_TRUE_FALSE
+#यदि_अपरिभाषितम् FALSE
+#परिभाषय FALSE 0
+#यदि_अन्तः
+#यदि_अपरिभाषितम् TRUE
+#परिभाषय TRUE 1
+#यदि_अन्तः
+#यदि_अन्तः
 
-typedef struct CK_HKDF_PARAMS {
+प्रकारनिर्देश संरचना CK_HKDF_PARAMS {
 	CK_BBOOL bExtract;
 	CK_BBOOL bExpand;
 	CK_MECHANISM_TYPE prfHashMechanism;
 	CK_ULONG ulSaltType;
 	CK_BYTE_PTR pSalt;
 	CK_ULONG ulSaltLen;
-	CK_OBJECT_HANDLE hSaltKey;
+	CK_OBJECT_HANDLE h_Salt_कुञ्चिका;
 	CK_BYTE_PTR pInfo;
 	CK_ULONG ulInfoLen;
 } CK_HKDF_PARAMS;
 
-#define CKF_HKDF_SALT_NULL 0x00000001UL
-#define CKF_HKDF_SALT_DATA 0x00000002UL
-#define CKF_HKDF_SALT_KEY  0x00000004UL
+#परिभाषय CKF_HKDF_SALT_NULL 0x00000001UL
+#परिभाषय CKF_HKDF_SALT_दत्त 0x00000002UL
+#परिभाषय CKF_HKDF_SALT_कुञ्चिका  0x00000004UL
 
-typedef struct ck_version CK_VERSION;
-typedef struct ck_version *CK_VERSION_PTR;
+प्रकारनिर्देश संरचना ck_संस्करणम् CK_संस्करणम्_2;
+प्रकारनिर्देश संरचना ck_संस्करणम् *CK_संस्करणम्_PTR;
 
-typedef struct ck_info CK_INFO;
-typedef struct ck_info *CK_INFO_PTR;
+प्रकारनिर्देश संरचना ck_info CK_INFO;
+प्रकारनिर्देश संरचना ck_info *CK_INFO_PTR;
 
-typedef ck_slot_id_t *CK_SLOT_ID_PTR;
+प्रकारनिर्देश ck_slot_id_t *CK_SLOT_ID_PTR;
 
-typedef struct ck_slot_info CK_SLOT_INFO;
-typedef struct ck_slot_info *CK_SLOT_INFO_PTR;
+प्रकारनिर्देश संरचना ck_slot_info CK_SLOT_INFO;
+प्रकारनिर्देश संरचना ck_slot_info *CK_SLOT_INFO_PTR;
 
-typedef struct ck_token_info CK_TOKEN_INFO;
-typedef struct ck_token_info *CK_TOKEN_INFO_PTR;
+प्रकारनिर्देश संरचना ck_token_info CK_TOKEN_INFO;
+प्रकारनिर्देश संरचना ck_token_info *CK_TOKEN_INFO_PTR;
 
-typedef ck_session_handle_t *CK_SESSION_HANDLE_PTR;
+प्रकारनिर्देश ck_session_handle_t *CK_SESSION_HANDLE_PTR;
 
-typedef struct ck_session_info CK_SESSION_INFO;
-typedef struct ck_session_info *CK_SESSION_INFO_PTR;
+प्रकारनिर्देश संरचना ck_session_info CK_SESSION_INFO;
+प्रकारनिर्देश संरचना ck_session_info *CK_SESSION_INFO_PTR;
 
-typedef ck_object_handle_t *CK_OBJECT_HANDLE_PTR;
+प्रकारनिर्देश ck_object_handle_t *CK_OBJECT_HANDLE_PTR;
 
-typedef ck_object_class_t *CK_OBJECT_CLASS_PTR;
+प्रकारनिर्देश ck_object_class_t *CK_OBJECT_CLASS_PTR;
 
-typedef struct ck_attribute CK_ATTRIBUTE;
-typedef struct ck_attribute *CK_ATTRIBUTE_PTR;
+प्रकारनिर्देश संरचना ck_attribute CK_ATTRIBUTE;
+प्रकारनिर्देश संरचना ck_attribute *CK_ATTRIBUTE_PTR;
 
-typedef struct ck_date CK_DATE;
-typedef struct ck_date *CK_DATE_PTR;
+प्रकारनिर्देश संरचना ck_date CK_DATE;
+प्रकारनिर्देश संरचना ck_date *CK_DATE_PTR;
 
-typedef ck_mechanism_type_t *CK_MECHANISM_TYPE_PTR;
+प्रकारनिर्देश ck_mechanism_type_t *CK_MECHANISM_TYPE_PTR;
 
-typedef ck_rsa_pkcs_mgf_type_t *CK_RSA_PKCS_MGF_TYPE_PTR;
+प्रकारनिर्देश ck_rsa_pkcs_mgf_type_t *CK_RSA_PKCS_MGF_TYPE_PTR;
 
-typedef struct ck_mechanism CK_MECHANISM;
-typedef struct ck_mechanism *CK_MECHANISM_PTR;
+प्रकारनिर्देश संरचना ck_mechanism CK_MECHANISM;
+प्रकारनिर्देश संरचना ck_mechanism *CK_MECHANISM_PTR;
 
-typedef struct ck_mechanism_info CK_MECHANISM_INFO;
-typedef struct ck_mechanism_info *CK_MECHANISM_INFO_PTR;
+प्रकारनिर्देश संरचना ck_mechanism_info CK_MECHANISM_INFO;
+प्रकारनिर्देश संरचना ck_mechanism_info *CK_MECHANISM_INFO_PTR;
 
-typedef struct ck_interface CK_INTERFACE;
-typedef struct ck_interface *CK_INTERFACE_PTR;
-typedef struct ck_interface **CK_INTERFACE_PTR_PTR;
+प्रकारनिर्देश संरचना ck_interface CK_INTERFACE;
+प्रकारनिर्देश संरचना ck_interface *CK_INTERFACE_PTR;
+प्रकारनिर्देश संरचना ck_interface **CK_INTERFACE_PTR_PTR;
 
-typedef struct ck_function_list CK_FUNCTION_LIST;
-typedef struct ck_function_list *CK_FUNCTION_LIST_PTR;
-typedef struct ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
+प्रकारनिर्देश संरचना ck_function_list CK_FUNCTION_LIST;
+प्रकारनिर्देश संरचना ck_function_list *CK_FUNCTION_LIST_PTR;
+प्रकारनिर्देश संरचना ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
 
-typedef struct ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
-typedef struct ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
-typedef struct ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
+प्रकारनिर्देश संरचना ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
+प्रकारनिर्देश संरचना ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
+प्रकारनिर्देश संरचना ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
 
-typedef struct ck_c_initialize_args CK_C_INITIALIZE_ARGS;
-typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
+प्रकारनिर्देश संरचना ck_c_initialize_तर्काः CK_C_INITIALIZE_तर्काः_2;
+प्रकारनिर्देश संरचना ck_c_initialize_तर्काः *CK_C_INITIALIZE_तर्काः_PTR;
 
-#define NULL_PTR NULL
+#परिभाषय NULL_PTR रिक्त
 
 /* Delete the helper macros defined at the top of the file.  */
-#undef ck_flags_t
-#undef ck_version
+#अपरिभाषय ck_flags_t
+#अपरिभाषय ck_संस्करणम्
 
-#undef ck_info
-#undef cryptoki_version
-#undef manufacturer_id
-#undef library_description
-#undef library_version
+#अपरिभाषय ck_info
+#अपरिभाषय cryptoki_संस्करणम्
+#अपरिभाषय manufacturer_id
+#अपरिभाषय library_description
+#अपरिभाषय library_संस्करणम्
 
-#undef ck_notification_t
-#undef ck_slot_id_t
+#अपरिभाषय ck_notification_t
+#अपरिभाषय ck_slot_id_t
 
-#undef ck_slot_info
-#undef slot_description
-#undef hardware_version
-#undef firmware_version
+#अपरिभाषय ck_slot_info
+#अपरिभाषय slot_description
+#अपरिभाषय hardware_संस्करणम्
+#अपरिभाषय firmware_संस्करणम्
 
-#undef ck_token_info
-#undef serial_number
-#undef max_session_count
-#undef session_count
-#undef max_rw_session_count
-#undef rw_session_count
-#undef max_pin_len
-#undef min_pin_len
-#undef total_public_memory
-#undef free_public_memory
-#undef total_private_memory
-#undef free_private_memory
-#undef utc_time
+#अपरिभाषय ck_token_info
+#अपरिभाषय serial_सङ्ख्या
+#अपरिभाषय max_session_गणनम्
+#अपरिभाषय session_गणनम्
+#अपरिभाषय max_rw_session_गणनम्
+#अपरिभाषय rw_session_गणनम्
+#अपरिभाषय max_pin_len
+#अपरिभाषय min_pin_len
+#अपरिभाषय योग_लौकिकम्_स्मृतिः
+#अपरिभाषय free_लौकिकम्_स्मृतिः
+#अपरिभाषय योग_वैयक्तिकम्_स्मृतिः
+#अपरिभाषय free_वैयक्तिकम्_स्मृतिः
+#अपरिभाषय utc_time
 
-#undef ck_session_handle_t
-#undef ck_user_type_t
-#undef ck_state_t
+#अपरिभाषय ck_session_handle_t
+#अपरिभाषय ck_user_type_t
+#अपरिभाषय ck_state_t
 
-#undef ck_session_info
-#undef slot_id
-#undef device_error
+#अपरिभाषय ck_session_info
+#अपरिभाषय slot_id
+#अपरिभाषय device_error
 
-#undef ck_object_handle_t
-#undef ck_object_class_t
-#undef ck_hw_feature_type_t
-#undef ck_key_type_t
-#undef ck_certificate_type_t
-#undef ck_attribute_type_t
+#अपरिभाषय ck_object_handle_t
+#अपरिभाषय ck_object_class_t
+#अपरिभाषय ck_hw_feature_type_t
+#अपरिभाषय ck_कुञ्चिका_type_t
+#अपरिभाषय ck_certificate_type_t
+#अपरिभाषय ck_attribute_type_t
 
-#undef ck_attribute
-#undef value
-#undef value_len
+#अपरिभाषय ck_attribute
+#अपरिभाषय मानम्
+#अपरिभाषय मानम्_len
 
-#undef ck_date
+#अपरिभाषय ck_date
 
-#undef ck_mechanism_type_t
+#अपरिभाषय ck_mechanism_type_t
 
-#undef ck_rsa_pkcs_mgf_type_t
+#अपरिभाषय ck_rsa_pkcs_mgf_type_t
 
-#undef ck_mechanism
-#undef parameter
-#undef parameter_len
+#अपरिभाषय ck_mechanism
+#अपरिभाषय parameter
+#अपरिभाषय parameter_len
 
-#undef ck_mechanism_info
-#undef min_key_size
-#undef max_key_size
+#अपरिभाषय ck_mechanism_info
+#अपरिभाषय min_कुञ्चिका_आकार
+#अपरिभाषय max_कुञ्चिका_आकार
 
-#undef ck_rv_t
-#undef ck_notify_t
+#अपरिभाषय ck_rv_t
+#अपरिभाषय ck_notify_t
 
-#undef ck_interface
+#अपरिभाषय ck_interface
 
-#undef ck_function_list
-#undef ck_function_list_3_0
+#अपरिभाषय ck_function_list
+#अपरिभाषय ck_function_list_3_0
 
-#undef ck_createmutex_t
-#undef ck_destroymutex_t
-#undef ck_lockmutex_t
-#undef ck_unlockmutex_t
+#अपरिभाषय ck_createmutex_t
+#अपरिभाषय ck_destroymutex_t
+#अपरिभाषय ck_lockmutex_t
+#अपरिभाषय ck_unlockmutex_t
 
-#undef ck_c_initialize_args
-#undef create_mutex
-#undef destroy_mutex
-#undef lock_mutex
-#undef unlock_mutex
-#undef reserved
+#अपरिभाषय ck_c_initialize_तर्काः
+#अपरिभाषय create_mutex
+#अपरिभाषय destroy_mutex
+#अपरिभाषय तालकम्_mutex
+#अपरिभाषय unlock_mutex
+#अपरिभाषय reserved
 
-#endif	/* CRYPTOKI_COMPAT */
+#यदि_अन्तः	/* CRYPTOKI_COMPAT */
 
 /* System dependencies.  */
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
-#pragma pack(pop, cryptoki)
-#endif
+#यदि defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#निर्देशः pack(निष्कासय, cryptoki)
+#यदि_अन्तः
 
-#if defined(__cplusplus)
+#यदि defined(__cplusplus)
 }
-#endif
+#यदि_अन्तः
 
-#endif	/* PKCS11_H */
+#यदि_अन्तः	/* PKCS11_H */
