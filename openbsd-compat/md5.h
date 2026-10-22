@@ -21,28 +21,28 @@
 #define	MD5_DIGEST_LENGTH		16
 #define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
 
-typedef struct MD5Context {
+प्रकारनिर्देश संरचना MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
+	u_int64_t मोजणी;			/* number of bits, mod 2^64 */
 	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+शून्य	 MD5Init(MD5_CTX *);
+शून्य	 MD5Update(MD5_CTX *, ध्रुव u_int8_t *, size_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
+शून्य	 MD5Pad(MD5_CTX *);
+शून्य	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
 		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+शून्य	 MD5Transform(u_int32_t [4], ध्रुव u_int8_t [MD5_BLOCK_LENGTH])
 		__attribute__((__bounded__(__minbytes__,1,4)))
 		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
+वर्ण	*MD5End(MD5_CTX *, वर्ण *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
+वर्ण	*MD5File(ध्रुव वर्ण *, वर्ण *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
+वर्ण	*MD5FileChunk(ध्रुव वर्ण *, वर्ण *, off_t, off_t)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+वर्ण	*MD5Data(ध्रुव u_int8_t *, size_t, वर्ण *)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
 

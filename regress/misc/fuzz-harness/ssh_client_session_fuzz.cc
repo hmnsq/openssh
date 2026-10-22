@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdint.h>
 
-extern "C" void fuzz_one_message(const uint8_t *data, size_t size);
+बाह्य "C" शून्य fuzz_one_message(ध्रुव uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+बाह्य "C" पूर्णाङ्क
+LLVMFuzzer_Test_One_आदान(ध्रुव uint8_t *data, size_t size)
 {
 	fuzz_one_message(data, size);
-	return 0;
+	प्रत्यागम 0;
 }

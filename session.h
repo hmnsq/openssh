@@ -27,58 +27,58 @@
 #define SESSION_H
 
 #define TTYSZ 64
-typedef struct Session Session;
-struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
-	struct passwd *pw;
+प्रकारनिर्देश संरचना Session Session;
+संरचना Session {
+	पूर्णाङ्क	used;
+	पूर्णाङ्क	self;
+	पूर्णाङ्क	next_unused;
+	संरचना passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	पूर्णाङ्क	forced;
 
 	/* tty */
-	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
+	वर्ण	*term;
+	पूर्णाङ्क	ptyfd, ttyfd, ptymaster;
 	u_int	row, col, xpixel, ypixel;
-	char	tty[TTYSZ];
+	वर्ण	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
-	char	*display;
+	u_int	display_संख्या;
+	वर्ण	*display;
 	u_int	screen;
-	char	*auth_display;
-	char	*auth_proto;
-	char	*auth_data;
-	int	single_connection;
+	वर्ण	*auth_display;
+	वर्ण	*auth_proto;
+	वर्ण	*auth_data;
+	पूर्णाङ्क	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
-	char	*subsys;
-	u_int	num_env;
-	struct {
-		char	*name;
-		char	*val;
+	पूर्णाङ्क	chanid;
+	पूर्णाङ्क	*x11_chanids;
+	पूर्णाङ्क	is_subsystem;
+	वर्ण	*subsys;
+	u_int	अंक_env;
+	संरचना {
+		वर्ण	*name;
+		वर्ण	*val;
 	} *env;
 };
 
-void	 do_authenticated(struct ssh *, Authctxt *);
-void	 do_cleanup(struct ssh *, Authctxt *);
+शून्य	 do_authenticated(संरचना ssh *, Authctxt *);
+शून्य	 do_cleanup(संरचना ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
-void	 session_destroy_all(struct ssh *, void (*)(Session *));
-void	 session_pty_cleanup2(Session *);
+पूर्णाङ्क	 session_open(Authctxt *, पूर्णाङ्क);
+शून्य	 session_unused(पूर्णाङ्क);
+पूर्णाङ्क	 session_आदान_channel_req(संरचना ssh *, Channel *, ध्रुव वर्ण *);
+शून्य	 session_close_by_pid(संरचना ssh *ssh, pid_t, पूर्णाङ्क);
+शून्य	 session_close_by_channel(संरचना ssh *, पूर्णाङ्क, पूर्णाङ्क, शून्य *);
+शून्य	 session_destroy_all(संरचना ssh *, शून्य (*)(Session *));
+शून्य	 session_pty_cleanup2(Session *);
 
-Session	*session_new(void);
-Session	*session_by_tty(char *);
-void	 session_close(struct ssh *, Session *);
-void	 do_setusercontext(struct passwd *);
+Session	*session_new(शून्य);
+Session	*session_by_tty(वर्ण *);
+शून्य	 session_close(संरचना ssh *, Session *);
+शून्य	 do_setusercontext(संरचना passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+ध्रुव वर्ण	*session_get_remote_name_or_ip(संरचना ssh *, u_int, पूर्णाङ्क);
 
 #endif
