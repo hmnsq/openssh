@@ -37,41 +37,41 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
+#अन्तर्भाव <openssl/evp.h>
 #endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#अन्तर्भाव "cipher-chachapoly.h"
+#अन्तर्भाव "cipher-aesctr.h"
 
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+संरचना sshcipher;
+संरचना sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+ध्रुव संरचना sshcipher *cipher_by_name(ध्रुव वर्ण *);
+ध्रुव वर्ण *cipher_warning_message(ध्रुव संरचना sshcipher_ctx *);
+पूर्णाङ्क	 ciphers_valid(ध्रुव वर्ण *);
+वर्ण	*cipher_alg_list(वर्ण, पूर्णाङ्क);
+ध्रुव वर्ण *compression_alg_list(पूर्णाङ्क);
+पूर्णाङ्क	 cipher_init(संरचना sshcipher_ctx **, ध्रुव संरचना sshcipher *,
+    ध्रुव u_char *, u_int, ध्रुव u_char *, u_int, पूर्णाङ्क);
+पूर्णाङ्क	 cipher_crypt(संरचना sshcipher_ctx *, u_int, u_char *, ध्रुव u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+पूर्णाङ्क	 cipher_get_length(संरचना sshcipher_ctx *, u_int *, u_int,
+    ध्रुव u_char *, u_int);
+शून्य	 cipher_free(संरचना sshcipher_ctx *);
+u_int	 cipher_blocksize(ध्रुव संरचना sshcipher *);
+u_int	 cipher_keylen(ध्रुव संरचना sshcipher *);
+u_int	 cipher_seclen(ध्रुव संरचना sshcipher *);
+u_int	 cipher_authlen(ध्रुव संरचना sshcipher *);
+u_int	 cipher_ivlen(ध्रुव संरचना sshcipher *);
+u_int	 cipher_is_cbc(ध्रुव संरचना sshcipher *);
+u_int	 cipher_is_internal(ध्रुव संरचना sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(संरचना sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+पूर्णाङ्क	 cipher_get_keyiv(संरचना sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */
