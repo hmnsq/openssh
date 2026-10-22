@@ -12,20 +12,20 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef SSH_LOG_H
-#define SSH_LOG_H
+#جيڪڏهن_وصف_نه_ٿيل SSH_LOG_H
+#وصف_ڪريو SSH_LOG_H
 
-#include <stdarg.h> /* va_list */
-#include "ssherr.h" /* ssh_err() */
+#ضمن <stdarg.h> /* va_list */
+#ضمن "ssherr.h" /* ssh_err() */
 
 /* Supported syslog facilities and levels. */
-typedef enum {
+تعريفنوع تعداد {
 	SYSLOG_FACILITY_DAEMON,
 	SYSLOG_FACILITY_USER,
 	SYSLOG_FACILITY_AUTH,
-#ifdef LOG_AUTHPRIV
+#جيڪڏهن_وصف_ٿيل LOG_AUTHPRIV
 	SYSLOG_FACILITY_AUTHPRIV,
-#endif
+#جيڪڏهن_پورو
 	SYSLOG_FACILITY_LOCAL0,
 	SYSLOG_FACILITY_LOCAL1,
 	SYSLOG_FACILITY_LOCAL2,
@@ -34,10 +34,10 @@ typedef enum {
 	SYSLOG_FACILITY_LOCAL5,
 	SYSLOG_FACILITY_LOCAL6,
 	SYSLOG_FACILITY_LOCAL7,
-	SYSLOG_FACILITY_NOT_SET = -1
+	SYSLOG_FACILITY_NOT_سيٽ = -1
 }       SyslogFacility;
 
-typedef enum {
+تعريفنوع تعداد {
 	SYSLOG_LEVEL_QUIET,
 	SYSLOG_LEVEL_FATAL,
 	SYSLOG_LEVEL_ERROR,
@@ -46,104 +46,104 @@ typedef enum {
 	SYSLOG_LEVEL_DEBUG1,
 	SYSLOG_LEVEL_DEBUG2,
 	SYSLOG_LEVEL_DEBUG3,
-	SYSLOG_LEVEL_NOT_SET = -1
+	SYSLOG_LEVEL_NOT_سيٽ = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+تعريفنوع فراغ (log_handler_fn)(LogLevel, صحيح, ثابت حرف *, فراغ *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
-LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
-void     log_redirect_stderr_to(const char *);
-void	 log_verbose_add(const char *);
-void	 log_verbose_reset(void);
+فراغ     log_init(ثابت حرف *, LogLevel, SyslogFacility, صحيح);
+LogLevel log_level_get(فراغ);
+صحيح      log_change_level(LogLevel);
+صحيح      log_is_on_stderr(فراغ);
+فراغ     log_redirect_stderr_منزل(ثابت حرف *);
+فراغ	 log_verbose_جوڙيو(ثابت حرف *);
+فراغ	 log_verbose_reset(فراغ);
 
-SyslogFacility	log_facility_number(char *);
-const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
-const char *	log_level_name(LogLevel);
+SyslogFacility	log_facility_عدد(حرف *);
+ثابت حرف *	log_facility_name(SyslogFacility);
+LogLevel	log_level_عدد(حرف *);
+ثابت حرف *	log_level_name(LogLevel);
 
-void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+فراغ	 سيٽ_log_handler(log_handler_fn *, فراغ *);
+فراغ	 cleanup_exit(صحيح) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...)
-    __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
-    __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
-    __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
-    __attribute__((format(printf, 3, 4)));
+فراغ	 sshlog(ثابت حرف *, ثابت حرف *, صحيح, صحيح,
+    LogLevel, ثابت حرف *, ثابت حرف *, ...)
+    __attribute__((format(لکو, 7, 8)));
+فراغ	 sshlogv(ثابت حرف *, ثابت حرف *, صحيح, صحيح,
+    LogLevel, ثابت حرف *, ثابت حرف *, va_list);
+فراغ	 sshlogdie(ثابت حرف *, ثابت حرف *, صحيح, صحيح,
+    LogLevel, ثابت حرف *, ثابت حرف *, ...) __attribute__((noreturn))
+    __attribute__((format(لکو, 7, 8)));
+فراغ	 sshfatal(ثابت حرف *, ثابت حرف *, صحيح, صحيح,
+    LogLevel, ثابت حرف *, ثابت حرف *, ...) __attribute__((noreturn))
+    __attribute__((format(لکو, 7, 8)));
+فراغ	 sshlogdirect(LogLevel, صحيح, ثابت حرف *, ...)
+    __attribute__((format(لکو, 3, 4)));
 
-struct log_ratelimit_ctx {
+بنية log_ratelimit_ctx {
 	/* configuration */
-	u_int threshold;	/* events per second */
+	u_int حد;	/* events per second */
 	u_int max_accum;	/* max events to accumulate */
 	u_int hysteresis;	/* seconds */
 	u_int log_every;	/* seconds */
 
 	/* state */
-	time_t last_event;
+	time_t آخري_event;
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
-	time_t ratelimit_start;
-	time_t last_log;
-	time_t hysteresis_start;
+	صحيح ratelimit_سرگرم;
+	time_t ratelimit_شروعات;
+	time_t آخري_log;
+	time_t hysteresis_شروعات;
 	u_int ratelimited_events;
 };
 
-void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+فراغ log_ratelimit_init(بنية log_ratelimit_ctx *rl, u_int حد,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+صحيح log_ratelimit(بنية log_ratelimit_ctx *rl, time_t now, صحيح *سرگرم,
     u_int *events_dropped);
 
-#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)
-#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#وصف_ڪريو do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, عدم, __VA_ARGS__)
+#وصف_ڪريو debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, عدم, __VA_ARGS__)
+#وصف_ڪريو debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, عدم, __VA_ARGS__)
+#وصف_ڪريو debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, عدم, __VA_ARGS__)
+#وصف_ڪريو verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, عدم, __VA_ARGS__)
+#وصف_ڪريو logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, عدم, __VA_ARGS__)
+#وصف_ڪريو error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, عدم, __VA_ARGS__)
+#وصف_ڪريو fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, عدم, __VA_ARGS__)
+#وصف_ڪريو logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, عدم, __VA_ARGS__)
 
 /* Variants that prepend the caller's function */
-#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, NULL, __VA_ARGS__)
-#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#وصف_ڪريو do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, عدم, __VA_ARGS__)
+#وصف_ڪريو debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, عدم, __VA_ARGS__)
+#وصف_ڪريو debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, عدم, __VA_ARGS__)
+#وصف_ڪريو debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, عدم, __VA_ARGS__)
+#وصف_ڪريو verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, عدم, __VA_ARGS__)
+#وصف_ڪريو logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, عدم, __VA_ARGS__)
+#وصف_ڪريو error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, عدم, __VA_ARGS__)
+#وصف_ڪريو fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, عدم, __VA_ARGS__)
+#وصف_ڪريو logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, عدم, __VA_ARGS__)
 
 /* Variants that appends a ssh_err message */
-#define do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)
-#define debug3_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
-#define debug2_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
-#define debug_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
-#define verbose_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
-#define logit_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
-#define error_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define fatal_r(r, ...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
-#define logdie_r(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define do_log2_fr(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 1, level, ssh_err(r), __VA_ARGS__)
-#define debug3_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
-#define debug2_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
-#define debug_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
-#define verbose_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
-#define logit_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
-#define error_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
-#define fatal_fr(r, ...)	sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
-#define logdie_fr(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug3_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug2_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو verbose_r(r, ...)	sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو logit_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو error_r(r, ...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو fatal_r(r, ...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو logdie_r(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو do_log2_fr(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 1, level, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug3_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug2_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو debug_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو verbose_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو logit_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو error_fr(r, ...)	sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو fatal_fr(r, ...)	sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ssh_err(r), __VA_ARGS__)
+#وصف_ڪريو logdie_fr(r, ...)	sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ssh_err(r), __VA_ARGS__)
 
-#endif
+#جيڪڏهن_پورو

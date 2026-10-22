@@ -45,31 +45,31 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/getrrsetbyname.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#إذا !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include "getrrsetbyname.h"
+#ضمن "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
-#endif
+#إذا defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+خارجي صحيح h_errno;
+#جيڪڏهن_پورو
 
 /* We don't need multithread support here */
-#ifdef _THREAD_PRIVATE
-# undef _THREAD_PRIVATE
-#endif
-#define _THREAD_PRIVATE(a,b,c) (c)
+#جيڪڏهن_وصف_ٿيل THREAD_ذاتي
+# undef THREAD_ذاتي
+#جيڪڏهن_پورو
+#وصف_ڪريو THREAD_ذاتي(a,b,c) (c)
 
-#ifndef HAVE__RES_EXTERN
-struct __res_state _res;
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE__RES_EXTERN
+بنية __res_state _res;
+#جيڪڏهن_پورو
 
 /* Necessary functions and macros */
 
@@ -80,25 +80,25 @@ struct __res_state _res;
  * portable or it can be elegant but rarely both.
  */
 
-#ifndef INT32SZ
+#جيڪڏهن_وصف_نه_ٿيل INT32SZ
 # define INT32SZ	4
-#endif
-#ifndef INT16SZ
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل INT16SZ
 # define INT16SZ	2
-#endif
+#جيڪڏهن_پورو
 
-#ifndef GETSHORT
-#define GETSHORT(s, cp) { \
+#جيڪڏهن_وصف_نه_ٿيل GETSHORT
+#وصف_ڪريو GETSHORT(s, cp) { \
 	u_char *t_cp = (u_char *)(cp); \
 	(s) = ((u_int16_t)t_cp[0] << 8) \
 	    | ((u_int16_t)t_cp[1]) \
 	    ; \
 	(cp) += INT16SZ; \
 }
-#endif
+#جيڪڏهن_پورو
 
-#ifndef GETLONG
-#define GETLONG(l, cp) { \
+#جيڪڏهن_وصف_نه_ٿيل GETLONG
+#وصف_ڪريو GETLONG(l, cp) { \
 	u_char *t_cp = (u_char *)(cp); \
 	(l) = ((u_int32_t)t_cp[0] << 24) \
 	    | ((u_int32_t)t_cp[1] << 16) \
@@ -107,13 +107,13 @@ struct __res_state _res;
 	    ; \
 	(cp) += INT32SZ; \
 }
-#endif
+#جيڪڏهن_پورو
 
 /*
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#إذا !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -127,374 +127,374 @@ struct __res_state _res;
 /*
  * Routines to insert/extract short/long's.
  */
-static u_int16_t
-_getshort(const u_char *msgp)
+ساكن u_int16_t
+_getshort(ثابت u_char *msgp)
 {
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	أرجع (u);
 }
 
-static u_int32_t
-_getlong(const u_char *msgp)
+ساكن u_int32_t
+_getlong(ثابت u_char *msgp)
 {
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	أرجع (u);
 }
-#endif /* missing _getshort/_getlong */
+#جيڪڏهن_پورو /* missing _getshort/_getlong */
 
 /* ************** */
 
-#define ANSWER_BUFFER_SIZE 0xffff
+#وصف_ڪريو ANSWER_بفر_سائيز 0xffff
 
-struct dns_query {
-	char			*name;
+بنية dns_query {
+	حرف			*name;
 	u_int16_t		type;
 	u_int16_t		class;
-	struct dns_query	*next;
+	بنية dns_query	*ايندڙ;
 };
 
-struct dns_rr {
-	char			*name;
+بنية dns_rr {
+	حرف			*name;
 	u_int16_t		type;
 	u_int16_t		class;
 	u_int16_t		ttl;
-	u_int16_t		size;
-	void			*rdata;
-	struct dns_rr		*next;
+	u_int16_t		سائيز;
+	فراغ			*rdata;
+	بنية dns_rr		*ايندڙ;
 };
 
-struct dns_response {
-	HEADER			header;
-	struct dns_query	*query;
-	struct dns_rr		*answer;
-	struct dns_rr		*authority;
-	struct dns_rr		*additional;
+بنية dns_response {
+	سرو_2			سرو_3;
+	بنية dns_query	*query;
+	بنية dns_rr		*answer;
+	بنية dns_rr		*authority;
+	بنية dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+ساكن بنية dns_response *parse_dns_response(ثابت u_char *, صحيح);
+ساكن بنية dns_query *parse_dns_qsection(ثابت u_char *, صحيح,
+    ثابت u_char **, صحيح);
+ساكن بنية dns_rr *parse_dns_rrsection(ثابت u_char *, صحيح, ثابت u_char **,
+    صحيح);
 
-static void free_dns_query(struct dns_query *);
-static void free_dns_rr(struct dns_rr *);
-static void free_dns_response(struct dns_response *);
+ساكن فراغ free_dns_query(بنية dns_query *);
+ساكن فراغ free_dns_rr(بنية dns_rr *);
+ساكن فراغ free_dns_response(بنية dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+ساكن صحيح ڳڻپ_dns_rr(بنية dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
-    struct rrsetinfo **res)
+صحيح
+getrrsetbyname(ثابت حرف *hostname, بنانشان صحيح rdclass,
+    بنانشان صحيح rdtype, بنانشان صحيح flags,
+    بنية rrsetinfo **res)
 {
-	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
-	struct rrsetinfo *rrset = NULL;
-	struct dns_response *response = NULL;
-	struct dns_rr *rr;
-	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
-	u_char answer[ANSWER_BUFFER_SIZE];
+	بنية __res_state *_resp = THREAD_ذاتي(_res, _res, &_res);
+	صحيح نتيجو;
+	بنية rrsetinfo *rrset = عدم;
+	بنية dns_response *response = عدم;
+	بنية dns_rr *rr;
+	بنية rdatainfo *rdata;
+	صحيح ڊيگهائي;
+	بنانشان صحيح اشاريو_ans, اشاريو_sig;
+	u_char answer[ANSWER_بفر_سائيز];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	إذا (rdclass > 0xffff || rdtype > 0xffff) {
+		نتيجو = ERRSET_INVAL;
+		اذهب fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
-		result = ERRSET_INVAL;
-		goto fail;
+	إذا (rdclass == 0xff || rdtype == 0xff) {
+		نتيجو = ERRSET_INVAL;
+		اذهب fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
-		result = ERRSET_INVAL;
-		goto fail;
+	إذا (flags) {
+		نتيجو = ERRSET_INVAL;
+		اذهب fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
-		result = ERRSET_FAIL;
-		goto fail;
+	إذا ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+		نتيجو = ERRSET_FAIL;
+		اذهب fail;
 	}
 
-#ifdef DEBUG
+#جيڪڏهن_وصف_ٿيل DEBUG
 	_resp->options |= RES_DEBUG;
-#endif /* DEBUG */
+#جيڪڏهن_پورو /* DEBUG */
 
-#ifdef RES_USE_DNSSEC
+#جيڪڏهن_وصف_ٿيل RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	إذا (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
-#endif /* RES_USE_DNSEC */
+#جيڪڏهن_پورو /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
-	    answer, sizeof(answer));
-	if (length < 0) {
-		switch(h_errno) {
-		case HOST_NOT_FOUND:
-			result = ERRSET_NONAME;
-			goto fail;
-		case NO_DATA:
-			result = ERRSET_NODATA;
-			goto fail;
-		default:
-			result = ERRSET_FAIL;
-			goto fail;
+	ڊيگهائي = res_query(hostname, (نشانوارو صحيح) rdclass, (نشانوارو صحيح) rdtype,
+	    answer, حجم(answer));
+	إذا (ڊيگهائي < 0) {
+		بدل(h_errno) {
+		حالة HOST_NOT_FOUND:
+			نتيجو = ERRSET_NONAME;
+			اذهب fail;
+		حالة NO_DATA:
+			نتيجو = ERRSET_NODATA;
+			اذهب fail;
+		افتراضي:
+			نتيجو = ERRSET_FAIL;
+			اذهب fail;
 		}
 	}
 
 	/* parse result */
-	response = parse_dns_response(answer, length);
-	if (response == NULL) {
-		result = ERRSET_FAIL;
-		goto fail;
+	response = parse_dns_response(answer, ڊيگهائي);
+	إذا (response == عدم) {
+		نتيجو = ERRSET_FAIL;
+		اذهب fail;
 	}
 
-	if (response->header.qdcount != 1) {
-		result = ERRSET_FAIL;
-		goto fail;
+	إذا (response->سرو_3.qdcount != 1) {
+		نتيجو = ERRSET_FAIL;
+		اذهب fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	rrset = صفر_يادگيري_ڏيو(1, حجم(بنية rrsetinfo));
+	إذا (rrset == عدم) {
+		نتيجو = ERRSET_NOMEMORY;
+		اذهب fail;
 	}
 	rrset->rri_rdclass = response->query->class;
 	rrset->rri_rdtype = response->query->type;
 	rrset->rri_ttl = response->answer->ttl;
-	rrset->rri_nrdatas = response->header.ancount;
+	rrset->rri_nrdatas = response->سرو_3.ancount;
 
-#ifdef HAVE_HEADER_AD
+#جيڪڏهن_وصف_ٿيل HAVE_سرو_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	إذا (response->سرو_3.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
-#endif
+#جيڪڏهن_پورو
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	إذا (rrset->rri_name == عدم) {
+		نتيجو = ERRSET_NOMEMORY;
+		اذهب fail;
 	}
 
 	/* count answers */
-	rrset->rri_nrdatas = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nrdatas = ڳڻپ_dns_rr(response->answer, rrset->rri_rdclass,
 	    rrset->rri_rdtype);
-	rrset->rri_nsigs = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nsigs = ڳڻپ_dns_rr(response->answer, rrset->rri_rdclass,
 	    T_RRSIG);
 
 	/* allocate memory for answers */
-	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
-		result = ERRSET_NOMEMORY;
-		goto fail;
+	rrset->rri_rdatas = صفر_يادگيري_ڏيو(rrset->rri_nrdatas,
+	    حجم(بنية rdatainfo));
+	إذا (rrset->rri_rdatas == عدم) {
+		نتيجو = ERRSET_NOMEMORY;
+		اذهب fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
-		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
-			result = ERRSET_NOMEMORY;
-			goto fail;
+	إذا (rrset->rri_nsigs > 0) {
+		rrset->rri_sigs = صفر_يادگيري_ڏيو(rrset->rri_nsigs, حجم(بنية rdatainfo));
+		إذا (rrset->rri_sigs == عدم) {
+			نتيجو = ERRSET_NOMEMORY;
+			اذهب fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
-	    rr; rr = rr->next) {
+	لكل (rr = response->answer, اشاريو_ans = 0, اشاريو_sig = 0;
+	    rr; rr = rr->ايندڙ) {
 
-		rdata = NULL;
+		rdata = عدم;
 
-		if (rr->class == rrset->rri_rdclass &&
+		إذا (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
-			rdata = &rrset->rri_rdatas[index_ans++];
+			rdata = &rrset->rri_rdatas[اشاريو_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		إذا (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
-			rdata = &rrset->rri_sigs[index_sig++];
+			rdata = &rrset->rri_sigs[اشاريو_sig++];
 
-		if (rdata) {
-			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
-				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
-					result = ERRSET_NOMEMORY;
-					goto fail;
+		إذا (rdata) {
+			rdata->rdi_ڊيگهائي = rr->سائيز;
+			إذا (rr->سائيز != 0) {
+				rdata->rdi_معلومات   = يادگيري_ڏيو(rr->سائيز);
+				إذا (rdata->rdi_معلومات == عدم) {
+					نتيجو = ERRSET_NOMEMORY;
+					اذهب fail;
 				}
-				memcpy(rdata->rdi_data, rr->rdata, rr->size);
+				يادگيري_نقل(rdata->rdi_معلومات, rr->rdata, rr->سائيز);
 			}
 		}
 	}
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	أرجع (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	إذا (rrset != عدم)
 		freerrset(rrset);
-	if (response != NULL)
+	إذا (response != عدم)
 		free_dns_response(response);
-	return (result);
+	أرجع (نتيجو);
 }
 
-void
-freerrset(struct rrsetinfo *rrset)
+فراغ
+freerrset(بنية rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	إذا (rrset == عدم)
+		أرجع;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	إذا (rrset->rri_rdatas) {
+		لكل (i = 0; i < rrset->rri_nrdatas; i++) {
+			إذا (rrset->rri_rdatas[i].rdi_معلومات == عدم)
+				اكسر;
+			حرر(rrset->rri_rdatas[i].rdi_معلومات);
 		}
-		free(rrset->rri_rdatas);
+		حرر(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	إذا (rrset->rri_sigs) {
+		لكل (i = 0; i < rrset->rri_nsigs; i++) {
+			إذا (rrset->rri_sigs[i].rdi_معلومات == عدم)
+				اكسر;
+			حرر(rrset->rri_sigs[i].rdi_معلومات);
 		}
-		free(rrset->rri_sigs);
+		حرر(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	إذا (rrset->rri_name)
+		حرر(rrset->rri_name);
+	حرر(rrset);
 }
 
 /*
  * DNS response parsing routines
  */
-static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+ساكن بنية dns_response *
+parse_dns_response(ثابت u_char *answer, صحيح سائيز)
 {
-	struct dns_response *resp;
-	const u_char *cp;
+	بنية dns_response *resp;
+	ثابت u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	إذا (سائيز < HFIXEDSZ)
+		أرجع (عدم);
 
 	/* allocate memory for the response */
-	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	resp = صفر_يادگيري_ڏيو(1, حجم(*resp));
+	إذا (resp == عدم)
+		أرجع (عدم);
 
 	/* initialize current pointer */
 	cp = answer;
 
 	/* copy header */
-	memcpy(&resp->header, cp, HFIXEDSZ);
+	يادگيري_نقل(&resp->سرو_3, cp, HFIXEDSZ);
 	cp += HFIXEDSZ;
 
 	/* fix header byte order */
-	resp->header.qdcount = ntohs(resp->header.qdcount);
-	resp->header.ancount = ntohs(resp->header.ancount);
-	resp->header.nscount = ntohs(resp->header.nscount);
-	resp->header.arcount = ntohs(resp->header.arcount);
+	resp->سرو_3.qdcount = ntohs(resp->سرو_3.qdcount);
+	resp->سرو_3.ancount = ntohs(resp->سرو_3.ancount);
+	resp->سرو_3.nscount = ntohs(resp->سرو_3.nscount);
+	resp->سرو_3.arcount = ntohs(resp->سرو_3.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	إذا (resp->سرو_3.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* parse query section */
-	resp->query = parse_dns_qsection(answer, size, &cp,
-	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	resp->query = parse_dns_qsection(answer, سائيز, &cp,
+	    resp->سرو_3.qdcount);
+	إذا (resp->سرو_3.qdcount && resp->query == عدم) {
 		free_dns_response(resp);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* parse answer section */
-	resp->answer = parse_dns_rrsection(answer, size, &cp,
-	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	resp->answer = parse_dns_rrsection(answer, سائيز, &cp,
+	    resp->سرو_3.ancount);
+	إذا (resp->سرو_3.ancount && resp->answer == عدم) {
 		free_dns_response(resp);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* parse authority section */
-	resp->authority = parse_dns_rrsection(answer, size, &cp,
-	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	resp->authority = parse_dns_rrsection(answer, سائيز, &cp,
+	    resp->سرو_3.nscount);
+	إذا (resp->سرو_3.nscount && resp->authority == عدم) {
 		free_dns_response(resp);
-		return (NULL);
+		أرجع (عدم);
 	}
 
 	/* parse additional section */
-	resp->additional = parse_dns_rrsection(answer, size, &cp,
-	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	resp->additional = parse_dns_rrsection(answer, سائيز, &cp,
+	    resp->سرو_3.arcount);
+	إذا (resp->سرو_3.arcount && resp->additional == عدم) {
 		free_dns_response(resp);
-		return (NULL);
+		أرجع (عدم);
 	}
 
-	return (resp);
+	أرجع (resp);
 }
 
-static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+ساكن بنية dns_query *
+parse_dns_qsection(ثابت u_char *answer, صحيح سائيز, ثابت u_char **cp, صحيح ڳڻپ)
 {
-	struct dns_query *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	بنية dns_query *سر, *curr, *prev;
+	صحيح i, ڊيگهائي;
+	حرف name[MAXDNAME];
 
-#define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+#وصف_ڪريو NEED(need) \
+	افعل { \
+		إذا (*cp + need > answer + سائيز) \
+			اذهب fail; \
+	} طالما (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	لكل (i = 1, سر = عدم, prev = عدم; i <= ڳڻپ; i++, prev = curr) {
+		إذا (*cp >= answer + سائيز) {
  fail:
-			free_dns_query(head);
-			return (NULL);
+			free_dns_query(سر);
+			أرجع (عدم);
 		}
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
-			head = curr;
-		if (prev != NULL)
-			prev->next = curr;
+		curr = صفر_يادگيري_ڏيو(1, حجم(بنية dns_query));
+		إذا (curr == عدم)
+			اذهب fail;
+		إذا (سر == عدم)
+			سر = curr;
+		إذا (prev != عدم)
+			prev->ايندڙ = curr;
 
 		/* name */
-		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
-			free_dns_query(head);
-			return (NULL);
+		ڊيگهائي = dn_expand(answer, answer + سائيز, *cp, name,
+		    حجم(name));
+		إذا (ڊيگهائي < 0) {
+			free_dns_query(سر);
+			أرجع (عدم);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
-			free_dns_query(head);
-			return (NULL);
+		إذا (curr->name == عدم) {
+			free_dns_query(سر);
+			أرجع (عدم);
 		}
-		NEED(length);
-		*cp += length;
+		NEED(ڊيگهائي);
+		*cp += ڊيگهائي;
 
 		/* type */
 		NEED(INT16SZ);
@@ -506,55 +506,55 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 		curr->class = _getshort(*cp);
 		*cp += INT16SZ;
 	}
-#undef NEED
+#وصف_رد NEED
 
-	return (head);
+	أرجع (سر);
 }
 
-static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+ساكن بنية dns_rr *
+parse_dns_rrsection(ثابت u_char *answer, صحيح سائيز, ثابت u_char **cp,
+    صحيح ڳڻپ)
 {
-	struct dns_rr *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	بنية dns_rr *سر, *curr, *prev;
+	صحيح i, ڊيگهائي;
+	حرف name[MAXDNAME];
 
-#define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+#وصف_ڪريو NEED(need) \
+	افعل { \
+		إذا (*cp + need > answer + سائيز) \
+			اذهب fail; \
+	} طالما (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	لكل (i = 1, سر = عدم, prev = عدم; i <= ڳڻپ; i++, prev = curr) {
+		إذا (*cp >= answer + سائيز) {
  fail:
-			free_dns_rr(head);
-			return (NULL);
+			free_dns_rr(سر);
+			أرجع (عدم);
 		}
 
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
-			head = curr;
-		if (prev != NULL)
-			prev->next = curr;
+		curr = صفر_يادگيري_ڏيو(1, حجم(بنية dns_rr));
+		إذا (curr == عدم)
+			اذهب fail;
+		إذا (سر == عدم)
+			سر = curr;
+		إذا (prev != عدم)
+			prev->ايندڙ = curr;
 
 		/* name */
-		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
-			free_dns_rr(head);
-			return (NULL);
+		ڊيگهائي = dn_expand(answer, answer + سائيز, *cp, name,
+		    حجم(name));
+		إذا (ڊيگهائي < 0) {
+			free_dns_rr(سر);
+			أرجع (عدم);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
-			free_dns_rr(head);
-			return (NULL);
+		إذا (curr->name == عدم) {
+			free_dns_rr(سر);
+			أرجع (عدم);
 		}
-		NEED(length);
-		*cp += length;
+		NEED(ڊيگهائي);
+		*cp += ڊيگهائي;
 
 		/* type */
 		NEED(INT16SZ);
@@ -573,77 +573,77 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata size */
 		NEED(INT16SZ);
-		curr->size = _getshort(*cp);
+		curr->سائيز = _getshort(*cp);
 		*cp += INT16SZ;
 
 		/* rdata itself */
-		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
-				free_dns_rr(head);
-				return (NULL);
+		NEED(curr->سائيز);
+		إذا (curr->سائيز != 0) {
+			إذا ((curr->rdata = يادگيري_ڏيو(curr->سائيز)) == عدم) {
+				free_dns_rr(سر);
+				أرجع (عدم);
 			}
-			memcpy(curr->rdata, *cp, curr->size);
+			يادگيري_نقل(curr->rdata, *cp, curr->سائيز);
 		}
-		*cp += curr->size;
+		*cp += curr->سائيز;
 	}
-#undef NEED
+#وصف_رد NEED
 
-	return (head);
+	أرجع (سر);
 }
 
-static void
-free_dns_query(struct dns_query *p)
+ساكن فراغ
+free_dns_query(بنية dns_query *p)
 {
-	struct dns_query *next;
+	بنية dns_query *ايندڙ;
 
-	while (p != NULL) {
-		next = p->next;
-		free(p->name);
-		free(p);
-		p = next;
-	}
-}
-
-static void
-free_dns_rr(struct dns_rr *p)
-{
-	struct dns_rr *next;
-
-	while (p != NULL) {
-		next = p->next;
-		free(p->name);
-		free(p->rdata);
-		free(p);
-		p = next;
+	طالما (p != عدم) {
+		ايندڙ = p->ايندڙ;
+		حرر(p->name);
+		حرر(p);
+		p = ايندڙ;
 	}
 }
 
-static void
-free_dns_response(struct dns_response *p)
+ساكن فراغ
+free_dns_rr(بنية dns_rr *p)
 {
-	if (p == NULL)
-		return;
+	بنية dns_rr *ايندڙ;
+
+	طالما (p != عدم) {
+		ايندڙ = p->ايندڙ;
+		حرر(p->name);
+		حرر(p->rdata);
+		حرر(p);
+		p = ايندڙ;
+	}
+}
+
+ساكن فراغ
+free_dns_response(بنية dns_response *p)
+{
+	إذا (p == عدم)
+		أرجع;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
 	free_dns_rr(p->authority);
 	free_dns_rr(p->additional);
-	free(p);
+	حرر(p);
 }
 
-static int
-count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
+ساكن صحيح
+ڳڻپ_dns_rr(بنية dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	صحيح n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	طالما(p) {
+		إذا (p->class == class && p->type == type)
 			n++;
-		p = p->next;
+		p = p->ايندڙ;
 	}
 
-	return (n);
+	أرجع (n);
 }
 
-#endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */
+#جيڪڏهن_پورو /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

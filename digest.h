@@ -15,56 +15,56 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _DIGEST_H
-#define _DIGEST_H
+#جيڪڏهن_وصف_نه_ٿيل _DIGEST_H
+#وصف_ڪريو _DIGEST_H
 
 /* Maximum digest output length */
-#define SSH_DIGEST_MAX_LENGTH	64
+#وصف_ڪريو SSH_DIGEST_MAX_ڊيگهائي	64
 
 /* Digest algorithms */
-#define SSH_DIGEST_MD5		0
-#define SSH_DIGEST_SHA1		1
-#define SSH_DIGEST_SHA256	2
-#define SSH_DIGEST_SHA384	3
-#define SSH_DIGEST_SHA512	4
-#define SSH_DIGEST_MAX		5
+#وصف_ڪريو SSH_DIGEST_MD5		0
+#وصف_ڪريو SSH_DIGEST_SHA1		1
+#وصف_ڪريو SSH_DIGEST_SHA256	2
+#وصف_ڪريو SSH_DIGEST_SHA384	3
+#وصف_ڪريو SSH_DIGEST_SHA512	4
+#وصف_ڪريو SSH_DIGEST_MAX		5
 
-struct sshbuf;
-struct ssh_digest_ctx;
+بنية sshbuf;
+بنية ssh_digest_ctx;
 
 /* Looks up a digest algorithm by name */
-int ssh_digest_alg_by_name(const char *name);
+صحيح ssh_digest_alg_by_name(ثابت حرف *name);
 
 /* Returns the algorithm name for a digest identifier */
-const char *ssh_digest_alg_name(int alg);
+ثابت حرف *ssh_digest_alg_name(صحيح alg);
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_digest_bytes(int alg);
+سائيز_t ssh_digest_بائيٽون(صحيح alg);
 
 /* Returns the block size of the digest, e.g. for implementing HMAC */
-size_t ssh_digest_blocksize(struct ssh_digest_ctx *ctx);
+سائيز_t ssh_digest_blocksize(بنية ssh_digest_ctx *ctx);
 
 /* Copies internal state of digest of 'from' to 'to' */
-int ssh_digest_copy_state(struct ssh_digest_ctx *from,
-    struct ssh_digest_ctx *to);
+صحيح ssh_digest_copy_state(بنية ssh_digest_ctx *from,
+    بنية ssh_digest_ctx *منزل);
 
 /* One-shot API */
-int ssh_digest_memory(int alg, const void *m, size_t mlen,
-    u_char *d, size_t dlen)
+صحيح ssh_digest_يادگيري(صحيح alg, ثابت فراغ *m, سائيز_t mlen,
+    u_char *d, سائيز_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)))
 	__attribute__((__bounded__(__buffer__, 4, 5)));
-int ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+صحيح ssh_digest_بفر(صحيح alg, ثابت بنية sshbuf *b, u_char *d, سائيز_t dlen)
 	__attribute__((__bounded__(__buffer__, 3, 4)));
 
 /* Update API */
-struct ssh_digest_ctx *ssh_digest_start(int alg);
-int ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+بنية ssh_digest_ctx *ssh_digest_شروعات(صحيح alg);
+صحيح ssh_digest_update(بنية ssh_digest_ctx *ctx, ثابت فراغ *m, سائيز_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_digest_update_buffer(struct ssh_digest_ctx *ctx,
-    const struct sshbuf *b);
-int ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+صحيح ssh_digest_update_بفر(بنية ssh_digest_ctx *ctx,
+    ثابت بنية sshbuf *b);
+صحيح ssh_digest_final(بنية ssh_digest_ctx *ctx, u_char *d, سائيز_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_digest_free(struct ssh_digest_ctx *ctx);
+فراغ ssh_digest_free(بنية ssh_digest_ctx *ctx);
 
-#endif /* _DIGEST_H */
+#جيڪڏهن_پورو /* _DIGEST_H */
 

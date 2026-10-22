@@ -37,146 +37,146 @@
  * Second step: test primes' safety (processor intensive)
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef WITH_OPENSSL
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/dh.h>
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#ضمن <errno.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <limits.h>
 
-#include "xmalloc.h"
-#include "dh.h"
-#include "log.h"
-#include "misc.h"
+#ضمن "xmalloc.h"
+#ضمن "dh.h"
+#ضمن "log.h"
+#ضمن "misc.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#ضمن "openbsd-compat/openssl-compat.h"
 
 /*
  * File output defines
  */
 
 /* need line long enough for largest moduli plus headers */
-#define QLINESIZE		(100+8192)
+#وصف_ڪريو QLINESIZE		(100+8192)
 
 /*
  * Size: decimal.
  * Specifies the number of the most significant bit (0 to M).
  * WARNING: internally, usually 1 to N.
  */
-#define QSIZE_MINIMUM		(511)
+#وصف_ڪريو QSIZE_MINIMUM		(511)
 
 /*
  * Prime sieving defines
  */
 
 /* Constant: assuming 8 bit bytes and 32 bit words */
-#define SHIFT_BIT	(3)
-#define SHIFT_BYTE	(2)
-#define SHIFT_WORD	(SHIFT_BIT+SHIFT_BYTE)
-#define SHIFT_MEGABYTE	(20)
-#define SHIFT_MEGAWORD	(SHIFT_MEGABYTE-SHIFT_BYTE)
+#وصف_ڪريو سرڪايو_ٻٽو_انگ	(3)
+#وصف_ڪريو سرڪايو_BYTE	(2)
+#وصف_ڪريو سرڪايو_لفظ	(سرڪايو_ٻٽو_انگ+سرڪايو_BYTE)
+#وصف_ڪريو سرڪايو_MEGABYTE	(20)
+#وصف_ڪريو سرڪايو_MEGAWORD	(سرڪايو_MEGABYTE-سرڪايو_BYTE)
 
 /*
  * Do not increase this number beyond the unsigned integer bit size.
  * Due to a multiple of 4, it must be LESS than 128 (yielding 2**30 bits).
  */
-#define LARGE_MAXIMUM	(127UL)	/* megabytes */
+#وصف_ڪريو LARGE_وڌ_کان_وڌ	(127UL)	/* megabytes */
 
 /*
  * Constant: when used with 32-bit integers, the largest sieve prime
  * has to be less than 2**32.
  */
-#define SMALL_MAXIMUM	(0xffffffffUL)
+#وصف_ڪريو SMALL_وڌ_کان_وڌ	(0xffffffffUL)
 
 /* Constant: can sieve all primes less than 2**32, as 65537**2 > 2**32-1. */
-#define TINY_NUMBER	(1UL<<16)
+#وصف_ڪريو TINY_عدد	(1UL<<16)
 
 /* Ensure enough bit space for testing 2*q. */
-#define TEST_MAXIMUM	(1UL<<16)
-#define TEST_MINIMUM	(QSIZE_MINIMUM + 1)
+#وصف_ڪريو TEST_وڌ_کان_وڌ	(1UL<<16)
+#وصف_ڪريو TEST_MINIMUM	(QSIZE_MINIMUM + 1)
 /* real TEST_MINIMUM	(1UL << (SHIFT_WORD - TEST_POWER)) */
-#define TEST_POWER	(3)	/* 2**n, n < SHIFT_WORD */
+#وصف_ڪريو TEST_POWER	(3)	/* 2**n, n < SHIFT_WORD */
 
 /* bit operations on 32-bit words */
-#define BIT_CLEAR(a,n)	((a)[(n)>>SHIFT_WORD] &= ~(1L << ((n) & 31)))
-#define BIT_SET(a,n)	((a)[(n)>>SHIFT_WORD] |= (1L << ((n) & 31)))
-#define BIT_TEST(a,n)	((a)[(n)>>SHIFT_WORD] & (1L << ((n) & 31)))
+#وصف_ڪريو ٻٽو_انگ_CLEAR(a,n)	((a)[(n)>>سرڪايو_لفظ] &= ~(1L << ((n) & 31)))
+#وصف_ڪريو ٻٽو_انگ_سيٽ(a,n)	((a)[(n)>>سرڪايو_لفظ] |= (1L << ((n) & 31)))
+#وصف_ڪريو ٻٽو_انگ_TEST(a,n)	((a)[(n)>>سرڪايو_لفظ] & (1L << ((n) & 31)))
 
 /*
  * Prime testing defines
  */
 
 /* Minimum number of primality tests to perform */
-#define TRIAL_MINIMUM	(4)
+#وصف_ڪريو TRIAL_MINIMUM	(4)
 
 /*
  * Sieving data (XXX - move to struct)
  */
 
 /* sieve 2**16 */
-static uint32_t *TinySieve, tinybits;
+ساكن uint32_t *TinySieve, tinybits;
 
 /* sieve 2**30 in 2**16 parts */
-static uint32_t *SmallSieve, smallbits, smallbase;
+ساكن uint32_t *SmallSieve, smallbits, smallbase;
 
 /* sieve relative to the initial value */
-static uint32_t *LargeSieve, largewords, largetries, largenumbers;
-static uint32_t largebits, largememory;	/* megabytes */
-static BIGNUM *largebase;
+ساكن uint32_t *LargeSieve, largewords, largetries, largenumbers;
+ساكن uint32_t largebits, largememory;	/* megabytes */
+ساكن BIGNUM *largebase;
 
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
-    unsigned long);
+صحيح gen_candidates(FILE *, uint32_t, BIGNUM *);
+صحيح مفرد_test(FILE *, FILE *, uint32_t, uint32_t, حرف *, بنانشان ڊگهو,
+    بنانشان ڊگهو);
 
 /*
  * print moduli out in consistent form,
  */
-static int
+ساكن صحيح
 qfileout(FILE * ofile, uint32_t otype, uint32_t otests, uint32_t otries,
     uint32_t osize, uint32_t ogenerator, BIGNUM * omodulus)
 {
-	struct tm *gtm;
-	time_t time_now;
-	int res;
+	بنية tm *gtm;
+	time_t وقت_now;
+	صحيح res;
 
-	time(&time_now);
-	gtm = gmtime(&time_now);
-	if (gtm == NULL)
-		return -1;
+	time(&وقت_now);
+	gtm = gmtime(&وقت_now);
+	إذا (gtm == عدم)
+		أرجع -1;
 
 	res = fprintf(ofile, "%04d%02d%02d%02d%02d%02d %u %u %u %u %x ",
 	    gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 	    gtm->tm_hour, gtm->tm_min, gtm->tm_sec,
 	    otype, otests, otries, osize, ogenerator);
 
-	if (res < 0)
-		return (-1);
+	إذا (res < 0)
+		أرجع (-1);
 
-	if (BN_print_fp(ofile, omodulus) < 1)
-		return (-1);
+	إذا (BN_print_fp(ofile, omodulus) < 1)
+		أرجع (-1);
 
 	res = fprintf(ofile, "\n");
 	fflush(ofile);
 
-	return (res > 0 ? 0 : -1);
+	أرجع (res > 0 ? 0 : -1);
 }
 
 
 /*
  ** Sieve p's and q's with small factors
  */
-static void
+ساكن فراغ
 sieve_large(uint32_t s32)
 {
 	uint64_t r, u, s = s32;
@@ -184,48 +184,48 @@ sieve_large(uint32_t s32)
 	debug3("sieve_large %u", s32);
 	largetries++;
 	/* r = largebase mod s */
-	r = BN_mod_word(largebase, s32);
-	if (r == 0)
+	r = BN_mod_لفظ(largebase, s32);
+	إذا (r == 0)
 		u = 0; /* s divides into largebase exactly */
-	else
+	وإلا
 		u = s - r; /* largebase+u is first entry divisible by s */
 
-	if (u < largebits * 2ULL) {
+	إذا (u < largebits * 2ULL) {
 		/*
 		 * The sieve omits p's and q's divisible by 2, so ensure that
 		 * largebase+u is odd. Then, step through the sieve in
 		 * increments of 2*s
 		 */
-		if (u & 0x1)
+		إذا (u & 0x1)
 			u += s; /* Make largebase+u odd, and u even */
 
 		/* Mark all multiples of 2*s */
-		for (u /= 2; u < largebits; u += s)
-			BIT_SET(LargeSieve, u);
+		لكل (u /= 2; u < largebits; u += s)
+			ٻٽو_انگ_سيٽ(LargeSieve, u);
 	}
 
 	/* r = p mod s */
 	r = (2 * r + 1) % s;
-	if (r == 0)
+	إذا (r == 0)
 		u = 0; /* s divides p exactly */
-	else
+	وإلا
 		u = s - r; /* p+u is first entry divisible by s */
 
-	if (u < largebits * 4ULL) {
+	إذا (u < largebits * 4ULL) {
 		/*
 		 * The sieve omits p's divisible by 4, so ensure that
 		 * largebase+u is not. Then, step through the sieve in
 		 * increments of 4*s
 		 */
-		while (u & 0x3) {
-			if (SMALL_MAXIMUM - u < s)
-				return;
+		طالما (u & 0x3) {
+			إذا (SMALL_وڌ_کان_وڌ - u < s)
+				أرجع;
 			u += s;
 		}
 
 		/* Mark all multiples of 4*s */
-		for (u /= 4; u < largebits; u += s)
-			BIT_SET(LargeSieve, u);
+		لكل (u /= 4; u < largebits; u += s)
+			ٻٽو_انگ_سيٽ(LargeSieve, u);
 	}
 }
 
@@ -234,86 +234,86 @@ sieve_large(uint32_t s32)
  * to standard output.
  * The list is checked against small known primes (less than 2**30).
  */
-int
-gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
+صحيح
+gen_candidates(FILE *ٻاهريون, uint32_t power, BIGNUM *شروعات)
 {
 	BIGNUM *q;
 	uint32_t j, r, s, t;
-	uint32_t smallwords = TINY_NUMBER >> 6;
-	uint32_t tinywords = TINY_NUMBER >> 6;
-	time_t time_start, time_stop;
+	uint32_t smallwords = TINY_عدد >> 6;
+	uint32_t tinywords = TINY_عدد >> 6;
+	time_t وقت_شروعات, وقت_stop;
 	uint32_t i;
-	int ret = 0;
+	صحيح ret = 0;
 
 	/*
 	 * Set power to the length in bits of the prime to be generated.
 	 * This is changed to 1 less than the desired safe prime moduli p.
 	 */
-	if (power > TEST_MAXIMUM) {
-		error("Too many bits: %u > %lu", power, TEST_MAXIMUM);
-		return (-1);
-	} else if (power < TEST_MINIMUM) {
+	إذا (power > TEST_وڌ_کان_وڌ) {
+		error("Too many bits: %u > %lu", power, TEST_وڌ_کان_وڌ);
+		أرجع (-1);
+	} وإلا إذا (power < TEST_MINIMUM) {
 		error("Too few bits: %u < %u", power, TEST_MINIMUM);
-		return (-1);
+		أرجع (-1);
 	}
 	power--; /* decrement before squaring */
 
 	/* Always use the maximum amount of memory supported by the algorithm. */
-	largememory = LARGE_MAXIMUM;
-	largewords = (largememory << SHIFT_MEGAWORD);
+	largememory = LARGE_وڌ_کان_وڌ;
+	largewords = (largememory << سرڪايو_MEGAWORD);
 
-	TinySieve = xcalloc(tinywords, sizeof(uint32_t));
-	tinybits = tinywords << SHIFT_WORD;
+	TinySieve = xcalloc(tinywords, حجم(uint32_t));
+	tinybits = tinywords << سرڪايو_لفظ;
 
-	SmallSieve = xcalloc(smallwords, sizeof(uint32_t));
-	smallbits = smallwords << SHIFT_WORD;
+	SmallSieve = xcalloc(smallwords, حجم(uint32_t));
+	smallbits = smallwords << سرڪايو_لفظ;
 
-	LargeSieve = xcalloc(largewords, sizeof(uint32_t));
-	largebits = largewords << SHIFT_WORD;
+	LargeSieve = xcalloc(largewords, حجم(uint32_t));
+	largebits = largewords << سرڪايو_لفظ;
 	largenumbers = largebits * 2;	/* even numbers excluded */
 
 	/* validation check: count the number of primes tried */
 	largetries = 0;
-	if ((q = BN_new()) == NULL)
+	إذا ((q = BN_new()) == عدم)
 		fatal("BN_new failed");
 
 	/*
 	 * Generate random starting point for subprime search, or use
 	 * specified parameter.
 	 */
-	if ((largebase = BN_new()) == NULL)
+	إذا ((largebase = BN_new()) == عدم)
 		fatal("BN_new failed");
-	if (start == NULL) {
-		if (BN_rand(largebase, power, 1, 1) == 0)
+	إذا (شروعات == عدم) {
+		إذا (BN_rand(largebase, power, 1, 1) == 0)
 			fatal("BN_rand failed");
-	} else {
-		if (BN_copy(largebase, start) == NULL)
+	} وإلا {
+		إذا (BN_copy(largebase, شروعات) == عدم)
 			fatal("BN_copy: failed");
 	}
 
 	/* ensure odd */
-	if (BN_set_bit(largebase, 0) == 0)
+	إذا (BN_سيٽ_ٻٽو_انگ(largebase, 0) == 0)
 		fatal("BN_set_bit: failed");
 
-	time(&time_start);
+	time(&وقت_شروعات);
 
-	logit("%.24s Sieve next %u plus %u-bit", ctime(&time_start),
+	logit("%.24s Sieve next %u plus %u-bit", ctime(&وقت_شروعات),
 	    largenumbers, power);
 	debug2("start point: 0x%s", BN_bn2hex(largebase));
 
 	/*
 	 * TinySieve
 	 */
-	for (i = 0; i < tinybits; i++) {
-		if (BIT_TEST(TinySieve, i))
-			continue; /* 2*i+3 is composite */
+	لكل (i = 0; i < tinybits; i++) {
+		إذا (ٻٽو_انگ_TEST(TinySieve, i))
+			استمر; /* 2*i+3 is composite */
 
 		/* The next tiny prime */
 		t = 2 * i + 3;
 
 		/* Mark all multiples of t */
-		for (j = i + t; j < tinybits; j += t)
-			BIT_SET(TinySieve, j);
+		لكل (j = i + t; j < tinybits; j += t)
+			ٻٽو_انگ_سيٽ(TinySieve, j);
 
 		sieve_large(t);
 	}
@@ -322,20 +322,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	 * Start the small block search at the next possible prime. To avoid
 	 * fencepost errors, the last pass is skipped.
 	 */
-	for (smallbase = TINY_NUMBER + 3;
-	    smallbase < (SMALL_MAXIMUM - TINY_NUMBER);
-	    smallbase += TINY_NUMBER) {
-		for (i = 0; i < tinybits; i++) {
-			if (BIT_TEST(TinySieve, i))
-				continue; /* 2*i+3 is composite */
+	لكل (smallbase = TINY_عدد + 3;
+	    smallbase < (SMALL_وڌ_کان_وڌ - TINY_عدد);
+	    smallbase += TINY_عدد) {
+		لكل (i = 0; i < tinybits; i++) {
+			إذا (ٻٽو_انگ_TEST(TinySieve, i))
+				استمر; /* 2*i+3 is composite */
 
 			/* The next tiny prime */
 			t = 2 * i + 3;
 			r = smallbase % t;
 
-			if (r == 0) {
+			إذا (r == 0) {
 				s = 0; /* t divides into smallbase exactly */
-			} else {
+			} وإلا {
 				/* smallbase+s is first entry divisible by t */
 				s = t - r;
 			}
@@ -345,184 +345,184 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 			 * smallbase+s is odd. Then, step through the sieve
 			 * in increments of 2*t
 			 */
-			if (s & 1)
+			إذا (s & 1)
 				s += t; /* Make smallbase+s odd, and s even */
 
 			/* Mark all multiples of 2*t */
-			for (s /= 2; s < smallbits; s += t)
-				BIT_SET(SmallSieve, s);
+			لكل (s /= 2; s < smallbits; s += t)
+				ٻٽو_انگ_سيٽ(SmallSieve, s);
 		}
 
 		/*
 		 * SmallSieve
 		 */
-		for (i = 0; i < smallbits; i++) {
-			if (BIT_TEST(SmallSieve, i))
-				continue; /* 2*i+smallbase is composite */
+		لكل (i = 0; i < smallbits; i++) {
+			إذا (ٻٽو_انگ_TEST(SmallSieve, i))
+				استمر; /* 2*i+smallbase is composite */
 
 			/* The next small prime */
 			sieve_large((2 * i) + smallbase);
 		}
 
-		memset(SmallSieve, 0, smallwords << SHIFT_BYTE);
+		memset(SmallSieve, 0, smallwords << سرڪايو_BYTE);
 	}
 
-	time(&time_stop);
+	time(&وقت_stop);
 
 	logit("%.24s Sieved with %u small primes in %lld seconds",
-	    ctime(&time_stop), largetries, (long long)(time_stop - time_start));
+	    ctime(&وقت_stop), largetries, (ڊگهو ڊگهو)(وقت_stop - وقت_شروعات));
 
-	for (j = r = 0; j < largebits; j++) {
-		if (BIT_TEST(LargeSieve, j))
-			continue; /* Definitely composite, skip */
+	لكل (j = r = 0; j < largebits; j++) {
+		إذا (ٻٽو_انگ_TEST(LargeSieve, j))
+			استمر; /* Definitely composite, skip */
 
 		debug2("test q = largebase+%u", 2 * j);
-		if (BN_set_word(q, 2 * j) == 0)
+		إذا (BN_سيٽ_لفظ(q, 2 * j) == 0)
 			fatal("BN_set_word failed");
-		if (BN_add(q, q, largebase) == 0)
+		إذا (BN_جوڙيو(q, q, largebase) == 0)
 			fatal("BN_add failed");
-		if (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
+		إذا (qfileout(ٻاهريون, MODULI_TYPE_SOPHIE_GERMAIN,
 		    MODULI_TESTS_SIEVE, largetries,
 		    (power - 1) /* MSB */, (0), q) == -1) {
 			ret = -1;
-			break;
+			اكسر;
 		}
 
 		r++; /* count q */
 	}
 
-	time(&time_stop);
+	time(&وقت_stop);
 
-	free(LargeSieve);
-	free(SmallSieve);
-	free(TinySieve);
+	حرر(LargeSieve);
+	حرر(SmallSieve);
+	حرر(TinySieve);
 
-	logit("%.24s Found %u candidates", ctime(&time_stop), r);
+	logit("%.24s Found %u candidates", ctime(&وقت_stop), r);
 
-	return (ret);
+	أرجع (ret);
 }
 
-static void
-write_checkpoint(char *cpfile, uint32_t lineno)
+ساكن فراغ
+write_checkpoint(حرف *cpfile, uint32_t lineno)
 {
 	FILE *fp;
-	char tmp[PATH_MAX];
-	int r, writeok, closeok;
+	حرف tmp[PATH_MAX];
+	صحيح r, writeok, closeok;
 
-	r = snprintf(tmp, sizeof(tmp), "%s.XXXXXXXXXX", cpfile);
-	if (r < 0 || r >= PATH_MAX) {
+	r = snprintf(tmp, حجم(tmp), "%s.XXXXXXXXXX", cpfile);
+	إذا (r < 0 || r >= PATH_MAX) {
 		logit("write_checkpoint: temp pathname too long");
-		return;
+		أرجع;
 	}
-	if ((r = mkstemp(tmp)) == -1) {
+	إذا ((r = mkstemp(tmp)) == -1) {
 		logit("mkstemp(%s): %s", tmp, strerror(errno));
-		return;
+		أرجع;
 	}
-	if ((fp = fdopen(r, "w")) == NULL) {
+	إذا ((fp = fdopen(r, "w")) == عدم) {
 		logit("write_checkpoint: fdopen: %s", strerror(errno));
 		unlink(tmp);
 		close(r);
-		return;
+		أرجع;
 	}
-	writeok = (fprintf(fp, "%lu\n", (unsigned long)lineno) > 0);
+	writeok = (fprintf(fp, "%lu\n", (بنانشان ڊگهو)lineno) > 0);
 	closeok = (fclose(fp) == 0);
-	if (writeok && closeok && rename(tmp, cpfile) == 0) {
+	إذا (writeok && closeok && rename(tmp, cpfile) == 0) {
 		debug3("wrote checkpoint line %lu to '%s'",
-		    (unsigned long)lineno, cpfile);
-	} else {
+		    (بنانشان ڊگهو)lineno, cpfile);
+	} وإلا {
 		logit("failed to write to checkpoint file '%s': %s", cpfile,
 		    strerror(errno));
-		(void)unlink(tmp);
+		(فراغ)unlink(tmp);
 	}
 }
 
-static unsigned long
-read_checkpoint(char *cpfile)
+ساكن بنانشان ڊگهو
+read_checkpoint(حرف *cpfile)
 {
 	FILE *fp;
-	unsigned long lineno = 0;
+	بنانشان ڊگهو lineno = 0;
 
-	if ((fp = fopen(cpfile, "r")) == NULL)
-		return 0;
-	if (fscanf(fp, "%lu\n", &lineno) < 1)
+	إذا ((fp = fopen(cpfile, "r")) == عدم)
+		أرجع 0;
+	إذا (fscanf(fp, "%lu\n", &lineno) < 1)
 		logit("Failed to load checkpoint from '%s'", cpfile);
-	else
+	وإلا
 		logit("Loaded checkpoint from '%s' line %lu", cpfile, lineno);
 	fclose(fp);
-	return lineno;
+	أرجع lineno;
 }
 
-static unsigned long
-count_lines(FILE *f)
+ساكن بنانشان ڊگهو
+ڳڻپ_سٽون(FILE *f)
 {
-	unsigned long count = 0;
-	char lp[QLINESIZE + 1];
+	بنانشان ڊگهو ڳڻپ = 0;
+	حرف lp[QLINESIZE + 1];
 
-	if (fseek(f, 0, SEEK_SET) != 0) {
+	إذا (fseek(f, 0, SEEK_SET) != 0) {
 		debug("input file is not seekable");
-		return ULONG_MAX;
+		أرجع ULONG_MAX;
 	}
-	while (fgets(lp, QLINESIZE + 1, f) != NULL)
-		count++;
+	طالما (fgets(lp, QLINESIZE + 1, f) != عدم)
+		ڳڻپ++;
 	rewind(f);
-	debug("input file has %lu lines", count);
-	return count;
+	debug("input file has %lu lines", ڳڻپ);
+	أرجع ڳڻپ;
 }
 
-static char *
-fmt_time(time_t seconds)
+ساكن حرف *
+fmt_وقت(time_t seconds)
 {
-	int day, hr, min;
-	static char buf[128];
+	صحيح day, hr, min;
+	ساكن حرف buf[128];
 
 	min = (seconds / 60) % 60;
 	hr = (seconds / 60 / 60) % 24;
 	day = seconds / 60 / 60 / 24;
-	if (day > 0)
-		snprintf(buf, sizeof buf, "%dd %d:%02d", day, hr, min);
-	else
-		snprintf(buf, sizeof buf, "%d:%02d", hr, min);
-	return buf;
+	إذا (day > 0)
+		snprintf(buf, حجم buf, "%dd %d:%02d", day, hr, min);
+	وإلا
+		snprintf(buf, حجم buf, "%d:%02d", hr, min);
+	أرجع buf;
 }
 
-static void
-print_progress(unsigned long start_lineno, unsigned long current_lineno,
-    unsigned long end_lineno)
+ساكن فراغ
+print_ترقي(بنانشان ڊگهو شروعات_lineno, بنانشان ڊگهو current_lineno,
+    بنانشان ڊگهو پڇاڙي_lineno)
 {
-	static time_t time_start, time_prev;
-	time_t time_now, elapsed;
-	unsigned long num_to_process, processed, remaining, percent, eta;
-	double time_per_line;
-	char *eta_str;
+	ساكن time_t وقت_شروعات, وقت_prev;
+	time_t وقت_now, elapsed;
+	بنانشان ڊگهو انگ_منزل_process, processed, بچيل, percent, eta;
+	مزدوج وقت_في_سٽ;
+	حرف *eta_str;
 
-	time_now = monotime();
-	if (time_start == 0) {
-		time_start = time_prev = time_now;
-		return;
+	وقت_now = monotime();
+	إذا (وقت_شروعات == 0) {
+		وقت_شروعات = وقت_prev = وقت_now;
+		أرجع;
 	}
 	/* print progress after 1m then once per 5m */
-	if (time_now - time_prev < 5 * 60)
-		return;
-	time_prev = time_now;
-	elapsed = time_now - time_start;
-	processed = current_lineno - start_lineno;
-	remaining = end_lineno - current_lineno;
-	num_to_process = end_lineno - start_lineno;
-	time_per_line = (double)elapsed / processed;
+	إذا (وقت_now - وقت_prev < 5 * 60)
+		أرجع;
+	وقت_prev = وقت_now;
+	elapsed = وقت_now - وقت_شروعات;
+	processed = current_lineno - شروعات_lineno;
+	بچيل = پڇاڙي_lineno - current_lineno;
+	انگ_منزل_process = پڇاڙي_lineno - شروعات_lineno;
+	وقت_في_سٽ = (مزدوج)elapsed / processed;
 	/* if we don't know how many we're processing just report count+time */
-	time(&time_now);
-	if (end_lineno == ULONG_MAX) {
-		logit("%.24s processed %lu in %s", ctime(&time_now),
-		    processed, fmt_time(elapsed));
-		return;
+	time(&وقت_now);
+	إذا (پڇاڙي_lineno == ULONG_MAX) {
+		logit("%.24s processed %lu in %s", ctime(&وقت_now),
+		    processed, fmt_وقت(elapsed));
+		أرجع;
 	}
-	percent = 100 * processed / num_to_process;
-	eta = time_per_line * remaining;
-	eta_str = xstrdup(fmt_time(eta));
+	percent = 100 * processed / انگ_منزل_process;
+	eta = وقت_في_سٽ * بچيل;
+	eta_str = xstrdup(fmt_وقت(eta));
 	logit("%.24s processed %lu of %lu (%lu%%) in %s, ETA %s",
-	    ctime(&time_now), processed, num_to_process, percent,
-	    fmt_time(elapsed), eta_str);
-	free(eta_str);
+	    ctime(&وقت_now), processed, انگ_منزل_process, percent,
+	    fmt_وقت(elapsed), eta_str);
+	حرر(eta_str);
 }
 
 /*
@@ -531,175 +531,175 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
  * (checking both q and p)
  * The result is a list of so-call "safe" primes
  */
-int
-prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
-    char *checkpoint_file, unsigned long start_lineno, unsigned long num_lines)
+صحيح
+مفرد_test(FILE *اندريون, FILE *ٻاهريون, uint32_t trials, uint32_t generator_wanted,
+    حرف *checkpoint_file, بنانشان ڊگهو شروعات_lineno, بنانشان ڊگهو انگ_سٽون)
 {
 	BIGNUM *q, *p, *a;
-	char *cp, *lp;
-	uint32_t count_in = 0, count_out = 0, count_possible = 0;
-	uint32_t generator_known, in_tests, in_tries, in_type, in_size;
-	unsigned long last_processed = 0, end_lineno;
-	time_t time_start, time_stop;
-	int res, is_prime;
+	حرف *cp, *lp;
+	uint32_t ڳڻپ_اندريون = 0, ڳڻپ_ٻاهريون = 0, ڳڻپ_possible = 0;
+	uint32_t generator_معلوم, اندريون_tests, اندريون_tries, اندريون_type, اندريون_سائيز;
+	بنانشان ڊگهو آخري_processed = 0, پڇاڙي_lineno;
+	time_t وقت_شروعات, وقت_stop;
+	صحيح res, is_مفرد;
 
-	if (trials < TRIAL_MINIMUM) {
+	إذا (trials < TRIAL_MINIMUM) {
 		error("Minimum primality trials is %d", TRIAL_MINIMUM);
-		return (-1);
+		أرجع (-1);
 	}
 
-	if (num_lines == 0)
-		end_lineno = count_lines(in);
-	else
-		end_lineno = start_lineno + num_lines;
+	إذا (انگ_سٽون == 0)
+		پڇاڙي_lineno = ڳڻپ_سٽون(اندريون);
+	وإلا
+		پڇاڙي_lineno = شروعات_lineno + انگ_سٽون;
 
-	time(&time_start);
+	time(&وقت_شروعات);
 
-	if ((p = BN_new()) == NULL)
+	إذا ((p = BN_new()) == عدم)
 		fatal("BN_new failed");
-	if ((q = BN_new()) == NULL)
+	إذا ((q = BN_new()) == عدم)
 		fatal("BN_new failed");
 
 	debug2("%.24s Final %u Miller-Rabin trials (%x generator)",
-	    ctime(&time_start), trials, generator_wanted);
+	    ctime(&وقت_شروعات), trials, generator_wanted);
 
-	if (checkpoint_file != NULL)
-		last_processed = read_checkpoint(checkpoint_file);
-	last_processed = start_lineno = MAXIMUM(last_processed, start_lineno);
-	if (end_lineno == ULONG_MAX)
-		debug("process from line %lu from pipe", last_processed);
-	else
-		debug("process from line %lu to line %lu", last_processed,
-		    end_lineno);
+	إذا (checkpoint_file != عدم)
+		آخري_processed = read_checkpoint(checkpoint_file);
+	آخري_processed = شروعات_lineno = وڌ_کان_وڌ(آخري_processed, شروعات_lineno);
+	إذا (پڇاڙي_lineno == ULONG_MAX)
+		debug("process from line %lu from pipe", آخري_processed);
+	وإلا
+		debug("process from line %lu to line %lu", آخري_processed,
+		    پڇاڙي_lineno);
 
 	res = 0;
 	lp = xmalloc(QLINESIZE + 1);
-	while (fgets(lp, QLINESIZE + 1, in) != NULL && count_in < end_lineno) {
-		count_in++;
-		if (count_in <= last_processed) {
+	طالما (fgets(lp, QLINESIZE + 1, اندريون) != عدم && ڳڻپ_اندريون < پڇاڙي_lineno) {
+		ڳڻپ_اندريون++;
+		إذا (ڳڻپ_اندريون <= آخري_processed) {
 			debug3("skipping line %u, before checkpoint or "
-			    "specified start line", count_in);
-			continue;
+			    "specified start line", ڳڻپ_اندريون);
+			استمر;
 		}
-		if (checkpoint_file != NULL)
-			write_checkpoint(checkpoint_file, count_in);
-		print_progress(start_lineno, count_in, end_lineno);
-		if (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
-			debug2("%10u: comment or short line", count_in);
-			continue;
+		إذا (checkpoint_file != عدم)
+			write_checkpoint(checkpoint_file, ڳڻپ_اندريون);
+		print_ترقي(شروعات_lineno, ڳڻپ_اندريون, پڇاڙي_lineno);
+		إذا (لڙي_ڊيگهه(lp) < 14 || *lp == '!' || *lp == '#') {
+			debug2("%10u: comment or short line", ڳڻپ_اندريون);
+			استمر;
 		}
 
 		/* XXX - fragile parser */
-		/* time */
+		/*وقت*/
 		cp = &lp[14];	/* (skip) */
 
 		/* type */
-		in_type = strtoul(cp, &cp, 10);
+		اندريون_type = strtoul(cp, &cp, 10);
 
 		/* tests */
-		in_tests = strtoul(cp, &cp, 10);
+		اندريون_tests = strtoul(cp, &cp, 10);
 
-		if (in_tests & MODULI_TESTS_COMPOSITE) {
-			debug2("%10u: known composite", count_in);
-			continue;
+		إذا (اندريون_tests & MODULI_TESTS_مرکب) {
+			debug2("%10u: known composite", ڳڻپ_اندريون);
+			استمر;
 		}
 
 		/* tries */
-		in_tries = strtoul(cp, &cp, 10);
+		اندريون_tries = strtoul(cp, &cp, 10);
 
 		/* size (most significant bit) */
-		in_size = strtoul(cp, &cp, 10);
+		اندريون_سائيز = strtoul(cp, &cp, 10);
 
 		/* generator (hex) */
-		generator_known = strtoul(cp, &cp, 16);
+		generator_معلوم = strtoul(cp, &cp, 16);
 
 		/* Skip white space */
 		cp += strspn(cp, " ");
 
 		/* modulus (hex) */
-		switch (in_type) {
-		case MODULI_TYPE_SOPHIE_GERMAIN:
-			debug2("%10u: (%u) Sophie-Germain", count_in, in_type);
+		بدل (اندريون_type) {
+		حالة MODULI_TYPE_SOPHIE_GERMAIN:
+			debug2("%10u: (%u) Sophie-Germain", ڳڻپ_اندريون, اندريون_type);
 			a = q;
-			if (BN_hex2bn(&a, cp) == 0)
+			إذا (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* p = 2*q + 1 */
-			if (BN_lshift(p, q, 1) == 0)
+			إذا (BN_lshift(p, q, 1) == 0)
 				fatal("BN_lshift failed");
-			if (BN_add_word(p, 1) == 0)
+			إذا (BN_جوڙيو_لفظ(p, 1) == 0)
 				fatal("BN_add_word failed");
-			in_size += 1;
-			generator_known = 0;
-			break;
-		case MODULI_TYPE_UNSTRUCTURED:
-		case MODULI_TYPE_SAFE:
-		case MODULI_TYPE_SCHNORR:
-		case MODULI_TYPE_STRONG:
-		case MODULI_TYPE_UNKNOWN:
-			debug2("%10u: (%u)", count_in, in_type);
+			اندريون_سائيز += 1;
+			generator_معلوم = 0;
+			اكسر;
+		حالة MODULI_TYPE_UNSTRUCTURED:
+		حالة MODULI_TYPE_محفوظ:
+		حالة MODULI_TYPE_SCHNORR:
+		حالة MODULI_TYPE_STRONG:
+		حالة MODULI_TYPE_UNKNOWN:
+			debug2("%10u: (%u)", ڳڻپ_اندريون, اندريون_type);
 			a = p;
-			if (BN_hex2bn(&a, cp) == 0)
+			إذا (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* q = (p-1) / 2 */
-			if (BN_rshift(q, p, 1) == 0)
+			إذا (BN_rshift(q, p, 1) == 0)
 				fatal("BN_rshift failed");
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			debug2("Unknown prime type");
-			break;
+			اكسر;
 		}
 
 		/*
 		 * due to earlier inconsistencies in interpretation, check
 		 * the proposed bit size.
 		 */
-		if ((uint32_t)BN_num_bits(p) != (in_size + 1)) {
-			debug2("%10u: bit size %u mismatch", count_in, in_size);
-			continue;
+		إذا ((uint32_t)BN_انگ_بٽ(p) != (اندريون_سائيز + 1)) {
+			debug2("%10u: bit size %u mismatch", ڳڻپ_اندريون, اندريون_سائيز);
+			استمر;
 		}
-		if (in_size < QSIZE_MINIMUM) {
-			debug2("%10u: bit size %u too short", count_in, in_size);
-			continue;
+		إذا (اندريون_سائيز < QSIZE_MINIMUM) {
+			debug2("%10u: bit size %u too short", ڳڻپ_اندريون, اندريون_سائيز);
+			استمر;
 		}
 
-		if (in_tests & MODULI_TESTS_MILLER_RABIN)
-			in_tries += trials;
-		else
-			in_tries = trials;
+		إذا (اندريون_tests & MODULI_TESTS_MILLER_RABIN)
+			اندريون_tries += trials;
+		وإلا
+			اندريون_tries = trials;
 
 		/*
 		 * guess unknown generator
 		 */
-		if (generator_known == 0) {
-			if (BN_mod_word(p, 24) == 11)
-				generator_known = 2;
-			else {
-				uint32_t r = BN_mod_word(p, 10);
+		إذا (generator_معلوم == 0) {
+			إذا (BN_mod_لفظ(p, 24) == 11)
+				generator_معلوم = 2;
+			وإلا {
+				uint32_t r = BN_mod_لفظ(p, 10);
 
-				if (r == 3 || r == 7)
-					generator_known = 5;
+				إذا (r == 3 || r == 7)
+					generator_معلوم = 5;
 			}
 		}
 		/*
 		 * skip tests when desired generator doesn't match
 		 */
-		if (generator_wanted > 0 &&
-		    generator_wanted != generator_known) {
+		إذا (generator_wanted > 0 &&
+		    generator_wanted != generator_معلوم) {
 			debug2("%10u: generator %d != %d",
-			    count_in, generator_known, generator_wanted);
-			continue;
+			    ڳڻپ_اندريون, generator_معلوم, generator_wanted);
+			استمر;
 		}
 
 		/*
 		 * Primes with no known generator are useless for DH, so
 		 * skip those.
 		 */
-		if (generator_known == 0) {
-			debug2("%10u: no known generator", count_in);
-			continue;
+		إذا (generator_معلوم == 0) {
+			debug2("%10u: no known generator", ڳڻپ_اندريون);
+			استمر;
 		}
 
-		count_possible++;
+		ڳڻپ_possible++;
 
 		/*
 		 * The (1/4)^N performance bound on Miller-Rabin is
@@ -708,13 +708,13 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * that p is also prime. A single pass will weed out the
 		 * vast majority of composite q's.
 		 */
-		is_prime = BN_is_prime_ex(q, 1, NULL, NULL);
-		if (is_prime < 0)
+		is_مفرد = BN_is_مفرد_ex(q, 1, عدم, عدم);
+		إذا (is_مفرد < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		إذا (is_مفرد == 0) {
 			debug("%10u: q failed first possible prime test",
-			    count_in);
-			continue;
+			    ڳڻپ_اندريون);
+			استمر;
 		}
 
 		/*
@@ -724,48 +724,48 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * will show up on the first Rabin-Miller iteration so it
 		 * doesn't hurt to specify a high iteration count.
 		 */
-		is_prime = BN_is_prime_ex(p, trials, NULL, NULL);
-		if (is_prime < 0)
+		is_مفرد = BN_is_مفرد_ex(p, trials, عدم, عدم);
+		إذا (is_مفرد < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: p is not prime", count_in);
-			continue;
+		إذا (is_مفرد == 0) {
+			debug("%10u: p is not prime", ڳڻپ_اندريون);
+			استمر;
 		}
-		debug("%10u: p is almost certainly prime", count_in);
+		debug("%10u: p is almost certainly prime", ڳڻپ_اندريون);
 
 		/* recheck q more rigorously */
-		is_prime = BN_is_prime_ex(q, trials - 1, NULL, NULL);
-		if (is_prime < 0)
+		is_مفرد = BN_is_مفرد_ex(q, trials - 1, عدم, عدم);
+		إذا (is_مفرد < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: q is not prime", count_in);
-			continue;
+		إذا (is_مفرد == 0) {
+			debug("%10u: q is not prime", ڳڻپ_اندريون);
+			استمر;
 		}
-		debug("%10u: q is almost certainly prime", count_in);
+		debug("%10u: q is almost certainly prime", ڳڻپ_اندريون);
 
-		if (qfileout(out, MODULI_TYPE_SAFE,
-		    in_tests | MODULI_TESTS_MILLER_RABIN,
-		    in_tries, in_size, generator_known, p)) {
+		إذا (qfileout(ٻاهريون, MODULI_TYPE_محفوظ,
+		    اندريون_tests | MODULI_TESTS_MILLER_RABIN,
+		    اندريون_tries, اندريون_سائيز, generator_معلوم, p)) {
 			res = -1;
-			break;
+			اكسر;
 		}
 
-		count_out++;
+		ڳڻپ_ٻاهريون++;
 	}
 
-	time(&time_stop);
-	free(lp);
+	time(&وقت_stop);
+	حرر(lp);
 	BN_free(p);
 	BN_free(q);
 
-	if (checkpoint_file != NULL)
+	إذا (checkpoint_file != عدم)
 		unlink(checkpoint_file);
 
 	logit("%.24s Found %u safe primes of %u candidates in %ld seconds",
-	    ctime(&time_stop), count_out, count_possible,
-	    (long) (time_stop - time_start));
+	    ctime(&وقت_stop), ڳڻپ_ٻاهريون, ڳڻپ_possible,
+	    (ڊگهو) (وقت_stop - وقت_شروعات));
 
-	return (res);
+	أرجع (res);
 }
 
-#endif /* WITH_OPENSSL */
+#جيڪڏهن_پورو /* WITH_OPENSSL */

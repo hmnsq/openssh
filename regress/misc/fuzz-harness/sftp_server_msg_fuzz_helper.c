@@ -38,156 +38,156 @@ limitations under the License.
  * recovery so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#ضمن <setjmp.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <pwd.h>
+#ضمن <sys/types.h>
 
-#include "log.h"
+#ضمن "log.h"
 
-extern void fuzz_arena_begin(void);
-extern void fuzz_arena_release(void);
-extern void fuzz_arena_cleanup(void);
+خارجي فراغ fuzz_arena_begin(فراغ);
+خارجي فراغ fuzz_arena_release(فراغ);
+خارجي فراغ fuzz_arena_cleanup(فراغ);
 
-static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+ساكن jmp_buf fuzz_server_env;
+ساكن متطاير صحيح اندريون_fuzz_server = 0;
 
-void
-cleanup_exit(int code)
+فراغ
+cleanup_exit(صحيح ڪوڊ)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	إذا (اندريون_fuzz_server)
+		longjmp(fuzz_server_env, ڪوڊ ? ڪوڊ : 1);
+	_exit(ڪوڊ);
 }
 
-#define sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
-#include "../../../sftp-server.c"
-#undef sftp_server_cleanup_exit
+#وصف_ڪريو sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
+#ضمن "../../../sftp-server.c"
+#وصف_رد sftp_server_cleanup_exit
 
-void
-sftp_server_cleanup_exit(int code)
+فراغ
+sftp_server_cleanup_exit(صحيح ڪوڊ)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	إذا (اندريون_fuzz_server)
+		longjmp(fuzz_server_env, ڪوڊ ? ڪوڊ : 1);
+	_exit(ڪوڊ);
 }
 
-static void (* const __force_use_renamed)(int) =
+ساكن فراغ (* ثابت __force_use_renamed)(صحيح) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+ساكن بنية passwd fuzz_pw;
+ساكن صحيح log_initialized = 0;
 
-static void
-cleanup_handles(void)
+ساكن فراغ
+cleanup_handles(فراغ)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
-	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+	إذا (handles == عدم)
+		أرجع;
+	لكل (i = 0; i < انگ_handles; i++) {
+		إذا (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		وإلا إذا (handles[i].use == HANDLE_DIR && handles[i].dirp != عدم)
 			closedir(handles[i].dirp);
-		free(handles[i].name);
+		حرر(handles[i].name);
 	}
-	free(handles);
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
+	حرر(handles);
+	handles = عدم;
+	انگ_handles = 0;
+	پهريون_اڻ_استعمال_ٿيل_handle = -1;
 }
 
-static void
-reset_module_globals(void)
+ساكن فراغ
+reset_module_globals(فراغ)
 {
 	pw = &fuzz_pw;
-	client_addr = NULL;
-	version = 0;
-	init_done = 0;
+	client_addr = عدم;
+	نسخو = 0;
+	init_پورو = 0;
 	readonly = 0;
-	request_allowlist = NULL;
-	request_denylist = NULL;
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
-	iqueue = NULL;
-	oqueue = NULL;
+	request_allowlist = عدم;
+	request_denylist = عدم;
+	handles = عدم;
+	انگ_handles = 0;
+	پهريون_اڻ_استعمال_ٿيل_handle = -1;
+	iqueue = عدم;
+	oqueue = عدم;
 }
 
-void
-fuzz_server_one(const uint8_t *data, size_t size)
+فراغ
+fuzz_server_one(ثابت uint8_t *معلومات, سائيز_t سائيز)
 {
-	if (!log_initialized) {
+	إذا (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		حرف tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		إذا (mkdtemp(tmpdir) != عدم && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, حجم(fuzz_pw));
+		fuzz_pw.pw_name = (حرف *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (حرف *)"/tmp";
+		fuzz_pw.pw_shell = (حرف *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	إذا (سائيز == 0 || سائيز > 65000)
+		أرجع;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
-	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	اندريون_fuzz_server = 1;
+	إذا (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
-			goto out;
+		إذا (iqueue == عدم || oqueue == عدم)
+			اذهب ٻاهريون;
 
-		const uint8_t init_msg[] = {
+		ثابت uint8_t init_نياپو[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
-			goto out;
+		إذا (sshbuf_put(iqueue, init_نياپو, حجم(init_نياپو)) != 0)
+			اذهب ٻاهريون;
 		process();
 
 		sshbuf_reset(iqueue);
 		sshbuf_reset(oqueue);
 
 		uint8_t hdr[4] = {
-		    (uint8_t)((size >> 24) & 0xff),
-		    (uint8_t)((size >> 16) & 0xff),
-		    (uint8_t)((size >> 8) & 0xff),
-		    (uint8_t)(size & 0xff),
+		    (uint8_t)((سائيز >> 24) & 0xff),
+		    (uint8_t)((سائيز >> 16) & 0xff),
+		    (uint8_t)((سائيز >> 8) & 0xff),
+		    (uint8_t)(سائيز & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
-		    sshbuf_put(iqueue, data, size) != 0)
-			goto out;
+		إذا (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		    sshbuf_put(iqueue, معلومات, سائيز) != 0)
+			اذهب ٻاهريون;
 		process();
-	out:
+	ٻاهريون:
 		cleanup_handles();
 		sshbuf_free(iqueue);
 		sshbuf_free(oqueue);
-		free(client_addr);
-		iqueue = oqueue = NULL;
-		client_addr = NULL;
-		in_fuzz_server = 0;
+		حرر(client_addr);
+		iqueue = oqueue = عدم;
+		client_addr = عدم;
+		اندريون_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		أرجع;
 	}
 	cleanup_handles();
-	in_fuzz_server = 0;
+	اندريون_fuzz_server = 0;
 	fuzz_arena_cleanup();
-	iqueue = oqueue = NULL;
-	client_addr = NULL;
+	iqueue = oqueue = عدم;
+	client_addr = عدم;
 }

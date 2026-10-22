@@ -25,80 +25,80 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/memmem.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_MEMMEM
+#جيڪڏهن_وصف_نه_ٿيل HAVE_MEMMEM
 
-#include <string.h>
-#include <stdint.h>
+#ضمن <string.h>
+#ضمن <stdint.h>
 
-static char *
-twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+ساكن حرف *
+twobyte_memmem(ثابت بنانشان حرف *h, سائيز_t k, ثابت بنانشان حرف *n)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
-	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+	لكل (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
+		إذا (hw == nw) أرجع (حرف *)h-2;
+	أرجع hw == nw ? (حرف *)h-2 : 0;
 }
 
-static char *
-threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+ساكن حرف *
+threebyte_memmem(ثابت بنانشان حرف *h, سائيز_t k, ثابت بنانشان حرف *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8;
-	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+	لكل (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
+		إذا (hw == nw) أرجع (حرف *)h-3;
+	أرجع hw == nw ? (حرف *)h-3 : 0;
 }
 
-static char *
-fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+ساكن حرف *
+fourbyte_memmem(ثابت بنانشان حرف *h, سائيز_t k, ثابت بنانشان حرف *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
-	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+	لكل (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
+		إذا (hw == nw) أرجع (حرف *)h-4;
+	أرجع hw == nw ? (حرف *)h-4 : 0;
 }
 
-#if 0
+#إذا 0
 /* In -portable, defines.h ensures that these are already defined. */
-#define MAX(a,b) ((a)>(b)?(a):(b))
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#endif
+#وصف_ڪريو MAX(a,b) ((a)>(b)?(a):(b))
+#وصف_ڪريو MIN(a,b) ((a)<(b)?(a):(b))
+#جيڪڏهن_پورو
 
-#define BITOP(a,b,op) \
- ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
+#وصف_ڪريو BITOP(a,b,op) \
+ ((a)[(سائيز_t)(b)/(8*حجم *(a))] op (سائيز_t)1<<((سائيز_t)(b)%(8*حجم *(a))))
 
 /*
  * Maxime Crochemore and Dominique Perrin, Two-way string-matching,
  * Journal of the ACM, 38(3):651-675, July 1991.
  */
-static char *
-twoway_memmem(const unsigned char *h, const unsigned char *z,
-    const unsigned char *n, size_t l)
+ساكن حرف *
+twoway_memmem(ثابت بنانشان حرف *h, ثابت بنانشان حرف *z,
+    ثابت بنانشان حرف *n, سائيز_t l)
 {
-	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
-	size_t shift[256];
+	سائيز_t i, ip, jp, k, p, ms, p0, mem, mem0;
+	سائيز_t byteset[32 / حجم(سائيز_t)] = { 0 };
+	سائيز_t سرڪايو[256];
 
 	/* Computing length of needle and fill shift table */
-	for (i=0; i<l; i++)
-		BITOP(byteset, n[i], |=), shift[n[i]] = i+1;
+	لكل (i=0; i<l; i++)
+		BITOP(byteset, n[i], |=), سرڪايو[n[i]] = i+1;
 
 	/* Compute maximal suffix */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	طالما (jp+k<l) {
+		إذا (n[ip+k] == n[jp+k]) {
+			إذا (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] > n[jp+k]) {
+			} وإلا k++;
+		} وإلا إذا (n[ip+k] > n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} وإلا {
 			ip = jp++;
 			k = p = 1;
 		}
@@ -108,87 +108,87 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 
 	/* And with the opposite comparison */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	طالما (jp+k<l) {
+		إذا (n[ip+k] == n[jp+k]) {
+			إذا (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] < n[jp+k]) {
+			} وإلا k++;
+		} وإلا إذا (n[ip+k] < n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} وإلا {
 			ip = jp++;
 			k = p = 1;
 		}
 	}
-	if (ip+1 > ms+1) ms = ip;
-	else p = p0;
+	إذا (ip+1 > ms+1) ms = ip;
+	وإلا p = p0;
 
 	/* Periodic needle? */
-	if (memcmp(n, n+p, ms+1)) {
+	إذا (memcmp(n, n+p, ms+1)) {
 		mem0 = 0;
 		p = MAX(ms, l-ms-1) + 1;
-	} else mem0 = l-p;
+	} وإلا mem0 = l-p;
 	mem = 0;
 
 	/* Search loop */
-	for (;;) {
+	لكل (;;) {
 		/* If remainder of haystack is shorter than needle, done */
-		if (z-h < l) return 0;
+		إذا (z-h < l) أرجع 0;
 
 		/* Check last byte first; advance by shift on mismatch */
-		if (BITOP(byteset, h[l-1], &)) {
-			k = l-shift[h[l-1]];
-			if (k) {
-				if (k < mem) k = mem;
+		إذا (BITOP(byteset, h[l-1], &)) {
+			k = l-سرڪايو[h[l-1]];
+			إذا (k) {
+				إذا (k < mem) k = mem;
 				h += k;
 				mem = 0;
-				continue;
+				استمر;
 			}
-		} else {
+		} وإلا {
 			h += l;
 			mem = 0;
-			continue;
+			استمر;
 		}
 
 		/* Compare right half */
-		for (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
-		if (k < l) {
+		لكل (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
+		إذا (k < l) {
 			h += k-ms;
 			mem = 0;
-			continue;
+			استمر;
 		}
 		/* Compare left half */
-		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		لكل (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
+		إذا (k <= mem) أرجع (حرف *)h;
 		h += p;
 		mem = mem0;
 	}
 }
 
-void *
-memmem(const void *h0, size_t k, const void *n0, size_t l)
+فراغ *
+memmem(ثابت فراغ *h0, سائيز_t k, ثابت فراغ *n0, سائيز_t l)
 {
-	const unsigned char *h = h0, *n = n0;
+	ثابت بنانشان حرف *h = h0, *n = n0;
 
 	/* Return immediately on empty needle */
-	if (!l) return (void *)h;
+	إذا (!l) أرجع (فراغ *)h;
 
 	/* Return immediately when needle is longer than haystack */
-	if (k<l) return 0;
+	إذا (k<l) أرجع 0;
 
 	/* Use faster algorithms for short needles */
 	h = memchr(h0, *n, k);
-	if (!h || l==1) return (void *)h;
-	k -= h - (const unsigned char *)h0;
-	if (k<l) return 0;
-	if (l==2) return twobyte_memmem(h, k, n);
-	if (l==3) return threebyte_memmem(h, k, n);
-	if (l==4) return fourbyte_memmem(h, k, n);
+	إذا (!h || l==1) أرجع (فراغ *)h;
+	k -= h - (ثابت بنانشان حرف *)h0;
+	إذا (k<l) أرجع 0;
+	إذا (l==2) أرجع twobyte_memmem(h, k, n);
+	إذا (l==3) أرجع threebyte_memmem(h, k, n);
+	إذا (l==4) أرجع fourbyte_memmem(h, k, n);
 
-	return twoway_memmem(h, h+k, n, l);
+	أرجع twoway_memmem(h, h+k, n, l);
 }
 DEF_WEAK(memmem);
-#endif /* HAVE_MEMMEM */
+#جيڪڏهن_پورو /* HAVE_MEMMEM */

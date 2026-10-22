@@ -17,28 +17,28 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/reallocarray.c */
 
-#include "includes.h"
-#ifndef HAVE_REALLOCARRAY
+#ضمن "includes.h"
+#جيڪڏهن_وصف_نه_ٿيل HAVE_REALLOCARRAY
 
-#include <sys/types.h>
-#include <errno.h>
-#include <stdint.h>
-#include <stdlib.h>
+#ضمن <sys/types.h>
+#ضمن <errno.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW	((size_t)1 << (sizeof(size_t) * 4))
+#وصف_ڪريو MUL_NO_حد_کان_مٿي	((سائيز_t)1 << (حجم(سائيز_t) * 4))
 
-void *
-reallocarray(void *optr, size_t nmemb, size_t size)
+فراغ *
+reallocarray(فراغ *optr, سائيز_t nmemb, سائيز_t سائيز)
 {
-	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    nmemb > 0 && SIZE_MAX / nmemb < size) {
+	إذا ((nmemb >= MUL_NO_حد_کان_مٿي || سائيز >= MUL_NO_حد_کان_مٿي) &&
+	    nmemb > 0 && SIZE_MAX / nmemb < سائيز) {
 		errno = ENOMEM;
-		return NULL;
+		أرجع عدم;
 	}
-	return realloc(optr, size * nmemb);
+	أرجع realloc(optr, سائيز * nmemb);
 }
-#endif /* HAVE_REALLOCARRAY */
+#جيڪڏهن_پورو /* HAVE_REALLOCARRAY */

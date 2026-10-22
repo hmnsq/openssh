@@ -17,83 +17,83 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 /*
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#إذا defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_VASPRINTF
+#جيڪڏهن_وصف_نه_ٿيل HAVE_VASPRINTF
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ضمن <errno.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
 
-#define INIT_SZ	128
+#وصف_ڪريو INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+صحيح
+vasprintf(حرف **str, ثابت حرف *fmt, va_list ap)
 {
-	int ret = -1;
+	صحيح ret = -1;
 	va_list ap2;
-	char *string, *newstr;
-	size_t len;
+	حرف *string, *newstr;
+	سائيز_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
-		goto fail;
+	إذا ((string = يادگيري_ڏيو(INIT_SZ)) == عدم)
+		اذهب fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	إذا (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
-		free(string);
-		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
-		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
-			free(string);
-			goto fail;
-		} else {
+	} وإلا إذا (ret == وڌ_کان_وڌ_عدد || ret < 0) { /* Bad length */
+		حرر(string);
+		اذهب fail;
+	} وإلا {	/* bigger than initial, realloc allowing for nul */
+		len = (سائيز_t)ret + 1;
+		إذا ((newstr = realloc(string, len)) == عدم) {
+			حرر(string);
+			اذهب fail;
+		} وإلا {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			إذا (ret >= 0 && (سائيز_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
-				free(newstr);
-				goto fail;
+			} وإلا { /* failed with realloc'ed string, give up */
+				حرر(newstr);
+				اذهب fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	أرجع (ret);
 
 fail:
-	*str = NULL;
+	*str = عدم;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	أرجع (-1);
 }
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ASPRINTF
+صحيح asprintf(حرف **str, ثابت حرف *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	صحيح ret;
 
-	*str = NULL;
+	*str = عدم;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	أرجع ret;
 }
-#endif
+#جيڪڏهن_پورو

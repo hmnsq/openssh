@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <errno.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ERR
+فراغ
+err(صحيح r, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list دليلون;
 
-	va_start(args, fmt);
+	va_start(دليلون, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, دليلون);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(دليلون);
+	ٻاهر_نڪرو(r);
 }
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ERRX
+فراغ
+errx(صحيح r, ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list دليلون;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(دليلون, fmt);
+	vfprintf(stderr, fmt, دليلون);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(دليلون);
+	ٻاهر_نڪرو(r);
 }
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_WARN
+فراغ
+warn(ثابت حرف *fmt, ...)
 {
-	va_list args;
+	va_list دليلون;
 
-	va_start(args, fmt);
+	va_start(دليلون, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, دليلون);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(دليلون);
 }
-#endif
+#جيڪڏهن_پورو

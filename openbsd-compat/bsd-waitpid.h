@@ -23,27 +23,27 @@
  *
  */
 
-#ifndef _BSD_WAITPID_H
-#define _BSD_WAITPID_H
+#جيڪڏهن_وصف_نه_ٿيل _BSD_WAITPID_H
+#وصف_ڪريو _BSD_WAITPID_H
 
-#ifndef HAVE_WAITPID
+#جيڪڏهن_وصف_نه_ٿيل HAVE_WAITPID
 /* Clean out any potential issues */
-#undef WIFEXITED
-#undef WIFSTOPPED
-#undef WIFSIGNALED
+#وصف_رد WIFEXITED
+#وصف_رد WIFSTOPPED
+#وصف_رد WIFSIGNALED
 
 /* Define required functions to mimic a POSIX look and feel */
-#define _W_INT(w)	(*(int*)&(w))	/* convert union wait to int */
-#define WIFEXITED(w)	(!((_W_INT(w)) & 0377))
-#define WIFSTOPPED(w)	((_W_INT(w)) & 0100)
-#define WIFSIGNALED(w)	(!WIFEXITED(w) && !WIFSTOPPED(w))
-#define WEXITSTATUS(w)	(int)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
-#define WTERMSIG(w)	(int)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
-#define WCOREFLAG	0x80
-#define WCOREDUMP(w)	((_W_INT(w)) & WCOREFLAG)
+#وصف_ڪريو _W_INT(w)	(*(صحيح*)&(w))	/* convert union wait to int */
+#وصف_ڪريو WIFEXITED(w)	(!((_W_INT(w)) & 0377))
+#وصف_ڪريو WIFSTOPPED(w)	((_W_INT(w)) & 0100)
+#وصف_ڪريو WIFSIGNALED(w)	(!WIFEXITED(w) && !WIFSTOPPED(w))
+#وصف_ڪريو WEXITSTATUS(w)	(صحيح)(WIFEXITED(w) ? ((_W_INT(w) >> 8) & 0377) : -1)
+#وصف_ڪريو WTERMSIG(w)	(صحيح)(WIFSIGNALED(w) ? (_W_INT(w) & 0177) : -1)
+#وصف_ڪريو WCOREFLAG	0x80
+#وصف_ڪريو WCOREDUMP(w)	((_W_INT(w)) & WCOREFLAG)
 
 /* Prototype */
-pid_t waitpid(int, int *, int);
+pid_t waitpid(صحيح, صحيح *, صحيح);
 
-#endif /* !HAVE_WAITPID */
-#endif /* _BSD_WAITPID_H */
+#جيڪڏهن_پورو /* !HAVE_WAITPID */
+#جيڪڏهن_پورو /* _BSD_WAITPID_H */

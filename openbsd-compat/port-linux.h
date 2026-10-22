@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#جيڪڏهن_وصف_نه_ٿيل پورٽ_LINUX_H
+#وصف_ڪريو پورٽ_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#جيڪڏهن_وصف_ٿيل WITH_SELINUX
+صحيح ssh_selinux_enabled(فراغ);
+فراغ ssh_selinux_تياري_pty(حرف *, ثابت حرف *);
+فراغ ssh_selinux_تياري_exec_context(حرف *);
+فراغ ssh_selinux_change_context(ثابت حرف *);
+فراغ ssh_selinux_setfscreatecon(ثابت حرف *);
+#جيڪڏهن_پورو
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#جيڪڏهن_وصف_ٿيل LINUX_OOM_ADJUST
+فراغ oom_adjust_restore(فراغ);
+فراغ oom_adjust_تياري(فراغ);
+#جيڪڏهن_پورو
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#جيڪڏهن_وصف_ٿيل LINUX_MEMLOCK_ONFAULT
+فراغ memlock_onfault_تياري(فراغ);
+#جيڪڏهن_پورو
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#جيڪڏهن_وصف_ٿيل SYSTEMD_NOTIFY
+فراغ ssh_systemd_notify_ready(فراغ);
+فراغ ssh_systemd_notify_reload(فراغ);
+#جيڪڏهن_پورو
 
-#endif /* ! _PORT_LINUX_H */
+#جيڪڏهن_پورو /* ! _PORT_LINUX_H */

@@ -13,30 +13,30 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+بنية xaddr;
 
-struct per_source_penalty;
+بنية في_ذريعو_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+فراغ	srclimit_init(صحيح, صحيح, صحيح, صحيح,
+    بنية في_ذريعو_penalty *, ثابت حرف *);
+صحيح	srclimit_check_allow(صحيح, صحيح);
+فراغ	srclimit_پورو(صحيح);
 
-#define SRCLIMIT_PENALTY_NONE			0
-#define SRCLIMIT_PENALTY_CRASH			1
-#define SRCLIMIT_PENALTY_AUTHFAIL		2
-#define SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
-#define SRCLIMIT_PENALTY_NOAUTH			4
-#define SRCLIMIT_PENALTY_REFUSECONNECTION	5
-#define SRCLIMIT_PENALTY_INVALIDUSER		6
+#وصف_ڪريو SRCLIMIT_PENALTY_NONE			0
+#وصف_ڪريو SRCLIMIT_PENALTY_CRASH			1
+#وصف_ڪريو SRCLIMIT_PENALTY_AUTHFAIL		2
+#وصف_ڪريو SRCLIMIT_PENALTY_GRACE_EXCEEDED		3
+#وصف_ڪريو SRCLIMIT_PENALTY_NOAUTH			4
+#وصف_ڪريو SRCLIMIT_PENALTY_REFUSECONNECTION	5
+#وصف_ڪريو SRCLIMIT_PENALTY_INVALIDUSER		6
 
 /* meaningful exit values, used by sshd listener for penalties */
-#define EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
-#define EXIT_CHILD_CRASH	4	/* preauth child crashed */
-#define EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
-#define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
-#define EXIT_INVALID_USER	7	/* invalid user supplied */
+#وصف_ڪريو EXIT_LOGIN_GRACE	3	/* login grace period exceeded */
+#وصف_ڪريو EXIT_ٻار_CRASH	4	/* preauth child crashed */
+#وصف_ڪريو EXIT_AUTH_ATTEMPTED	5	/* at least one auth attempt made */
+#وصف_ڪريو EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
+#وصف_ڪريو EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
-void	srclimit_penalty_info(void);
+فراغ	srclimit_penalise(بنية xaddr *, صحيح);
+صحيح	srclimit_penalty_check_allow(صحيح, ثابت حرف **);
+فراغ	srclimit_penalty_info(فراغ);

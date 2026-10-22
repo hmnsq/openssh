@@ -14,38 +14,38 @@
  *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef WITH_OPENSSL
+#جيڪڏهن_وصف_نه_ٿيل WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
 
-#define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+#وصف_ڪريو rol(قدر, بٽ) (((قدر) << (بٽ)) | ((قدر) >> (32 - (بٽ))))
 
 /*
  * blk0() and blk() perform the initial expand.
  * I got the idea of expanding during the round function from SSLeay
  */
-#if BYTE_ORDER == LITTLE_ENDIAN
-# define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
-    |(rol(block->l[i],8)&0x00FF00FF))
-#else
-# define blk0(i) block->l[i]
-#endif
-#define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15]^block->l[(i+8)&15] \
-    ^block->l[(i+2)&15]^block->l[i&15],1))
+#إذا BYTE_ORDER == LITTLE_ENDIAN
+# define blk0(i) (بلاڪ->l[i] = (rol(بلاڪ->l[i],24)&0xFF00FF00) \
+    |(rol(بلاڪ->l[i],8)&0x00FF00FF))
+#وإلا
+# define blk0(i) بلاڪ->l[i]
+#جيڪڏهن_پورو
+#وصف_ڪريو blk(i) (بلاڪ->l[i&15] = rol(بلاڪ->l[(i+13)&15]^بلاڪ->l[(i+8)&15] \
+    ^بلاڪ->l[(i+2)&15]^بلاڪ->l[i&15],1))
 
 /*
  * (R0+R1), R2, R3, R4 are the different operations (rounds) used in SHA1
  */
-#define R0(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk0(i)+0x5A827999+rol(v,5);w=rol(w,30);
-#define R1(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk(i)+0x5A827999+rol(v,5);w=rol(w,30);
-#define R2(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0x6ED9EBA1+rol(v,5);w=rol(w,30);
-#define R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
-#define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
+#وصف_ڪريو R0(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk0(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#وصف_ڪريو R1(v,w,x,y,z,i) z+=((w&(x^y))^y)+blk(i)+0x5A827999+rol(v,5);w=rol(w,30);
+#وصف_ڪريو R2(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0x6ED9EBA1+rol(v,5);w=rol(w,30);
+#وصف_ڪريو R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
+#وصف_ڪريو R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
 
-typedef union {
+تعريفنوع اتحاد {
 	u_int8_t c[64];
 	u_int32_t l[16];
 } CHAR64LONG16;
@@ -53,14 +53,14 @@ typedef union {
 /*
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
-void
-SHA1Transform(u_int32_t state[5], const u_int8_t buffer[SHA1_BLOCK_LENGTH])
+فراغ
+SHA1Transform(u_int32_t state[5], ثابت u_int8_t بفر[SHA1_بلاڪ_ڊيگهائي])
 {
 	u_int32_t a, b, c, d, e;
-	u_int8_t workspace[SHA1_BLOCK_LENGTH];
-	CHAR64LONG16 *block = (CHAR64LONG16 *)workspace;
+	u_int8_t workspace[SHA1_بلاڪ_ڊيگهائي];
+	CHAR64LONG16 *بلاڪ = (CHAR64LONG16 *)workspace;
 
-	(void)memcpy(block, buffer, SHA1_BLOCK_LENGTH);
+	(فراغ)يادگيري_نقل(بلاڪ, بفر, SHA1_بلاڪ_ڊيگهائي);
 
 	/* Copy context->state[] to working vars */
 	a = state[0];
@@ -107,12 +107,12 @@ DEF_WEAK(SHA1Transform);
 /*
  * SHA1Init - Initialize new context
  */
-void
+فراغ
 SHA1Init(SHA1_CTX *context)
 {
 
 	/* SHA1 initialization constants */
-	context->count = 0;
+	context->ڳڻپ = 0;
 	context->state[0] = 0x67452301;
 	context->state[1] = 0xEFCDAB89;
 	context->state[2] = 0x98BADCFE;
@@ -125,23 +125,23 @@ DEF_WEAK(SHA1Init);
 /*
  * Run your data through this.
  */
-void
-SHA1Update(SHA1_CTX *context, const u_int8_t *data, size_t len)
+فراغ
+SHA1Update(SHA1_CTX *context, ثابت u_int8_t *معلومات, سائيز_t len)
 {
-	size_t i, j;
+	سائيز_t i, j;
 
-	j = (size_t)((context->count >> 3) & 63);
-	context->count += ((u_int64_t)len << 3);
-	if ((j + len) > 63) {
-		(void)memcpy(&context->buffer[j], data, (i = 64-j));
-		SHA1Transform(context->state, context->buffer);
-		for ( ; i + 63 < len; i += 64)
-			SHA1Transform(context->state, (u_int8_t *)&data[i]);
+	j = (سائيز_t)((context->ڳڻپ >> 3) & 63);
+	context->ڳڻپ += ((u_int64_t)len << 3);
+	إذا ((j + len) > 63) {
+		(فراغ)يادگيري_نقل(&context->بفر[j], معلومات, (i = 64-j));
+		SHA1Transform(context->state, context->بفر);
+		لكل ( ; i + 63 < len; i += 64)
+			SHA1Transform(context->state, (u_int8_t *)&معلومات[i]);
 		j = 0;
-	} else {
+	} وإلا {
 		i = 0;
 	}
-	(void)memcpy(&context->buffer[j], &data[i], len - i);
+	(فراغ)يادگيري_نقل(&context->بفر[j], &معلومات[i], len - i);
 }
 DEF_WEAK(SHA1Update);
 
@@ -149,34 +149,34 @@ DEF_WEAK(SHA1Update);
 /*
  * Add padding and return the message digest.
  */
-void
+فراغ
 SHA1Pad(SHA1_CTX *context)
 {
 	u_int8_t finalcount[8];
 	u_int i;
 
-	for (i = 0; i < 8; i++) {
-		finalcount[i] = (u_int8_t)((context->count >>
+	لكل (i = 0; i < 8; i++) {
+		finalcount[i] = (u_int8_t)((context->ڳڻپ >>
 		    ((7 - (i & 7)) * 8)) & 255);	/* Endian independent */
 	}
 	SHA1Update(context, (u_int8_t *)"\200", 1);
-	while ((context->count & 504) != 448)
+	طالما ((context->ڳڻپ & 504) != 448)
 		SHA1Update(context, (u_int8_t *)"\0", 1);
 	SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
 }
 DEF_WEAK(SHA1Pad);
 
-void
-SHA1Final(u_int8_t digest[SHA1_DIGEST_LENGTH], SHA1_CTX *context)
+فراغ
+SHA1Final(u_int8_t digest[SHA1_DIGEST_ڊيگهائي], SHA1_CTX *context)
 {
 	u_int i;
 
 	SHA1Pad(context);
-	for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+	لكل (i = 0; i < SHA1_DIGEST_ڊيگهائي; i++) {
 		digest[i] = (u_int8_t)
 		   ((context->state[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
 	}
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, حجم(*context));
 }
 DEF_WEAK(SHA1Final);
-#endif /* !WITH_OPENSSL */
+#جيڪڏهن_پورو /* !WITH_OPENSSL */

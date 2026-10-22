@@ -15,469 +15,469 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/un.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <libgen.h>
+#ضمن <dirent.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <netdb.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <libgen.h>
 
-#include "digest.h"
-#include "log.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "ssh.h"
-#include "xmalloc.h"
+#ضمن "digest.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "pathnames.h"
+#ضمن "ssh.h"
+#ضمن "xmalloc.h"
 
 /* stuff shared by agent listeners (ssh-agent and sshd agent forwarding) */
 
-#define SOCKET_HOSTNAME_HASHLEN 10 /* length of hostname hash in socket path */
+#وصف_ڪريو SOCKET_HOSTNAME_HASHLEN 10 /* length of hostname hash in socket path */
 
 /* used for presenting random strings in unix_listener_tmp and hostname_hash */
-static const char presentation_chars[] =
+ساكن ثابت حرف presentation_chars[] =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 /* returns a text-encoded hash of the hostname of specified length (max 64) */
-static char *
-hostname_hash(size_t len)
+ساكن حرف *
+hostname_hash(سائيز_t len)
 {
-	char hostname[NI_MAXHOST], p[65];
+	حرف hostname[NI_MAXHOST], p[65];
 	u_char hash[64];
-	int r;
-	size_t l, i;
+	صحيح r;
+	سائيز_t l, i;
 
-	l = ssh_digest_bytes(SSH_DIGEST_SHA512);
-	if (len > 64) {
+	l = ssh_digest_بائيٽون(SSH_DIGEST_SHA512);
+	إذا (len > 64) {
 		error_f("bad length %zu >= max %zd", len, l);
-		return NULL;
+		أرجع عدم;
 	}
-	if (gethostname(hostname, sizeof(hostname)) == -1) {
+	إذا (gethostname(hostname, حجم(hostname)) == -1) {
 		error_f("gethostname: %s", strerror(errno));
-		return NULL;
+		أرجع عدم;
 	}
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512,
-	    hostname, strlen(hostname), hash, sizeof(hash))) != 0) {
+	إذا ((r = ssh_digest_يادگيري(SSH_DIGEST_SHA512,
+	    hostname, لڙي_ڊيگهه(hostname), hash, حجم(hash))) != 0) {
 		error_fr(r, "ssh_digest_memory");
-		return NULL;
+		أرجع عدم;
 	}
-	memset(p, '\0', sizeof(p));
-	for (i = 0; i < l; i++)
+	memset(p, '\0', حجم(p));
+	لكل (i = 0; i < l; i++)
 		p[i] = presentation_chars[
-		    hash[i] % (sizeof(presentation_chars) - 1)];
+		    hash[i] % (حجم(presentation_chars) - 1)];
 	/* debug3_f("hostname \"%s\" => hash \"%s\"", hostname, p); */
 	p[len] = '\0';
-	return xstrdup(p);
+	أرجع xstrdup(p);
 }
 
-static char *
-agent_hostname_hash(void)
+ساكن حرف *
+agent_hostname_hash(فراغ)
 {
-	return hostname_hash(SOCKET_HOSTNAME_HASHLEN);
+	أرجع hostname_hash(SOCKET_HOSTNAME_HASHLEN);
 }
 
 /*
  * Creates a unix listener at a mkstemp(3)-style path, e.g. "/dir/sock.XXXXXX"
  * Supplied path is modified to the actual one used.
  */
-static int
-unix_listener_tmp(char *path, int backlog)
+ساكن صحيح
+unix_listener_tmp(حرف *رستو, صحيح backlog)
 {
-	struct sockaddr_un sunaddr;
-	int good, sock = -1;
-	size_t i, xstart;
-	mode_t prev_mask;
+	بنية sockaddr_un sunaddr;
+	صحيح good, sock = -1;
+	سائيز_t i, xstart;
+	گهڻائي_t prev_نقاب;
 
 	/* Find first 'X' template character back from end of string */
-	xstart = strlen(path);
-	while (xstart > 0 && path[xstart - 1] == 'X')
+	xstart = لڙي_ڊيگهه(رستو);
+	طالما (xstart > 0 && رستو[xstart - 1] == 'X')
 		xstart--;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, حجم(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	prev_mask = umask(0177);
-	for (good = 0; !good;) {
+	prev_نقاب = umask(0177);
+	لكل (good = 0; !good;) {
 		sock = -1;
 		/* Randomise path suffix */
-		for (i = xstart; path[i] != '\0'; i++) {
-			path[i] = presentation_chars[
-			    arc4random_uniform(sizeof(presentation_chars)-1)];
+		لكل (i = xstart; رستو[i] != '\0'; i++) {
+			رستو[i] = presentation_chars[
+			    arc4random_هڪجهڙو(حجم(presentation_chars)-1)];
 		}
-		debug_f("trying path \"%s\"", path);
+		debug_f("trying path \"%s\"", رستو);
 
-		if (strlcpy(sunaddr.sun_path, path,
-		    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+		إذا (strlcpy(sunaddr.sun_رستو, رستو,
+		    حجم(sunaddr.sun_رستو)) >= حجم(sunaddr.sun_رستو)) {
 			error_f("path \"%s\" too long for Unix domain socket",
-			    path);
-			break;
+			    رستو);
+			اكسر;
 		}
 
-		if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
+		إذا ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
 			error_f("socket: %.100s", strerror(errno));
-			break;
+			اكسر;
 		}
-		if (bind(sock, (struct sockaddr *)&sunaddr,
-		    sizeof(sunaddr)) == -1) {
-			if (errno == EADDRINUSE) {
+		إذا (bind(sock, (بنية sockaddr *)&sunaddr,
+		    حجم(sunaddr)) == -1) {
+			إذا (errno == EADDRINUSE) {
 				error_f("bind \"%s\": %.100s",
-				    path, strerror(errno));
+				    رستو, strerror(errno));
 				close(sock);
 				sock = -1;
-				continue;
+				استمر;
 			}
-			error_f("bind \"%s\": %.100s", path, strerror(errno));
-			break;
+			error_f("bind \"%s\": %.100s", رستو, strerror(errno));
+			اكسر;
 		}
-		if (listen(sock, backlog) == -1) {
-			error_f("listen \"%s\": %s", path, strerror(errno));
-			break;
+		إذا (listen(sock, backlog) == -1) {
+			error_f("listen \"%s\": %s", رستو, strerror(errno));
+			اكسر;
 		}
 		good = 1;
 	}
-	umask(prev_mask);
-	if (good) {
+	umask(prev_نقاب);
+	إذا (good) {
 		debug3_f("listening on unix socket \"%s\" as fd=%d",
-		    path, sock);
-	} else if (sock != -1) {
+		    رستو, sock);
+	} وإلا إذا (sock != -1) {
 		close(sock);
 		sock = -1;
 	}
-	return sock;
+	أرجع sock;
 }
 
 /*
  * Shared directory case (e.g. /tmp): create a temporary directory
  * for the socket.
  */
-static int
-agent_listener_shared(const char *parent_dir, pid_t pid, const char *tag,
-    int *sockp, char **pathp, char **dirp)
+ساكن صحيح
+agent_listener_shared(ثابت حرف *والد_dir, pid_t pid, ثابت حرف *ٽيگ,
+    صحيح *sockp, حرف **pathp, حرف **dirp)
 {
-	char *dir = NULL, *path = NULL;
-	int sock, ret = -1;
-	mode_t prev_mask;
+	حرف *dir = عدم, *رستو = عدم;
+	صحيح sock, ret = -1;
+	گهڻائي_t prev_نقاب;
 
-	*pathp = *dirp = NULL;
-	xasprintf(&dir, "%s/ssh-XXXXXXXXXXXX", parent_dir);
-	if (mkdtemp(dir) == NULL) {
+	*pathp = *dirp = عدم;
+	xasprintf(&dir, "%s/ssh-XXXXXXXXXXXX", والد_dir);
+	إذا (mkdtemp(dir) == عدم) {
 		error_f("failed to create temporary directory "
 		    "in \"%s\": %s", dir, strerror(errno));
-		goto out;
+		اذهب ٻاهريون;
 	}
-	xasprintf(&path, "%s/agent.%s.%ld", dir, tag, (long)pid);
-	prev_mask = umask(0177);
-	if ((sock = unix_listener(path, SSH_LISTEN_BACKLOG, 0)) < 0) {
+	xasprintf(&رستو, "%s/agent.%s.%ld", dir, ٽيگ, (ڊگهو)pid);
+	prev_نقاب = umask(0177);
+	إذا ((sock = unix_listener(رستو, SSH_LISTEN_BACKLOG, 0)) < 0) {
 		/* Error already logged */
-		umask(prev_mask);
-		if (rmdir(dir) != 0)
+		umask(prev_نقاب);
+		إذا (rmdir(dir) != 0)
 			error_f("rmdir \"%s\": %s", dir, strerror(errno));
-		goto out;
+		اذهب ٻاهريون;
 	}
-	umask(prev_mask);
+	umask(prev_نقاب);
 
 	/* Success */
 	*dirp = dir;
-	dir = NULL; /* transferred */
-	*pathp = path;
-	path = NULL; /* transferred */
+	dir = عدم; /* transferred */
+	*pathp = رستو;
+	رستو = عدم; /* transferred */
 	*sockp = sock;
 	ret = 0;
- out:
-	free(dir);
-	free(path);
-	return ret;
+ ٻاهريون:
+	حرر(dir);
+	حرر(رستو);
+	أرجع ret;
 }
 
 /*
  * User-specific directory case (e.g. ~/.ssh/agent): ensure directory
  * exists, and use a temp socket name under it.
  */
-static int
-agent_listener_user(const char *dir, pid_t pid, const char *tag,
-    int *sockp, char **pathp)
+ساكن صحيح
+agent_listener_user(ثابت حرف *dir, pid_t pid, ثابت حرف *ٽيگ,
+    صحيح *sockp, حرف **pathp)
 {
-	char *hostnamehash = NULL, *path = NULL;
-	int sock, ret = -1;
+	حرف *hostnamehash = عدم, *رستو = عدم;
+	صحيح sock, ret = -1;
 
-	if ((hostnamehash = hostname_hash(SOCKET_HOSTNAME_HASHLEN)) == NULL)
-		return -1;
-	xasprintf(&path, "%s/s.%s.%s.%lld.XXXXXXXXXX",
-	    dir, hostnamehash, tag, (long long)pid);
-	if (mkdir_path(dir, 0700) != 0) {
+	إذا ((hostnamehash = hostname_hash(SOCKET_HOSTNAME_HASHLEN)) == عدم)
+		أرجع -1;
+	xasprintf(&رستو, "%s/s.%s.%s.%lld.XXXXXXXXXX",
+	    dir, hostnamehash, ٽيگ, (ڊگهو ڊگهو)pid);
+	إذا (mkdir_رستو(dir, 0700) != 0) {
 		error_f("failed to create agent socket parent directory");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((sock = unix_listener_tmp(path, SSH_LISTEN_BACKLOG)) == -1) {
+	إذا ((sock = unix_listener_tmp(رستو, SSH_LISTEN_BACKLOG)) == -1) {
 		/* error already logged */
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* Success */
-	*pathp = path;
-	path = NULL; /* transferred */
+	*pathp = رستو;
+	رستو = عدم; /* transferred */
 	*sockp = sock;
 	ret = 0;
- out:
-	free(hostnamehash);
-	free(path);
-	return ret;
+ ٻاهريون:
+	حرر(hostnamehash);
+	حرر(رستو);
+	أرجع ret;
 }
 
-static char *
-expand_pathspec(const char *path, const char *username,
-    uid_t uid, const char *homedir)
+ساكن حرف *
+expand_pathspec(ثابت حرف *رستو, ثابت حرف *username,
+    uid_t uid, ثابت حرف *homedir)
 {
-	char *uidbuf = NULL, *dir = NULL, *tmp = NULL;
+	حرف *uidbuf = عدم, *dir = عدم, *tmp = عدم;
 
-	xasprintf(&uidbuf, "%lld", (long long)uid);
+	xasprintf(&uidbuf, "%lld", (ڊگهو ڊگهو)uid);
 
-	if ((tmp = percent_expand(path, "u", username, "U", uidbuf,
-	    "h", homedir, NULL)) == NULL) {
+	إذا ((tmp = percent_expand(رستو, "u", username, "U", uidbuf,
+	    "h", homedir, عدم)) == عدم) {
 		error_f("failed to percent-expand agent socket directory");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (tilde_expand(tmp, uid, &dir) != 0) {
+	إذا (tilde_expand(tmp, uid, &dir) != 0) {
 		error_f("failed to user-expand agent socket directory");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (dir[0] != '/') {
+	إذا (dir[0] != '/') {
 		/* Assume it's relative to the home directory */
-		free(tmp);
+		حرر(tmp);
 		tmp = dir;
 		xasprintf(&dir, "%s/%s", homedir, tmp);
 	}
- out:
-	free(uidbuf);
-	free(tmp);
-	return dir;
+ ٻاهريون:
+	حرر(uidbuf);
+	حرر(tmp);
+	أرجع dir;
 }
 
-int
-agent_listener(const char *pathspec, const char *username, uid_t uid,
-    const char *homedir, pid_t pid, const char *tag, int *sockp,
-    char **pathp, char **dirp)
+صحيح
+agent_listener(ثابت حرف *pathspec, ثابت حرف *username, uid_t uid,
+    ثابت حرف *homedir, pid_t pid, ثابت حرف *ٽيگ, صحيح *sockp,
+    حرف **pathp, حرف **dirp)
 {
-	int sock = -1, ret = -1;
-	char *path = NULL, *dir = NULL;
+	صحيح sock = -1, ret = -1;
+	حرف *رستو = عدم, *dir = عدم;
 
 	*sockp = -1;
-	*pathp = *dirp = NULL;
+	*pathp = *dirp = عدم;
 
-	if (pathspec == NULL || pathspec[0] == '\0') {
+	إذا (pathspec == عدم || pathspec[0] == '\0') {
 		error_f("no agent path specified");
-		return -1;
+		أرجع -1;
 	}
-	if (strncmp(pathspec, "shared:", 7) == 0) {
-		if (pathspec[7] != '/') {
+	إذا (لڙي_ڀيٽ(pathspec, "shared:", 7) == 0) {
+		إذا (pathspec[7] != '/') {
 			error_f("shared agent socket paths must be absolute");
-			goto out;
+			اذهب ٻاهريون;
 		}
-		if ((dir = expand_pathspec(pathspec + 7,
-		    username, uid, homedir)) == NULL) {
+		إذا ((dir = expand_pathspec(pathspec + 7,
+		    username, uid, homedir)) == عدم) {
 			/* Error already logged */
-			goto out;
+			اذهب ٻاهريون;
 		}
-		if (agent_listener_shared(dir, pid, tag,
-		    &sock, &path, dirp) != 0) {
+		إذا (agent_listener_shared(dir, pid, ٽيگ,
+		    &sock, &رستو, dirp) != 0) {
 			/* Error already logged */
-			goto out;
+			اذهب ٻاهريون;
 		}
-	} else if (strncmp(pathspec, "user:", 5) == 0) {
-		if ((dir = expand_pathspec(pathspec + 5,
-		    username, uid, homedir)) == NULL) {
+	} وإلا إذا (لڙي_ڀيٽ(pathspec, "user:", 5) == 0) {
+		إذا ((dir = expand_pathspec(pathspec + 5,
+		    username, uid, homedir)) == عدم) {
 			/* Error already logged */
-			goto out;
+			اذهب ٻاهريون;
 		}
-		if (agent_listener_user(dir, pid, tag, &sock, &path) != 0) {
+		إذا (agent_listener_user(dir, pid, ٽيگ, &sock, &رستو) != 0) {
 			/* Error already logged */
-			goto out;
+			اذهب ٻاهريون;
 		}
-	} else {
+	} وإلا {
 		/* Shouldn't happen */
 		error_f("unsupported agent path specification %s", pathspec);
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* success */
 	ret = 0;
 	*sockp = sock;
-	*pathp = path;
-	path = NULL; /* transferred */
- out:
-	free(path);
-	free(dir);
-	return ret;
+	*pathp = رستو;
+	رستو = عدم; /* transferred */
+ ٻاهريون:
+	حرر(رستو);
+	حرر(dir);
+	أرجع ret;
 }
 
-int
-agent_listener_cleanup(const char *pathspec, const char *sockpath,
-    const char *sockdir)
+صحيح
+agent_listener_cleanup(ثابت حرف *pathspec, ثابت حرف *sockpath,
+    ثابت حرف *sockdir)
 {
-	if (sockpath == NULL)
-		return 0;
-	if (unlink(sockpath) != 0) {
+	إذا (sockpath == عدم)
+		أرجع 0;
+	إذا (unlink(sockpath) != 0) {
 		error_f("unlink \"%s\": %s", sockpath, strerror(errno));
-		return -1;
+		أرجع -1;
 	}
 	debug3_f("removed socket %s", sockpath);
 
-	if (pathspec == NULL)
-		return 0;
-	if (strncmp(pathspec, "shared:", 7) == 0 && sockdir != NULL) {
-		if (rmdir(sockdir) != 0) {
+	إذا (pathspec == عدم)
+		أرجع 0;
+	إذا (لڙي_ڀيٽ(pathspec, "shared:", 7) == 0 && sockdir != عدم) {
+		إذا (rmdir(sockdir) != 0) {
 			error_f("rmdir \"%s\": %s", sockdir, strerror(errno));
-			return -1;
+			أرجع -1;
 		}
 		debug3_f("removed socket directory %s", sockdir);
 	}
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-socket_is_stale(const char *path)
+ساكن صحيح
+socket_is_stale(ثابت حرف *رستو)
 {
-	int fd, r;
-	struct sockaddr_un sunaddr;
-	socklen_t l = sizeof(r);
+	صحيح fd, r;
+	بنية sockaddr_un sunaddr;
+	socklen_t l = حجم(r);
 
 	/* attempt non-blocking connect on socket */
-	memset(&sunaddr, '\0', sizeof(sunaddr));
+	memset(&sunaddr, '\0', حجم(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
-		debug_f("path for \"%s\" too long for sockaddr_un", path);
-		return 0;
+	إذا (strlcpy(sunaddr.sun_رستو, رستو,
+	    حجم(sunaddr.sun_رستو)) >= حجم(sunaddr.sun_رستو)) {
+		debug_f("path for \"%s\" too long for sockaddr_un", رستو);
+		أرجع 0;
 	}
-	if ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
+	إذا ((fd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1) {
 		error_f("socket: %s", strerror(errno));
-		return 0;
+		أرجع 0;
 	}
-	set_nonblock(fd);
+	سيٽ_nonblock(fd);
 	/* a socket without a listener should yield an error immediately */
-	if (connect(fd, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
-		debug_f("connect \"%s\": %s", path, strerror(errno));
+	إذا (connect(fd, (بنية sockaddr *)&sunaddr, حجم(sunaddr)) == -1) {
+		debug_f("connect \"%s\": %s", رستو, strerror(errno));
 		close(fd);
-		return 1;
+		أرجع 1;
 	}
-	if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &r, &l) == -1) {
+	إذا (getsockopt(fd, SOL_SOCKET, SO_ERROR, &r, &l) == -1) {
 		debug_f("getsockopt: %s", strerror(errno));
 		close(fd);
-		return 0;
+		أرجع 0;
 	}
-	if (r != 0) {
-		debug_f("socket error on %s: %s", path, strerror(errno));
+	إذا (r != 0) {
+		debug_f("socket error on %s: %s", رستو, strerror(errno));
 		close(fd);
-		return 1;
+		أرجع 1;
 	}
 	close(fd);
-	debug_f("socket %s seems still active", path);
-	return 0;
+	debug_f("socket %s seems still active", رستو);
+	أرجع 0;
 }
 
-#ifndef HAVE_FSTATAT
-# define fstatat(x, y, buf, z) lstat(path, buf)
-#endif
-#ifndef HAVE_UNLINKAT
-# define unlinkat(x, y, z) unlink(path)
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FSTATAT
+# define fstatat(x, y, buf, z) lstat(رستو, buf)
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل HAVE_UNLINKAT
+# define unlinkat(x, y, z) unlink(رستو)
+#جيڪڏهن_پورو
 
-void
-agent_cleanup_stale(const char *pathspec, const char *username, uid_t uid,
-    const char *homedir, int ignore_hosthash)
+فراغ
+agent_cleanup_stale(ثابت حرف *pathspec, ثابت حرف *username, uid_t uid,
+    ثابت حرف *homedir, صحيح ignore_hosthash)
 {
-	DIR *d = NULL;
-	struct dirent *dp;
-	struct stat sb;
-	char *prefix = NULL, *dir = NULL, *path;
-	struct timespec now, sub, *mtimp = NULL;
+	DIR *d = عدم;
+	بنية dirent *dp;
+	بنية stat sb;
+	حرف *اڳياڙي = عدم, *dir = عدم, *رستو;
+	بنية timespec now, sub, *mtimp = عدم;
 
 	/* Only clean up user socket directories */
-	if (pathspec == NULL || strncmp(pathspec, "user:", 5) != 0)
-		return;
+	إذا (pathspec == عدم || لڙي_ڀيٽ(pathspec, "user:", 5) != 0)
+		أرجع;
 
-	if ((dir = expand_pathspec(pathspec + 5,
-	    username, uid, homedir)) == NULL)
-		return; /* error already logged */
+	إذا ((dir = expand_pathspec(pathspec + 5,
+	    username, uid, homedir)) == عدم)
+		أرجع; /* error already logged */
 
 	debug_f("cleanup %s", dir);
 
 	/* Only consider sockets last modified > 1 hour ago */
-	if (clock_gettime(CLOCK_REALTIME, &now) != 0) {
+	إذا (clock_gettime(CLOCK_REALTIME, &now) != 0) {
 		error_f("clock_gettime: %s", strerror(errno));
-		goto out;
+		اذهب ٻاهريون;
 	}
 	sub.tv_sec = 60 * 60;
 	sub.tv_nsec = 0;
 	timespecsub(&now, &sub, &now);
 
 	/* Only consider sockets from the same hostname */
-	if (!ignore_hosthash) {
-		if ((path = agent_hostname_hash()) == NULL) {
+	إذا (!ignore_hosthash) {
+		إذا ((رستو = agent_hostname_hash()) == عدم) {
 			error_f("couldn't get hostname hash");
-			goto out;
+			اذهب ٻاهريون;
 		}
-		xasprintf(&prefix, "s.%s.", path);
-		free(path);
+		xasprintf(&اڳياڙي, "s.%s.", رستو);
+		حرر(رستو);
 	}
 
-	if ((d = opendir(dir)) == NULL) {
-		if (errno != ENOENT)
+	إذا ((d = opendir(dir)) == عدم) {
+		إذا (errno != ENOENT)
 			error_f("opendir \"%s\": %s", dir, strerror(errno));
-		goto out;
+		اذهب ٻاهريون;
 	}
-	while ((dp = readdir(d)) != NULL) {
-#ifdef HAVE_DIRENT_D_TYPE
-		if (dp->d_type != DT_SOCK && dp->d_type != DT_UNKNOWN)
-			continue;
-#endif
-		if (fstatat(dirfd(d), dp->d_name,
+	طالما ((dp = readdir(d)) != عدم) {
+#جيڪڏهن_وصف_ٿيل HAVE_DIRENT_D_TYPE
+		إذا (dp->d_type != DT_SOCK && dp->d_type != DT_UNKNOWN)
+			استمر;
+#جيڪڏهن_پورو
+		إذا (fstatat(dirfd(d), dp->d_name,
 		    &sb, AT_SYMLINK_NOFOLLOW) != 0 && errno != ENOENT) {
 			error_f("stat \"%s/%s\": %s",
 			    dir, dp->d_name, strerror(errno));
-			continue;
+			استمر;
 		}
-		if (!S_ISSOCK(sb.st_mode))
-			continue;
-#ifdef HAVE_STRUCT_STAT_ST_MTIM
+		إذا (!S_ISSOCK(sb.st_mode))
+			استمر;
+#جيڪڏهن_وصف_ٿيل HAVE_STRUCT_STAT_ST_MTIM
 		mtimp = &sb.st_mtim;
-#else
+#وإلا
 		sub.tv_sec = sb.st_mtime;
 		sub.tv_nsec = 0;
 		mtimp = &sub;
-#endif
-		if (timespeccmp(mtimp, &now, >)) {
+#جيڪڏهن_پورو
+		إذا (timespeccmp(mtimp, &now, >)) {
 			debug3_f("Ignoring recent socket \"%s/%s\"",
 			    dir, dp->d_name);
-			continue;
+			استمر;
 		}
-		if (!ignore_hosthash &&
-		    strncmp(dp->d_name, prefix, strlen(prefix)) != 0) {
+		إذا (!ignore_hosthash &&
+		    لڙي_ڀيٽ(dp->d_name, اڳياڙي, لڙي_ڊيگهه(اڳياڙي)) != 0) {
 			debug3_f("Ignoring socket \"%s/%s\" "
 			    "from different host", dir, dp->d_name);
-			continue;
+			استمر;
 		}
-		xasprintf(&path, "%s/%s", dir, dp->d_name);
-		if (socket_is_stale(path)) {
-			debug_f("cleanup stale socket %s", path);
+		xasprintf(&رستو, "%s/%s", dir, dp->d_name);
+		إذا (socket_is_stale(رستو)) {
+			debug_f("cleanup stale socket %s", رستو);
 			unlinkat(dirfd(d), dp->d_name, 0);
 		}
-		free(path);
+		حرر(رستو);
 	}
- out:
-	if (d != NULL)
+ ٻاهريون:
+	إذا (d != عدم)
 		closedir(d);
-	free(dir);
-	free(prefix);
+	حرر(dir);
+	حرر(اڳياڙي);
 }
 
-#undef unlinkat
-#undef fstatat
+#وصف_رد unlinkat
+#وصف_رد fstatat

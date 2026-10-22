@@ -24,42 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/dh.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <signal.h>
 
-#include "sshkey.h"
-#include "digest.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "dh.h"
-#include "ssh2.h"
-#include "compat.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "misc.h"
+#ضمن "sshkey.h"
+#ضمن "digest.h"
+#ضمن "kex.h"
+#ضمن "log.h"
+#ضمن "packet.h"
+#ضمن "dh.h"
+#ضمن "ssh2.h"
+#ضمن "compat.h"
+#ضمن "dispatch.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "misc.h"
 
-static int input_kex_dh_gex_group(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_reply(int, uint32_t, struct ssh *);
+ساكن صحيح داخلا_kex_dh_gex_گروهه(صحيح, uint32_t, بنية ssh *);
+ساكن صحيح داخلا_kex_dh_gex_جواب(صحيح, uint32_t, بنية ssh *);
 
-int
-kexgex_client(struct ssh *ssh)
+صحيح
+kexgex_client(بنية ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	بنية kex *kex = ssh->kex;
+	صحيح r;
 	u_int nbits;
 
 	nbits = dh_estimate(kex->dh_need * 8);
@@ -67,175 +67,175 @@ kexgex_client(struct ssh *ssh)
 	kex->min = DH_GRP_MIN;
 	kex->max = DH_GRP_MAX;
 	kex->nbits = nbits;
-	if (ssh->compat & SSH_BUG_DHGEX_LARGE)
+	إذا (ssh->compat & SSH_BUG_DHGEX_LARGE)
 		kex->nbits = MINIMUM(kex->nbits, 4096);
 	/* New GEX request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST)) != 0 ||
+	إذا ((r = sshpkt_شروعات(ssh, SSH2_نياپو_KEX_DH_GEX_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->min)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->nbits)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->max)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST(%u<%u<%u) sent",
 	    kex->min, kex->nbits, kex->max);
-#ifdef DEBUG_KEXDH
+#جيڪڏهن_وصف_ٿيل DEBUG_KEXDH
 	fprintf(stderr, "\nmin = %d, nbits = %d, max = %d\n",
 	    kex->min, kex->nbits, kex->max);
-#endif
+#جيڪڏهن_پورو
 	debug("expecting SSH2_MSG_KEX_DH_GEX_GROUP");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP,
-	    &input_kex_dh_gex_group);
+	ssh_dispatch_سيٽ(ssh, SSH2_نياپو_KEX_DH_GEX_گروهه,
+	    &داخلا_kex_dh_gex_گروهه);
 	r = 0;
- out:
-	return r;
+ ٻاهريون:
+	أرجع r;
 }
 
-static int
-input_kex_dh_gex_group(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+داخلا_kex_dh_gex_گروهه(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *p = NULL, *g = NULL;
-	const BIGNUM *pub_key;
-	int r, bits;
+	بنية kex *kex = ssh->kex;
+	BIGNUM *p = عدم, *g = عدم;
+	ثابت BIGNUM *pub_ڪنجي;
+	صحيح r, بٽ;
 
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP, &kex_protocol_error);
+	ssh_dispatch_سيٽ(ssh, SSH2_نياپو_KEX_DH_GEX_گروهه, &kex_protocol_error);
 
-	if ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
+	إذا ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
 	    (r = sshpkt_get_bignum2(ssh, &g)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((bits = BN_num_bits(p)) < 0 ||
-	    (u_int)bits < kex->min || (u_int)bits > kex->max) {
-		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
-		goto out;
+	    (r = sshpkt_get_پڇاڙي(ssh)) != 0)
+		اذهب ٻاهريون;
+	إذا ((بٽ = BN_انگ_بٽ(p)) < 0 ||
+	    (u_int)بٽ < kex->min || (u_int)بٽ > kex->max) {
+		r = SSH_ERR_DH_GEX_ٻاهريون_جو_RANGE;
+		اذهب ٻاهريون;
 	}
-	if ((kex->dh = dh_new_group(g, p)) == NULL) {
+	إذا ((kex->dh = dh_new_گروهه(g, p)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	p = g = NULL; /* belong to kex->dh now */
+	p = g = عدم; /* belong to kex->dh now */
 
 	/* generate and send 'e', client DH public key */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_INIT)) != 0 ||
-	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||
+	إذا ((r = dh_gen_ڪنجي(kex->dh, kex->we_need * 8)) != 0)
+		اذهب ٻاهريون;
+	DH_get0_ڪنجي(kex->dh, &pub_ڪنجي, عدم);
+	إذا ((r = sshpkt_شروعات(ssh, SSH2_نياپو_KEX_DH_GEX_INIT)) != 0 ||
+	    (r = sshpkt_put_bignum2(ssh, pub_ڪنجي)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 	debug("SSH2_MSG_KEX_DH_GEX_INIT sent");
-#ifdef DEBUG_KEXDH
+#جيڪڏهن_وصف_ٿيل DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_ڪنجي);
 	fprintf(stderr, "\n");
-#endif
+#جيڪڏهن_پورو
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &input_kex_dh_gex_reply);
+	ssh_dispatch_سيٽ(ssh, SSH2_نياپو_KEX_DH_GEX_جواب, &داخلا_kex_dh_gex_جواب);
 	r = 0;
-out:
+ٻاهريون:
 	BN_clear_free(p);
 	BN_clear_free(g);
-	return r;
+	أرجع r;
 }
 
-static int
-input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
+ساكن صحيح
+داخلا_kex_dh_gex_جواب(صحيح type, uint32_t seq, بنية ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	BIGNUM *dh_server_pub = NULL;
-	const BIGNUM *pub_key, *dh_p, *dh_g;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	struct sshkey *server_host_key = NULL;
-	u_char *signature = NULL;
-	u_char hash[SSH_DIGEST_MAX_LENGTH];
-	size_t slen, hashlen;
-	int r;
+	بنية kex *kex = ssh->kex;
+	BIGNUM *dh_server_pub = عدم;
+	ثابت BIGNUM *pub_ڪنجي, *dh_p, *dh_g;
+	بنية sshbuf *shared_secret = عدم;
+	بنية sshbuf *tmp = عدم, *server_host_ڪنجي_blob = عدم;
+	بنية sshkey *server_host_ڪنجي = عدم;
+	u_char *signature = عدم;
+	u_char hash[SSH_DIGEST_MAX_ڊيگهائي];
+	سائيز_t slen, hashlen;
+	صحيح r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &kex_protocol_error);
+	ssh_dispatch_سيٽ(ssh, SSH2_نياپو_KEX_DH_GEX_جواب, &kex_protocol_error);
 
 	/* key, cert */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	إذا ((r = sshpkt_getb_froms(ssh, &server_host_ڪنجي_blob)) != 0)
+		اذهب ٻاهريون;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	إذا ((tmp = sshbuf_fromb(server_host_ڪنجي_blob)) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0 ||
-	    (r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	إذا ((r = sshkey_fromb_allowlist(tmp, &server_host_ڪنجي,
+	    kex->hostkey_alg, عدم)) != 0 ||
+	    (r = kex_verify_host_ڪنجي(ssh, server_host_ڪنجي)) != 0)
+		اذهب ٻاهريون;
 	/* DH parameter f, server public DH key, signed H */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
+	إذا ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+	    (r = sshpkt_get_پڇاڙي(ssh)) != 0)
+		اذهب ٻاهريون;
+	إذا ((shared_secret = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_server_pub, shared_secret)) != 0)
-		goto out;
-	if (ssh->compat & SSH_OLD_DHGEX)
+	إذا ((r = kex_dh_compute_ڪنجي(kex, dh_server_pub, shared_secret)) != 0)
+		اذهب ٻاهريون;
+	إذا (ssh->compat & SSH_OLD_DHGEX)
 		kex->min = kex->max = -1;
 
 	/* calc and verify H */
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	DH_get0_ڪنجي(kex->dh, &pub_ڪنجي, عدم);
+	DH_get0_pqg(kex->dh, &dh_p, عدم, &dh_g);
+	hashlen = حجم(hash);
+	إذا ((r = kexgex_hash(
 	    kex->hash_alg,
-	    kex->client_version,
-	    kex->server_version,
+	    kex->client_نسخو,
+	    kex->server_نسخو,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_ڪنجي_blob,
 	    kex->min, kex->nbits, kex->max,
 	    dh_p, dh_g,
-	    pub_key,
+	    pub_ڪنجي,
 	    dh_server_pub,
 	    sshbuf_ptr(shared_secret), sshbuf_len(shared_secret),
 	    hash, &hashlen)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash,
-	    hashlen, kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	إذا ((r = sshkey_verify(server_host_ڪنجي, signature, slen, hash,
+	    hashlen, kex->hostkey_alg, ssh->compat, عدم)) != 0)
+		اذهب ٻاهريون;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	إذا ((r = kex_derive_ڪنجيون(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
-			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+	إذا ((kex->flags & KEX_INITIAL) != 0) {
+		إذا (kex->initial_hostkey != عدم || kex->initial_sig != عدم) {
+			r = SSH_ERR_اندروني_ERROR;
+			اذهب ٻاهريون;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		إذا ((kex->initial_sig = sshbuf_new()) == عدم) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب ٻاهريون;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		إذا ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			اذهب ٻاهريون;
+		kex->initial_hostkey = server_host_ڪنجي;
+		server_host_ڪنجي = عدم;
 	}
 	/* success */
- out:
-	explicit_bzero(hash, sizeof(hash));
+ ٻاهريون:
+	explicit_bzero(hash, حجم(hash));
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = عدم;
 	BN_clear_free(dh_server_pub);
 	sshbuf_free(shared_secret);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_ڪنجي);
 	sshbuf_free(tmp);
-	sshbuf_free(server_host_key_blob);
-	free(signature);
-	return r;
+	sshbuf_free(server_host_ڪنجي_blob);
+	حرر(signature);
+	أرجع r;
 }
-#endif /* WITH_OPENSSL */
+#جيڪڏهن_پورو /* WITH_OPENSSL */

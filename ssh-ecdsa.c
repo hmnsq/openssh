@@ -24,43 +24,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if defined(WITH_OPENSSL)
-#include "openbsd-compat/openssl-compat.h"
+#إذا defined(WITH_OPENSSL)
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/evp.h>
 
-#include <string.h>
+#ضمن <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#define SSHKEY_INTERNAL
-#include "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#وصف_ڪريو SSHKEY_اندروني
+#ضمن "sshkey.h"
 
-int
-sshkey_ecdsa_fixup_group(EVP_PKEY *k)
+صحيح
+sshkey_ecdsa_fixup_گروهه(EVP_PKEY *k)
 {
-	int nids[] = {
+	صحيح nids[] = {
 		NID_X9_62_prime256v1,
 		NID_secp384r1,
 		NID_secp521r1,
 		-1
 	};
-	int nid = -1;
+	صحيح nid = -1;
 	u_int i;
-	const EC_GROUP *g;
-	EC_KEY *ec = NULL;
-	EC_GROUP *eg = NULL;
+	ثابت EC_گروهه *g;
+	EC_ڪنجي *ec = عدم;
+	EC_گروهه *eg = عدم;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
-	    (g = EC_KEY_get0_group(ec)) == NULL)
-		goto out;
+	إذا ((ec = EVP_PKEY_get1_EC_ڪنجي(k)) == عدم ||
+	    (g = EC_ڪنجي_get0_گروهه(ec)) == عدم)
+		اذهب ٻاهريون;
 	/*
 	 * The group may be stored in a ASN.1 encoded private key in one of two
 	 * ways: as a "named group", which is reconstituted by ASN.1 object ID
@@ -69,446 +69,446 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	 * it out for the other case by comparing against all the groups that
 	 * are supported.
 	 */
-	if ((nid = EC_GROUP_get_curve_name(g)) > 0)
-		goto out;
+	إذا ((nid = EC_گروهه_get_وڪر_name(g)) > 0)
+		اذهب ٻاهريون;
 	nid = -1;
-	for (i = 0; nids[i] != -1; i++) {
-		if ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
-			goto out;
-		if (EC_GROUP_cmp(g, eg, NULL) == 0)
-			break;
-		EC_GROUP_free(eg);
-		eg = NULL;
+	لكل (i = 0; nids[i] != -1; i++) {
+		إذا ((eg = EC_گروهه_new_by_وڪر_name(nids[i])) == عدم)
+			اذهب ٻاهريون;
+		إذا (EC_گروهه_cmp(g, eg, عدم) == 0)
+			اكسر;
+		EC_گروهه_free(eg);
+		eg = عدم;
 	}
-	if (nids[i] == -1)
-		goto out;
+	إذا (nids[i] == -1)
+		اذهب ٻاهريون;
 
 	/* Use the group with the NID attached */
-	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
-	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
-		goto out;
+	EC_گروهه_سيٽ_asn1_flag(eg, OPENSSL_EC_NAMED_وڪر);
+	إذا (EC_ڪنجي_سيٽ_گروهه(ec, eg) != 1 ||
+	    EVP_PKEY_set1_EC_ڪنجي(k, ec) != 1)
+		اذهب ٻاهريون;
 	/* success */
 	nid = nids[i];
- out:
-	EC_KEY_free(ec);
-	EC_GROUP_free(eg);
-	return nid;
+ ٻاهريون:
+	EC_ڪنجي_free(ec);
+	EC_گروهه_free(eg);
+	أرجع nid;
 }
 
-static u_int
-ssh_ecdsa_size(const struct sshkey *key)
+ساكن u_int
+ssh_ecdsa_سائيز(ثابت بنية sshkey *ڪنجي)
 {
-	switch (key->ecdsa_nid) {
-	case NID_X9_62_prime256v1:
-		return 256;
-	case NID_secp384r1:
-		return 384;
-	case NID_secp521r1:
-		return 521;
-	default:
-		return 0;
+	بدل (ڪنجي->ecdsa_nid) {
+	حالة NID_X9_62_prime256v1:
+		أرجع 256;
+	حالة NID_secp384r1:
+		أرجع 384;
+	حالة NID_secp521r1:
+		أرجع 521;
+	افتراضي:
+		أرجع 0;
 	}
 }
 
-static void
-ssh_ecdsa_cleanup(struct sshkey *k)
+ساكن فراغ
+ssh_ecdsa_cleanup(بنية sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = عدم;
 }
 
-static int
-ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
+ساكن صحيح
+ssh_ecdsa_equal(ثابت بنية sshkey *a, ثابت بنية sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	إذا (a->pkey == عدم || b->pkey == عدم)
+		أرجع 0;
+	أرجع EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ecdsa_serialize_عوامي(ثابت بنية sshkey *ڪنجي, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_cstring(b,
-	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
-	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
-		return r;
+	إذا (ڪنجي->pkey == عدم)
+		أرجع SSH_ERR_INVALID_دليل;
+	إذا ((r = sshbuf_put_cstring(b,
+	    sshkey_وڪر_nid_منزل_name(ڪنجي->ecdsa_nid))) != 0 ||
+	    (r = sshbuf_put_ec_pkey(b, ڪنجي->pkey)) != 0)
+		أرجع r;
 
-	return 0;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ecdsa_serialize_ذاتي(ثابت بنية sshkey *ڪنجي, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
-			return r;
+	إذا (!sshkey_is_cert(ڪنجي)) {
+		إذا ((r = ssh_ecdsa_serialize_عوامي(ڪنجي, b, opts)) != 0)
+			أرجع r;
 	}
-	if ((r = sshbuf_put_bignum2(b,
-	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
-		return r;
-	return 0;
+	إذا ((r = sshbuf_put_bignum2(b,
+	    EC_ڪنجي_get0_ذاتي_ڪنجي(EVP_PKEY_get0_EC_ڪنجي(ڪنجي->pkey)))) != 0)
+		أرجع r;
+	أرجع 0;
 }
 
-static int
-ssh_ecdsa_generate(struct sshkey *k, int bits)
+ساكن صحيح
+ssh_ecdsa_generate(بنية sshkey *k, صحيح بٽ)
 {
-	EVP_PKEY *res = NULL;
-	EVP_PKEY_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	EVP_PKEY *res = عدم;
+	EVP_PKEY_CTX *ctx = عدم;
+	صحيح ret = SSH_ERR_اندروني_ERROR;
 
-	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+	إذا ((k->ecdsa_nid = sshkey_ecdsa_بٽ_منزل_nid(بٽ)) == -1)
+		أرجع SSH_ERR_ڪنجي_ڊيگهائي;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	إذا ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, عدم)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
 
-	if (EVP_PKEY_keygen_init(ctx) <= 0 ||
-	    EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, k->ecdsa_nid) <= 0 ||
+	إذا (EVP_PKEY_keygen_init(ctx) <= 0 ||
+	    EVP_PKEY_CTX_سيٽ_ec_paramgen_وڪر_nid(ctx, k->ecdsa_nid) <= 0 ||
 	    EVP_PKEY_keygen(ctx, &res) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* success */
 	k->pkey = res;
-	res = NULL;
+	res = عدم;
 	ret = 0;
- out:
+ ٻاهريون:
 	EVP_PKEY_free(res);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	أرجع ret;
 }
 
-static int
-ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
+ساكن صحيح
+ssh_ecdsa_copy_عوامي(ثابت بنية sshkey *from, بنية sshkey *منزل)
 {
-	const EC_KEY *ec_from;
-	EC_KEY *ec_to = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ثابت EC_ڪنجي *ec_from;
+	EC_ڪنجي *ec_منزل = عدم;
+	صحيح ret = SSH_ERR_اندروني_ERROR;
 
-	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
-	if (ec_from == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ec_from = EVP_PKEY_get0_EC_ڪنجي(from->pkey);
+	إذا (ec_from == عدم)
+		أرجع SSH_ERR_LIBCRYPTO_ERROR;
 
-	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
-	    EC_KEY_get0_public_key(ec_from)) != 1) {
+	منزل->ecdsa_nid = from->ecdsa_nid;
+	إذا ((ec_منزل = EC_ڪنجي_new_by_وڪر_name(from->ecdsa_nid)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا (EC_ڪنجي_سيٽ_عوامي_ڪنجي(ec_منزل,
+	    EC_ڪنجي_get0_عوامي_ڪنجي(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	EVP_PKEY_free(to->pkey);
-	if ((to->pkey = EVP_PKEY_new()) == NULL) {
+	EVP_PKEY_free(منزل->pkey);
+	إذا ((منزل->pkey = EVP_PKEY_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	إذا (EVP_PKEY_set1_EC_ڪنجي(منزل->pkey, ec_منزل) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	ret = 0;
- out:
-	EC_KEY_free(ec_to);
-	return ret;
+ ٻاهريون:
+	EC_ڪنجي_free(ec_منزل);
+	أرجع ret;
 }
 
-static int
-ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ecdsa_deserialize_عوامي(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *ڪنجي)
 {
-	int r;
-	char *curve = NULL;
-	EVP_PKEY *pkey = NULL;
-	EC_KEY *ec = NULL;
+	صحيح r;
+	حرف *وڪر = عدم;
+	EVP_PKEY *pkey = عدم;
+	EC_ڪنجي *ec = عدم;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
-		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
-		r = SSH_ERR_EC_CURVE_MISMATCH;
-		goto out;
+	إذا ((ڪنجي->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+		أرجع SSH_ERR_INVALID_دليل;
+	إذا ((r = sshbuf_get_cstring(b, &وڪر, عدم)) != 0)
+		اذهب ٻاهريون;
+	إذا (ڪنجي->ecdsa_nid != sshkey_وڪر_name_منزل_nid(وڪر)) {
+		r = SSH_ERR_EC_وڪر_MISMATCH;
+		اذهب ٻاهريون;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	إذا ((ec = EC_ڪنجي_new_by_وڪر_name(ڪنجي->ecdsa_nid)) == عدم) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0)
-		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+	إذا ((r = sshbuf_get_eckey(b, ec)) != 0)
+		اذهب ٻاهريون;
+	إذا (sshkey_ec_validate_عوامي(EC_ڪنجي_get0_گروهه(ec),
+	    EC_ڪنجي_get0_عوامي_ڪنجي(ec)) != 0) {
+		r = SSH_ERR_ڪنجي_INVALID_EC_قدر;
+		اذهب ٻاهريون;
 	}
-	if ((pkey = EVP_PKEY_new()) == NULL) {
+	إذا ((pkey = EVP_PKEY_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	إذا (EVP_PKEY_set1_EC_ڪنجي(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	EVP_PKEY_free(key->pkey);
-	key->pkey = pkey;
-	pkey = NULL;
+	EVP_PKEY_free(ڪنجي->pkey);
+	ڪنجي->pkey = pkey;
+	pkey = عدم;
 	/* success */
 	r = 0;
-#ifdef DEBUG_PK
-	sshkey_dump_ec_point(
-	    EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(key->pkey)),
-	    EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(key->pkey)));
-#endif
- out:
-	EC_KEY_free(ec);
+#جيڪڏهن_وصف_ٿيل DEBUG_PK
+	sshkey_dump_ec_نقطو(
+	    EC_ڪنجي_get0_گروهه(EVP_PKEY_get0_EC_ڪنجي(ڪنجي->pkey)),
+	    EC_ڪنجي_get0_عوامي_ڪنجي(EVP_PKEY_get0_EC_ڪنجي(ڪنجي->pkey)));
+#جيڪڏهن_پورو
+ ٻاهريون:
+	EC_ڪنجي_free(ec);
 	EVP_PKEY_free(pkey);
-	free(curve);
-	return r;
+	حرر(وڪر);
+	أرجع r;
 }
 
-static int
-ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ecdsa_deserialize_ذاتي(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *ڪنجي)
 {
-	int r;
-	BIGNUM *exponent = NULL;
-	EC_KEY *ec = NULL;
+	صحيح r;
+	BIGNUM *exponent = عدم;
+	EC_ڪنجي *ec = عدم;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
-			return r;
+	إذا (!sshkey_is_cert(ڪنجي)) {
+		إذا ((r = ssh_ecdsa_deserialize_عوامي(ktype, b, ڪنجي)) != 0)
+			أرجع r;
 	}
-	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
-		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	إذا ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
+		اذهب ٻاهريون;
+	إذا ((ec = EVP_PKEY_get1_EC_ڪنجي(ڪنجي->pkey)) == عدم) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	إذا (EC_ڪنجي_سيٽ_ذاتي_ڪنجي(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((r = sshkey_ec_validate_private(ec)) != 0)
-		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	إذا ((r = sshkey_ec_validate_ذاتي(ec)) != 0)
+		اذهب ٻاهريون;
+	إذا (EVP_PKEY_set1_EC_ڪنجي(ڪنجي->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* success */
 	r = 0;
- out:
+ ٻاهريون:
 	BN_clear_free(exponent);
-	EC_KEY_free(ec);
-	return r;
+	EC_ڪنجي_free(ec);
+	أرجع r;
 }
 
-static int
-ssh_ecdsa_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t dlen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+ساكن صحيح
+ssh_ecdsa_sign(بنية sshkey *ڪنجي,
+    u_char **sigp, سائيز_t *lenp,
+    ثابت u_char *معلومات, سائيز_t dlen,
+    ثابت حرف *alg, ثابت حرف *sk_provider, ثابت حرف *sk_pin, u_int compat)
 {
-	ECDSA_SIG *esig = NULL;
-	unsigned char *sigb = NULL;
-	const unsigned char *psig;
-	const BIGNUM *sig_r, *sig_s;
-	int hash_alg;
-	size_t slen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ECDSA_SIG *esig = عدم;
+	بنانشان حرف *sigb = عدم;
+	ثابت بنانشان حرف *psig;
+	ثابت BIGNUM *sig_r, *sig_s;
+	صحيح hash_alg;
+	سائيز_t slen = 0;
+	صحيح ret = SSH_ERR_اندروني_ERROR;
 
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	إذا (sigp != عدم)
+		*sigp = عدم;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا (ڪنجي == عدم || ڪنجي->pkey == عدم ||
+	    sshkey_type_plain(ڪنجي->type) != ڪنجي_ECDSA)
+		أرجع SSH_ERR_INVALID_دليل;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	إذا ((hash_alg = sshkey_ec_nid_منزل_hash_alg(ڪنجي->ecdsa_nid)) == -1)
+		أرجع SSH_ERR_اندروني_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
-	    data, dlen)) != 0)
-		goto out;
+	إذا ((ret = sshkey_pkey_digest_sign(ڪنجي->pkey, hash_alg, &sigb, &slen,
+	    معلومات, dlen)) != 0)
+		اذهب ٻاهريون;
 
 	psig = sigb;
-	if ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
+	إذا ((esig = d2i_ECDSA_SIG(عدم, &psig, slen)) == عدم) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	إذا ((ret = ssh_ecdsa_encode_store_sig(ڪنجي, sig_r, sig_s,
 	    sigp, lenp)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 	/* success */
 	ret = 0;
- out:
+ ٻاهريون:
 	freezero(sigb, slen);
 	ECDSA_SIG_free(esig);
-	return ret;
+	أرجع ret;
 }
 
-int
-ssh_ecdsa_encode_store_sig(const struct sshkey *key,
-    const BIGNUM *sig_r, const BIGNUM *sig_s,
-    u_char **sigp, size_t *lenp)
+صحيح
+ssh_ecdsa_encode_store_sig(ثابت بنية sshkey *ڪنجي,
+    ثابت BIGNUM *sig_r, ثابت BIGNUM *sig_s,
+    u_char **sigp, سائيز_t *lenp)
 {
-	struct sshbuf *b = NULL, *bb = NULL;
-	int ret;
-	size_t len;
+	بنية sshbuf *b = عدم, *bb = عدم;
+	صحيح ret;
+	سائيز_t len;
 
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	إذا (sigp != عدم)
+		*sigp = عدم;
 
-	if ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
+	إذا ((bb = sshbuf_new()) == عدم || (b = sshbuf_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
+	إذا ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
-		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+		اذهب ٻاهريون;
+	إذا ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(ڪنجي))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
-		goto out;
+		اذهب ٻاهريون;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	إذا (sigp != عدم) {
+		إذا ((*sigp = يادگيري_ڏيو(len)) == عدم) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب ٻاهريون;
 		}
-		memcpy(*sigp, sshbuf_ptr(b), len);
+		يادگيري_نقل(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	إذا (lenp != عدم)
 		*lenp = len;
 	ret = 0;
- out:
+ ٻاهريون:
 	sshbuf_free(b);
 	sshbuf_free(bb);
-	return ret;
+	أرجع ret;
 }
 
-static int
-ssh_ecdsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ساكن صحيح
+ssh_ecdsa_verify(ثابت بنية sshkey *ڪنجي,
+    ثابت u_char *sig, سائيز_t siglen,
+    ثابت u_char *معلومات, سائيز_t dlen, ثابت حرف *alg, u_int compat,
+    بنية sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
-	int hash_alg, len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL, *sigbuf = NULL;
-	char *ktype = NULL;
-	unsigned char *sigb = NULL, *cp;
+	ECDSA_SIG *esig = عدم;
+	BIGNUM *sig_r = عدم, *sig_s = عدم;
+	صحيح hash_alg, len = 0;
+	صحيح ret = SSH_ERR_اندروني_ERROR;
+	بنية sshbuf *b = عدم, *sigbuf = عدم;
+	حرف *ktype = عدم;
+	بنانشان حرف *sigb = عدم, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا (ڪنجي == عدم || ڪنجي->pkey == عدم ||
+	    sshkey_type_plain(ڪنجي->type) != ڪنجي_ECDSA ||
+	    sig == عدم || siglen == 0)
+		أرجع SSH_ERR_INVALID_دليل;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	إذا ((hash_alg = sshkey_ec_nid_منزل_hash_alg(ڪنجي->ecdsa_nid)) == -1)
+		أرجع SSH_ERR_اندروني_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	إذا ((b = sshbuf_from(sig, siglen)) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا (sshbuf_get_cstring(b, &ktype, عدم) != 0 ||
 	    sshbuf_froms(b, &sigbuf) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	إذا (strcmp(sshkey_ssh_name_plain(ڪنجي), ktype) != 0) {
+		ret = SSH_ERR_ڪنجي_TYPE_MISMATCH;
+		اذهب ٻاهريون;
 	}
-	if (sshbuf_len(b) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	إذا (sshbuf_len(b) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_معلومات;
+		اذهب ٻاهريون;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	إذا (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
-		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+	إذا (sshbuf_len(sigbuf) != 0) {
+		ret = SSH_ERR_UNEXPECTED_TRAILING_معلومات;
+		اذهب ٻاهريون;
 	}
 
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	إذا ((esig = ECDSA_SIG_new()) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	إذا (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = عدم; /* transferred */
 
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	إذا ((len = i2d_ECDSA_SIG(esig, عدم)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	إذا ((sigb = صفر_يادگيري_ڏيو(1, len)) == عدم) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب ٻاهريون;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	إذا (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
-	    data, dlen, sigb, len)) != 0)
-		goto out;
+	إذا ((ret = sshkey_pkey_digest_verify(ڪنجي->pkey, hash_alg,
+	    معلومات, dlen, sigb, len)) != 0)
+		اذهب ٻاهريون;
 	/* success */
- out:
+ ٻاهريون:
 	freezero(sigb, len);
 	sshbuf_free(sigbuf);
 	sshbuf_free(b);
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
-	return ret;
+	حرر(ktype);
+	أرجع ret;
 }
 
 /* NB. not static; used by ECDSA-SK */
-const struct sshkey_impl_funcs sshkey_ecdsa_funcs = {
-	/* .size = */		ssh_ecdsa_size,
-	/* .alloc = */		NULL,
+ثابت بنية sshkey_impl_funcs sshkey_ecdsa_funcs = {
+	/* .size = */		ssh_ecdsa_سائيز,
+	/* .alloc = */		عدم,
 	/* .cleanup = */	ssh_ecdsa_cleanup,
 	/* .equal = */		ssh_ecdsa_equal,
-	/* .ssh_serialize_public = */ ssh_ecdsa_serialize_public,
-	/* .ssh_deserialize_public = */ ssh_ecdsa_deserialize_public,
-	/* .ssh_serialize_private = */ ssh_ecdsa_serialize_private,
-	/* .ssh_deserialize_private = */ ssh_ecdsa_deserialize_private,
+	/* .ssh_serialize_public = */ ssh_ecdsa_serialize_عوامي,
+	/* .ssh_deserialize_public = */ ssh_ecdsa_deserialize_عوامي,
+	/* .ssh_serialize_private = */ ssh_ecdsa_serialize_ذاتي,
+	/* .ssh_deserialize_private = */ ssh_ecdsa_deserialize_ذاتي,
 	/* .generate = */	ssh_ecdsa_generate,
-	/* .copy_public = */	ssh_ecdsa_copy_public,
+	/* .copy_public = */	ssh_ecdsa_copy_عوامي,
 	/* .sign = */		ssh_ecdsa_sign,
 	/* .verify = */		ssh_ecdsa_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -516,11 +516,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -528,11 +528,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -540,11 +540,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA_CERT,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -552,11 +552,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -564,11 +564,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		عدم,
+	/* .type = */		ڪنجي_ECDSA_CERT,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -576,4 +576,4 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-#endif /* WITH_OPENSSL */
+#جيڪڏهن_پورو /* WITH_OPENSSL */

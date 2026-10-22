@@ -14,73 +14,73 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef WITH_OPENSSL
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include <openssl/evp.h>
+#ضمن <openssl/evp.h>
 
-#ifndef HAVE_EVP_CIPHER_CTX_GET_IV
-int
-EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_EVP_CIPHER_CTX_GET_IV
+صحيح
+EVP_CIPHER_CTX_get_iv(ثابت EVP_CIPHER_CTX *ctx, بنانشان حرف *iv, سائيز_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	إذا (ctx == عدم)
+		أرجع 0;
+	إذا (EVP_CIPHER_CTX_iv_ڊيگهائي(ctx) < 0)
+		أرجع 0;
+	إذا (len != (سائيز_t)EVP_CIPHER_CTX_iv_ڊيگهائي(ctx))
+		أرجع 0;
+	إذا (len > EVP_MAX_IV_ڊيگهائي)
+		أرجع 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	إذا (len != 0) {
+		إذا (iv == عدم)
+			أرجع 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV
-		memcpy(iv, EVP_CIPHER_CTX_iv(ctx), len);
-# else
-		memcpy(iv, ctx->iv, len);
+		يادگيري_نقل(iv, EVP_CIPHER_CTX_iv(ctx), len);
+# وإلا
+		يادگيري_نقل(iv, ctx->iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV */
 	}
-	return 1;
+	أرجع 1;
 }
-#endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
+#جيڪڏهن_پورو /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
-#ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int
-EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
+#جيڪڏهن_وصف_نه_ٿيل HAVE_EVP_CIPHER_CTX_سيٽ_IV
+صحيح
+EVP_CIPHER_CTX_سيٽ_iv(EVP_CIPHER_CTX *ctx, ثابت بنانشان حرف *iv, سائيز_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	إذا (ctx == عدم)
+		أرجع 0;
+	إذا (EVP_CIPHER_CTX_iv_ڊيگهائي(ctx) < 0)
+		أرجع 0;
+	إذا (len != (سائيز_t)EVP_CIPHER_CTX_iv_ڊيگهائي(ctx))
+		أرجع 0;
+	إذا (len > EVP_MAX_IV_ڊيگهائي)
+		أرجع 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	إذا (len != 0) {
+		إذا (iv == عدم)
+			أرجع 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV_NOCONST
-		memcpy(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
-# else
-		memcpy(ctx->iv, iv, len);
+		يادگيري_نقل(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
+# وإلا
+		يادگيري_نقل(ctx->iv, iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV_NOCONST */
 	}
-	return 1;
+	أرجع 1;
 }
-#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
+#جيڪڏهن_پورو /* HAVE_EVP_CIPHER_CTX_SET_IV */
 
-#endif /* WITH_OPENSSL */
+#جيڪڏهن_پورو /* WITH_OPENSSL */

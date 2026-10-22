@@ -7,163 +7,163 @@
  * OpenBSD project by leaving this copyright notice intact.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
  
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/queue.h>
+#ضمن <sys/time.h>
+#ضمن <sys/resource.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#endif
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+#ضمن <openssl/bn.h>
+#جيڪڏهن_پورو
 
-#include <errno.h>
-#include <limits.h>
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <poll.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <limits.h>
+#ضمن <netdb.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <poll.h>
+#ضمن <signal.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "digest.h"
-#include "kex.h"
-#include "compat.h"
-#include "myproposal.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "log.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "hostfile.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "dns.h"
-#include "addr.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "cipher.h"
+#ضمن "digest.h"
+#ضمن "kex.h"
+#ضمن "compat.h"
+#ضمن "myproposal.h"
+#ضمن "packet.h"
+#ضمن "dispatch.h"
+#ضمن "log.h"
+#ضمن "atomicio.h"
+#ضمن "misc.h"
+#ضمن "hostfile.h"
+#ضمن "ssherr.h"
+#ضمن "ssh_api.h"
+#ضمن "dns.h"
+#ضمن "addr.h"
 
 /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
    Default value is AF_UNSPEC means both IPv4 and IPv6. */
-int IPv4or6 = AF_UNSPEC;
+صحيح IPv4or6 = AF_UNSPEC;
 
-int ssh_port = SSH_DEFAULT_PORT;
+صحيح ssh_پورٽ = SSH_DEFAULT_پورٽ;
 
-#define KT_RSA		(1)
-#define KT_ECDSA	(1<<1)
-#define KT_ED25519	(1<<2)
-#define KT_ECDSA_SK	(1<<4)
-#define KT_ED25519_SK	(1<<5)
-#define KT_MLDSA44_ED25519 (1<<6)
+#وصف_ڪريو KT_RSA		(1)
+#وصف_ڪريو KT_ECDSA	(1<<1)
+#وصف_ڪريو KT_ED25519	(1<<2)
+#وصف_ڪريو KT_ECDSA_SK	(1<<4)
+#وصف_ڪريو KT_ED25519_SK	(1<<5)
+#وصف_ڪريو KT_MLDSA44_ED25519 (1<<6)
 
-#define KT_MIN		KT_RSA
-#define KT_MAX		KT_MLDSA44_ED25519
+#وصف_ڪريو KT_MIN		KT_RSA
+#وصف_ڪريو KT_MAX		KT_MLDSA44_ED25519
 
-int get_cert = 0;
-int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
+صحيح get_cert = 0;
+صحيح get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
 
-int hash_hosts = 0;		/* Hash hostname on output */
+صحيح hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+صحيح print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
-int found_one = 0;		/* Successfully found a key */
+صحيح مليو_one = 0;		/* Successfully found a key */
 
-int hashalg = -1;		/* Hash for SSHFP records or -1 for all */
+صحيح hashalg = -1;		/* Hash for SSHFP records or -1 for all */
 
-int quiet = 0;			/* Don't print key comment lines */
+صحيح quiet = 0;			/* Don't print key comment lines */
 
-#define MAXMAXFD 256
+#وصف_ڪريو MAXMAXFD 256
 
 /* The number of seconds after which to give up on a TCP connection */
-int timeout = 5;
+صحيح timeout = 5;
 
-int maxfd;
-#define MAXCON (maxfd - 10)
+صحيح maxfd;
+#وصف_ڪريو MAXCON (maxfd - 10)
 
-extern char *__progname;
-struct pollfd *read_wait;
-int ncon;
+خارجي حرف *__progname;
+بنية pollfd *read_wait;
+صحيح ncon;
 
 /*
  * Keep a connection structure for each file descriptor.  The state
  * associated with file descriptor n is held in fdcon[n].
  */
-typedef struct Connection {
-	u_char c_status;	/* State of connection on this file desc. */
-#define CS_UNUSED 0		/* File descriptor unused */
-#define CS_CON 1		/* Waiting to connect/read greeting */
-	int c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
-	int c_keytype;		/* Only one of KT_* */
-	sig_atomic_t c_done;	/* SSH2 done */
-	char *c_namebase;	/* Address to free for c_name and c_namelist */
-	char *c_name;		/* Hostname of connection for errors */
-	char *c_namelist;	/* Pointer to other possible addresses */
-	char *c_output_name;	/* Hostname of connection for output */
-	struct ssh *c_ssh;	/* SSH-connection */
-	char c_banner[256];	/* Partial server greeting */
-	size_t c_banner_len;	/* Length of partial server greeting */
-	int c_banner_sent;	/* Client greeting has been sent */
-	struct timespec c_ts;	/* Time at which connection gets aborted */
+تعريفنوع بنية Connection {
+	u_char c_حالت;	/* State of connection on this file desc. */
+#وصف_ڪريو CS_اڻ_استعمال_ٿيل 0		/* File descriptor unused */
+#وصف_ڪريو CS_CON 1		/* Waiting to connect/read greeting */
+	صحيح c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
+	صحيح c_keytype;		/* Only one of KT_* */
+	sig_atomic_t c_پورو;	/* SSH2 done */
+	حرف *c_namebase;	/* Address to free for c_name and c_namelist */
+	حرف *c_name;		/* Hostname of connection for errors */
+	حرف *c_namelist;	/* Pointer to other possible addresses */
+	حرف *c_output_name;	/* Hostname of connection for output */
+	بنية ssh *c_ssh;	/* SSH-connection */
+	حرف c_banner[256];	/* Partial server greeting */
+	سائيز_t c_banner_len;	/* Length of partial server greeting */
+	صحيح c_banner_موڪليل;	/* Client greeting has been sent */
+	بنية timespec c_ts;	/* Time at which connection gets aborted */
 	TAILQ_ENTRY(Connection) c_link;	/* List of connections in timeout order. */
 } con;
 
 TAILQ_HEAD(conlist, Connection) tq;	/* Timeout Queue */
 con *fdcon;
 
-static void keyprint(con *c, struct sshkey *key);
+ساكن فراغ keyprint(con *c, بنية sshkey *ڪنجي);
 
-static int
-fdlim_get(int hard)
+ساكن صحيح
+fdlim_get(صحيح hard)
 {
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
+#إذا defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	بنية rlimit rlfd;
 	rlim_t lim;
 
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return -1;
+	إذا (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		أرجع -1;
 	lim = hard ? rlfd.rlim_max : rlfd.rlim_cur;
-	if (lim <= 0)
-		return -1;
-	if (lim == RLIM_INFINITY)
+	إذا (lim <= 0)
+		أرجع -1;
+	إذا (lim == RLIM_INFINITY)
 		lim = SSH_SYSFDMAX;
-	if (lim >= INT_MAX)
-		lim = INT_MAX;
-	return lim;
-#else
-	return (SSH_SYSFDMAX <= 0) ? -1 :
-	    ((SSH_SYSFDMAX >= INT_MAX) ? INT_MAX : SSH_SYSFDMAX);
-#endif
+	إذا (lim >= وڌ_کان_وڌ_عدد)
+		lim = وڌ_کان_وڌ_عدد;
+	أرجع lim;
+#وإلا
+	أرجع (SSH_SYSFDMAX <= 0) ? -1 :
+	    ((SSH_SYSFDMAX >= وڌ_کان_وڌ_عدد) ? وڌ_کان_وڌ_عدد : SSH_SYSFDMAX);
+#جيڪڏهن_پورو
 }
 
-static int
-fdlim_set(int lim)
+ساكن صحيح
+fdlim_سيٽ(صحيح lim)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
-#endif
+#إذا defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	بنية rlimit rlfd;
+#جيڪڏهن_پورو
 
-	if (lim <= 0)
-		return (-1);
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	إذا (lim <= 0)
+		أرجع (-1);
+#إذا defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	إذا (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		أرجع (-1);
 	rlfd.rlim_cur = lim;
-	if (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
-#elif defined (HAVE_SETDTABLESIZE)
+	إذا (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		أرجع (-1);
+#وإلاإذا defined (HAVE_SETDTABLESIZE)
 	setdtablesize(lim);
-#endif
-	return (0);
+#جيڪڏهن_پورو
+	أرجع (0);
 }
 
 /*
@@ -171,121 +171,121 @@ fdlim_set(int lim)
  * separators.  This is the same as the 4.4BSD strsep, but different from the
  * one in the GNU libc.
  */
-static char *
-xstrsep(char **str, const char *delim)
+ساكن حرف *
+xstrsep(حرف **str, ثابت حرف *delim)
 {
-	char *s, *e;
+	حرف *s, *e;
 
-	if (!**str)
-		return (NULL);
+	إذا (!**str)
+		أرجع (عدم);
 
 	s = *str;
 	e = s + strcspn(s, delim);
 
-	if (*e != '\0')
+	إذا (*e != '\0')
 		*e++ = '\0';
 	*str = e;
 
-	return (s);
+	أرجع (s);
 }
 
 /*
  * Get the next non-null token (like GNU strsep).  Strsep() will return a
  * null token for two adjacent separators, so we may have to loop.
  */
-static char *
-strnnsep(char **stringp, char *delim)
+ساكن حرف *
+strnnsep(حرف **stringp, حرف *delim)
 {
-	char *tok;
+	حرف *tok;
 
-	do {
+	افعل {
 		tok = xstrsep(stringp, delim);
-	} while (tok && *tok == '\0');
-	return (tok);
+	} طالما (tok && *tok == '\0');
+	أرجع (tok);
 }
 
 
-static int
-key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
+ساكن صحيح
+ڪنجي_print_wrapper(بنية sshkey *hostkey, بنية ssh *ssh)
 {
 	con *c;
 
-	if ((c = ssh_get_app_data(ssh)) != NULL)
+	إذا ((c = ssh_get_app_معلومات(ssh)) != عدم)
 		keyprint(c, hostkey);
 	/* always abort key exchange */
-	return -1;
+	أرجع -1;
 }
 
-static int
-ssh2_capable(int remote_major, int remote_minor)
+ساكن صحيح
+ssh2_capable(صحيح remote_major, صحيح remote_minor)
 {
-	switch (remote_major) {
-	case 1:
-		if (remote_minor == 99)
-			return 1;
-		break;
-	case 2:
-		return 1;
-	default:
-		break;
+	بدل (remote_major) {
+	حالة 1:
+		إذا (remote_minor == 99)
+			أرجع 1;
+		اكسر;
+	حالة 2:
+		أرجع 1;
+	افتراضي:
+		اكسر;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static void
+ساكن فراغ
 keygrab_ssh2(con *c)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	int r;
+	حرف *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	صحيح r;
 
-	switch (c->c_keytype) {
-	case KT_RSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+	بدل (c->c_keytype) {
+	حالة KT_RSA:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "rsa-sha2-512-cert-v01@openssh.com,"
 		    "rsa-sha2-256-cert-v01@openssh.com,"
 		    "ssh-rsa-cert-v01@openssh.com" :
 		    "rsa-sha2-512,"
 		    "rsa-sha2-256,"
 		    "ssh-rsa";
-		break;
-	case KT_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		اكسر;
+	حالة KT_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "ssh-ed25519-cert-v01@openssh.com" : "ssh-ed25519";
-		break;
-	case KT_ECDSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		اكسر;
+	حالة KT_ECDSA:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "ecdsa-sha2-nistp256-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp384-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp521-cert-v01@openssh.com" :
 		    "ecdsa-sha2-nistp256,"
 		    "ecdsa-sha2-nistp384,"
 		    "ecdsa-sha2-nistp521";
-		break;
-	case KT_MLDSA44_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		اكسر;
+	حالة KT_MLDSA44_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "ssh-mldsa44-ed25519-cert" :
 		    "ssh-mldsa44-ed25519";
-		break;
-	case KT_ECDSA_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		اكسر;
+	حالة KT_ECDSA_SK:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com" :
 		    "sk-ecdsa-sha2-nistp256@openssh.com";
-		break;
-	case KT_ED25519_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		اكسر;
+	حالة KT_ED25519_SK:
+		myproposal[PROPOSAL_SERVER_HOST_ڪنجي_ALGS] = get_cert ?
 		    "sk-ssh-ed25519-cert-v01@openssh.com" :
 		    "sk-ssh-ed25519@openssh.com";
-		break;
-	default:
+		اكسر;
+	افتراضي:
 		fatal("unknown key type %d", c->c_keytype);
-		break;
+		اكسر;
 	}
-	if ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
-		free(c->c_ssh);
+	إذا ((r = kex_تياري(c->c_ssh, myproposal)) != 0) {
+		حرر(c->c_ssh);
 		fprintf(stderr, "kex_setup: %s\n", ssh_err(r));
-		exit(1);
+		ٻاهر_نڪرو(1);
 	}
-#ifdef WITH_OPENSSL
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
 	c->c_ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_DH_GRP14_SHA256] = kex_gen_client;
@@ -294,153 +294,153 @@ keygrab_ssh2(con *c)
 	c->c_ssh->kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
 	c->c_ssh->kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
 	c->c_ssh->kex->kex[KEX_ECDH_SHA2] = kex_gen_client;
-#endif
+#جيڪڏهن_پورو
 	c->c_ssh->kex->kex[KEX_C25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh_set_verify_host_key_callback(c->c_ssh, key_print_wrapper);
+	ssh_سيٽ_verify_host_ڪنجي_callback(c->c_ssh, ڪنجي_print_wrapper);
 	/*
 	 * do the key-exchange until an error occurs or until
 	 * the key_print_wrapper() callback sets c_done.
 	 */
-	ssh_dispatch_run(c->c_ssh, DISPATCH_BLOCK, &c->c_done);
+	ssh_dispatch_لاڳيتو(c->c_ssh, DISPATCH_بلاڪ, &c->c_پورو);
 }
 
-static void
-keyprint_one(const char *host, struct sshkey *key)
+ساكن فراغ
+keyprint_one(ثابت حرف *host, بنية sshkey *ڪنجي)
 {
-	char *hostport = NULL, *hashed = NULL;
-	const char *known_host;
-	int r = 0;
+	حرف *hostport = عدم, *hashed = عدم;
+	ثابت حرف *معلوم_host;
+	صحيح r = 0;
 
-	found_one = 1;
+	مليو_one = 1;
 
-	if (print_sshfp) {
-		export_dns_rr(host, key, stdout, 0, hashalg);
-		return;
+	إذا (print_sshfp) {
+		export_dns_rr(host, ڪنجي, stdout, 0, hashalg);
+		أرجع;
 	}
 
-	hostport = put_host_port(host, ssh_port);
+	hostport = put_host_پورٽ(host, ssh_پورٽ);
 	lowercase(hostport);
-	if (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
+	إذا (hash_hosts && (hashed = host_hash(hostport, عدم, 0)) == عدم)
 		fatal("host_hash failed");
-	known_host = hash_hosts ? hashed : hostport;
-	if (!get_cert)
-		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
-		(void)fputs("\n", stdout);
-	free(hashed);
-	free(hostport);
+	معلوم_host = hash_hosts ? hashed : hostport;
+	إذا (!get_cert)
+		r = fprintf(stdout, "%s ", معلوم_host);
+	إذا (r >= 0 && sshkey_write(ڪنجي, stdout) == 0)
+		(فراغ)fputs("\n", stdout);
+	حرر(hashed);
+	حرر(hostport);
 }
 
-static void
-keyprint(con *c, struct sshkey *key)
+ساكن فراغ
+keyprint(con *c, بنية sshkey *ڪنجي)
 {
-	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
-	char *host, *ohosts;
+	حرف *hosts = c->c_output_name ? c->c_output_name : c->c_name;
+	حرف *host, *ohosts;
 
-	if (key == NULL)
-		return;
-	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
-		keyprint_one(hosts, key);
-		return;
+	إذا (ڪنجي == عدم)
+		أرجع;
+	إذا (get_cert || (!hash_hosts && ssh_پورٽ == SSH_DEFAULT_پورٽ)) {
+		keyprint_one(hosts, ڪنجي);
+		أرجع;
 	}
 	ohosts = hosts = xstrdup(hosts);
-	while ((host = strsep(&hosts, ",")) != NULL)
-		keyprint_one(host, key);
-	free(ohosts);
+	طالما ((host = strsep(&hosts, ",")) != عدم)
+		keyprint_one(host, ڪنجي);
+	حرر(ohosts);
 }
 
-static int
-tcpconnect(char *host)
+ساكن صحيح
+tcpconnect(حرف *host)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr, s = -1;
+	بنية addrinfo hints, *ai, *aitop;
+	حرف strport[NI_MAXSERV];
+	صحيح gaierr, s = -1;
 
-	snprintf(strport, sizeof strport, "%d", ssh_port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, حجم strport, "%d", ssh_پورٽ);
+	memset(&hints, 0, حجم(hints));
 	hints.ai_family = IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+	إذا ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
-		return -1;
+		أرجع -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	لكل (ai = aitop; ai; ai = ai->ai_next) {
 		s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (s == -1) {
+		إذا (s == -1) {
 			error("socket: %s", strerror(errno));
-			continue;
+			استمر;
 		}
-		if (set_nonblock(s) == -1)
+		إذا (سيٽ_nonblock(s) == -1)
 			fatal_f("set_nonblock(%d)", s);
-		if (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
+		إذا (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
 		    errno != EINPROGRESS)
 			error("connect (`%s'): %s", host, strerror(errno));
-		else
-			break;
+		وإلا
+			اكسر;
 		close(s);
 		s = -1;
 	}
 	freeaddrinfo(aitop);
-	return s;
+	أرجع s;
 }
 
-static int
-conalloc(const char *iname, const char *oname, int keytype)
+ساكن صحيح
+conalloc(ثابت حرف *iname, ثابت حرف *oname, صحيح keytype)
 {
-	char *namebase, *name, *namelist;
-	int s;
+	حرف *namebase, *name, *namelist;
+	صحيح s;
 
 	namebase = namelist = xstrdup(iname);
 
-	do {
+	افعل {
 		name = xstrsep(&namelist, ",");
-		if (!name) {
-			free(namebase);
-			return (-1);
+		إذا (!name) {
+			حرر(namebase);
+			أرجع (-1);
 		}
-	} while ((s = tcpconnect(name)) < 0);
+	} طالما ((s = tcpconnect(name)) < 0);
 
-	if (s >= maxfd)
+	إذا (s >= maxfd)
 		fatal("conalloc: fdno %d too high", s);
-	if (fdcon[s].c_status)
+	إذا (fdcon[s].c_حالت)
 		fatal("conalloc: attempt to reuse fdno %d", s);
 
 	debug3_f("oname %s kt %d", oname, keytype);
 	fdcon[s].c_fd = s;
-	fdcon[s].c_status = CS_CON;
+	fdcon[s].c_حالت = CS_CON;
 	fdcon[s].c_namebase = namebase;
 	fdcon[s].c_name = name;
 	fdcon[s].c_namelist = namelist;
 	fdcon[s].c_output_name = xstrdup(oname);
 	fdcon[s].c_keytype = keytype;
 	fdcon[s].c_banner_len = 0;
-	fdcon[s].c_banner_sent = 0;
+	fdcon[s].c_banner_موڪليل = 0;
 	monotime_ts(&fdcon[s].c_ts);
 	fdcon[s].c_ts.tv_sec += timeout;
 	TAILQ_INSERT_TAIL(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = s;
 	read_wait[s].events = POLLIN;
 	ncon++;
-	return (s);
+	أرجع (s);
 }
 
-static void
-confree(int s)
+ساكن فراغ
+confree(صحيح s)
 {
-	if (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
+	إذا (s >= maxfd || fdcon[s].c_حالت == CS_اڻ_استعمال_ٿيل)
 		fatal("confree: attempt to free bad fdno %d", s);
-	free(fdcon[s].c_namebase);
-	free(fdcon[s].c_output_name);
-	fdcon[s].c_status = CS_UNUSED;
+	حرر(fdcon[s].c_namebase);
+	حرر(fdcon[s].c_output_name);
+	fdcon[s].c_حالت = CS_اڻ_استعمال_ٿيل;
 	fdcon[s].c_keytype = 0;
-	if (fdcon[s].c_ssh) {
+	إذا (fdcon[s].c_ssh) {
 		ssh_packet_close(fdcon[s].c_ssh);
-		free(fdcon[s].c_ssh);
-		fdcon[s].c_ssh = NULL;
-	} else
+		حرر(fdcon[s].c_ssh);
+		fdcon[s].c_ssh = عدم;
+	} وإلا
 		close(s);
 	TAILQ_REMOVE(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = -1;
@@ -448,41 +448,41 @@ confree(int s)
 	ncon--;
 }
 
-static int
-conrecycle(int s)
+ساكن صحيح
+conrecycle(صحيح s)
 {
 	con *c = &fdcon[s];
-	int ret;
+	صحيح ret;
 
 	ret = conalloc(c->c_namelist, c->c_output_name, c->c_keytype);
 	confree(s);
-	return (ret);
+	أرجع (ret);
 }
 
-static void
-congreet(int s)
+ساكن فراغ
+congreet(صحيح s)
 {
-	int remote_major = 0, remote_minor = 0;
+	صحيح remote_major = 0, remote_minor = 0;
 	ssize_t n;
-	char buf[256], ch;
-	char remote_version[sizeof buf];
+	حرف buf[256], ch;
+	حرف remote_نسخو[حجم buf];
 	con *c = &fdcon[s];
 
-	if (!c->c_banner_sent) {
+	إذا (!c->c_banner_موڪليل) {
 		/* send client banner */
-		n = snprintf(buf, sizeof buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
+		n = snprintf(buf, حجم buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2);
-		if (n < 0 || (size_t)n >= sizeof(buf)) {
+		إذا (n < 0 || (سائيز_t)n >= حجم(buf)) {
 			error("snprintf: buffer too small");
 			confree(s);
-			return;
+			أرجع;
 		}
-		if (atomicio(vwrite, s, buf, n) != (size_t)n) {
+		إذا (atomicio(vwrite, s, buf, n) != (سائيز_t)n) {
 			error("write (%s): %s", c->c_name, strerror(errno));
 			confree(s);
-			return;
+			أرجع;
 		}
-		c->c_banner_sent = 1;
+		c->c_banner_موڪليل = 1;
 	}
 
 	/*
@@ -493,355 +493,355 @@ congreet(int s)
 	 * timeouts.  Partial lines are retained in the connection state
 	 * between calls.
 	 */
-	n = read(s, &ch, sizeof(ch));
-	if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
+	n = اقرأ(s, &ch, حجم(ch));
+	إذا (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
 	    errno == EINTR))
-		return;
-	if (n != 1) {
-		if (n == 0)
+		أرجع;
+	إذا (n != 1) {
+		إذا (n == 0)
 			errno = EPIPE;
-		switch (errno) {
-		case EPIPE:
+		بدل (errno) {
+		حالة EPIPE:
 			error("%s: Connection closed by remote host",
 			    c->c_name);
-			break;
-		case ECONNREFUSED:
-			break;
-		default:
+			اكسر;
+		حالة ECONNREFUSED:
+			اكسر;
+		افتراضي:
 			error("read (%s): %s", c->c_name, strerror(errno));
-			break;
+			اكسر;
 		}
 		conrecycle(s);
-		return;
+		أرجع;
 	}
 	c->c_banner[c->c_banner_len++] = ch == '\r' ? '\n' : ch;
-	if (ch != '\n') {
-		if (c->c_banner_len < sizeof(c->c_banner) - 1)
-			return; /* incomplete line */
-		if (strncmp(c->c_banner, "SSH-", 4) == 0) {
+	إذا (ch != '\n') {
+		إذا (c->c_banner_len < حجم(c->c_banner) - 1)
+			أرجع; /* incomplete line */
+		إذا (لڙي_ڀيٽ(c->c_banner, "SSH-", 4) == 0) {
 			/* banner exceeds RFC 4253 s4.2 length limit */
 			error("%s: greeting exceeds allowable length",
 			    c->c_name);
 			confree(s);
-			return;
+			أرجع;
 		}
 		/* Discard an oversized pre-identification banner chunk. */
 		c->c_banner_len = 0;
-		return;
+		أرجع;
 	}
-	if (strncmp(c->c_banner, "SSH-", 4) != 0) {
+	إذا (لڙي_ڀيٽ(c->c_banner, "SSH-", 4) != 0) {
 		/* Ignore non-banner lines */
 		c->c_banner_len = 0;
-		return;
+		أرجع;
 	}
 	c->c_banner[c->c_banner_len++] = '\0';
-	memcpy(buf, c->c_banner, c->c_banner_len);
-	if ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
+	يادگيري_نقل(buf, c->c_banner, c->c_banner_len);
+	إذا ((c->c_ssh = ssh_packet_سيٽ_connection(عدم, s, s)) == عدم)
 		fatal("ssh_packet_set_connection failed");
-	ssh_packet_set_timeout(c->c_ssh, timeout, 1);
-	ssh_set_app_data(c->c_ssh, c);	/* back link */
+	ssh_packet_سيٽ_timeout(c->c_ssh, timeout, 1);
+	ssh_سيٽ_app_معلومات(c->c_ssh, c);	/* back link */
 	c->c_ssh->compat = 0;
-	if (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
-	    &remote_major, &remote_minor, remote_version) == 3)
-		compat_banner(c->c_ssh, remote_version);
-	if (!ssh2_capable(remote_major, remote_minor)) {
+	إذا (لڙي_مان_پڙهو(buf, "SSH-%d.%d-%[^\n]\n",
+	    &remote_major, &remote_minor, remote_نسخو) == 3)
+		compat_banner(c->c_ssh, remote_نسخو);
+	إذا (!ssh2_capable(remote_major, remote_minor)) {
 		debug("%s doesn't support ssh2", c->c_name);
 		confree(s);
-		return;
+		أرجع;
 	}
-	if (!quiet) {
+	إذا (!quiet) {
 		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
-		    c->c_name, ssh_port, chop(buf));
+		    c->c_name, ssh_پورٽ, chop(buf));
 	}
 	keygrab_ssh2(c);
 	confree(s);
 }
 
-static void
-conread(int s)
+ساكن فراغ
+conread(صحيح s)
 {
 	con *c = &fdcon[s];
 
-	if (c->c_status != CS_CON)
-		fatal("conread: invalid status %d", c->c_status);
+	إذا (c->c_حالت != CS_CON)
+		fatal("conread: invalid status %d", c->c_حالت);
 
 	congreet(s);
 }
 
-static void
-conloop(void)
+ساكن فراغ
+conloop(فراغ)
 {
-	struct timespec seltime, now;
+	بنية timespec seltime, now;
 	con *c;
-	int i;
+	صحيح i;
 
 	monotime_ts(&now);
 	c = TAILQ_FIRST(&tq);
 
-	if (c && timespeccmp(&c->c_ts, &now, >))
+	إذا (c && timespeccmp(&c->c_ts, &now, >))
 		timespecsub(&c->c_ts, &now, &seltime);
-	else
+	وإلا
 		timespecclear(&seltime);
 
-	while (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
-			continue;
+	طالما (ppoll(read_wait, maxfd, &seltime, عدم) == -1) {
+		إذا (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+			استمر;
 		error("poll error");
 	}
 
-	for (i = 0; i < maxfd; i++) {
-		if (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
+	لكل (i = 0; i < maxfd; i++) {
+		إذا (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
 			confree(i);
-		else if (read_wait[i].revents & (POLLIN))
+		وإلا إذا (read_wait[i].revents & (POLLIN))
 			conread(i);
 	}
 
 	c = TAILQ_FIRST(&tq);
-	while (c && timespeccmp(&c->c_ts, &now, <)) {
-		int s = c->c_fd;
+	طالما (c && timespeccmp(&c->c_ts, &now, <)) {
+		صحيح s = c->c_fd;
 
 		c = TAILQ_NEXT(c, c_link);
 		conrecycle(s);
 	}
 }
 
-static void
-do_one_host(char *host)
+ساكن فراغ
+do_one_host(حرف *host)
 {
-	char *name = strnnsep(&host, " \t\n");
-	int j;
+	حرف *name = strnnsep(&host, " \t\n");
+	صحيح j;
 
-	if (name == NULL)
-		return;
-	for (j = KT_MIN; j <= KT_MAX; j *= 2) {
-		if (get_keytypes & j) {
-			while (ncon >= MAXCON)
+	إذا (name == عدم)
+		أرجع;
+	لكل (j = KT_MIN; j <= KT_MAX; j *= 2) {
+		إذا (get_keytypes & j) {
+			طالما (ncon >= MAXCON)
 				conloop();
 			conalloc(name, *host ? host : name, j);
 		}
 	}
 }
 
-static void
-do_host(char *host)
+ساكن فراغ
+do_host(حرف *host)
 {
-	char daddr[128];
-	struct xaddr addr, end_addr;
+	حرف daddr[128];
+	بنية xaddr addr, پڇاڙي_addr;
 	u_int masklen;
 
-	if (host == NULL)
-		return;
-	if (addr_pton_cidr(host, &addr, &masklen) != 0) {
+	إذا (host == عدم)
+		أرجع;
+	إذا (addr_pton_cidr(host, &addr, &masklen) != 0) {
 		/* Assume argument is a hostname */
 		do_one_host(host);
-	} else {
+	} وإلا {
 		/* Argument is a CIDR range */
 		debug("CIDR range %s", host);
-		end_addr = addr;
-		if (addr_host_to_all1s(&end_addr, masklen) != 0)
-			goto badaddr;
+		پڇاڙي_addr = addr;
+		إذا (addr_host_منزل_all1s(&پڇاڙي_addr, masklen) != 0)
+			اذهب badaddr;
 		/*
 		 * Note: we deliberately include the all-zero/ones addresses.
 		 */
-		for (;;) {
-			if (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
+		لكل (;;) {
+			إذا (addr_ntop(&addr, daddr, حجم(daddr)) != 0) {
  badaddr:
 				error("Invalid address %s", host);
-				return;
+				أرجع;
 			}
 			debug("CIDR expand: address %s", daddr);
 			do_one_host(daddr);
-			if (addr_cmp(&addr, &end_addr) == 0)
-				break;
+			إذا (addr_cmp(&addr, &پڇاڙي_addr) == 0)
+				اكسر;
 			addr_increment(&addr);
 		}
 	}
 }
 
-static void
-usage(void)
+ساكن فراغ
+usage(فراغ)
 {
 	fprintf(stderr,
 	    "usage: ssh-keyscan [-46cDHqv] [-f file] [-O option] [-p port] [-T timeout]\n"
 	    "                   [-t type] [host | addrlist namelist]\n");
-	exit(1);
+	ٻاهر_نڪرو(1);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+مکيه(صحيح argc, حرف **argv)
 {
-	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
-	char *tname, *cp, *line = NULL;
-	size_t linesize = 0;
+	صحيح debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
+	صحيح opt, fopt_ڳڻپ = 0, j;
+	حرف *tname, *cp, *سٽ = عدم;
+	سائيز_t linesize = 0;
 	FILE *fp;
 
-	extern int optind;
-	extern char *optarg;
+	خارجي صحيح optind;
+	خارجي حرف *optarg;
 
 	__progname = ssh_get_progname(argv[0]);
-	seed_rng();
+	ٻج_rng();
 	TAILQ_INIT(&tq);
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if (argc <= 1)
+	إذا (argc <= 1)
 		usage();
 
-	while ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
-		switch (opt) {
-		case 'H':
+	طالما ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
+		بدل (opt) {
+		حالة 'H':
 			hash_hosts = 1;
-			break;
-		case 'c':
+			اكسر;
+		حالة 'c':
 			get_cert = 1;
-			break;
-		case 'D':
+			اكسر;
+		حالة 'D':
 			print_sshfp = 1;
-			break;
-		case 'p':
-			ssh_port = a2port(optarg);
-			if (ssh_port <= 0) {
+			اكسر;
+		حالة 'p':
+			ssh_پورٽ = a2port(optarg);
+			إذا (ssh_پورٽ <= 0) {
 				fprintf(stderr, "Bad port '%s'\n", optarg);
-				exit(1);
+				ٻاهر_نڪرو(1);
 			}
-			break;
-		case 'T':
+			اكسر;
+		حالة 'T':
 			timeout = convtime(optarg);
-			if (timeout == -1 || timeout == 0) {
+			إذا (timeout == -1 || timeout == 0) {
 				fprintf(stderr, "Bad timeout '%s'\n", optarg);
 				usage();
 			}
-			break;
-		case 'v':
-			if (!debug_flag) {
+			اكسر;
+		حالة 'v':
+			إذا (!debug_flag) {
 				debug_flag = 1;
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			}
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			وإلا إذا (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			else
+			وإلا
 				fatal("Too high debugging level.");
-			break;
-		case 'q':
+			اكسر;
+		حالة 'q':
 			quiet = 1;
-			break;
-		case 'f':
-			if (strcmp(optarg, "-") == 0)
-				optarg = NULL;
-			argv[fopt_count++] = optarg;
-			break;
-		case 'O':
+			اكسر;
+		حالة 'f':
+			إذا (strcmp(optarg, "-") == 0)
+				optarg = عدم;
+			argv[fopt_ڳڻپ++] = optarg;
+			اكسر;
+		حالة 'O':
 			/* Maybe other misc options in the future too */
-			if (strncmp(optarg, "hashalg=", 8) != 0)
+			إذا (لڙي_ڀيٽ(optarg, "hashalg=", 8) != 0)
 				fatal("Unsupported -O option");
-			if ((hashalg = ssh_digest_alg_by_name(
+			إذا ((hashalg = ssh_digest_alg_by_name(
 			    optarg + 8)) == -1)
 				fatal("Unsupported hash algorithm");
-			break;
-		case 't':
+			اكسر;
+		حالة 't':
 			get_keytypes = 0;
 			tname = strtok(optarg, ",");
-			while (tname) {
-				int type = sshkey_type_from_shortname(tname);
+			طالما (tname) {
+				صحيح type = sshkey_type_from_shortname(tname);
 
-				switch (type) {
-				case KEY_ECDSA:
+				بدل (type) {
+				حالة ڪنجي_ECDSA:
 					get_keytypes |= KT_ECDSA;
-					break;
-				case KEY_RSA:
+					اكسر;
+				حالة ڪنجي_RSA:
 					get_keytypes |= KT_RSA;
-					break;
-				case KEY_ED25519:
+					اكسر;
+				حالة ڪنجي_ED25519:
 					get_keytypes |= KT_ED25519;
-					break;
-				case KEY_ED25519_SK:
+					اكسر;
+				حالة ڪنجي_ED25519_SK:
 					get_keytypes |= KT_ED25519_SK;
-					break;
-				case KEY_ECDSA_SK:
+					اكسر;
+				حالة ڪنجي_ECDSA_SK:
 					get_keytypes |= KT_ECDSA_SK;
-					break;
-				case KEY_MLDSA44_ED25519:
+					اكسر;
+				حالة ڪنجي_MLDSA44_ED25519:
 					get_keytypes |= KT_MLDSA44_ED25519;
-					break;
-				case KEY_UNSPEC:
-				default:
+					اكسر;
+				حالة ڪنجي_UNSPEC:
+				افتراضي:
 					fatal("Unknown key type \"%s\"", tname);
 				}
-				tname = strtok(NULL, ",");
+				tname = strtok(عدم, ",");
 			}
-			break;
-		case '4':
+			اكسر;
+		حالة '4':
 			IPv4or6 = AF_INET;
-			break;
-		case '6':
+			اكسر;
+		حالة '6':
 			IPv4or6 = AF_INET6;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	إذا (optind == argc && !fopt_ڳڻپ)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
-	if (maxfd < 0)
+	إذا (maxfd < 0)
 		fatal("%s: fdlim_get: bad value", __progname);
-	if (maxfd > MAXMAXFD)
+	إذا (maxfd > MAXMAXFD)
 		maxfd = MAXMAXFD;
-	if (MAXCON <= 0)
+	إذا (MAXCON <= 0)
 		fatal("%s: not enough file descriptors", __progname);
-	if (maxfd > fdlim_get(0))
-		fdlim_set(maxfd);
-	fdcon = xcalloc(maxfd, sizeof(con));
-	read_wait = xcalloc(maxfd, sizeof(struct pollfd));
-	for (j = 0; j < maxfd; j++)
+	إذا (maxfd > fdlim_get(0))
+		fdlim_سيٽ(maxfd);
+	fdcon = xcalloc(maxfd, حجم(con));
+	read_wait = xcalloc(maxfd, حجم(بنية pollfd));
+	لكل (j = 0; j < maxfd; j++)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
-		if (argv[j] == NULL)
+	لكل (j = 0; j < fopt_ڳڻپ; j++) {
+		إذا (argv[j] == عدم)
 			fp = stdin;
-		else if ((fp = fopen(argv[j], "r")) == NULL)
+		وإلا إذا ((fp = fopen(argv[j], "r")) == عدم)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		طالما (getline(&سٽ, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
-				cp = line + strlen(line) - 1;
-			while (cp >= line) {
-				if (*cp == ' ' || *cp == '\t' ||
+			إذا ((cp = strchr(سٽ, '#')) == عدم)
+				cp = سٽ + لڙي_ڊيگهه(سٽ) - 1;
+			طالما (cp >= سٽ) {
+				إذا (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
-				else
-					break;
+				وإلا
+					اكسر;
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
-				continue;
+			إذا (*سٽ == '\0')
+				استمر;
 
-			do_host(line);
+			do_host(سٽ);
 		}
 
-		if (ferror(fp))
+		إذا (ferror(fp))
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		if (fp != stdin)
+		إذا (fp != stdin)
 			fclose(fp);
 	}
-	free(line);
+	حرر(سٽ);
 
-	while (optind < argc)
+	طالما (optind < argc)
 		do_host(argv[optind++]);
 
-	while (ncon > 0)
+	طالما (ncon > 0)
 		conloop();
 
-	return found_one ? 0 : 1;
+	أرجع مليو_one ? 0 : 1;
 }

@@ -13,172 +13,172 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#جيڪڏهن_وصف_نه_ٿيل INCLUDES_H
+#وصف_ڪريو INCLUDES_H
 
-#include "config.h"
+#ضمن "config.h"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE /* activate extra prototypes for glibc */
-#endif
+#جيڪڏهن_وصف_نه_ٿيل GNU_ذريعو
+#وصف_ڪريو GNU_ذريعو /* activate extra prototypes for glibc */
+#جيڪڏهن_پورو
 
-#include <sys/types.h>
-#include <sys/socket.h> /* For CMSG_* */
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h> /* For CMSG_* */
 
-#ifdef HAVE_LIMITS_H
+#جيڪڏهن_وصف_ٿيل HAVE_LIMITS_H
 # include <limits.h> /* For PATH_MAX, _POSIX_HOST_NAME_MAX */
-#endif
-#ifdef HAVE_BSTRING_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_BSTRING_H
 # include <bstring.h>
-#endif
-#ifdef HAVE_ENDIAN_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_ENDIAN_H
 # include <endian.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#ifdef HAVE_TTYENT_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_TTYENT_H
 # include <ttyent.h>
-#endif
-#ifdef HAVE_UTIME_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_UTIME_H
 # include <utime.h>
-#endif
-#ifdef HAVE_MAILLOCK_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_MAILLOCK_H
 # include <maillock.h> /* For _PATH_MAILDIR */
-#endif
-#ifdef HAVE_NEXT
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_ايندڙ
 # include <libc.h>
-#endif
-#ifdef HAVE_PATHS_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_PATHS_H
 # include <paths.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_FCNTL_H
 # include <fcntl.h> /* For AT_FDCWD */
-#endif
+#جيڪڏهن_پورو
 
 /*
  *-*-nto-qnx needs these headers for strcasecmp and LASTLOG_FILE respectively
  */
-#ifdef HAVE_STRINGS_H
+#جيڪڏهن_وصف_ٿيل HAVE_لڙيون_H
 # include <strings.h>
-#endif
-#ifdef HAVE_LOGIN_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_LOGIN_H
 # include <login.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef HAVE_UTMP_H
+#جيڪڏهن_وصف_ٿيل HAVE_UTMP_H
 #  include <utmp.h>
-#endif
-#ifdef HAVE_UTMPX_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_UTMPX_H
 #  include <utmpx.h>
-#endif
-#ifdef HAVE_LASTLOG_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_LASTLOG_H
 #  include <lastlog.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef HAVE_SYS_SELECT_H
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_SELECT_H
 # include <sys/select.h>
-#endif
-#ifdef HAVE_SYS_BSDTTY_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_BSDTTY_H
 # include <sys/bsdtty.h>
-#endif
-#ifdef HAVE_STDINT_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_STDINT_H
 # include <stdint.h>
-#endif
-#include <termios.h>
-#ifdef HAVE_SYS_BITYPES_H
+#جيڪڏهن_پورو
+#ضمن <termios.h>
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_BITYPES_H
 # include <sys/bitypes.h> /* For u_intXX_t */
-#endif
-#ifdef HAVE_SYS_CDEFS_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_CDEFS_H
 # include <sys/cdefs.h> /* For __P() */
-#endif
-#ifdef HAVE_SYS_STAT_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_STAT_H
 # include <sys/stat.h> /* For S_* constants and macros */
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_SYSMACROS_H
 # include <sys/sysmacros.h> /* For MIN, MAX, etc */
-#endif
-#ifdef HAVE_SYS_TIME_H
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_وقت_H
 # include <sys/time.h> /* for timespeccmp if present */
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h> /* for MAP_ANONYMOUS */
-#endif
-#ifdef HAVE_SYS_STRTIO_H
-#include <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
-#endif
-#if defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
-# if defined(HAVE_SYS_STREAM_H)
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_MMAN_H
+#ضمن <sys/mman.h> /* for MAP_ANONYMOUS */
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_STRTIO_H
+#ضمن <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
+#جيڪڏهن_پورو
+#إذا defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
+# إذا defined(HAVE_SYS_وهڪرو_H)
 #  include <sys/stream.h>	/* reqd for queue_t on Solaris 2.5.1 */
 # endif
-#include <sys/ptms.h>	/* for grantpt() and friends */
-#endif
+#ضمن <sys/ptms.h>	/* for grantpt() and friends */
+#جيڪڏهن_پورو
 
-#include <netinet/in.h>
-#include <netinet/in_systm.h> /* For typedefs */
-#ifdef HAVE_RPC_TYPES_H
+#ضمن <netinet/in.h>
+#ضمن <netinet/in_systm.h> /* For typedefs */
+#جيڪڏهن_وصف_ٿيل HAVE_RPC_TYPES_H
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
-#endif
-#ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل USE_PAM
+#إذا defined(HAVE_SECURITY_PAM_APPL_H)
 # include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
+#وإلاإذا defined (HAVE_PAM_PAM_APPL_H)
 # include <pam/pam_appl.h>
-#endif
-#endif
-#ifdef HAVE_READPASSPHRASE_H
+#جيڪڏهن_پورو
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل HAVE_READPASSPHRASE_H
 # include <readpassphrase.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef HAVE_IA_H
+#جيڪڏهن_وصف_ٿيل HAVE_IA_H
 # include <ia.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef HAVE_IAF_H
+#جيڪڏهن_وصف_ٿيل HAVE_IAF_H
 # include <iaf.h>
-#endif
+#جيڪڏهن_پورو
 
-#ifdef HAVE_TMPDIR_H
+#جيڪڏهن_وصف_ٿيل HAVE_TMPDIR_H
 # include <tmpdir.h>
-#endif
+#جيڪڏهن_پورو
 
-#if defined(HAVE_BSD_LIBUTIL_H)
+#إذا defined(HAVE_BSD_LIBUTIL_H)
 # include <bsd/libutil.h>
-#elif defined(HAVE_LIBUTIL_H)
+#وإلاإذا defined(HAVE_LIBUTIL_H)
 # include <libutil.h>
-#endif
+#جيڪڏهن_پورو
 
-#if defined(KRB5) && defined(USE_AFS)
+#إذا defined(KRB5) && defined(USE_AFS)
 # include <krb5.h>
 # include <kafs.h>
-#endif
+#جيڪڏهن_پورو
 
-#if defined(HAVE_SYS_SYSLOG_H)
+#إذا defined(HAVE_SYS_SYSLOG_H)
 # include <sys/syslog.h>
-#endif
+#جيڪڏهن_پورو
 
-#include <errno.h>
+#ضمن <errno.h>
 
 /*
  * On HP-UX 11.11, shadow.h and prot.h provide conflicting declarations
  * of getspnam when _INCLUDE__STDC__ is defined, so we unset it here.
  */
-#ifdef GETSPNAM_CONFLICTING_DEFS
+#جيڪڏهن_وصف_ٿيل GETSPNAM_CONFLICTING_DEFS
 # ifdef _INCLUDE__STDC__
 #  undef _INCLUDE__STDC__
 # endif
-#endif
+#جيڪڏهن_پورو
 
-#ifdef WITH_OPENSSL
-#include <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
-#endif
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+#ضمن <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
+#جيڪڏهن_پورو
 
-#include "defines.h"
+#ضمن "defines.h"
 
-#include "platform.h"
-#include "openbsd-compat/openbsd-compat.h"
-#include "openbsd-compat/bsd-nextstep.h"
+#ضمن "platform.h"
+#ضمن "openbsd-compat/openbsd-compat.h"
+#ضمن "openbsd-compat/bsd-nextstep.h"
 
-#include "entropy.h"
+#ضمن "entropy.h"
 
-#endif /* INCLUDES_H */
+#جيڪڏهن_پورو /* INCLUDES_H */

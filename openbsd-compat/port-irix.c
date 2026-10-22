@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#إذا defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#ifdef WITH_IRIX_PROJECT
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_PROJECT
 # include <proj.h>
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_JOBS
+#جيڪڏهن_پورو /* WITH_IRIX_PROJECT */
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_JOBS
 # include <sys/resource.h>
-#endif
-#ifdef WITH_IRIX_AUDIT
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_AUDIT
 # include <sat.h>
-#endif /* WITH_IRIX_AUDIT */
+#جيڪڏهن_پورو /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#ضمن "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+فراغ
+irix_setusercontext(بنية passwd *pw)
 {
-#ifdef WITH_IRIX_PROJECT
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_PROJECT
 	prid_t projid;
-#endif
-#ifdef WITH_IRIX_JOBS
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
-#endif
+#وإلاإذا defined(WITH_IRIX_ARRAY)
+	صحيح jid = 0;
+#جيڪڏهن_پورو
 
-#ifdef WITH_IRIX_JOBS
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	إذا (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_JOBS */
-#ifdef WITH_IRIX_ARRAY
+#جيڪڏهن_پورو /* WITH_IRIX_JOBS */
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	إذا (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_ARRAY */
-#ifdef WITH_IRIX_PROJECT
+#جيڪڏهن_پورو /* WITH_IRIX_ARRAY */
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	إذا ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	إذا (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+		    (صحيح)projid, pw->pw_name, strerror(errno));
+#جيڪڏهن_پورو /* WITH_IRIX_PROJECT */
+#جيڪڏهن_وصف_ٿيل WITH_IRIX_AUDIT
+	إذا (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (صحيح) pw->pw_uid);
+		إذا (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
-#endif /* WITH_IRIX_AUDIT */
+#جيڪڏهن_پورو /* WITH_IRIX_AUDIT */
 }
 
 
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#جيڪڏهن_پورو /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */

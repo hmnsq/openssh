@@ -30,119 +30,119 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
-#ifndef HAVE_STRMODE
+#ضمن "includes.h"
+#جيڪڏهن_وصف_نه_ٿيل HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <sys/stat.h>
+#ضمن <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+فراغ
+strmode(صحيح گهڻائي, حرف *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	بدل (گهڻائي & S_IFMT) {
+	حالة S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		اكسر;
+	حالة S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		اكسر;
+	حالة S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		اكسر;
+	حالة S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		اكسر;
+	حالة S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
-#ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+		اكسر;
+#جيڪڏهن_وصف_ٿيل S_IFSOCK
+	حالة S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
-#endif
-#ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+		اكسر;
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_ٿيل S_IFIFO
+	حالة S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
-#endif
-	default:			/* unknown */
+		اكسر;
+#جيڪڏهن_پورو
+	افتراضي:			/* unknown */
 		*p++ = '?';
-		break;
+		اكسر;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	إذا (گهڻائي & S_IRUSR)
 		*p++ = 'r';
-	else
+	وإلا
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	إذا (گهڻائي & S_IWUSR)
 		*p++ = 'w';
-	else
+	وإلا
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	بدل (گهڻائي & (S_IXUSR | S_ISUID)) {
+	حالة 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		اكسر;
+	حالة S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		اكسر;
+	حالة S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		اكسر;
+	حالة S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		اكسر;
 	}
-	/* group */
-	if (mode & S_IRGRP)
+	/*گروهه*/
+	إذا (گهڻائي & S_IRGRP)
 		*p++ = 'r';
-	else
+	وإلا
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	إذا (گهڻائي & S_IWGRP)
 		*p++ = 'w';
-	else
+	وإلا
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	بدل (گهڻائي & (S_IXGRP | S_ISGID)) {
+	حالة 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		اكسر;
+	حالة S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		اكسر;
+	حالة S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		اكسر;
+	حالة S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		اكسر;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	إذا (گهڻائي & S_IROTH)
 		*p++ = 'r';
-	else
+	وإلا
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	إذا (گهڻائي & S_IWOTH)
 		*p++ = 'w';
-	else
+	وإلا
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	بدل (گهڻائي & (S_IXOTH | S_ISVTX)) {
+	حالة 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		اكسر;
+	حالة S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		اكسر;
+	حالة S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		اكسر;
+	حالة S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		اكسر;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
 }
-#endif
+#جيڪڏهن_پورو

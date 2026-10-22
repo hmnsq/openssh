@@ -5,43 +5,43 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <signal.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "cipher.h"
-#include "compat.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "kex.h"
-#include "myproposal.h"
-#include "packet.h"
-#include "xmalloc.h"
+#ضمن "cipher.h"
+#ضمن "compat.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "kex.h"
+#ضمن "myproposal.h"
+#ضمن "packet.h"
+#ضمن "xmalloc.h"
 
-void kex_proposal_tests(void);
-void kex_proposal_populate_tests(void);
+فراغ kex_proposal_tests(فراغ);
+فراغ kex_proposal_populate_tests(فراغ);
 
-#define CURVE25519 "curve25519-sha256@libssh.org"
-#define DHGEX1 "diffie-hellman-group-exchange-sha1"
-#define DHGEX256 "diffie-hellman-group-exchange-sha256"
-#define KEXALGOS CURVE25519","DHGEX256","DHGEX1
-void
-kex_proposal_tests(void)
+#وصف_ڪريو CURVE25519 "curve25519-sha256@libssh.org"
+#وصف_ڪريو DHGEX1 "diffie-hellman-group-exchange-sha1"
+#وصف_ڪريو DHGEX256 "diffie-hellman-group-exchange-sha256"
+#وصف_ڪريو KEXALGOS CURVE25519","DHGEX256","DHGEX1
+فراغ
+kex_proposal_tests(فراغ)
 {
-	size_t i;
-	struct ssh ssh;
-	char *result, *out, *in;
-	struct {
-		char *in;	/* TODO: make this const */
-		char *out;
-		int compat;
+	سائيز_t i;
+	بنية ssh ssh;
+	حرف *نتيجو, *ٻاهريون, *اندريون;
+	بنية {
+		حرف *اندريون;	/* TODO: make this const */
+		حرف *ٻاهريون;
+		صحيح compat;
 	} tests[] = {
 		{ KEXALGOS, KEXALGOS, 0},
 		{ KEXALGOS, DHGEX256","DHGEX1, SSH_BUG_CURVE25519PAD },
@@ -51,46 +51,46 @@ kex_proposal_tests(void)
 		/* { KEXALGOS, "", SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX }, */
 	};
 
-	TEST_START("compat_kex_proposal");
-	for (i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
+	TEST_شروعات("compat_kex_proposal");
+	لكل (i = 0; i < حجم(tests) / حجم(*tests); i++) {
 		ssh.compat = tests[i].compat;
 		/* match entire string */
-		result = compat_kex_proposal(&ssh, tests[i].in);
-		ASSERT_STRING_EQ(result, tests[i].out);
-		free(result);
+		نتيجو = compat_kex_proposal(&ssh, tests[i].اندريون);
+		ASSERT_STRING_EQ(نتيجو, tests[i].ٻاهريون);
+		حرر(نتيجو);
 		/* match at end */
-		in = kex_names_cat("a", tests[i].in);
-		out = kex_names_cat("a", tests[i].out);
-		result = compat_kex_proposal(&ssh, in);
-		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		اندريون = kex_نالا_cat("a", tests[i].اندريون);
+		ٻاهريون = kex_نالا_cat("a", tests[i].ٻاهريون);
+		نتيجو = compat_kex_proposal(&ssh, اندريون);
+		ASSERT_STRING_EQ(نتيجو, ٻاهريون);
+		حرر(نتيجو); حرر(اندريون); حرر(ٻاهريون);
 		/* match at start */
-		in = kex_names_cat(tests[i].in, "a");
-		out = kex_names_cat(tests[i].out, "a");
-		result = compat_kex_proposal(&ssh, in);
-		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		اندريون = kex_نالا_cat(tests[i].اندريون, "a");
+		ٻاهريون = kex_نالا_cat(tests[i].ٻاهريون, "a");
+		نتيجو = compat_kex_proposal(&ssh, اندريون);
+		ASSERT_STRING_EQ(نتيجو, ٻاهريون);
+		حرر(نتيجو); حرر(اندريون); حرر(ٻاهريون);
 		/* match in middle */
-		xasprintf(&in, "a,%s,b", tests[i].in);
-		if (*(tests[i].out) == '\0')
-			out = xstrdup("a,b");
-		else
-			xasprintf(&out, "a,%s,b", tests[i].out);
-		result = compat_kex_proposal(&ssh, in);
-		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		xasprintf(&اندريون, "a,%s,b", tests[i].اندريون);
+		إذا (*(tests[i].ٻاهريون) == '\0')
+			ٻاهريون = xstrdup("a,b");
+		وإلا
+			xasprintf(&ٻاهريون, "a,%s,b", tests[i].ٻاهريون);
+		نتيجو = compat_kex_proposal(&ssh, اندريون);
+		ASSERT_STRING_EQ(نتيجو, ٻاهريون);
+		حرر(نتيجو); حرر(اندريون); حرر(ٻاهريون);
 	}
-	TEST_DONE();
+	TEST_پورو();
 }
 
-void
-kex_proposal_populate_tests(void)
+فراغ
+kex_proposal_populate_tests(فراغ)
 {
-	char *prop[PROPOSAL_MAX], *kexalgs, *ciphers, *macs, *hkalgs;
-	const char *comp = compression_alg_list(0);
-	int i;
-	struct ssh ssh;
-	struct kex kex;
+	حرف *prop[PROPOSAL_MAX], *kexalgs, *ciphers, *macs, *hkalgs;
+	ثابت حرف *comp = compression_alg_list(0);
+	صحيح i;
+	بنية ssh ssh;
+	بنية kex kex;
 
 	kexalgs = kex_alg_list(',');
 	ciphers = cipher_alg_list(',', 0);
@@ -98,25 +98,25 @@ kex_proposal_populate_tests(void)
 	hkalgs = kex_alg_list(',');
 
 	ssh.kex = &kex;
-	TEST_START("compat_kex_proposal_populate");
-	for (i = 0; i <= 1; i++) {
+	TEST_شروعات("compat_kex_proposal_populate");
+	لكل (i = 0; i <= 1; i++) {
 		kex.server = i;
-		for (ssh.compat = 0; ssh.compat < 0x40000000; ) {
-			kex_proposal_populate_entries(&ssh, prop, NULL, NULL,
-			    NULL, NULL, NULL);
+		لكل (ssh.compat = 0; ssh.compat < 0x40000000; ) {
+			kex_proposal_populate_entries(&ssh, prop, عدم, عدم,
+			    عدم, عدم, عدم);
 			kex_proposal_free_entries(prop);
 			kex_proposal_populate_entries(&ssh, prop, kexalgs,
 			    ciphers, macs, hkalgs, comp);
 			kex_proposal_free_entries(prop);
-			if (ssh.compat == 0)
+			إذا (ssh.compat == 0)
 				ssh.compat = 1;
-			else
+			وإلا
 				ssh.compat <<= 1;
 		}
 	}
 
-	free(kexalgs);
-	free(ciphers);
-	free(macs);
-	free(hkalgs);
+	حرر(kexalgs);
+	حرر(ciphers);
+	حرر(macs);
+	حرر(hkalgs);
 }

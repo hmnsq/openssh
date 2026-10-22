@@ -15,87 +15,87 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SK_API_H
-#define _SK_API_H 1
+#جيڪڏهن_وصف_نه_ٿيل _SK_API_H
+#وصف_ڪريو _SK_API_H 1
 
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
 /* Flags */
-#define SSH_SK_USER_PRESENCE_REQD	0x01
-#define SSH_SK_USER_VERIFICATION_REQD	0x04
-#define SSH_SK_FORCE_OPERATION		0x10
-#define SSH_SK_RESIDENT_KEY		0x20
+#وصف_ڪريو SSH_SK_USER_PRESENCE_REQD	0x01
+#وصف_ڪريو SSH_SK_USER_VERIFICATION_REQD	0x04
+#وصف_ڪريو SSH_SK_FORCE_OPERATION		0x10
+#وصف_ڪريو SSH_SK_RESIDENT_ڪنجي		0x20
 
 /* Algs */
-#define SSH_SK_ECDSA			0x00
-#define SSH_SK_ED25519			0x01
+#وصف_ڪريو SSH_SK_ECDSA			0x00
+#وصف_ڪريو SSH_SK_ED25519			0x01
 
 /* Error codes */
-#define SSH_SK_ERR_GENERAL		-1
-#define SSH_SK_ERR_UNSUPPORTED		-2
-#define SSH_SK_ERR_PIN_REQUIRED		-3
-#define SSH_SK_ERR_DEVICE_NOT_FOUND	-4
-#define SSH_SK_ERR_CREDENTIAL_EXISTS	-5
+#وصف_ڪريو SSH_SK_ERR_GENERAL		-1
+#وصف_ڪريو SSH_SK_ERR_UNSUPPORTED		-2
+#وصف_ڪريو SSH_SK_ERR_PIN_REQUIRED		-3
+#وصف_ڪريو SSH_SK_ERR_DEVICE_NOT_مليو	-4
+#وصف_ڪريو SSH_SK_ERR_CREDENTIAL_EXISTS	-5
 
-struct sk_enroll_response {
+بنية sk_enroll_response {
 	uint8_t flags;
-	uint8_t *public_key;
-	size_t public_key_len;
-	uint8_t *key_handle;
-	size_t key_handle_len;
+	uint8_t *عوامي_ڪنجي;
+	سائيز_t عوامي_ڪنجي_len;
+	uint8_t *ڪنجي_handle;
+	سائيز_t ڪنجي_handle_len;
 	uint8_t *signature;
-	size_t signature_len;
+	سائيز_t signature_len;
 	uint8_t *attestation_cert;
-	size_t attestation_cert_len;
+	سائيز_t attestation_cert_len;
 	uint8_t *authdata;
-	size_t authdata_len;
+	سائيز_t authdata_len;
 };
 
-struct sk_sign_response {
+بنية sk_sign_response {
 	uint8_t flags;
 	uint32_t counter;
 	uint8_t *sig_r;
-	size_t sig_r_len;
+	سائيز_t sig_r_len;
 	uint8_t *sig_s;
-	size_t sig_s_len;
+	سائيز_t sig_s_len;
 };
 
-struct sk_resident_key {
+بنية sk_resident_ڪنجي {
 	uint32_t alg;
-	size_t slot;
-	char *application;
-	struct sk_enroll_response key;
+	سائيز_t جڳهه;
+	حرف *application;
+	بنية sk_enroll_response ڪنجي;
 	uint8_t flags;
 	uint8_t *user_id;
-	size_t user_id_len;
+	سائيز_t user_id_len;
 };
 
-struct sk_option {
-	char *name;
-	char *value;
+بنية sk_option {
+	حرف *name;
+	حرف *قدر;
 	uint8_t required;
 };
 
-#define SSH_SK_VERSION_MAJOR		0x000a0000 /* current API version */
-#define SSH_SK_VERSION_MAJOR_MASK	0xffff0000
+#وصف_ڪريو SSH_SK_نسخو_MAJOR		0x000a0000 /* current API version */
+#وصف_ڪريو SSH_SK_نسخو_MAJOR_نقاب	0xffff0000
 
 /* Return the version of the middleware API */
-uint32_t sk_api_version(void);
+uint32_t sk_api_نسخو(فراغ);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+صحيح sk_enroll(uint32_t alg, ثابت uint8_t *challenge, سائيز_t challenge_len,
+    ثابت حرف *application, uint8_t flags, ثابت حرف *pin,
+    بنية sk_option **options, بنية sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+صحيح sk_sign(uint32_t alg, ثابت uint8_t *معلومات, سائيز_t معلومات_len,
+    ثابت حرف *application, ثابت uint8_t *ڪنجي_handle, سائيز_t ڪنجي_handle_len,
+    uint8_t flags, ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_sign_response **sign_response);
 
 /* Enumerate all resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+صحيح sk_ڀريو_resident_ڪنجيون(ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_resident_ڪنجي ***rks, سائيز_t *nrks);
 
-#endif /* _SK_API_H */
+#جيڪڏهن_پورو /* _SK_API_H */

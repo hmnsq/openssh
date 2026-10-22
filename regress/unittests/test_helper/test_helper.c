@@ -17,784 +17,784 @@
 
 /* Utility functions/framework for regress tests */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/time.h>
+#ضمن <sys/types.h>
+#ضمن <sys/uio.h>
+#ضمن <sys/time.h>
 
-#include <assert.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ضمن <assert.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <math.h>
+#ضمن <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stdint.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
-#endif
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+#ضمن <openssl/bn.h>
+#ضمن <openssl/err.h>
+#جيڪڏهن_پورو
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#إذا defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
-#endif
+#جيڪڏهن_پورو
 
-#include "entropy.h"
-#include "test_helper.h"
-#include "atomicio.h"
-#include "match.h"
-#include "misc.h"
-#include "xmalloc.h"
+#ضمن "entropy.h"
+#ضمن "test_helper.h"
+#ضمن "atomicio.h"
+#ضمن "match.h"
+#ضمن "misc.h"
+#ضمن "xmalloc.h"
 
-#define BENCH_FAST_DEADLINE	1
-#define BENCH_NORMAL_DEADLINE	10
-#define BENCH_SLOW_DEADLINE	60
-#define BENCH_SAMPLES_ALLOC	8192
-#define BENCH_COLUMN_WIDTH	40
+#وصف_ڪريو BENCH_FAST_DEADLINE	1
+#وصف_ڪريو BENCH_عام_DEADLINE	10
+#وصف_ڪريو BENCH_SLOW_DEADLINE	60
+#وصف_ڪريو BENCH_SAMPLES_ALLOC	8192
+#وصف_ڪريو BENCH_ڪالم_ويڪر	40
 
-#define MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
+#وصف_ڪريو MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
 
-#define TEST_CHECK_INT(r, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
-			break;			\
-		default:			\
+#وصف_ڪريو TEST_CHECK_INT(r, pred) افعل {		\
+		بدل (pred) {			\
+		حالة TEST_EQ:			\
+			إذا (r == 0)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_NE:			\
+			إذا (r != 0)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_LT:			\
+			إذا (r < 0)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_LE:			\
+			إذا (r <= 0)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_GT:			\
+			إذا (r > 0)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_GE:			\
+			إذا (r >= 0)		\
+				أرجع;		\
+			اكسر;			\
+		افتراضي:			\
 			abort();		\
 		}				\
-	} while (0)
+	} طالما (0)
 
-#define TEST_CHECK(x1, x2, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
-			break;			\
-		default:			\
+#وصف_ڪريو TEST_CHECK(x1, x2, pred) افعل {		\
+		بدل (pred) {			\
+		حالة TEST_EQ:			\
+			إذا (x1 == x2)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_NE:			\
+			إذا (x1 != x2)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_LT:			\
+			إذا (x1 < x2)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_LE:			\
+			إذا (x1 <= x2)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_GT:			\
+			إذا (x1 > x2)		\
+				أرجع;		\
+			اكسر;			\
+		حالة TEST_GE:			\
+			إذا (x1 >= x2)		\
+				أرجع;		\
+			اكسر;			\
+		افتراضي:			\
 			abort();		\
 		}				\
-	} while (0)
+	} طالما (0)
 
-extern char *__progname;
+خارجي حرف *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
-static char *active_test_name = NULL;
-static u_int test_number = 0;
-static test_onerror_func_t *test_onerror = NULL;
-static void *onerror_ctx = NULL;
-static const char *data_dir = NULL;
-static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+ساكن صحيح verbose_گهڻائي = 0;
+ساكن صحيح quiet_گهڻائي = 0;
+ساكن حرف *سرگرم_test_name = عدم;
+ساكن u_int test_عدد = 0;
+ساكن test_onerror_func_t *test_onerror = عدم;
+ساكن فراغ *onerror_ctx = عدم;
+ساكن ثابت حرف *معلومات_dir = عدم;
+ساكن حرف subtest_info[512];
+ساكن صحيح fast = 0;
+ساكن صحيح slow = 0;
+ساكن صحيح benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
-static const char *bench_name = NULL;
-static char *benchmark_pattern = NULL;
-static struct timespec bench_start_time, bench_finish_time;
-static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
-double bench_accum_secs;
+ساكن صحيح benchmark = 0;
+ساكن ثابت حرف *bench_name = عدم;
+ساكن حرف *benchmark_نمونو = عدم;
+ساكن بنية timespec bench_شروعات_وقت, bench_پڄاڻي_وقت;
+ساكن بنية timespec *bench_samples;
+ساكن صحيح bench_skip, bench_nruns, bench_nalloc;
+مزدوج bench_accum_secs;
 
-int
-main(int argc, char **argv)
+صحيح
+مکيه(صحيح argc, حرف **argv)
 {
-	int ch;
+	صحيح ch;
 
-	seed_rng();
-#ifdef WITH_OPENSSL
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-#endif
+	ٻج_rng();
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+	OPENSSL_init_crypto(OPENSSL_INIT_ڀريو_CRYPTO_لڙيون, عدم);
+#جيڪڏهن_پورو
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
+	إذا (__progname == عدم) {
 		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+		إذا (__progname == عدم || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		وإلا
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
+		إذا ((__progname = strdup(__progname)) == عدم) {
 			fprintf(stderr, "strdup failed\n");
-			exit(1);
+			ٻاهر_نڪرو(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
-		switch (ch) {
-		case 'b':
+	طالما ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+		بدل (ch) {
+		حالة 'b':
 			benchmark = 1;
-			break;
-		case 'B':
+			اكسر;
+		حالة 'B':
 			benchmark = benchmark_detail_statistics = 1;
-			break;
-		case 'O':
-			benchmark_pattern = xstrdup(optarg);
-			break;
-		case 'F':
+			اكسر;
+		حالة 'O':
+			benchmark_نمونو = xstrdup(optarg);
+			اكسر;
+		حالة 'F':
 			slow = 1;
-			break;
-		case 'f':
+			اكسر;
+		حالة 'f':
 			fast = 1;
-			break;
-		case 'd':
-			data_dir = optarg;
-			break;
-		case 'q':
-			verbose_mode = 0;
-			quiet_mode = 1;
-			break;
-		case 'v':
-			verbose_mode = 1;
-			quiet_mode = 0;
-			break;
-		default:
+			اكسر;
+		حالة 'd':
+			معلومات_dir = optarg;
+			اكسر;
+		حالة 'q':
+			verbose_گهڻائي = 0;
+			quiet_گهڻائي = 1;
+			اكسر;
+		حالة 'v':
+			verbose_گهڻائي = 1;
+			quiet_گهڻائي = 0;
+			اكسر;
+		افتراضي:
 			fprintf(stderr, "Unrecognised command line option\n");
 			fprintf(stderr, "Usage: %s [-vqfFbB] [-d data_dir] "
 			    "[-O pattern]\n", __progname);
-			exit(1);
+			ٻاهر_نڪرو(1);
 		}
 	}
-	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
-		printf("%s: ", __progname);
-	if (verbose_mode)
-		printf("\n");
+	setvbuf(stdout, عدم, _IONBF, 0);
+	إذا (!quiet_گهڻائي)
+		لکو("%s: ", __progname);
+	إذا (verbose_گهڻائي)
+		لکو("\n");
 
-	if (benchmark)
+	إذا (benchmark)
 		benchmarks();
-	else
+	وإلا
 		tests();
 
-	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
-	return 0;
+	إذا (!quiet_گهڻائي && !benchmark)
+		لکو(" %u tests ok\n", test_عدد);
+	أرجع 0;
 }
 
-int
-test_is_verbose(void)
+صحيح
+test_is_verbose(فراغ)
 {
-	return verbose_mode;
+	أرجع verbose_گهڻائي;
 }
 
-int
-test_is_quiet(void)
+صحيح
+test_is_quiet(فراغ)
 {
-	return quiet_mode;
+	أرجع quiet_گهڻائي;
 }
 
-int
-test_is_fast(void)
+صحيح
+test_is_fast(فراغ)
 {
-	return fast;
+	أرجع fast;
 }
 
-int
-test_is_slow(void)
+صحيح
+test_is_slow(فراغ)
 {
-	return slow;
+	أرجع slow;
 }
 
-const char *
-test_data_file(const char *name)
+ثابت حرف *
+test_معلومات_file(ثابت حرف *name)
 {
-	static char ret[PATH_MAX];
+	ساكن حرف ret[PATH_MAX];
 
-	if (data_dir != NULL)
-		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
-		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
+	إذا (معلومات_dir != عدم)
+		snprintf(ret, حجم(ret), "%s/%s", معلومات_dir, name);
+	وإلا
+		strlcpy(ret, name, حجم(ret));
+	إذا (access(ret, F_OK) != 0) {
 		fprintf(stderr, "Cannot access data file %s: %s\n",
 		    ret, strerror(errno));
-		exit(1);
+		ٻاهر_نڪرو(1);
 	}
-	return ret;
+	أرجع ret;
 }
 
-void
-test_info(char *s, size_t len)
+فراغ
+test_info(حرف *s, سائيز_t len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
-	    active_test_name == NULL ? "<none>" : active_test_name,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_عدد,
+	    سرگرم_test_name == عدم ? "<none>" : سرگرم_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+ساكن فراغ
+siginfo(صحيح اڻ_استعمال_ٿيل __attribute__((__unused__)))
 {
-	char buf[256];
+	حرف buf[256];
 
-	test_info(buf, sizeof(buf));
-	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
+	test_info(buf, حجم(buf));
+	atomicio(vwrite, STDERR_FILENO, buf, لڙي_ڊيگهه(buf));
 }
 
-void
-test_start(const char *n)
+فراغ
+test_شروعات(ثابت حرف *n)
 {
-	assert(active_test_name == NULL);
-	assert((active_test_name = strdup(n)) != NULL);
+	أكد(سرگرم_test_name == عدم);
+	أكد((سرگرم_test_name = strdup(n)) != عدم);
 	*subtest_info = '\0';
-	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
-#ifdef SIGINFO
-	signal(SIGINFO, siginfo);
-#endif
-	signal(SIGUSR1, siginfo);
+	إذا (verbose_گهڻائي)
+		لکو("test %u - \"%s\": ", test_عدد, سرگرم_test_name);
+	test_عدد++;
+#جيڪڏهن_وصف_ٿيل SIGINFO
+	إشارة(SIGINFO, siginfo);
+#جيڪڏهن_پورو
+	إشارة(SIGUSR1, siginfo);
 }
 
-void
-set_onerror_func(test_onerror_func_t *f, void *ctx)
+فراغ
+سيٽ_onerror_func(test_onerror_func_t *f, فراغ *ctx)
 {
 	test_onerror = f;
 	onerror_ctx = ctx;
 }
 
-void
-test_done(void)
+فراغ
+test_پورو(فراغ)
 {
 	*subtest_info = '\0';
-	assert(active_test_name != NULL);
-	free(active_test_name);
-	active_test_name = NULL;
-	if (verbose_mode)
-		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
-		printf(".");
+	أكد(سرگرم_test_name != عدم);
+	حرر(سرگرم_test_name);
+	سرگرم_test_name = عدم;
+	إذا (verbose_گهڻائي)
+		لکو("OK\n");
+	وإلا إذا (!quiet_گهڻائي && !benchmark) {
+		لکو(".");
 		fflush(stdout);
 	}
 }
 
-void
-test_subtest_info(const char *fmt, ...)
+فراغ
+test_subtest_info(ثابت حرف *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(subtest_info, sizeof(subtest_info), fmt, ap);
+	vsnprintf(subtest_info, حجم(subtest_info), fmt, ap);
 	va_end(ap);
 }
 
-int
-test_is_benchmark(void)
+صحيح
+test_is_benchmark(فراغ)
 {
-	return benchmark;
+	أرجع benchmark;
 }
 
-void
-ssl_err_check(const char *file, int line)
+فراغ
+ssl_err_check(ثابت حرف *file, صحيح سٽ)
 {
-#ifdef WITH_OPENSSL
-	long openssl_error = ERR_get_error();
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+	ڊگهو openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	إذا (openssl_error == 0)
+		أرجع;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
+	    file, سٽ, ERR_error_string(openssl_error, عدم));
+#وإلا /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
-#endif /* WITH_OPENSSL */
+	    file, سٽ);
+#جيڪڏهن_پورو /* WITH_OPENSSL */
 	abort();
 }
 
-static const char *
-pred_name(enum test_predicate p)
+ساكن ثابت حرف *
+pred_name(تعداد test_predicate p)
 {
-	switch (p) {
-	case TEST_EQ:
-		return "EQ";
-	case TEST_NE:
-		return "NE";
-	case TEST_LT:
-		return "LT";
-	case TEST_LE:
-		return "LE";
-	case TEST_GT:
-		return "GT";
-	case TEST_GE:
-		return "GE";
-	default:
-		return "UNKNOWN";
+	بدل (p) {
+	حالة TEST_EQ:
+		أرجع "EQ";
+	حالة TEST_NE:
+		أرجع "NE";
+	حالة TEST_LT:
+		أرجع "LT";
+	حالة TEST_LE:
+		أرجع "LE";
+	حالة TEST_GT:
+		أرجع "GT";
+	حالة TEST_GE:
+		أرجع "GE";
+	افتراضي:
+		أرجع "UNKNOWN";
 	}
 }
 
-static void
-test_die(void)
+ساكن فراغ
+test_die(فراغ)
 {
-	if (test_onerror != NULL)
+	إذا (test_onerror != عدم)
 		test_onerror(onerror_ctx);
 	abort();
 }
 
-static void
-test_header(const char *file, int line, const char *a1, const char *a2,
-    const char *name, enum test_predicate pred)
+ساكن فراغ
+test_سرو(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ثابت حرف *name, تعداد test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	    file, سٽ, test_عدد, سرگرم_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
-	    a2 != NULL ? ", " : "", a2 != NULL ? a2 : "");
+	    a2 != عدم ? ", " : "", a2 != عدم ? a2 : "");
 }
 
-#ifdef WITH_OPENSSL
-void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+فراغ
+assert_bignum(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ثابت BIGNUM *aa1, ثابت BIGNUM *aa2, تعداد test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	صحيح r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
+	test_سرو(file, سٽ, a1, a2, "BIGNUM", pred);
 	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
 	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
 }
-#endif
+#جيڪڏهن_پورو
 
-void
-assert_string(const char *file, int line, const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred)
+فراغ
+assert_string(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ثابت حرف *aa1, ثابت حرف *aa2, تعداد test_predicate pred)
 {
-	int r;
+	صحيح r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, سٽ, a1, "NULL", aa1, عدم, TEST_NE);
+	assert_ptr(file, سٽ, a2, "NULL", aa2, عدم, TEST_NE);
 
 	r = strcmp(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
-	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
-	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
+	test_سرو(file, سٽ, a1, a2, "STRING", pred);
+	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, لڙي_ڊيگهه(aa1));
+	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, لڙي_ڊيگهه(aa2));
 	test_die();
 }
 
-void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
+فراغ
+assert_mem(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ثابت فراغ *aa1, ثابت فراغ *aa2, سائيز_t l, تعداد test_predicate pred)
 {
-	int r;
-	char *aa1_tohex = NULL;
-	char *aa2_tohex = NULL;
+	صحيح r;
+	حرف *aa1_tohex = عدم;
+	حرف *aa2_tohex = عدم;
 
-	if (l == 0)
-		return;
+	إذا (l == 0)
+		أرجع;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, سٽ, a1, "NULL", aa1, عدم, TEST_NE);
+	assert_ptr(file, سٽ, a2, "NULL", aa2, عدم, TEST_NE);
 
 	r = memcmp(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_سرو(file, سٽ, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
-	free(aa1_tohex);
-	free(aa2_tohex);
+	حرر(aa1_tohex);
+	حرر(aa2_tohex);
 	test_die();
 }
 
-static int
-memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
+ساكن صحيح
+memvalcmp(ثابت uint8_t *s, u_char v, سائيز_t l, سائيز_t *where)
 {
-	size_t i;
+	سائيز_t i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	لكل (i = 0; i < l; i++) {
+		إذا (s[i] != v) {
 			*where = i;
-			return 1;
+			أرجع 1;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-void
-assert_mem_filled(const char *file, int line, const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred)
+فراغ
+assert_mem_filled(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1,
+    ثابت فراغ *aa1, u_char v, سائيز_t l, تعداد test_predicate pred)
 {
-	size_t where = -1;
-	int r;
-	char tmp[64];
-	char *aa1_tohex = NULL;
+	سائيز_t where = -1;
+	صحيح r;
+	حرف tmp[64];
+	حرف *aa1_tohex = عدم;
 
-	if (l == 0)
-		return;
+	إذا (l == 0)
+		أرجع;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, سٽ, a1, "NULL", aa1, عدم, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_سرو(file, سٽ, a1, عدم, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
 	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
-	free(aa1_tohex);
-	snprintf(tmp, sizeof(tmp), "(%s)[%zu]", a1, where);
+	حرر(aa1_tohex);
+	snprintf(tmp, حجم(tmp), "(%s)[%zu]", a1, where);
 	fprintf(stderr, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
 	    ((u_char *)aa1)[where], v);
 	test_die();
 }
 
-void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+فراغ
+assert_int(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    صحيح aa1, صحيح aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
+	test_سرو(file, سٽ, a1, a2, "INT", pred);
 	fprintf(stderr, "%12s = %d\n", a1, aa1);
 	fprintf(stderr, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred)
+فراغ
+assert_سائيز_t(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    سائيز_t aa1, سائيز_t aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
+	test_سرو(file, سٽ, a1, a2, "SIZE_T", pred);
 	fprintf(stderr, "%12s = %zu\n", a1, aa1);
 	fprintf(stderr, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred)
+فراغ
+assert_u_int(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    u_int aa1, u_int aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
+	test_سرو(file, سٽ, a1, a2, "U_INT", pred);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long(const char *file, int line, const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred)
+فراغ
+assert_long(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ڊگهو aa1, ڊگهو aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
+	test_سرو(file, سٽ, a1, a2, "LONG", pred);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred)
+فراغ
+assert_long_long(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ڊگهو ڊگهو aa1, ڊگهو ڊگهو aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
+	test_سرو(file, سٽ, a1, a2, "LONG LONG", pred);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_char(const char *file, int line, const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred)
+فراغ
+assert_char(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    حرف aa1, حرف aa2, تعداد test_predicate pred)
 {
-	char buf[8];
+	حرف buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
+	test_سرو(file, سٽ, a1, a2, "CHAR", pred);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
-	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
+	    vis(buf, aa1, VIS_محفوظ|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
-	    vis(buf, aa2, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa2);
+	    vis(buf, aa2, VIS_محفوظ|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa2);
 	test_die();
 }
 
-void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred)
+فراغ
+assert_u8(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    uint8_t aa1, uint8_t aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
+	test_سرو(file, سٽ, a1, a2, "U8", pred);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred)
+فراغ
+assert_u16(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    uint16_t aa1, uint16_t aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
+	test_سرو(file, سٽ, a1, a2, "U16", pred);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred)
+فراغ
+assert_u32(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    uint32_t aa1, uint32_t aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
+	test_سرو(file, سٽ, a1, a2, "U32", pred);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred)
+فراغ
+assert_u64(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    uint64_t aa1, uint64_t aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
+	test_سرو(file, سٽ, a1, a2, "U64", pred);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
-	    (unsigned long long)aa1, (unsigned long long)aa1);
+	    (بنانشان ڊگهو ڊگهو)aa1, (بنانشان ڊگهو ڊگهو)aa1);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
-	    (unsigned long long)aa2, (unsigned long long)aa2);
+	    (بنانشان ڊگهو ڊگهو)aa2, (بنانشان ڊگهو ڊگهو)aa2);
 	test_die();
 }
 
-void
-assert_double(const char *file, int line, const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred)
+فراغ
+assert_double(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    مزدوج aa1, مزدوج aa2, تعداد test_predicate pred)
 {
-	const double epsilon = 0.000000001;
+	ثابت مزدوج epsilon = 0.000000001;
 
-	switch (pred) {
-	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
-		break;
-	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
-		break;
-	case TEST_LT:
-		if (aa1 < aa2)
-			return;
-		break;
-	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
-		break;
-	case TEST_GT:
-		if (aa1 > aa2)
-			return;
-		break;
-	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
-		break;
-	default:
+	بدل (pred) {
+	حالة TEST_EQ:
+		إذا (fabs(aa1 - aa2) < epsilon)
+			أرجع;
+		اكسر;
+	حالة TEST_NE:
+		إذا (fabs(aa1 - aa2) >= epsilon)
+			أرجع;
+		اكسر;
+	حالة TEST_LT:
+		إذا (aa1 < aa2)
+			أرجع;
+		اكسر;
+	حالة TEST_LE:
+		إذا (aa1 <= aa2)
+			أرجع;
+		اكسر;
+	حالة TEST_GT:
+		إذا (aa1 > aa2)
+			أرجع;
+		اكسر;
+	حالة TEST_GE:
+		إذا (aa1 >= aa2)
+			أرجع;
+		اكسر;
+	افتراضي:
 		abort();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
+	test_سرو(file, سٽ, a1, a2, "DOUBLE", pred);
 	fprintf(stderr, "%12s = %f\n", a1, aa1);
 	fprintf(stderr, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred)
+فراغ
+assert_ptr(ثابت حرف *file, صحيح سٽ, ثابت حرف *a1, ثابت حرف *a2,
+    ثابت فراغ *aa1, ثابت فراغ *aa2, تعداد test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
+	test_سرو(file, سٽ, a1, a2, "PTR", pred);
 	fprintf(stderr, "%12s = %p\n", a1, aa1);
 	fprintf(stderr, "%12s = %p\n", a2, aa2);
 	test_die();
 }
 
-static double
-tstod(const struct timespec *ts)
+ساكن مزدوج
+tstod(ثابت بنية timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	أرجع (مزدوج)ts->tv_sec + ((مزدوج)ts->tv_nsec / 1000000000.0);
 }
 
-void
-hex2bin(uint8_t *bin, const char *hex, size_t len)
+فراغ
+hex2bin(uint8_t *bin, ثابت حرف *hex, سائيز_t len)
 {
-	size_t i;
-	unsigned int v;
+	سائيز_t i;
+	بنانشان صحيح v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
-		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
+	لكل (i = 0; i < len; i++) {
+		ASSERT_INT_EQ(لڙي_مان_پڙهو(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
 	}
 }
 
-void
-bench_start(const char *file, int line, const char *name)
+فراغ
+bench_شروعات(ثابت حرف *file, صحيح سٽ, ثابت حرف *name)
 {
-	char *cp;
+	حرف *cp;
 
-	if (bench_name != NULL) {
+	إذا (bench_name != عدم) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
+		    file, سٽ, bench_name);
 		abort();
 	}
 	cp = xstrdup(name);
 	lowercase(cp);
-	bench_skip = benchmark_pattern != NULL &&
-	    match_pattern_list(cp, benchmark_pattern, 1) != 1;
-	free(cp);
+	bench_skip = benchmark_نمونو != عدم &&
+	    ميلاپ_نمونو_list(cp, benchmark_نمونو, 1) != 1;
+	حرر(cp);
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
-	free(bench_samples);
+	إذا (bench_skip)
+		أرجع;
+	حرر(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
-	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
+	bench_samples = xcalloc(حجم(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
-bench_done(void)
+صحيح
+bench_پورو(فراغ)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
-	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
+	أرجع bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	    (slow ? BENCH_SLOW_DEADLINE : BENCH_عام_DEADLINE));
 }
 
-void
-bench_case_start(const char *file, int line)
+فراغ
+bench_case_شروعات(ثابت حرف *file, صحيح سٽ)
 {
-	clock_gettime(CLOCK_REALTIME, &bench_start_time);
+	clock_gettime(CLOCK_REALTIME, &bench_شروعات_وقت);
 }
 
-void
-bench_case_finish(const char *file, int line)
+فراغ
+bench_case_پڄاڻي(ثابت حرف *file, صحيح سٽ)
 {
-	struct timespec ts;
+	بنية timespec ts;
 
-	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
-	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
+	clock_gettime(CLOCK_REALTIME, &bench_پڄاڻي_وقت);
+	timespecsub(&bench_پڄاڻي_وقت, &bench_شروعات_وقت, &ts);
+	إذا (bench_nruns >= bench_nalloc) {
+		إذا (bench_nalloc >= وڌ_کان_وڌ_عدد / 2) {
 			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
 			abort();
 		}
 		bench_samples = xrecallocarray(bench_samples, bench_nalloc,
-		    bench_nalloc * 2, sizeof(*bench_samples));
+		    bench_nalloc * 2, حجم(*bench_samples));
 		bench_nalloc *= 2;
 	}
 	bench_samples[bench_nruns++] = ts;
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
-tscmp(const void *aa, const void *bb)
+ساكن صحيح
+tscmp(ثابت فراغ *aa, ثابت فراغ *bb)
 {
-	const struct timespec *a = (const struct timespec *)aa;
-	const struct timespec *b = (const struct timespec *)bb;
+	ثابت بنية timespec *a = (ثابت بنية timespec *)aa;
+	ثابت بنية timespec *b = (ثابت بنية timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	إذا (timespeccmp(a, b, ==))
+		أرجع 0;
+	أرجع timespeccmp(a, b, <) ? -1 : 1;
 }
 
-void
-bench_finish(const char *file, int line, const char *unit)
+فراغ
+bench_پڄاڻي(ثابت حرف *file, صحيح سٽ, ثابت حرف *unit)
 {
-	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	مزدوج std_dev = 0, سراسري_spr, سراسري_rps, med_spr, med_rps;
+	صحيح i;
 
-	if (bench_skip)
-		goto done;
+	إذا (bench_skip)
+		اذهب پورو;
 
-	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+	إذا (bench_nruns < 1) {
+		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, سٽ,
 		    bench_name);
 		abort();
 	}
 	/* median */
-	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
+	qsort(bench_samples, bench_nruns, حجم(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	إذا (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
 	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
-	/* mean */
-	mean_spr = bench_accum_secs / (double)bench_nruns;
-	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
+	/*سراسري*/
+	سراسري_spr = bench_accum_secs / (مزدوج)bench_nruns;
+	سراسري_rps = (سراسري_spr == 0.0) ? INFINITY : 1.0/سراسري_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
-		std_dev = tstod(&bench_samples[i]) - mean_spr;
+	لكل (i = 0; i < bench_nruns; i++) {
+		std_dev = tstod(&bench_samples[i]) - سراسري_spr;
 		std_dev *= std_dev;
 	}
-	std_dev /= (double)bench_nruns;
-	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
-		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
+	std_dev /= (مزدوج)bench_nruns;
+	std_dev = جذر(std_dev);
+	إذا (benchmark_detail_statistics) {
+		لکو("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
-		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
-		    mean_rps, med_rps, unit);
-	} else {
-		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
+		    سراسري_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
+		    سراسري_rps, med_rps, unit);
+	} وإلا {
+		لکو("%-*s %0.2f %s/s\n", BENCH_ڪالم_ويڪر,
 		    bench_name, med_rps, unit);
 	}
- done:
-	bench_name = NULL;
+ پورو:
+	bench_name = عدم;
 	bench_nruns = 0;
-	free(bench_samples);
-	bench_samples = NULL;
+	حرر(bench_samples);
+	bench_samples = عدم;
 	bench_skip = 0;
 }

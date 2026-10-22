@@ -15,58 +15,58 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdarg.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <stddef.h>
+#ضمن <stdarg.h>
 
-#include "crypto_api.h"
-#include "sk-api.h"
+#ضمن "crypto_api.h"
+#ضمن "sk-api.h"
 
-#ifdef WITH_OPENSSL
-#include <openssl/opensslv.h>
-#include <openssl/sha.h>
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/pem.h>
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+#ضمن <openssl/opensslv.h>
+#ضمن <openssl/sha.h>
+#ضمن <openssl/crypto.h>
+#ضمن <openssl/evp.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/ec.h>
+#ضمن <openssl/ecdsa.h>
+#ضمن <openssl/pem.h>
 
 /* Use OpenSSL SHA256 instead of libc */
-#define SHA256Init(x)		SHA256_Init(x)
-#define SHA256Update(x, y, z)	SHA256_Update(x, y, z)
-#define SHA256Final(x, y)	SHA256_Final(x, y)
-#define SHA2_CTX		SHA256_CTX
+#وصف_ڪريو SHA256Init(x)		SHA256_Init(x)
+#وصف_ڪريو SHA256Update(x, y, z)	SHA256_Update(x, y, z)
+#وصف_ڪريو SHA256Final(x, y)	SHA256_Final(x, y)
+#وصف_ڪريو SHA2_CTX		SHA256_CTX
 
-#elif defined(HAVE_SHA2_H)
-#include <sha2.h>
-#endif /* WITH_OPENSSL */
+#وإلاإذا defined(HAVE_SHA2_H)
+#ضمن <sha2.h>
+#جيڪڏهن_پورو /* WITH_OPENSSL */
 
 /* #define SK_DEBUG 1 */
 
-#if SSH_SK_VERSION_MAJOR != 0x000a0000
-# error SK API has changed, sk-dummy.c needs an update
-#endif
+#إذا SSH_SK_نسخو_MAJOR != 0x000a0000
+# error SK API has بدليو, sk-dummy.c needs an update
+#جيڪڏهن_پورو
 
-#ifdef SK_DUMMY_INTEGRATE
-# define sk_api_version		ssh_sk_api_version
+#جيڪڏهن_وصف_ٿيل SK_DUMMY_INTEGRATE
+# define sk_api_نسخو		ssh_sk_api_نسخو
 # define sk_enroll		ssh_sk_enroll
 # define sk_sign		ssh_sk_sign
-# define sk_load_resident_keys	ssh_sk_load_resident_keys
-#endif /* !SK_STANDALONE */
+# define sk_ڀريو_resident_ڪنجيون	ssh_sk_ڀريو_resident_ڪنجيون
+#جيڪڏهن_پورو /* !SK_STANDALONE */
 
-static void skdebug(const char *func, const char *fmt, ...)
-    __attribute__((__format__ (printf, 2, 3)));
+ساكن فراغ skdebug(ثابت حرف *func, ثابت حرف *fmt, ...)
+    __attribute__((__format__ (لکو, 2, 3)));
 
-static void
-skdebug(const char *func, const char *fmt, ...)
+ساكن فراغ
+skdebug(ثابت حرف *func, ثابت حرف *fmt, ...)
 {
-#if defined(SK_DEBUG)
+#إذا defined(SK_DEBUG)
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -74,467 +74,467 @@ skdebug(const char *func, const char *fmt, ...)
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
 	va_end(ap);
-#else
-	(void)func; /* XXX */
-	(void)fmt; /* XXX */
-#endif
+#وإلا
+	(فراغ)func; /* XXX */
+	(فراغ)fmt; /* XXX */
+#جيڪڏهن_پورو
 }
 
 uint32_t
-sk_api_version(void)
+sk_api_نسخو(فراغ)
 {
-	return SSH_SK_VERSION_MAJOR;
+	أرجع SSH_SK_نسخو_MAJOR;
 }
 
-static int
-pack_key_ecdsa(struct sk_enroll_response *response)
+ساكن صحيح
+pack_ڪنجي_ecdsa(بنية sk_enroll_response *response)
 {
-#ifdef WITH_OPENSSL
-	EC_KEY *key = NULL;
-	const EC_GROUP *g;
-	const EC_POINT *q;
-	int ret = -1;
-	long privlen;
-	BIO *bio = NULL;
-	char *privptr;
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+	EC_ڪنجي *ڪنجي = عدم;
+	ثابت EC_گروهه *g;
+	ثابت EC_نقطو *q;
+	صحيح ret = -1;
+	ڊگهو privlen;
+	BIO *bio = عدم;
+	حرف *privptr;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
-	response->key_handle = NULL;
-	response->key_handle_len = 0;
+	response->عوامي_ڪنجي = عدم;
+	response->عوامي_ڪنجي_len = 0;
+	response->ڪنجي_handle = عدم;
+	response->ڪنجي_handle_len = 0;
 
-	if ((key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1)) == NULL) {
+	إذا ((ڪنجي = EC_ڪنجي_new_by_وڪر_name(NID_X9_62_prime256v1)) == عدم) {
 		skdebug(__func__, "EC_KEY_new_by_curve_name");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EC_KEY_generate_key(key) != 1) {
+	إذا (EC_ڪنجي_generate_ڪنجي(ڪنجي) != 1) {
 		skdebug(__func__, "EC_KEY_generate_key");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	EC_KEY_set_asn1_flag(key, OPENSSL_EC_NAMED_CURVE);
-	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
-	    (g = EC_KEY_get0_group(key)) == NULL ||
-	    (q = EC_KEY_get0_public_key(key)) == NULL) {
+	EC_ڪنجي_سيٽ_asn1_flag(ڪنجي, OPENSSL_EC_NAMED_وڪر);
+	إذا ((bio = BIO_new(BIO_s_mem())) == عدم ||
+	    (g = EC_ڪنجي_get0_گروهه(ڪنجي)) == عدم ||
+	    (q = EC_ڪنجي_get0_عوامي_ڪنجي(ڪنجي)) == عدم) {
 		skdebug(__func__, "couldn't get key parameters");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	response->public_key_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	response->عوامي_ڪنجي_len = EC_نقطو_point2oct(g, q,
+	    نقطو_CONVERSION_UNCOMPRESSED, عدم, 0, عدم);
+	إذا (response->عوامي_ڪنجي_len == 0 || response->عوامي_ڪنجي_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
-		    response->public_key_len);
-		goto out;
+		    response->عوامي_ڪنجي_len);
+		اذهب ٻاهريون;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	إذا ((response->عوامي_ڪنجي = يادگيري_ڏيو(response->عوامي_ڪنجي_len)) == عدم) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    response->public_key, response->public_key_len, NULL) == 0) {
+	إذا (EC_نقطو_point2oct(g, q, نقطو_CONVERSION_UNCOMPRESSED,
+	    response->عوامي_ڪنجي, response->عوامي_ڪنجي_len, عدم) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* Key handle contains PEM encoded private key */
-	if (!PEM_write_bio_ECPrivateKey(bio, key, NULL, NULL, 0, NULL, NULL)) {
+	إذا (!PEM_write_bio_ECPrivate_ڪنجي(bio, ڪنجي, عدم, عدم, 0, عدم, عدم)) {
 		skdebug(__func__, "PEM_write_bio_ECPrivateKey failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((privlen = BIO_get_mem_data(bio, &privptr)) <= 0) {
+	إذا ((privlen = BIO_get_mem_معلومات(bio, &privptr)) <= 0) {
 		skdebug(__func__, "BIO_get_mem_data failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((response->key_handle = malloc(privlen)) == NULL) {
+	إذا ((response->ڪنجي_handle = يادگيري_ڏيو(privlen)) == عدم) {
 		skdebug(__func__, "malloc key_handle failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	response->key_handle_len = (size_t)privlen;
-	memcpy(response->key_handle, privptr, response->key_handle_len);
+	response->ڪنجي_handle_len = (سائيز_t)privlen;
+	يادگيري_نقل(response->ڪنجي_handle, privptr, response->ڪنجي_handle_len);
 	/* success */
 	ret = 0;
- out:
-	if (ret != 0) {
-		if (response->public_key != NULL) {
-			memset(response->public_key, 0,
-			    response->public_key_len);
-			free(response->public_key);
-			response->public_key = NULL;
+ ٻاهريون:
+	إذا (ret != 0) {
+		إذا (response->عوامي_ڪنجي != عدم) {
+			memset(response->عوامي_ڪنجي, 0,
+			    response->عوامي_ڪنجي_len);
+			حرر(response->عوامي_ڪنجي);
+			response->عوامي_ڪنجي = عدم;
 		}
-		if (response->key_handle != NULL) {
-			memset(response->key_handle, 0,
-			    response->key_handle_len);
-			free(response->key_handle);
-			response->key_handle = NULL;
+		إذا (response->ڪنجي_handle != عدم) {
+			memset(response->ڪنجي_handle, 0,
+			    response->ڪنجي_handle_len);
+			حرر(response->ڪنجي_handle);
+			response->ڪنجي_handle = عدم;
 		}
 	}
 	BIO_free(bio);
-	EC_KEY_free(key);
-	return ret;
-#else
-	return -1;
-#endif
+	EC_ڪنجي_free(ڪنجي);
+	أرجع ret;
+#وإلا
+	أرجع -1;
+#جيڪڏهن_پورو
 }
 
-static int
-pack_key_ed25519(struct sk_enroll_response *response)
+ساكن صحيح
+pack_ڪنجي_ed25519(بنية sk_enroll_response *response)
 {
-	int ret = -1;
+	صحيح ret = -1;
 	u_char pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	u_char sk[crypto_sign_ed25519_SECRETKEYBYTES];
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
-	response->key_handle = NULL;
-	response->key_handle_len = 0;
+	response->عوامي_ڪنجي = عدم;
+	response->عوامي_ڪنجي_len = 0;
+	response->ڪنجي_handle = عدم;
+	response->ڪنجي_handle_len = 0;
 
-	memset(pk, 0, sizeof(pk));
-	memset(sk, 0, sizeof(sk));
+	memset(pk, 0, حجم(pk));
+	memset(sk, 0, حجم(sk));
 	crypto_sign_ed25519_keypair(pk, sk);
 
-	response->public_key_len = sizeof(pk);
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	response->عوامي_ڪنجي_len = حجم(pk);
+	إذا ((response->عوامي_ڪنجي = يادگيري_ڏيو(response->عوامي_ڪنجي_len)) == عدم) {
 		skdebug(__func__, "malloc pubkey failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	memcpy(response->public_key, pk, sizeof(pk));
+	يادگيري_نقل(response->عوامي_ڪنجي, pk, حجم(pk));
 	/* Key handle contains sk */
-	response->key_handle_len = sizeof(sk);
-	if ((response->key_handle = malloc(response->key_handle_len)) == NULL) {
+	response->ڪنجي_handle_len = حجم(sk);
+	إذا ((response->ڪنجي_handle = يادگيري_ڏيو(response->ڪنجي_handle_len)) == عدم) {
 		skdebug(__func__, "malloc key_handle failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	memcpy(response->key_handle, sk, sizeof(sk));
+	يادگيري_نقل(response->ڪنجي_handle, sk, حجم(sk));
 	/* success */
 	ret = 0;
- out:
-	if (ret != 0)
-		free(response->public_key);
-	return ret;
+ ٻاهريون:
+	إذا (ret != 0)
+		حرر(response->عوامي_ڪنجي);
+	أرجع ret;
 }
 
-static int
-check_options(struct sk_option **options)
+ساكن صحيح
+check_options(بنية sk_option **options)
 {
-	size_t i;
+	سائيز_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
+	إذا (options == عدم)
+		أرجع 0;
+	لكل (i = 0; options[i] != عدم; i++) {
 		skdebug(__func__, "requested unsupported option %s",
 		    options[i]->name);
-		if (options[i]->required) {
+		إذا (options[i]->required) {
 			skdebug(__func__, "unknown required option");
-			return -1;
+			أرجع -1;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 
-int
-sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response)
+صحيح
+sk_enroll(uint32_t alg, ثابت uint8_t *challenge, سائيز_t challenge_len,
+    ثابت حرف *application, uint8_t flags, ثابت حرف *pin,
+    بنية sk_option **options, بنية sk_enroll_response **enroll_response)
 {
-	struct sk_enroll_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL;
+	بنية sk_enroll_response *response = عدم;
+	صحيح ret = SSH_SK_ERR_GENERAL;
 
-	(void)flags; /* XXX; unused */
+	(فراغ)flags; /* XXX; unused */
 
-	if (enroll_response == NULL) {
+	إذا (enroll_response == عدم) {
 		skdebug(__func__, "enroll_response == NULL");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	*enroll_response = NULL;
-	if (check_options(options) != 0)
-		goto out; /* error already logged */
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	*enroll_response = عدم;
+	إذا (check_options(options) != 0)
+		اذهب ٻاهريون; /* error already logged */
+	إذا ((response = صفر_يادگيري_ڏيو(1, حجم(*response))) == عدم) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	response->flags = flags;
-	switch(alg) {
-	case SSH_SK_ECDSA:
-		if (pack_key_ecdsa(response) != 0)
-			goto out;
-		break;
-	case SSH_SK_ED25519:
-		if (pack_key_ed25519(response) != 0)
-			goto out;
-		break;
-	default:
+	بدل(alg) {
+	حالة SSH_SK_ECDSA:
+		إذا (pack_ڪنجي_ecdsa(response) != 0)
+			اذهب ٻاهريون;
+		اكسر;
+	حالة SSH_SK_ED25519:
+		إذا (pack_ڪنجي_ed25519(response) != 0)
+			اذهب ٻاهريون;
+		اكسر;
+	افتراضي:
 		skdebug(__func__, "unsupported key type %d", alg);
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* Have to return something here */
-	if ((response->signature = calloc(1, 1)) == NULL) {
+	إذا ((response->signature = صفر_يادگيري_ڏيو(1, 1)) == عدم) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	response->signature_len = 0;
 
 	*enroll_response = response;
-	response = NULL;
+	response = عدم;
 	ret = 0;
- out:
-	if (response != NULL) {
-		free(response->public_key);
-		free(response->key_handle);
-		free(response->signature);
-		free(response->attestation_cert);
-		free(response);
+ ٻاهريون:
+	إذا (response != عدم) {
+		حرر(response->عوامي_ڪنجي);
+		حرر(response->ڪنجي_handle);
+		حرر(response->signature);
+		حرر(response->attestation_cert);
+		حرر(response);
 	}
-	return ret;
+	أرجع ret;
 }
 
-static void
-dump(const char *preamble, const void *sv, size_t l)
+ساكن فراغ
+dump(ثابت حرف *preamble, ثابت فراغ *sv, سائيز_t l)
 {
-#ifdef SK_DEBUG
-	const u_char *s = (const u_char *)sv;
-	size_t i;
+#جيڪڏهن_وصف_ٿيل SK_DEBUG
+	ثابت u_char *s = (ثابت u_char *)sv;
+	سائيز_t i;
 
 	fprintf(stderr, "%s (len %zu):\n", preamble, l);
-	for (i = 0; i < l; i++) {
-		if (i % 16 == 0)
+	لكل (i = 0; i < l; i++) {
+		إذا (i % 16 == 0)
 			fprintf(stderr, "%04zu: ", i);
 		fprintf(stderr, "%02x", s[i]);
-		if (i % 16 == 15 || i == l - 1)
+		إذا (i % 16 == 15 || i == l - 1)
 			fprintf(stderr, "\n");
 	}
-#endif
+#جيڪڏهن_پورو
 }
 
-static int
-sig_ecdsa(const uint8_t *message, size_t message_len,
-    const char *application, uint32_t counter, uint8_t flags,
-    const uint8_t *key_handle, size_t key_handle_len,
-    struct sk_sign_response *response)
+ساكن صحيح
+sig_ecdsa(ثابت uint8_t *پيغام, سائيز_t پيغام_len,
+    ثابت حرف *application, uint32_t counter, uint8_t flags,
+    ثابت uint8_t *ڪنجي_handle, سائيز_t ڪنجي_handle_len,
+    بنية sk_sign_response *response)
 {
-#ifdef WITH_OPENSSL
-	ECDSA_SIG *sig = NULL;
-	const BIGNUM *sig_r, *sig_s;
-	int ret = -1;
-	BIO *bio = NULL;
-	EVP_PKEY *pk = NULL;
-	EC_KEY *ec = NULL;
+#جيڪڏهن_وصف_ٿيل WITH_OPENSSL
+	ECDSA_SIG *sig = عدم;
+	ثابت BIGNUM *sig_r, *sig_s;
+	صحيح ret = -1;
+	BIO *bio = عدم;
+	EVP_PKEY *pk = عدم;
+	EC_ڪنجي *ec = عدم;
 	SHA2_CTX ctx;
-	uint8_t	apphash[SHA256_DIGEST_LENGTH];
-	uint8_t	sighash[SHA256_DIGEST_LENGTH];
+	uint8_t	apphash[SHA256_DIGEST_ڊيگهائي];
+	uint8_t	sighash[SHA256_DIGEST_ڊيگهائي];
 	uint8_t countbuf[4];
 
 	/* Decode EC_KEY from key handle */
-	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
-	    BIO_write(bio, key_handle, key_handle_len) != (int)key_handle_len) {
+	إذا ((bio = BIO_new(BIO_s_mem())) == عدم ||
+	    BIO_write(bio, ڪنجي_handle, ڪنجي_handle_len) != (صحيح)ڪنجي_handle_len) {
 		skdebug(__func__, "BIO setup failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if ((pk = PEM_read_bio_PrivateKey(bio, NULL, NULL, "")) == NULL) {
+	إذا ((pk = PEM_read_bio_ذاتي_ڪنجي(bio, عدم, عدم, "")) == عدم) {
 		skdebug(__func__, "PEM_read_bio_PrivateKey failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_PKEY_base_id(pk) != EVP_PKEY_EC) {
-		skdebug(__func__, "Not an EC key: %d", EVP_PKEY_base_id(pk));
-		goto out;
+	إذا (EVP_PKEY_بنياد_id(pk) != EVP_PKEY_EC) {
+		skdebug(__func__, "Not an EC key: %d", EVP_PKEY_بنياد_id(pk));
+		اذهب ٻاهريون;
 	}
-	if ((ec = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
+	إذا ((ec = EVP_PKEY_get1_EC_ڪنجي(pk)) == عدم) {
 		skdebug(__func__, "EVP_PKEY_get1_EC_KEY failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	/* Expect message to be pre-hashed */
-	if (message_len != SHA256_DIGEST_LENGTH) {
-		skdebug(__func__, "bad message len %zu", message_len);
-		goto out;
+	إذا (پيغام_len != SHA256_DIGEST_ڊيگهائي) {
+		skdebug(__func__, "bad message len %zu", پيغام_len);
+		اذهب ٻاهريون;
 	}
 	/* Prepare data to be signed */
-	dump("message", message, message_len);
+	dump("message", پيغام, پيغام_len);
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, (const u_char *)application, strlen(application));
+	SHA256Update(&ctx, (ثابت u_char *)application, لڙي_ڊيگهه(application));
 	SHA256Final(apphash, &ctx);
-	dump("apphash", apphash, sizeof(apphash));
+	dump("apphash", apphash, حجم(apphash));
 	countbuf[0] = (counter >> 24) & 0xff;
 	countbuf[1] = (counter >> 16) & 0xff;
 	countbuf[2] = (counter >> 8) & 0xff;
 	countbuf[3] = counter & 0xff;
-	dump("countbuf", countbuf, sizeof(countbuf));
-	dump("flags", &flags, sizeof(flags));
+	dump("countbuf", countbuf, حجم(countbuf));
+	dump("flags", &flags, حجم(flags));
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, apphash, sizeof(apphash));
-	SHA256Update(&ctx, &flags, sizeof(flags));
-	SHA256Update(&ctx, countbuf, sizeof(countbuf));
-	SHA256Update(&ctx, message, message_len);
+	SHA256Update(&ctx, apphash, حجم(apphash));
+	SHA256Update(&ctx, &flags, حجم(flags));
+	SHA256Update(&ctx, countbuf, حجم(countbuf));
+	SHA256Update(&ctx, پيغام, پيغام_len);
 	SHA256Final(sighash, &ctx);
-	dump("sighash", sighash, sizeof(sighash));
+	dump("sighash", sighash, حجم(sighash));
 	/* create and encode signature */
-	if ((sig = ECDSA_do_sign(sighash, sizeof(sighash), ec)) == NULL) {
+	إذا ((sig = ECDSA_do_sign(sighash, حجم(sighash), ec)) == عدم) {
 		skdebug(__func__, "ECDSA_do_sign failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
-	response->sig_r_len = BN_num_bytes(sig_r);
-	response->sig_s_len = BN_num_bytes(sig_s);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
-	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
+	response->sig_r_len = BN_انگ_بائيٽون(sig_r);
+	response->sig_s_len = BN_انگ_بائيٽون(sig_s);
+	إذا ((response->sig_r = صفر_يادگيري_ڏيو(1, response->sig_r_len)) == عدم ||
+	    (response->sig_s = صفر_يادگيري_ڏيو(1, response->sig_s_len)) == عدم) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	BN_bn2bin(sig_r, response->sig_r);
 	BN_bn2bin(sig_s, response->sig_s);
 	ret = 0;
- out:
-	explicit_bzero(&ctx, sizeof(ctx));
-	explicit_bzero(&apphash, sizeof(apphash));
-	explicit_bzero(&sighash, sizeof(sighash));
+ ٻاهريون:
+	explicit_bzero(&ctx, حجم(ctx));
+	explicit_bzero(&apphash, حجم(apphash));
+	explicit_bzero(&sighash, حجم(sighash));
 	ECDSA_SIG_free(sig);
-	if (ret != 0) {
-		free(response->sig_r);
-		free(response->sig_s);
-		response->sig_r = NULL;
-		response->sig_s = NULL;
+	إذا (ret != 0) {
+		حرر(response->sig_r);
+		حرر(response->sig_s);
+		response->sig_r = عدم;
+		response->sig_s = عدم;
 	}
 	BIO_free(bio);
-	EC_KEY_free(ec);
+	EC_ڪنجي_free(ec);
 	EVP_PKEY_free(pk);
-	return ret;
-#else
-	return -1;
-#endif
+	أرجع ret;
+#وإلا
+	أرجع -1;
+#جيڪڏهن_پورو
 }
 
-static int
-sig_ed25519(const uint8_t *message, size_t message_len,
-    const char *application, uint32_t counter, uint8_t flags,
-    const uint8_t *key_handle, size_t key_handle_len,
-    struct sk_sign_response *response)
+ساكن صحيح
+sig_ed25519(ثابت uint8_t *پيغام, سائيز_t پيغام_len,
+    ثابت حرف *application, uint32_t counter, uint8_t flags,
+    ثابت uint8_t *ڪنجي_handle, سائيز_t ڪنجي_handle_len,
+    بنية sk_sign_response *response)
 {
-	size_t o;
-	int ret = -1;
+	سائيز_t o;
+	صحيح ret = -1;
 	SHA2_CTX ctx;
-	uint8_t	apphash[SHA256_DIGEST_LENGTH];
-	uint8_t signbuf[sizeof(apphash) + sizeof(flags) +
-	    sizeof(counter) + SHA256_DIGEST_LENGTH];
-	uint8_t sig[crypto_sign_ed25519_BYTES];
-	unsigned long long siglen = 0;
+	uint8_t	apphash[SHA256_DIGEST_ڊيگهائي];
+	uint8_t signbuf[حجم(apphash) + حجم(flags) +
+	    حجم(counter) + SHA256_DIGEST_ڊيگهائي];
+	uint8_t sig[crypto_sign_ed25519_بائيٽون];
+	بنانشان ڊگهو ڊگهو siglen = 0;
 
-	if (key_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
-		skdebug(__func__, "bad key handle length %zu", key_handle_len);
-		goto out;
+	إذا (ڪنجي_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
+		skdebug(__func__, "bad key handle length %zu", ڪنجي_handle_len);
+		اذهب ٻاهريون;
 	}
 	/* Expect message to be pre-hashed */
-	if (message_len != SHA256_DIGEST_LENGTH) {
-		skdebug(__func__, "bad message len %zu", message_len);
-		goto out;
+	إذا (پيغام_len != SHA256_DIGEST_ڊيگهائي) {
+		skdebug(__func__, "bad message len %zu", پيغام_len);
+		اذهب ٻاهريون;
 	}
 	/* Prepare data to be signed */
-	dump("message", message, message_len);
+	dump("message", پيغام, پيغام_len);
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, (const u_char *)application, strlen(application));
+	SHA256Update(&ctx, (ثابت u_char *)application, لڙي_ڊيگهه(application));
 	SHA256Final(apphash, &ctx);
-	dump("apphash", apphash, sizeof(apphash));
+	dump("apphash", apphash, حجم(apphash));
 
-	memcpy(signbuf, apphash, sizeof(apphash));
-	o = sizeof(apphash);
+	يادگيري_نقل(signbuf, apphash, حجم(apphash));
+	o = حجم(apphash);
 	signbuf[o++] = flags;
 	signbuf[o++] = (counter >> 24) & 0xff;
 	signbuf[o++] = (counter >> 16) & 0xff;
 	signbuf[o++] = (counter >> 8) & 0xff;
 	signbuf[o++] = counter & 0xff;
-	memcpy(signbuf + o, message, message_len);
-	o += message_len;
-	if (o != sizeof(signbuf)) {
+	يادگيري_نقل(signbuf + o, پيغام, پيغام_len);
+	o += پيغام_len;
+	إذا (o != حجم(signbuf)) {
 		skdebug(__func__, "bad sign buf len %zu, expected %zu",
-		    o, sizeof(signbuf));
-		goto out;
+		    o, حجم(signbuf));
+		اذهب ٻاهريون;
 	}
-	dump("signbuf", signbuf, sizeof(signbuf));
+	dump("signbuf", signbuf, حجم(signbuf));
 	/* create and encode signature */
-	if (crypto_sign_ed25519_detached(sig, &siglen, signbuf, sizeof(signbuf),
-	    key_handle) != 0) {
+	إذا (crypto_sign_ed25519_detached(sig, &siglen, signbuf, حجم(signbuf),
+	    ڪنجي_handle) != 0) {
 		skdebug(__func__, "crypto_sign_ed25519_detached failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (siglen != sizeof(sig)) {
+	إذا (siglen != حجم(sig)) {
 		skdebug(__func__, "bad signature length %llu", siglen);
-		goto out;
+		اذهب ٻاهريون;
 	}
-	response->sig_r_len = sizeof(sig);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
+	response->sig_r_len = حجم(sig);
+	إذا ((response->sig_r = صفر_يادگيري_ڏيو(1, response->sig_r_len)) == عدم) {
 		skdebug(__func__, "calloc signature failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	memcpy(response->sig_r, sig, response->sig_r_len);
+	يادگيري_نقل(response->sig_r, sig, response->sig_r_len);
 	dump("sig_r", response->sig_r, response->sig_r_len);
 	ret = 0;
- out:
-	explicit_bzero(&ctx, sizeof(ctx));
-	explicit_bzero(&apphash, sizeof(apphash));
-	explicit_bzero(&signbuf, sizeof(signbuf));
-	explicit_bzero(&sig, sizeof(sig));
-	if (ret != 0) {
-		free(response->sig_r);
-		response->sig_r = NULL;
+ ٻاهريون:
+	explicit_bzero(&ctx, حجم(ctx));
+	explicit_bzero(&apphash, حجم(apphash));
+	explicit_bzero(&signbuf, حجم(signbuf));
+	explicit_bzero(&sig, حجم(sig));
+	إذا (ret != 0) {
+		حرر(response->sig_r);
+		response->sig_r = عدم;
 	}
-	return ret;
+	أرجع ret;
 }
 
-int
-sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response)
+صحيح
+sk_sign(uint32_t alg, ثابت uint8_t *معلومات, سائيز_t datalen,
+    ثابت حرف *application, ثابت uint8_t *ڪنجي_handle, سائيز_t ڪنجي_handle_len,
+    uint8_t flags, ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_sign_response **sign_response)
 {
-	struct sk_sign_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL;
+	بنية sk_sign_response *response = عدم;
+	صحيح ret = SSH_SK_ERR_GENERAL;
 	SHA2_CTX ctx;
-	uint8_t message[32];
+	uint8_t پيغام[32];
 
-	if (sign_response == NULL) {
+	إذا (sign_response == عدم) {
 		skdebug(__func__, "sign_response == NULL");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	*sign_response = NULL;
-	if (check_options(options) != 0)
-		goto out; /* error already logged */
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	*sign_response = عدم;
+	إذا (check_options(options) != 0)
+		اذهب ٻاهريون; /* error already logged */
+	إذا ((response = صفر_يادگيري_ڏيو(1, حجم(*response))) == عدم) {
 		skdebug(__func__, "calloc response failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 	SHA256Init(&ctx);
-	SHA256Update(&ctx, data, datalen);
-	SHA256Final(message, &ctx);
+	SHA256Update(&ctx, معلومات, datalen);
+	SHA256Final(پيغام, &ctx);
 	response->flags = flags;
 	response->counter = 0x12345678;
-	switch(alg) {
-	case SSH_SK_ECDSA:
-		if (sig_ecdsa(message, sizeof(message), application,
-		    response->counter, flags, key_handle, key_handle_len,
+	بدل(alg) {
+	حالة SSH_SK_ECDSA:
+		إذا (sig_ecdsa(پيغام, حجم(پيغام), application,
+		    response->counter, flags, ڪنجي_handle, ڪنجي_handle_len,
 		    response) != 0)
-			goto out;
-		break;
-	case SSH_SK_ED25519:
-		if (sig_ed25519(message, sizeof(message), application,
-		    response->counter, flags, key_handle, key_handle_len,
+			اذهب ٻاهريون;
+		اكسر;
+	حالة SSH_SK_ED25519:
+		إذا (sig_ed25519(پيغام, حجم(پيغام), application,
+		    response->counter, flags, ڪنجي_handle, ڪنجي_handle_len,
 		    response) != 0)
-			goto out;
-		break;
-	default:
+			اذهب ٻاهريون;
+		اكسر;
+	افتراضي:
 		skdebug(__func__, "unsupported key type %d", alg);
-		goto out;
+		اذهب ٻاهريون;
 	}
 	*sign_response = response;
-	response = NULL;
+	response = عدم;
 	ret = 0;
- out:
-	explicit_bzero(message, sizeof(message));
-	if (response != NULL) {
-		free(response->sig_r);
-		free(response->sig_s);
-		free(response);
+ ٻاهريون:
+	explicit_bzero(پيغام, حجم(پيغام));
+	إذا (response != عدم) {
+		حرر(response->sig_r);
+		حرر(response->sig_s);
+		حرر(response);
 	}
-	return ret;
+	أرجع ret;
 }
 
-int
-sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks)
+صحيح
+sk_ڀريو_resident_ڪنجيون(ثابت حرف *pin, بنية sk_option **options,
+    بنية sk_resident_ڪنجي ***rks, سائيز_t *nrks)
 {
-	return SSH_SK_ERR_UNSUPPORTED;
+	أرجع SSH_SK_ERR_UNSUPPORTED;
 }

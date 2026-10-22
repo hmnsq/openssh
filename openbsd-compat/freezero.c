@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#ifndef HAVE_FREEZERO
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FREEZERO
 
-void
-freezero(void *ptr, size_t sz)
+فراغ
+freezero(فراغ *ptr, سائيز_t sz)
 {
-	if (ptr == NULL)
-		return;
+	إذا (ptr == عدم)
+		أرجع;
 	explicit_bzero(ptr, sz);
-	free(ptr);
+	حرر(ptr);
 }
 
-#endif /* HAVE_FREEZERO */
+#جيڪڏهن_پورو /* HAVE_FREEZERO */
 

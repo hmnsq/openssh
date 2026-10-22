@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#ضمن <stddef.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
 
-extern "C" {
+خارجي "C" {
 
-#include "auth-options.h"
+#ضمن "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحيح LLVMFuzzer_Test_One_داخلا(ثابت uint8_t* معلومات, سائيز_t سائيز)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	حرف *cp = (حرف *)يادگيري_ڏيو(سائيز + 1);
+	بنية sshauthopt *opts = عدم, *ملايو = عدم, *جوڙيو = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
-	memcpy(cp, data, size);
-	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	إذا (cp == عدم || جوڙيو == عدم)
+		اذهب ٻاهريون;
+	يادگيري_نقل(cp, معلومات, سائيز);
+	cp[سائيز] = '\0';
+	إذا ((opts = sshauthopt_parse(cp, عدم)) == عدم)
+		اذهب ٻاهريون;
+	إذا ((ملايو = sshauthopt_ملايو(opts, جوڙيو, عدم)) == عدم)
+		اذهب ٻاهريون;
 
- out:
-	free(cp);
-	sshauthopt_free(add);
+ ٻاهريون:
+	حرر(cp);
+	sshauthopt_free(جوڙيو);
 	sshauthopt_free(opts);
-	sshauthopt_free(merge);
-	return 0;
+	sshauthopt_free(ملايو);
+	أرجع 0;
 }
 
 } // extern "C"

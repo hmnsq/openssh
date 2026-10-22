@@ -20,199 +20,199 @@
  * Alternative to the internal libsodium-based implementation in ed25519.c.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef OPENSSL_HAS_ED25519
+#جيڪڏهن_وصف_ٿيل OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <string.h>
-#include <stdint.h>
-#include <limits.h>
+#ضمن <string.h>
+#ضمن <stdint.h>
+#ضمن <limits.h>
 
-#include <openssl/evp.h>
+#ضمن <openssl/evp.h>
 
-#include "crypto_api.h"
-#include "log.h"
+#ضمن "crypto_api.h"
+#ضمن "log.h"
 
-#if crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
-#error "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
-#endif
+#إذا crypto_sign_ed25519_SECRETKEYBYTES <= crypto_sign_ed25519_PUBLICKEYBYTES
+#غلطي "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
+#جيڪڏهن_پورو
 
-#define SSH_ED25519_RAW_SECRET_KEY_LEN \
+#وصف_ڪريو SSH_ED25519_RAW_SECRET_ڪنجي_LEN \
     (crypto_sign_ed25519_SECRETKEYBYTES - crypto_sign_ed25519_PUBLICKEYBYTES)
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+صحيح
+crypto_sign_ed25519_keypair(بنانشان حرف *pk, بنانشان حرف *sk)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *pkey = NULL;
-	size_t pklen, sklen;
-	int ret = -1;
+	EVP_PKEY_CTX *ctx = عدم;
+	EVP_PKEY *pkey = عدم;
+	سائيز_t pklen, sklen;
+	صحيح ret = -1;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL)) == NULL) {
+	إذا ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, عدم)) == عدم) {
 		debug3_f("EVP_PKEY_CTX_new_id failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	إذا (EVP_PKEY_keygen_init(ctx) <= 0) {
 		debug3_f("EVP_PKEY_keygen_init failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
+	إذا (EVP_PKEY_keygen(ctx, &pkey) <= 0) {
 		debug3_f("EVP_PKEY_keygen failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	إذا (!EVP_PKEY_get_raw_عوامي_ڪنجي(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
+	إذا (pklen != crypto_sign_ed25519_PUBLICKEYBYTES) {
 		debug3_f("public key length mismatch: %zu", pklen);
-		goto out;
+		اذهب ٻاهريون;
 	}
 
-	sklen = SSH_ED25519_RAW_SECRET_KEY_LEN;
+	sklen = SSH_ED25519_RAW_SECRET_ڪنجي_LEN;
 	/* Extract private key (32 bytes seed) */
-	if (!EVP_PKEY_get_raw_private_key(pkey, sk, &sklen)) {
+	إذا (!EVP_PKEY_get_raw_ذاتي_ڪنجي(pkey, sk, &sklen)) {
 		debug3_f("EVP_PKEY_get_raw_private_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (sklen != SSH_ED25519_RAW_SECRET_KEY_LEN) {
+	إذا (sklen != SSH_ED25519_RAW_SECRET_ڪنجي_LEN) {
 		debug3_f("private key length mismatch: %zu", sklen);
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* Append public key to secret key (SUPERCOP format compatibility) */
-	memcpy(sk + sklen, pk, crypto_sign_ed25519_PUBLICKEYBYTES);
+	يادگيري_نقل(sk + sklen, pk, crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
-out:
+ٻاهريون:
 	EVP_PKEY_free(pkey);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	أرجع ret;
 }
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-    const unsigned char *seed)
+صحيح
+crypto_sign_ed25519_ٻج_keypair(بنانشان حرف *pk, بنانشان حرف *sk,
+    ثابت بنانشان حرف *ٻج)
 {
-	EVP_PKEY *pkey = NULL;
-	size_t pklen;
-	int ret = -1;
+	EVP_PKEY *pkey = عدم;
+	سائيز_t pklen;
+	صحيح ret = -1;
 
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    seed, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	إذا ((pkey = EVP_PKEY_new_raw_ذاتي_ڪنجي(EVP_PKEY_ED25519, عدم,
+	    ٻج, SSH_ED25519_RAW_SECRET_ڪنجي_LEN)) == عدم) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	إذا (!EVP_PKEY_get_raw_عوامي_ڪنجي(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* Build sk = seed || pk */
-	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_KEY_LEN);
-	memcpy(sk + SSH_ED25519_RAW_SECRET_KEY_LEN, pk,
+	يادگيري_نقل(sk, ٻج, SSH_ED25519_RAW_SECRET_ڪنجي_LEN);
+	يادگيري_نقل(sk + SSH_ED25519_RAW_SECRET_ڪنجي_LEN, pk,
 	    crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
-out:
+ٻاهريون:
 	EVP_PKEY_free(pkey);
-	return ret;
+	أرجع ret;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglenp,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *sk)
+صحيح
+crypto_sign_ed25519_detached(بنانشان حرف *sig, بنانشان ڊگهو ڊگهو *siglenp,
+    ثابت بنانشان حرف *m, بنانشان ڊگهو ڊگهو mlen,
+    ثابت بنانشان حرف *sk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
-	size_t siglen;
-	int ret = -1;
+	EVP_PKEY *pkey = عدم;
+	EVP_MD_CTX *mdctx = عدم;
+	سائيز_t siglen;
+	صحيح ret = -1;
 
 	/* Create EVP_PKEY from secret key (first 32 bytes are the seed) */
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    sk, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	إذا ((pkey = EVP_PKEY_new_raw_ذاتي_ڪنجي(EVP_PKEY_ED25519, عدم,
+	    sk, SSH_ED25519_RAW_SECRET_ڪنجي_LEN)) == عدم) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	/* Sign the message */
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	إذا ((mdctx = EVP_MD_CTX_new()) == عدم) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_DigestSignInit(mdctx, NULL, NULL, NULL, pkey) != 1) {
+	إذا (EVP_DigestSignInit(mdctx, عدم, عدم, عدم, pkey) != 1) {
 		debug3_f("EVP_DigestSignInit failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	siglen = crypto_sign_ed25519_BYTES;
-	if (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
+	siglen = crypto_sign_ed25519_بائيٽون;
+	إذا (EVP_DigestSign(mdctx, sig, &siglen, m, mlen) != 1) {
 		debug3_f("EVP_DigestSign failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (siglen != crypto_sign_ed25519_BYTES) {
+	إذا (siglen != crypto_sign_ed25519_بائيٽون) {
 		debug3_f("signature length mismatch: %zu", siglen);
-		goto out;
+		اذهب ٻاهريون;
 	}
 
-	if (siglenp != NULL)
+	إذا (siglenp != عدم)
 		*siglenp = siglen;
 
 	ret = 0;
-out:
+ٻاهريون:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	أرجع ret;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-    const unsigned char *m, unsigned long long mlen,
-    const unsigned char *pk)
+صحيح
+crypto_sign_ed25519_verify_detached(ثابت بنانشان حرف *sig,
+    ثابت بنانشان حرف *m, بنانشان ڊگهو ڊگهو mlen,
+    ثابت بنانشان حرف *pk)
 {
-	EVP_PKEY *pkey = NULL;
-	EVP_MD_CTX *mdctx = NULL;
-	int ret = -1;
+	EVP_PKEY *pkey = عدم;
+	EVP_MD_CTX *mdctx = عدم;
+	صحيح ret = -1;
 
-	if (mlen > SIZE_MAX) {
+	إذا (mlen > SIZE_MAX) {
 		debug3_f("message too long: %llu", mlen);
-		return -1;
+		أرجع -1;
 	}
 
 	/* Create EVP_PKEY from public key */
-	if ((pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
-	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == NULL) {
+	إذا ((pkey = EVP_PKEY_new_raw_عوامي_ڪنجي(EVP_PKEY_ED25519, عدم,
+	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == عدم) {
 		debug3_f("EVP_PKEY_new_raw_public_key failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
-	if ((mdctx = EVP_MD_CTX_new()) == NULL) {
+	إذا ((mdctx = EVP_MD_CTX_new()) == عدم) {
 		debug3_f("EVP_MD_CTX_new failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_DigestVerifyInit(mdctx, NULL, NULL, NULL, pkey) <= 0) {
+	إذا (EVP_DigestVerifyInit(mdctx, عدم, عدم, عدم, pkey) <= 0) {
 		debug3_f("EVP_DigestVerifyInit failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
-	if (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_BYTES,
-	    m, (size_t)mlen) != 1) {
+	إذا (EVP_DigestVerify(mdctx, sig, crypto_sign_ed25519_بائيٽون,
+	    m, (سائيز_t)mlen) != 1) {
 		debug3_f("EVP_DigestVerify failed");
-		goto out;
+		اذهب ٻاهريون;
 	}
 
 	ret = 0;
-out:
+ٻاهريون:
 	EVP_MD_CTX_free(mdctx);
 	EVP_PKEY_free(pkey);
-	return ret;
+	أرجع ret;
 }
 
-#endif /* OPENSSL_HAS_ED25519 */
+#جيڪڏهن_پورو /* OPENSSL_HAS_ED25519 */

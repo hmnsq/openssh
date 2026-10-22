@@ -15,14 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	 vasnmprintf(char **, size_t, int *, const char *, va_list);
-int	 mprintf(const char *, ...)
-	    __attribute__((format(printf, 1, 2)));
-int	 fmprintf(FILE *, const char *, ...)
-	    __attribute__((format(printf, 2, 3)));
-int	 vfmprintf(FILE *, const char *, va_list);
-int	 snmprintf(char *, size_t, int *, const char *, ...)
-	    __attribute__((format(printf, 4, 5)));
-int	 asmprintf(char **, size_t, int *, const char *, ...)
-	    __attribute__((format(printf, 4, 5)));
-void	 msetlocale(void);
+صحيح	 vasnmprintf(حرف **, سائيز_t, صحيح *, ثابت حرف *, va_list);
+صحيح	 mprintf(ثابت حرف *, ...)
+	    __attribute__((format(لکو, 1, 2)));
+صحيح	 fmprintf(FILE *, ثابت حرف *, ...)
+	    __attribute__((format(لکو, 2, 3)));
+صحيح	 vfmprintf(FILE *, ثابت حرف *, va_list);
+صحيح	 snmprintf(حرف *, سائيز_t, صحيح *, ثابت حرف *, ...)
+	    __attribute__((format(لکو, 4, 5)));
+صحيح	 asmprintf(حرف **, سائيز_t, صحيح *, ثابت حرف *, ...)
+	    __attribute__((format(لکو, 4, 5)));
+فراغ	 msetlocale(فراغ);

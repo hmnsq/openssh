@@ -34,33 +34,33 @@
 
 /* OPENBSD ORIGINAL: include/fnmatch.h */
 
-#ifndef HAVE_FNMATCH_H
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FNMATCH_H
 /* Ensure we define FNM_CASEFOLD */
-#define __BSD_VISIBLE 1
+#وصف_ڪريو __BSD_VISIBLE 1
 
-#ifndef	_FNMATCH_H_
-#define	_FNMATCH_H_
+#جيڪڏهن_وصف_نه_ٿيل	_FNMATCH_H_
+#وصف_ڪريو	_FNMATCH_H_
 
-#ifdef HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
-#endif
+#جيڪڏهن_وصف_ٿيل HAVE_SYS_CDEFS_H
+#ضمن <sys/cdefs.h>
+#جيڪڏهن_پورو
 
-#define	FNM_NOMATCH	1	/* Match failed. */
-#define	FNM_NOSYS	2	/* Function not supported (unused). */
+#وصف_ڪريو	FNM_NOMATCH	1	/* Match failed. */
+#وصف_ڪريو	FNM_NOSYS	2	/* Function not supported (unused). */
 
-#define	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
-#define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
-#define	FNM_PERIOD	0x04	/* Period must be matched by period. */
-#if __BSD_VISIBLE
-#define	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
-#define	FNM_CASEFOLD	0x10	/* Case insensitive search. */
-#define	FNM_IGNORECASE	FNM_CASEFOLD
-#define	FNM_FILE_NAME	FNM_PATHNAME
-#endif
+#وصف_ڪريو	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
+#وصف_ڪريو	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
+#وصف_ڪريو	FNM_PERIOD	0x04	/* Period must be matched by period. */
+#إذا __BSD_VISIBLE
+#وصف_ڪريو	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
+#وصف_ڪريو	FNM_CASEFOLD	0x10	/* Case insensitive search. */
+#وصف_ڪريو	FNM_IGNORECASE	FNM_CASEFOLD
+#وصف_ڪريو	FNM_FILE_NAME	FNM_PATHNAME
+#جيڪڏهن_پورو
 
 /* __BEGIN_DECLS */
-int	 fnmatch(const char *, const char *, int);
+صحيح	 fnmatch(ثابت حرف *, ثابت حرف *, صحيح);
 /* __END_DECLS */
 
-#endif /* !_FNMATCH_H_ */
-#endif /* ! HAVE_FNMATCH_H */
+#جيڪڏهن_پورو /* !_FNMATCH_H_ */
+#جيڪڏهن_پورو /* ! HAVE_FNMATCH_H */

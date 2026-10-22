@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#جيڪڏهن_وصف_نه_ٿيل _BSD_MISC_H
+#وصف_ڪريو _BSD_MISC_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+حرف *ssh_get_progname(حرف *);
+صحيح ٻج_from_prngd(بنانشان حرف *, سائيز_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#جيڪڏهن_وصف_نه_ٿيل HAVE_SETSID
+#وصف_ڪريو setsid() setpgrp(0, getpid())
+#جيڪڏهن_پورو /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#جيڪڏهن_وصف_نه_ٿيل HAVE_SETENV
+صحيح setenv(ثابت حرف *, ثابت حرف *, صحيح);
+#جيڪڏهن_پورو /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#جيڪڏهن_وصف_نه_ٿيل HAVE_SETLOGIN
+صحيح setlogin(ثابت حرف *);
+#جيڪڏهن_پورو /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#جيڪڏهن_وصف_نه_ٿيل HAVE_INNETGR
+صحيح innetgr(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
+#جيڪڏهن_پورو /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#إذا !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+صحيح seteuid(uid_t);
+#جيڪڏهن_پورو /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#إذا !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+صحيح setegid(uid_t);
+#جيڪڏهن_پورو /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#إذا !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ثابت حرف *strerror(صحيح);
+#جيڪڏهن_پورو
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#إذا !defined(HAVE_SETLINEBUF)
+#وصف_ڪريو setlinebuf(a)	(setvbuf((a), عدم, _IOLBF, 0))
+#جيڪڏهن_پورو
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#جيڪڏهن_وصف_نه_ٿيل HAVE_UTIMES
+#جيڪڏهن_وصف_نه_ٿيل HAVE_STRUCT_TIMEVAL
+بنية timeval {
+	ڊگهو tv_sec;
+	ڊگهو tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#جيڪڏهن_پورو /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+صحيح utimes(ثابت حرف *, بنية timeval *);
+#جيڪڏهن_پورو /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_DIRFD
+صحيح dirfd(فراغ *);
+#جيڪڏهن_پورو
 
-#ifndef AT_FDCWD
+#جيڪڏهن_وصف_نه_ٿيل AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FCHMODAT
+صحيح fchmodat(صحيح, ثابت حرف *, گهڻائي_t, صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FCHOWNAT
+صحيح fchownat(صحيح, ثابت حرف *, uid_t, gid_t, صحيح);
+#جيڪڏهن_پورو
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#جيڪڏهن_وصف_ٿيل HAVE_FSTATAT
+صحيح fstatat(صحيح, ثابت حرف *, بنية stat *, صحيح);
+#جيڪڏهن_پورو
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#جيڪڏهن_وصف_ٿيل HAVE_UNLINKAT
+صحيح unlinkat(صحيح, ثابت حرف *, صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#جيڪڏهن_وصف_نه_ٿيل HAVE_TRUNCATE
+صحيح truncate (ثابت حرف *, off_t);
+#جيڪڏهن_پورو /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#جيڪڏهن_وصف_نه_ٿيل HAVE_STRUCT_TIMESPEC
+بنية timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	ڊگهو	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#جيڪڏهن_پورو /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#إذا !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+صحيح nanosleep(ثابت بنية timespec *, بنية timespec *);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_UTIMENSAT
+#جيڪڏهن_وصف_نه_ٿيل HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+صحيح utimensat(صحيح, ثابت حرف *, ثابت بنية timespec[2], صحيح);
+#جيڪڏهن_پورو /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_USLEEP
+صحيح usleep(بنانشان صحيح useconds);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_TCGETPGRP
+pid_t tcgetpgrp(صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_TCSENDBREAK
+صحيح tcsendbreak(صحيح, صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_UNSETENV
+صحيح unsetenv(ثابت حرف *);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ISBLANK
+صحيح	isblank(صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_GETPGID
+#جيڪڏهن_وصف_نه_ٿيل HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_PSELECT
+صحيح pselect(صحيح, fd_set *, fd_set *, fd_set *, ثابت بنية timespec *,
+    ثابت sigset_t *);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ENDGRENT
+# define endgrent() افعل { } طالما(0)
+#جيڪڏهن_پورو
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_KRB5_GET_ERROR_پيغام
+# define krb5_get_error_پيغام krb5_get_err_متن
+#جيڪڏهن_پورو
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_KRB5_FREE_ERROR_پيغام
+# define krb5_free_error_پيغام(a,b) افعل { } طالما(0)
+#جيڪڏهن_پورو
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_PLEDGE
+صحيح pledge(ثابت حرف *promises, ثابت حرف *execpromises);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_UNVEIL
+صحيح unveil(ثابت حرف *, ثابت حرف *);
+#جيڪڏهن_پورو
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ERR
+فراغ err(صحيح, ثابت حرف *, ...) __attribute__((format(لکو, 2, 3)));
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل HAVE_ERRX
+فراغ errx(صحيح, ثابت حرف *, ...) __attribute__((format(لکو, 2, 3)));
+#جيڪڏهن_پورو
+#جيڪڏهن_وصف_نه_ٿيل HAVE_WARN
+فراغ warn(ثابت حرف *, ...) __attribute__((format(لکو, 1, 2)));
+#جيڪڏهن_پورو
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_LLABS
+ڊگهو ڊگهو llabs(ڊگهو ڊگهو);
+#جيڪڏهن_پورو
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#إذا defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+فراغ bzero(فراغ *, سائيز_t);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_RAISE
+صحيح ارفع(صحيح);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_GETSID
+#جيڪڏهن_وصف_نه_ٿيل HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_FLOCK
+#جيڪڏهن_وصف_نه_ٿيل HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+صحيح flock(صحيح, صحيح);
+#جيڪڏهن_پورو
 
-#ifdef FFLUSH_NULL_BUG
+#جيڪڏهن_وصف_ٿيل FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#جيڪڏهن_پورو
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_LOCALTIME_R
+بنية tm *localtime_r(ثابت time_t *, بنية tm *);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#جيڪڏهن_وصف_نه_ٿيل HAVE_CLOCK_GETTIME
+تعريفنوع صحيح clockid_t;
+#جيڪڏهن_وصف_نه_ٿيل CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#جيڪڏهن_پورو
+صحيح clock_gettime(clockid_t, بنية timespec *);
+#جيڪڏهن_پورو
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#جيڪڏهن_وصف_نه_ٿيل HAVE_REALPATH
+#وصف_ڪريو realpath(x, y)	(sftp_realpath((x), (y)))
+#جيڪڏهن_پورو
 
-#endif /* _BSD_MISC_H */
+#جيڪڏهن_پورو /* _BSD_MISC_H */

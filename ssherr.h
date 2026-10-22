@@ -15,80 +15,80 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSHERR_H
-#define _SSHERR_H
+#جيڪڏهن_وصف_نه_ٿيل _SSHERR_H
+#وصف_ڪريو _SSHERR_H
 
 /* XXX are these too granular? not granular enough? I can't decide - djm */
 
 /* Error codes */
-#define SSH_ERR_SUCCESS				0
-#define SSH_ERR_INTERNAL_ERROR			-1
-#define SSH_ERR_ALLOC_FAIL			-2
-#define SSH_ERR_MESSAGE_INCOMPLETE		-3
-#define SSH_ERR_INVALID_FORMAT			-4
-#define SSH_ERR_BIGNUM_IS_NEGATIVE		-5
-#define SSH_ERR_STRING_TOO_LARGE		-6
-#define SSH_ERR_BIGNUM_TOO_LARGE		-7
-#define SSH_ERR_ECPOINT_TOO_LARGE		-8
-#define SSH_ERR_NO_BUFFER_SPACE			-9
-#define SSH_ERR_INVALID_ARGUMENT		-10
-#define SSH_ERR_KEY_BITS_MISMATCH		-11
-#define SSH_ERR_EC_CURVE_INVALID		-12
-#define SSH_ERR_KEY_TYPE_MISMATCH		-13
-#define SSH_ERR_KEY_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
-#define SSH_ERR_EC_CURVE_MISMATCH		-15
-#define SSH_ERR_EXPECTED_CERT			-16
-#define SSH_ERR_KEY_LACKS_CERTBLOB		-17
-#define SSH_ERR_KEY_CERT_UNKNOWN_TYPE		-18
-#define SSH_ERR_KEY_CERT_INVALID_SIGN_KEY	-19
-#define SSH_ERR_KEY_INVALID_EC_VALUE		-20
-#define SSH_ERR_SIGNATURE_INVALID		-21
-#define SSH_ERR_LIBCRYPTO_ERROR			-22
-#define SSH_ERR_UNEXPECTED_TRAILING_DATA	-23
-#define SSH_ERR_SYSTEM_ERROR			-24
-#define SSH_ERR_KEY_CERT_INVALID		-25
-#define SSH_ERR_AGENT_COMMUNICATION		-26
-#define SSH_ERR_AGENT_FAILURE			-27
-#define SSH_ERR_DH_GEX_OUT_OF_RANGE		-28
-#define SSH_ERR_DISCONNECTED			-29
-#define SSH_ERR_MAC_INVALID			-30
-#define SSH_ERR_NO_CIPHER_ALG_MATCH		-31
-#define SSH_ERR_NO_MAC_ALG_MATCH		-32
-#define SSH_ERR_NO_COMPRESS_ALG_MATCH		-33
-#define SSH_ERR_NO_KEX_ALG_MATCH		-34
-#define SSH_ERR_NO_HOSTKEY_ALG_MATCH		-35
-#define SSH_ERR_NO_HOSTKEY_LOADED		-36
-#define SSH_ERR_PROTOCOL_MISMATCH		-37
-#define SSH_ERR_NO_PROTOCOL_VERSION		-38
-#define SSH_ERR_NEED_REKEY			-39
-#define SSH_ERR_PASSPHRASE_TOO_SHORT		-40
-#define SSH_ERR_FILE_CHANGED			-41
-#define SSH_ERR_KEY_UNKNOWN_CIPHER		-42
-#define SSH_ERR_KEY_WRONG_PASSPHRASE		-43
-#define SSH_ERR_KEY_BAD_PERMISSIONS		-44
-#define SSH_ERR_KEY_CERT_MISMATCH		-45
-#define SSH_ERR_KEY_NOT_FOUND			-46
-#define SSH_ERR_AGENT_NOT_PRESENT		-47
-#define SSH_ERR_AGENT_NO_IDENTITIES		-48
-#define SSH_ERR_BUFFER_READ_ONLY		-49
-#define SSH_ERR_KRL_BAD_MAGIC			-50
-#define SSH_ERR_KEY_REVOKED			-51
-#define SSH_ERR_CONN_CLOSED			-52
-#define SSH_ERR_CONN_TIMEOUT			-53
-#define SSH_ERR_CONN_CORRUPT			-54
-#define SSH_ERR_PROTOCOL_ERROR			-55
-#define SSH_ERR_KEY_LENGTH			-56
-#define SSH_ERR_NUMBER_TOO_LARGE		-57
-#define SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
-#define SSH_ERR_FEATURE_UNSUPPORTED		-59
-#define SSH_ERR_DEVICE_NOT_FOUND		-60
-#define SSH_ERR_CRYPTO_ERROR			-61
-#define SSH_ERR_INTERNAL_CRYPTO_ERROR		-62
-#define SSH_ERR_KEY_ALG_UNSUPPORTED		-63
+#وصف_ڪريو SSH_ERR_SUCCESS				0
+#وصف_ڪريو SSH_ERR_اندروني_ERROR			-1
+#وصف_ڪريو SSH_ERR_ALLOC_FAIL			-2
+#وصف_ڪريو SSH_ERR_پيغام_INCOMPLETE		-3
+#وصف_ڪريو SSH_ERR_INVALID_FORMAT			-4
+#وصف_ڪريو SSH_ERR_BIGNUM_IS_NEGATIVE		-5
+#وصف_ڪريو SSH_ERR_STRING_TOO_LARGE		-6
+#وصف_ڪريو SSH_ERR_BIGNUM_TOO_LARGE		-7
+#وصف_ڪريو SSH_ERR_ECPOINT_TOO_LARGE		-8
+#وصف_ڪريو SSH_ERR_NO_بفر_SPACE			-9
+#وصف_ڪريو SSH_ERR_INVALID_دليل		-10
+#وصف_ڪريو SSH_ERR_ڪنجي_بٽ_MISMATCH		-11
+#وصف_ڪريو SSH_ERR_EC_وڪر_INVALID		-12
+#وصف_ڪريو SSH_ERR_ڪنجي_TYPE_MISMATCH		-13
+#وصف_ڪريو SSH_ERR_ڪنجي_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
+#وصف_ڪريو SSH_ERR_EC_وڪر_MISMATCH		-15
+#وصف_ڪريو SSH_ERR_EXPECTED_CERT			-16
+#وصف_ڪريو SSH_ERR_ڪنجي_LACKS_CERTBLOB		-17
+#وصف_ڪريو SSH_ERR_ڪنجي_CERT_UNKNOWN_TYPE		-18
+#وصف_ڪريو SSH_ERR_ڪنجي_CERT_INVALID_SIGN_ڪنجي	-19
+#وصف_ڪريو SSH_ERR_ڪنجي_INVALID_EC_قدر		-20
+#وصف_ڪريو SSH_ERR_SIGNATURE_INVALID		-21
+#وصف_ڪريو SSH_ERR_LIBCRYPTO_ERROR			-22
+#وصف_ڪريو SSH_ERR_UNEXPECTED_TRAILING_معلومات	-23
+#وصف_ڪريو SSH_ERR_SYSTEM_ERROR			-24
+#وصف_ڪريو SSH_ERR_ڪنجي_CERT_INVALID		-25
+#وصف_ڪريو SSH_ERR_AGENT_COMMUNICATION		-26
+#وصف_ڪريو SSH_ERR_AGENT_FAILURE			-27
+#وصف_ڪريو SSH_ERR_DH_GEX_ٻاهريون_جو_RANGE		-28
+#وصف_ڪريو SSH_ERR_DISCONNECTED			-29
+#وصف_ڪريو SSH_ERR_MAC_INVALID			-30
+#وصف_ڪريو SSH_ERR_NO_CIPHER_ALG_ميلاپ		-31
+#وصف_ڪريو SSH_ERR_NO_MAC_ALG_ميلاپ		-32
+#وصف_ڪريو SSH_ERR_NO_COMPRESS_ALG_ميلاپ		-33
+#وصف_ڪريو SSH_ERR_NO_KEX_ALG_ميلاپ		-34
+#وصف_ڪريو SSH_ERR_NO_HOSTKEY_ALG_ميلاپ		-35
+#وصف_ڪريو SSH_ERR_NO_HOSTKEY_LOADED		-36
+#وصف_ڪريو SSH_ERR_PROTOCOL_MISMATCH		-37
+#وصف_ڪريو SSH_ERR_NO_PROTOCOL_نسخو		-38
+#وصف_ڪريو SSH_ERR_NEED_REKEY			-39
+#وصف_ڪريو SSH_ERR_PASSPHRASE_TOO_SHORT		-40
+#وصف_ڪريو SSH_ERR_FILE_بدليو			-41
+#وصف_ڪريو SSH_ERR_ڪنجي_UNKNOWN_CIPHER		-42
+#وصف_ڪريو SSH_ERR_ڪنجي_WRONG_PASSPHRASE		-43
+#وصف_ڪريو SSH_ERR_ڪنجي_BAD_PERMISSIONS		-44
+#وصف_ڪريو SSH_ERR_ڪنجي_CERT_MISMATCH		-45
+#وصف_ڪريو SSH_ERR_ڪنجي_NOT_مليو			-46
+#وصف_ڪريو SSH_ERR_AGENT_NOT_PRESENT		-47
+#وصف_ڪريو SSH_ERR_AGENT_NO_IDENTITIES		-48
+#وصف_ڪريو SSH_ERR_بفر_READ_ONLY		-49
+#وصف_ڪريو SSH_ERR_KRL_BAD_MAGIC			-50
+#وصف_ڪريو SSH_ERR_ڪنجي_REVOKED			-51
+#وصف_ڪريو SSH_ERR_CONN_CLOSED			-52
+#وصف_ڪريو SSH_ERR_CONN_TIMEOUT			-53
+#وصف_ڪريو SSH_ERR_CONN_CORRUPT			-54
+#وصف_ڪريو SSH_ERR_PROTOCOL_ERROR			-55
+#وصف_ڪريو SSH_ERR_ڪنجي_ڊيگهائي			-56
+#وصف_ڪريو SSH_ERR_عدد_TOO_LARGE		-57
+#وصف_ڪريو SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
+#وصف_ڪريو SSH_ERR_FEATURE_UNSUPPORTED		-59
+#وصف_ڪريو SSH_ERR_DEVICE_NOT_مليو		-60
+#وصف_ڪريو SSH_ERR_CRYPTO_ERROR			-61
+#وصف_ڪريو SSH_ERR_اندروني_CRYPTO_ERROR		-62
+#وصف_ڪريو SSH_ERR_ڪنجي_ALG_UNSUPPORTED		-63
 
 /* Translate a numeric error code to a human-readable error string */
-const char *ssh_err(int n);
+ثابت حرف *ssh_err(صحيح n);
 /* Return most recent error from libcrypto. */
-const char *ssherr_libcrypto(void);
+ثابت حرف *ssherr_libcrypto(فراغ);
 
-#endif /* _SSHERR_H */
+#جيڪڏهن_پورو /* _SSHERR_H */

@@ -26,28 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _ATOMICIO_H
-#define _ATOMICIO_H
+#جيڪڏهن_وصف_نه_ٿيل _ATOMICIO_H
+#وصف_ڪريو _ATOMICIO_H
 
-struct iovec;
+بنية iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+سائيز_t
+atomicio6(ssize_t (*f) (صحيح, فراغ *, سائيز_t), صحيح fd, فراغ *_s, سائيز_t n,
+    صحيح (*cb)(فراغ *, سائيز_t), فراغ *);
+سائيز_t	atomicio(ssize_t (*)(صحيح, فراغ *, سائيز_t), صحيح, فراغ *, سائيز_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#وصف_ڪريو vwrite (ssize_t (*)(صحيح, فراغ *, سائيز_t))اكتب
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+سائيز_t
+atomiciov6(ssize_t (*f) (صحيح, ثابت بنية iovec *, صحيح), صحيح fd,
+    ثابت بنية iovec *_iov, صحيح iovcnt, صحيح (*cb)(فراغ *, سائيز_t), فراغ *);
+سائيز_t	atomiciov(ssize_t (*)(صحيح, ثابت بنية iovec *, صحيح),
+    صحيح, ثابت بنية iovec *, صحيح);
 
-#endif /* _ATOMICIO_H */
+#جيڪڏهن_پورو /* _ATOMICIO_H */
