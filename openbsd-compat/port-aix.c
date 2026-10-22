@@ -24,45 +24,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef _AIX
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh.h"
-#include "ssh_api.h"
-#include "log.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "ssh_api.h"
+#அந்தர்பாவ "log.h"
 
-#include <errno.h>
-#if defined(HAVE_NETDB_H)
+#அந்தர்பாவ <errno.h>
+#எனில் defined(HAVE_NETDB_H)
 # include <netdb.h>
 #endif
-#include <uinfo.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
+#அந்தர்பாவ <uinfo.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <sys/socket.h>
 
 #ifdef WITH_AIXAUTHENTICATE
 # include <login.h>
 # include <userpw.h>
-# if defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
+# எனில் defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
 #  include <sys/audit.h>
 # endif
 # include <usersec.h>
 #endif
 
-#include "port-aix.h"
+#அந்தர்பாவ "port-aix.h"
 
-static char *lastlogin_msg = NULL;
+நிலையான எழுத்து *lastlogin_செய்தி = வெற்று;
 
 # ifdef HAVE_SETAUTHDB
-static char old_registry[REGISTRY_SIZE] = "";
+நிலையான எழுத்து old_registry[REGISTRY_SIZE] = "";
 # endif
 
 /*
@@ -72,23 +72,23 @@ static char old_registry[REGISTRY_SIZE] = "";
  * NOTE: TTY= should be set, but since no one uses it and it's hard to
  * acquire due to privsep code.  We will just drop support.
  */
-void
-aix_usrinfo(struct passwd *pw)
+வெறுமை
+aix_usrinfo(கட்டமைப்பு passwd *pw)
 {
 	u_int i;
 	size_t len;
-	char *cp;
+	எழுத்து *cp;
 
-	len = sizeof("LOGNAME= NAME= ") + (2 * strlen(pw->pw_name));
+	len = அளவு("LOGNAME= NAME= ") + (2 * strlen(pw->pw_name));
 	cp = xmalloc(len);
 
 	i = snprintf(cp, len, "LOGNAME=%s%cNAME=%s%c", pw->pw_name, '\0',
 	    pw->pw_name, '\0');
-	if (usrinfo(SETUINFO, cp, i) == -1)
+	எனில் (usrinfo(SETUINFO, cp, i) == -1)
 		fatal("Couldn't set usrinfo: %s", strerror(errno));
 	debug3("AIX/UsrInfo: set len %d", i);
 
-	free(cp);
+	விடுவி(cp);
 }
 
 # ifdef WITH_AIXAUTHENTICATE
@@ -97,18 +97,18 @@ aix_usrinfo(struct passwd *pw)
  * Used before logging messages returned by AIX authentication functions
  * so the message is logged on one line.
  */
-void
-aix_remove_embedded_newlines(char *p)
+வெறுமை
+aix_remove_embedded_newlines(எழுத்து *p)
 {
-	if (p == NULL)
-		return;
+	எனில் (p == வெற்று)
+		திரும்பு;
 
-	for (; *p; p++) {
-		if (*p == '\n')
+	க்கு (; *p; p++) {
+		எனில் (*p == '\n')
 			*p = ' ';
 	}
 	/* Remove trailing whitespace */
-	if (*--p == ' ')
+	எனில் (*--p == ' ')
 		*p = '\0';
 }
 
@@ -128,33 +128,33 @@ aix_remove_embedded_newlines(char *p)
  *
  * Returns 0 if an unsupportable combination is found, 1 otherwise.
  */
-static int
-aix_valid_authentications(const char *user)
+நிலையான முழு
+aix_valid_authentications(மாறிலி எழுத்து *user)
 {
-	char *auth1, *sys, *p;
-	int valid = 1;
+	எழுத்து *auth1, *sys, *p;
+	முழு valid = 1;
 
-	if (getuserattr((char *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
+	எனில் (getuserattr((எழுத்து *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
 		logit("Can't retrieve attribute SYSTEM for %s: %.100s",
 		    user, strerror(errno));
-		return 0;
+		திரும்பு 0;
 	}
 
 	debug3("AIX SYSTEM attribute %s", sys);
-	if (strcmp(sys, "NONE") != 0)
-		return 1;	/* not "NONE", so is OK */
+	எனில் (strcmp(sys, "NONE") != 0)
+		திரும்பு 1;	/* not "NONE", so is OK */
 
-	if (getuserattr((char *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
+	எனில் (getuserattr((எழுத்து *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
 		logit("Can't retrieve attribute auth1 for %s: %.100s",
 		    user, strerror(errno));
-		return 0;
+		திரும்பு 0;
 	}
 
 	p = auth1;
 	/* A SEC_LIST is concatenated strings, ending with two NULs. */
-	while (p[0] != '\0' && p[1] != '\0') {
+	போது (p[0] != '\0' && p[1] != '\0') {
 		debug3("AIX auth1 attribute list member %s", p);
-		if (strcmp(p, "NONE") != 0 && strcmp(p, "SYSTEM")) {
+		எனில் (strcmp(p, "NONE") != 0 && strcmp(p, "SYSTEM")) {
 			logit("Account %s has unsupported auth1 value '%s'",
 			    user, p);
 			valid = 0;
@@ -162,7 +162,7 @@ aix_valid_authentications(const char *user)
 		p += strlen(p) + 1;
 	}
 
-	return (valid);
+	திரும்பு (valid);
 }
 
 /*
@@ -172,25 +172,25 @@ aix_valid_authentications(const char *user)
  * Note: this function returns 1 on success, whereas AIX's authenticate()
  * returns 0.
  */
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+முழு
+sys_auth_passwd(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *password)
 {
 	Authctxt *ctxt = ssh->authctxt;
-	char *authmsg = NULL, *msg = NULL, *name = ctxt->pw->pw_name;
-	int r, authsuccess = 0, expired, reenter, result;
+	எழுத்து *authmsg = வெற்று, *செய்தி = வெற்று, *name = ctxt->pw->pw_name;
+	முழு r, authsuccess = 0, expired, reenter, result;
 
-	do {
-		result = authenticate((char *)name, (char *)password, &reenter,
+	செய் {
+		result = authenticate((எழுத்து *)name, (எழுத்து *)password, &reenter,
 		    &authmsg);
 		aix_remove_embedded_newlines(authmsg);
 		debug3("AIX/authenticate result %d, authmsg %.100s", result,
 		    authmsg);
-	} while (reenter);
+	} போது (reenter);
 
-	if (!aix_valid_authentications(name))
+	எனில் (!aix_valid_authentications(name))
 		result = -1;
 
-	if (result == 0) {
+	எனில் (result == 0) {
 		authsuccess = 1;
 
 		/*
@@ -202,129 +202,129 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 		/*
 		 * Check if the user's password is expired.
 		 */
-		expired = passwdexpired(name, &msg);
-		if (msg && *msg) {
-			if ((r = sshbuf_put(ctxt->loginmsg,
-			    msg, strlen(msg))) != 0)
+		expired = passwdexpired(name, &செய்தி);
+		எனில் (செய்தி && *செய்தி) {
+			எனில் ((r = sshbuf_put(ctxt->loginmsg,
+			    செய்தி, strlen(செய்தி))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			aix_remove_embedded_newlines(msg);
+			aix_remove_embedded_newlines(செய்தி);
 		}
-		debug3("AIX/passwdexpired returned %d msg %.100s", expired, msg);
+		debug3("AIX/passwdexpired returned %d msg %.100s", expired, செய்தி);
 
-		switch (expired) {
-		case 0: /* password not expired */
-			break;
-		case 1: /* expired, password change required */
+		தேர்வு (expired) {
+		நிலை 0: /* password not expired */
+			நிறுத்து;
+		நிலை 1: /* expired, password change required */
 			ctxt->force_pwchange = 1;
-			break;
-		default: /* user can't change(2) or other error (-1) */
+			நிறுத்து;
+		இயல்பு: /* user can't change(2) or other error (-1) */
 			logit("Password can't be changed for user %s: %.100s",
-			    name, msg);
-			free(msg);
+			    name, செய்தி);
+			விடுவி(செய்தி);
 			authsuccess = 0;
 		}
 
 		aix_restoreauthdb();
 	}
 
-	free(authmsg);
+	விடுவி(authmsg);
 
-	return authsuccess;
+	திரும்பு authsuccess;
 }
 
 /*
  * Check if specified account is permitted to log in.
  * Returns 1 if login is allowed, 0 if not allowed.
  */
-int
-sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
+முழு
+sys_auth_allowed_user(கட்டமைப்பு passwd *pw, கட்டமைப்பு sshbuf *loginmsg)
 {
-	char *msg = NULL;
-	int r, result, permitted = 0;
-	struct stat st;
+	எழுத்து *செய்தி = வெற்று;
+	முழு r, result, permitted = 0;
+	கட்டமைப்பு stat st;
 
 	/*
 	 * Don't perform checks for root account (PermitRootLogin controls
 	 * logins via ssh) or if running as non-root user (since
 	 * loginrestrictions will always fail due to insufficient privilege).
 	 */
-	if (pw->pw_uid == 0 || geteuid() != 0) {
+	எனில் (pw->pw_uid == 0 || geteuid() != 0) {
 		debug3("%s: not checking", __func__);
-		return 1;
+		திரும்பு 1;
 	}
 
-	result = loginrestrictions(pw->pw_name, S_RLOGIN, NULL, &msg);
-	if (result == 0)
+	result = loginrestrictions(pw->pw_name, S_RLOGIN, வெற்று, &செய்தி);
+	எனில் (result == 0)
 		permitted = 1;
 	/*
 	 * If restricted because /etc/nologin exists, the login will be denied
 	 * in session.c after the nologin message is sent, so allow for now
 	 * and do not append the returned message.
 	 */
-	if (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
+	எனில் (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
 		permitted = 1;
-	else if (msg != NULL) {
-		if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	இல்லையெனில் எனில் (செய்தி != வெற்று) {
+		எனில் ((r = sshbuf_put(loginmsg, செய்தி, strlen(செய்தி))) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	}
-	if (msg == NULL)
-		msg = xstrdup("(none)");
-	aix_remove_embedded_newlines(msg);
-	debug3("AIX/loginrestrictions returned %d msg %.100s", result, msg);
+	எனில் (செய்தி == வெற்று)
+		செய்தி = xstrdup("(none)");
+	aix_remove_embedded_newlines(செய்தி);
+	debug3("AIX/loginrestrictions returned %d msg %.100s", result, செய்தி);
 
-	if (!permitted)
-		logit("Login restricted for %s: %.100s", pw->pw_name, msg);
-	free(msg);
-	return permitted;
+	எனில் (!permitted)
+		logit("Login restricted for %s: %.100s", pw->pw_name, செய்தி);
+	விடுவி(செய்தி);
+	திரும்பு permitted;
 }
 
-int
-sys_auth_record_login(const char *user, const char *host, const char *ttynm,
-    struct sshbuf *loginmsg)
+முழு
+sys_auth_record_login(மாறிலி எழுத்து *user, மாறிலி எழுத்து *host, மாறிலி எழுத்து *ttynm,
+    கட்டமைப்பு sshbuf *loginmsg)
 {
-	char *msg = NULL;
-	int success = 0;
+	எழுத்து *செய்தி = வெற்று;
+	முழு success = 0;
 
 	aix_setauthdb(user);
-	if (loginsuccess((char *)user, (char *)host, (char *)ttynm, &msg) == 0) {
+	எனில் (loginsuccess((எழுத்து *)user, (எழுத்து *)host, (எழுத்து *)ttynm, &செய்தி) == 0) {
 		success = 1;
-		if (msg != NULL) {
-			debug("AIX/loginsuccess: msg %s", msg);
-			if (lastlogin_msg == NULL)
-				lastlogin_msg = msg;
+		எனில் (செய்தி != வெற்று) {
+			debug("AIX/loginsuccess: msg %s", செய்தி);
+			எனில் (lastlogin_செய்தி == வெற்று)
+				lastlogin_செய்தி = செய்தி;
 		}
 	}
 	aix_restoreauthdb();
-	return (success);
+	திரும்பு (success);
 }
 
-char *
-sys_auth_get_lastlogin_msg(const char *user, uid_t uid)
+எழுத்து *
+sys_auth_get_lastlogin_செய்தி(மாறிலி எழுத்து *user, uid_t uid)
 {
-	char *msg = lastlogin_msg;
+	எழுத்து *செய்தி = lastlogin_செய்தி;
 
-	lastlogin_msg = NULL;
-	return msg;
+	lastlogin_செய்தி = வெற்று;
+	திரும்பு செய்தி;
 }
 
 #  ifdef CUSTOM_FAILED_LOGIN
 /*
  * record_failed_login: generic "login failed" interface function
  */
-void
-record_failed_login(struct ssh *ssh, const char *user, const char *hostname,
-    const char *ttyname)
+வெறுமை
+record_failed_login(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *user, மாறிலி எழுத்து *hostname,
+    மாறிலி எழுத்து *ttyname)
 {
-	if (geteuid() != 0)
-		return;
+	எனில் (geteuid() != 0)
+		திரும்பு;
 
 	aix_setauthdb(user);
 #   ifdef AIX_LOGINFAILED_4ARG
-	loginfailed((char *)user, (char *)hostname, (char *)ttyname,
+	loginfailed((எழுத்து *)user, (எழுத்து *)hostname, (எழுத்து *)ttyname,
 	    AUDIT_FAIL_AUTH);
-#   else
-	loginfailed((char *)user, (char *)hostname, (char *)ttyname);
+#   இல்லையெனில்
+	loginfailed((எழுத்து *)user, (எழுத்து *)hostname, (எழுத்து *)ttyname);
 #   endif
 	aix_restoreauthdb();
 }
@@ -336,24 +336,24 @@ record_failed_login(struct ssh *ssh, const char *user, const char *hostname,
  * functions will only use the specified loadable module.  If we don't have
  * setauthdb this is a no-op.
  */
-void
-aix_setauthdb(const char *user)
+வெறுமை
+aix_setauthdb(மாறிலி எழுத்து *user)
 {
 #  ifdef HAVE_SETAUTHDB
-	char *registry;
+	எழுத்து *registry;
 
-	if (setuserdb(S_READ) == -1) {
+	எனில் (setuserdb(S_READ) == -1) {
 		debug3("%s: Could not open userdb to read", __func__);
-		return;
+		திரும்பு;
 	}
 
-	if (getuserattr((char *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
-		if (setauthdb(registry, old_registry) == 0)
+	எனில் (getuserattr((எழுத்து *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
+		எனில் (setauthdb(registry, old_registry) == 0)
 			debug3("AIX/setauthdb set registry '%s'", registry);
-		else
+		இல்லையெனில்
 			debug3("AIX/setauthdb set registry '%s' failed: %s",
 			    registry, strerror(errno));
-	} else
+	} இல்லையெனில்
 		debug3("%s: Could not read S_REGISTRY for user: %s", __func__,
 		    strerror(errno));
 	enduserdb();
@@ -366,14 +366,14 @@ aix_setauthdb(const char *user)
  * (it restores the system default behaviour).  If we don't have setauthdb,
  * this is a no-op.
  */
-void
-aix_restoreauthdb(void)
+வெறுமை
+aix_restoreauthdb(வெறுமை)
 {
 #  ifdef HAVE_SETAUTHDB
-	if (setauthdb(old_registry, NULL) == 0)
+	எனில் (setauthdb(old_registry, வெற்று) == 0)
 		debug3("%s: restoring old registry '%s'", __func__,
 		    old_registry);
-	else
+	இல்லையெனில்
 		debug3("%s: failed to restore old registry %s", __func__,
 		    old_registry);
 #  endif /* HAVE_SETAUTHDB */
@@ -386,97 +386,97 @@ aix_restoreauthdb(void)
  * aix_krb5_get_principal_name: returns the user's kerberos client principal
  * name if configured, otherwise NULL.  Caller must free returned string.
  */
-char *
-aix_krb5_get_principal_name(const char *const_pw_name)
+எழுத்து *
+aix_krb5_get_principal_name(மாறிலி எழுத்து *const_pw_name)
 {
-	char *pw_name = (char *)const_pw_name;
-	char *authname = NULL, *authdomain = NULL, *principal = NULL;
+	எழுத்து *pw_name = (எழுத்து *)const_pw_name;
+	எழுத்து *authname = வெற்று, *authdomain = வெற்று, *principal = வெற்று;
 
 	setuserdb(S_READ);
-	if (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
+	எனில் (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
 		debug("AIX getuserattr S_AUTHDOMAIN: %s", strerror(errno));
-	if (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
+	எனில் (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
 		debug("AIX getuserattr S_AUTHNAME: %s", strerror(errno));
 
-	if (authdomain != NULL)
+	எனில் (authdomain != வெற்று)
 		xasprintf(&principal, "%s@%s", authname ? authname : pw_name,
 		    authdomain);
-	else if (authname != NULL)
+	இல்லையெனில் எனில் (authname != வெற்று)
 		principal = xstrdup(authname);
 	enduserdb();
-	return principal;
+	திரும்பு principal;
 }
 # endif /* USE_AIX_KRB_NAME */
 
-# if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
+# எனில் defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
 # undef getnameinfo
 /*
  * For some reason, AIX's getnameinfo will refuse to resolve the all-zeros
  * IPv6 address into its textual representation ("::"), so we wrap it
  * with a function that will.
  */
-int
-sshaix_getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-    size_t hostlen, char *serv, size_t servlen, int flags)
+முழு
+sshaix_getnameinfo(மாறிலி கட்டமைப்பு sockaddr *sa, size_t salen, எழுத்து *host,
+    size_t hostlen, எழுத்து *serv, size_t servlen, முழு flags)
 {
-	struct sockaddr_in6 *sa6;
+	கட்டமைப்பு sockaddr_in6 *sa6;
 	u_int32_t *a6;
 
-	if (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
+	எனில் (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
 	    sa->sa_family == AF_INET6) {
-		sa6 = (struct sockaddr_in6 *)sa;
+		sa6 = (கட்டமைப்பு sockaddr_in6 *)sa;
 		a6 = sa6->sin6_addr.u6_addr.u6_addr32;
 
-		if (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
+		எனில் (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
 			strlcpy(host, "::", hostlen);
 			snprintf(serv, servlen, "%d", sa6->sin6_port);
-			return 0;
+			திரும்பு 0;
 		}
 	}
-	return getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
+	திரும்பு getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
 }
 # endif /* AIX_GETNAMEINFO_HACK */
 
-# if defined(USE_GETGRSET)
+# எனில் defined(USE_GETGRSET)
 #  include <stdlib.h>
-int
-getgrouplist(const char *user, gid_t pgid, gid_t *groups, int *grpcnt)
+முழு
+getgrouplist(மாறிலி எழுத்து *user, gid_t pgid, gid_t *groups, முழு *grpcnt)
 {
-	char *cp, *grplist, *grp;
+	எழுத்து *cp, *grplist, *grp;
 	gid_t gid;
-	int ret = 0, ngroups = 0, maxgroups;
+	முழு ret = 0, ngroups = 0, maxgroups;
 	long long ll;
 
 	maxgroups = *grpcnt;
 
-	if ((cp = grplist = getgrset(user)) == NULL)
-		return -1;
+	எனில் ((cp = grplist = getgrset(user)) == வெற்று)
+		திரும்பு -1;
 
 	/* handle zero-length case */
-	if (maxgroups <= 0) {
+	எனில் (maxgroups <= 0) {
 		*grpcnt = 0;
-		return -1;
+		திரும்பு -1;
 	}
 
 	/* copy primary group */
 	groups[ngroups++] = pgid;
 
 	/* copy each entry from getgrset into group list */
-	while ((grp = strsep(&grplist, ",")) != NULL) {
-		ll = strtoll(grp, NULL, 10);
-		if (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
+	போது ((grp = strsep(&grplist, ",")) != வெற்று) {
+		ll = strtoll(grp, வெற்று, 10);
+		எனில் (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
 			ret = -1;
-			goto out;
+			செல் out;
 		}
 		gid = (gid_t)ll;
-		if (gid == pgid)
-			continue;	/* we have already added primary gid */
+		எனில் (gid == pgid)
+			தொடர்;	/* we have already added primary gid */
 		groups[ngroups++] = gid;
 	}
 out:
-	free(cp);
+	விடுவி(cp);
 	*grpcnt = ngroups;
-	return ret;
+	திரும்பு ret;
 }
 # endif	/* USE_GETGRSET */
 

@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
+#அந்தர்பாவ "crypto_api.h"
+#அந்தர்பாவ "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+கட்டமைப்பு ed25519_kat {
+	மாறிலி எழுத்து *sk;
+	மாறிலி எழுத்து *pk;
+	மாறிலி எழுத்து *செய்தி;
+	மாறிலி எழுத்து *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+நிலையான மாறிலி கட்டமைப்பு ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,18 +61,18 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+வெறுமை ed25519_tests(வெறுமை);
 
-void
-ed25519_tests(void)
+வெறுமை
+ed25519_tests(வெறுமை)
 {
 	uint8_t pk[32], sk[64], seed[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
+	uint8_t *செய்தி;
 	size_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	க்கு (i = 0; i < அளவு(ed25519_kats)/அளவு(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
@@ -81,19 +81,19 @@ ed25519_tests(void)
 		TEST_DONE();
 
 		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		msglen = strlen(ed25519_kats[i].செய்தி) / 2;
+		ASSERT_PTR_NE(செய்தி = malloc(msglen == 0 ? 1 : msglen), வெற்று);
+		hex2bin(செய்தி, ed25519_kats[i].செய்தி, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    செய்தி, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
+		    செய்தி, msglen, pk), 0);
+		விடுவி(செய்தி);
 		TEST_DONE();
 	}
 }

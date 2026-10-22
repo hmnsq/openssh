@@ -36,31 +36,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdarg.h>
 
-#include "packet.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "auth-options.h"
 
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+வெளி கட்டமைப்பு sshbuf *loginmsg;
+வெளி ServerOptions options;
 
 #ifdef HAVE_LOGIN_CAP
-extern login_cap_t *lc;
+வெளி login_cap_t *lc;
 #endif
 
 
@@ -73,31 +73,31 @@ extern login_cap_t *lc;
  * Tries to authenticate the user using password.  Returns true if
  * authentication succeeds.
  */
-int
-auth_password(struct ssh *ssh, const char *password)
+முழு
+auth_password(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	int result, ok = authctxt->valid;
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	static int expire_checked = 0;
+	கட்டமைப்பு passwd *pw = authctxt->pw;
+	முழு result, ok = authctxt->valid;
+#எனில் defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	நிலையான முழு expire_checked = 0;
 #endif
 
-	if (strlen(password) > MAX_PASSWORD_LEN)
-		return 0;
+	எனில் (strlen(password) > MAX_PASSWORD_LEN)
+		திரும்பு 0;
 
 #ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+	எனில் (pw->pw_uid == 0 && options.permit_வேர்_login != PERMIT_YES)
 		ok = 0;
 #endif
-	if (*password == '\0' && options.permit_empty_passwd == 0)
-		return 0;
+	எனில் (*password == '\0' && options.permit_empty_passwd == 0)
+		திரும்பு 0;
 
 #ifdef KRB5
-	if (options.kerberos_authentication == 1) {
-		int ret = auth_krb5_password(authctxt, password);
-		if (ret == 1 || ret == 0)
-			return ret && ok;
+	எனில் (options.kerberos_authentication == 1) {
+		முழு ret = auth_krb5_password(authctxt, password);
+		எனில் (ret == 1 || ret == 0)
+			திரும்பு ret && ok;
 		/* Fall back to ordinary passwd authentication. */
 	}
 #endif
@@ -105,34 +105,34 @@ auth_password(struct ssh *ssh, const char *password)
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
-			return 0;
+		எனில் (hToken == INVALID_HANDLE_மதிப்பு)
+			திரும்பு 0;
 		cygwin_set_impersonation_token(hToken);
-		return ok;
+		திரும்பு ok;
 	}
 #endif
 #ifdef USE_PAM
-	if (options.use_pam)
-		return (sshpam_auth_passwd(authctxt, password) && ok);
+	எனில் (options.use_pam)
+		திரும்பு (sshpam_auth_passwd(authctxt, password) && ok);
 #endif
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-	if (!expire_checked) {
+#எனில் defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+	எனில் (!expire_checked) {
 		expire_checked = 1;
-		if (auth_shadow_pwexpired(authctxt))
+		எனில் (auth_shadow_pwexpired(authctxt))
 			authctxt->force_pwchange = 1;
 	}
 #endif
 	result = sys_auth_passwd(ssh, password);
-	if (authctxt->force_pwchange)
+	எனில் (authctxt->force_pwchange)
 		auth_restrict_session(ssh);
-	return (result && ok);
+	திரும்பு (result && ok);
 }
 
 #ifdef BSD_AUTH
-static void
+நிலையான வெறுமை
 warn_expiry(Authctxt *authctxt, auth_session_t *as)
 {
-	int r;
+	முழு r;
 	int64_t pwtimeleft, actimeleft, daysleft, pwwarntime, acwarntime;
 
 	pwwarntime = acwarntime = TWO_WEEKS;
@@ -140,76 +140,76 @@ warn_expiry(Authctxt *authctxt, auth_session_t *as)
 	pwtimeleft = auth_check_change(as);
 	actimeleft = auth_check_expire(as);
 #ifdef HAVE_LOGIN_CAP
-	if (authctxt->valid) {
+	எனில் (authctxt->valid) {
 		pwwarntime = login_getcaptime(lc, "password-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 		acwarntime = login_getcaptime(lc, "expire-warn", TWO_WEEKS,
 		    TWO_WEEKS);
 	}
 #endif
-	if (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
+	எனில் (pwtimeleft != 0 && pwtimeleft < pwwarntime) {
 		daysleft = pwtimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		எனில் ((r = sshbuf_putf(loginmsg,
 		    "Your password will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if (actimeleft != 0 && actimeleft < acwarntime) {
+	எனில் (actimeleft != 0 && actimeleft < acwarntime) {
 		daysleft = actimeleft / DAY + 1;
-		if ((r = sshbuf_putf(loginmsg,
+		எனில் ((r = sshbuf_putf(loginmsg,
 		    "Your account will expire in %lld day%s.\n",
 		    daysleft, daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 }
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+முழு
+sys_auth_passwd(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	auth_session_t *as;
-	static int expire_checked = 0;
+	நிலையான முழு expire_checked = 0;
 
 	as = auth_usercheck(authctxt->pw->pw_name, authctxt->style, "auth-ssh",
-	    (char *)password);
-	if (as == NULL)
-		return (0);
-	if (auth_getstate(as) & AUTH_PWEXPIRED) {
+	    (எழுத்து *)password);
+	எனில் (as == வெற்று)
+		திரும்பு (0);
+	எனில் (auth_getstate(as) & AUTH_PWEXPIRED) {
 		auth_close(as);
 		auth_restrict_session(ssh);
 		authctxt->force_pwchange = 1;
-		return (1);
-	} else {
-		if (!expire_checked) {
+		திரும்பு (1);
+	} இல்லையெனில் {
+		எனில் (!expire_checked) {
 			expire_checked = 1;
 			warn_expiry(authctxt, as);
 		}
-		return (auth_close(as));
+		திரும்பு (auth_close(as));
 	}
 }
-#elif !defined(CUSTOM_SYS_AUTH_PASSWD)
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+#அல்லதெனில் !defined(CUSTOM_SYS_AUTH_PASSWD)
+முழு
+sys_auth_passwd(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	char *encrypted_password, *salt = NULL;
+	கட்டமைப்பு passwd *pw = authctxt->pw;
+	எழுத்து *encrypted_password, *salt = வெற்று;
 
 	/* Just use the supplied fake password if authctxt is invalid */
-	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
+	எழுத்து *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	எனில் (pw_password == வெற்று)
+		திரும்பு 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	எனில் (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		திரும்பு (1);
 
 	/*
 	 * Encrypt the candidate password using the proper salt, or pass a
 	 * NULL and let xcrypt pick one.
 	 */
-	if (authctxt->valid && pw_password[0] && pw_password[1])
+	எனில் (authctxt->valid && pw_password[0] && pw_password[1])
 		salt = pw_password;
 	encrypted_password = xcrypt(password, salt);
 
@@ -217,7 +217,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * Authentication is accepted if the encrypted passwords
 	 * are identical.
 	 */
-	return encrypted_password != NULL &&
+	திரும்பு encrypted_password != வெற்று &&
 	    strcmp(encrypted_password, pw_password) == 0;
 }
 #endif

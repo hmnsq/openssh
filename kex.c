@@ -23,48 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/dh.h>
+#அந்தர்பாவ <openssl/crypto.h>
+#அந்தர்பாவ <openssl/dh.h>
 #endif
 
-#include "ssh.h"
-#include "ssh2.h"
-#include "atomicio.h"
-#include "version.h"
-#include "packet.h"
-#include "compat.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "mac.h"
-#include "match.h"
-#include "misc.h"
-#include "dispatch.h"
-#include "myproposal.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "ssh2.h"
+#அந்தர்பாவ "atomicio.h"
+#அந்தர்பாவ "version.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "compat.h"
+#அந்தர்பாவ "cipher.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "mac.h"
+#அந்தர்பாவ "match.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "dispatch.h"
+#அந்தர்பாவ "myproposal.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "xmalloc.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "xmalloc.h"
 
 /* prototype */
-static int kex_choose_conf(struct ssh *, uint32_t seq);
-static int kex_input_newkeys(int, uint32_t, struct ssh *);
+நிலையான முழு kex_choose_conf(கட்டமைப்பு ssh *, uint32_t seq);
+நிலையான முழு kex_உள்ளீடு_newkeys(முழு, uint32_t, கட்டமைப்பு ssh *);
 
-static const char * const proposal_names[PROPOSAL_MAX] = {
+நிலையான மாறிலி எழுத்து * மாறிலி proposal_names[PROPOSAL_MAX] = {
 	"KEX algorithms",
 	"host key algorithms",
 	"ciphers ctos",
@@ -83,70 +83,70 @@ static const char * const proposal_names[PROPOSAL_MAX] = {
  * Any of the options may be NULL, in which case the default is used.
  * Array contents must be freed by calling kex_proposal_free_entries.
  */
-void
-kex_proposal_populate_entries(struct ssh *ssh, char *prop[PROPOSAL_MAX],
-    const char *kexalgos, const char *ciphers, const char *macs,
-    const char *comp, const char *hkalgs)
+வெறுமை
+kex_proposal_populate_entries(கட்டமைப்பு ssh *ssh, எழுத்து *prop[PROPOSAL_MAX],
+    மாறிலி எழுத்து *kexalgos, மாறிலி எழுத்து *ciphers, மாறிலி எழுத்து *macs,
+    மாறிலி எழுத்து *comp, மாறிலி எழுத்து *hkalgs)
 {
-	const char *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
-	const char *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
-	const char **defprop = ssh->kex->server ? defpropserver : defpropclient;
+	மாறிலி எழுத்து *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
+	மாறிலி எழுத்து *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
+	மாறிலி எழுத்து **defprop = ssh->kex->server ? defpropserver : defpropclient;
 	u_int i;
-	char *cp;
+	எழுத்து *cp;
 
-	if (prop == NULL)
+	எனில் (prop == வெற்று)
 		fatal_f("proposal missing");
 
 	/* Append EXT_INFO signalling to KexAlgorithms */
-	if (kexalgos == NULL)
+	எனில் (kexalgos == வெற்று)
 		kexalgos = defprop[PROPOSAL_KEX_ALGS];
-	if ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
+	எனில் ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
 	    "ext-info-s,kex-strict-s-v00@openssh.com" :
-	    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL)
+	    "ext-info-c,kex-strict-c-v00@openssh.com")) == வெற்று)
 		fatal_f("kex_names_cat");
 
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		switch(i) {
-		case PROPOSAL_KEX_ALGS:
+	க்கு (i = 0; i < PROPOSAL_MAX; i++) {
+		தேர்வு(i) {
+		நிலை PROPOSAL_KEX_ALGS:
 			prop[i] = compat_kex_proposal(ssh, cp);
-			break;
-		case PROPOSAL_ENC_ALGS_CTOS:
-		case PROPOSAL_ENC_ALGS_STOC:
+			நிறுத்து;
+		நிலை PROPOSAL_ENC_ALGS_CTOS:
+		நிலை PROPOSAL_ENC_ALGS_STOC:
 			prop[i] = xstrdup(ciphers ? ciphers : defprop[i]);
-			break;
-		case PROPOSAL_MAC_ALGS_CTOS:
-		case PROPOSAL_MAC_ALGS_STOC:
+			நிறுத்து;
+		நிலை PROPOSAL_MAC_ALGS_CTOS:
+		நிலை PROPOSAL_MAC_ALGS_STOC:
 			prop[i]  = xstrdup(macs ? macs : defprop[i]);
-			break;
-		case PROPOSAL_COMP_ALGS_CTOS:
-		case PROPOSAL_COMP_ALGS_STOC:
+			நிறுத்து;
+		நிலை PROPOSAL_COMP_ALGS_CTOS:
+		நிலை PROPOSAL_COMP_ALGS_STOC:
 			prop[i] = xstrdup(comp ? comp : defprop[i]);
-			break;
-		case PROPOSAL_SERVER_HOST_KEY_ALGS:
+			நிறுத்து;
+		நிலை PROPOSAL_SERVER_HOST_சாவி_ALGS:
 			prop[i] = xstrdup(hkalgs ? hkalgs : defprop[i]);
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			prop[i] = xstrdup(defprop[i]);
 		}
 	}
-	free(cp);
+	விடுவி(cp);
 }
 
-void
-kex_proposal_free_entries(char *prop[PROPOSAL_MAX])
+வெறுமை
+kex_proposal_free_entries(எழுத்து *prop[PROPOSAL_MAX])
 {
 	u_int i;
 
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(prop[i]);
+	க்கு (i = 0; i < PROPOSAL_MAX; i++)
+		விடுவி(prop[i]);
 }
 
 /* put algorithm proposal into buffer */
-int
-kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
+முழு
+kex_prop2buf(கட்டமைப்பு sshbuf *b, எழுத்து *proposal[PROPOSAL_MAX])
 {
 	u_int i;
-	int r;
+	முழு r;
 
 	sshbuf_reset(b);
 
@@ -154,110 +154,110 @@ kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
 	 * add a dummy cookie, the cookie will be overwritten by
 	 * kex_send_kexinit(), each time a kexinit is set
 	 */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshbuf_put_u8(b, 0)) != 0)
-			return r;
+	க்கு (i = 0; i < KEX_COOKIE_LEN; i++) {
+		எனில் ((r = sshbuf_put_u8(b, 0)) != 0)
+			திரும்பு r;
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
-			return r;
+	க்கு (i = 0; i < PROPOSAL_MAX; i++) {
+		எனில் ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
+			திரும்பு r;
 	}
-	if ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
+	எனில் ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
 	    (r = sshbuf_put_u32(b, 0)) != 0)	/* uint32 reserved */
-		return r;
-	return 0;
+		திரும்பு r;
+	திரும்பு 0;
 }
 
 /* parse buffer and return algorithm proposal */
-int
-kex_buf2prop(struct sshbuf *raw, int *first_kex_follows, char ***propp)
+முழு
+kex_buf2prop(கட்டமைப்பு sshbuf *raw, முழு *first_kex_follows, எழுத்து ***propp)
 {
-	struct sshbuf *b = NULL;
+	கட்டமைப்பு sshbuf *b = வெற்று;
 	u_char v;
 	u_int i;
-	char **proposal = NULL;
-	int r;
+	எழுத்து **proposal = வெற்று;
+	முழு r;
 
-	*propp = NULL;
-	if ((proposal = calloc(PROPOSAL_MAX, sizeof(char *))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((b = sshbuf_fromb(raw)) == NULL) {
+	*propp = வெற்று;
+	எனில் ((proposal = calloc(PROPOSAL_MAX, அளவு(எழுத்து *))) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((b = sshbuf_fromb(raw)) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
+	எனில் ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
 		error_fr(r, "consume cookie");
-		goto out;
+		செல் out;
 	}
 	/* extract kex init proposal strings */
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_get_cstring(b, &(proposal[i]), NULL)) != 0) {
+	க்கு (i = 0; i < PROPOSAL_MAX; i++) {
+		எனில் ((r = sshbuf_get_cstring(b, &(proposal[i]), வெற்று)) != 0) {
 			error_fr(r, "parse proposal %u", i);
-			goto out;
+			செல் out;
 		}
 		debug2("%s: %s", proposal_names[i], proposal[i]);
 	}
 	/* first kex follows / reserved */
-	if ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
+	எனில் ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
 	    (r = sshbuf_get_u32(b, &i)) != 0) {	/* reserved */
 		error_fr(r, "parse");
-		goto out;
+		செல் out;
 	}
-	if (first_kex_follows != NULL)
+	எனில் (first_kex_follows != வெற்று)
 		*first_kex_follows = v;
 	debug2("first_kex_follows %d ", v);
 	debug2("reserved %u ", i);
 	r = 0;
 	*propp = proposal;
  out:
-	if (r != 0 && proposal != NULL)
+	எனில் (r != 0 && proposal != வெற்று)
 		kex_prop_free(proposal);
 	sshbuf_free(b);
-	return r;
+	திரும்பு r;
 }
 
-void
-kex_prop_free(char **proposal)
+வெறுமை
+kex_prop_free(எழுத்து **proposal)
 {
 	u_int i;
 
-	if (proposal == NULL)
-		return;
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
-	free(proposal);
+	எனில் (proposal == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < PROPOSAL_MAX; i++)
+		விடுவி(proposal[i]);
+	விடுவி(proposal);
 }
 
-int
-kex_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+முழு
+kex_protocol_error(முழு type, uint32_t seq, கட்டமைப்பு ssh *ssh)
 {
-	int r;
+	முழு r;
 
 	/* If in strict mode, any unexpected message is an error */
-	if ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
+	எனில் ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
 		ssh_packet_disconnect(ssh, "strict KEX violation: "
 		    "unexpected packet type %u (seqnr %u)", type, seq);
 	}
 	error_f("type %u seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		திரும்பு r;
+	திரும்பு 0;
 }
 
-static void
-kex_reset_dispatch(struct ssh *ssh)
+நிலையான வெறுமை
+kex_reset_dispatch(கட்டமைப்பு ssh *ssh)
 {
-	ssh_dispatch_range(ssh, SSH2_MSG_TRANSPORT_MIN,
-	    SSH2_MSG_TRANSPORT_MAX, &kex_protocol_error);
+	ssh_dispatch_range(ssh, SSH2_செய்தி_TRANSPORT_MIN,
+	    SSH2_செய்தி_TRANSPORT_MAX, &kex_protocol_error);
 }
 
-void
-kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
+வெறுமை
+kex_set_server_sig_algs(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *allowed_algs)
 {
-	char *alg, *oalgs, *algs, *sigalgs;
-	const char *sigalg;
+	எழுத்து *alg, *oalgs, *algs, *sigalgs;
+	மாறிலி எழுத்து *sigalg;
 
 	/*
 	 * NB. allowed algorithms may contain certificate algorithms that
@@ -266,56 +266,56 @@ kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
 	 * We need to be careful here to match these, retain the mapping
 	 * and only add each signature algorithm once.
 	 */
-	if ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
+	எனில் ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == வெற்று)
 		fatal_f("sshkey_alg_list failed");
 	oalgs = algs = xstrdup(allowed_algs);
-	free(ssh->kex->server_sig_algs);
-	ssh->kex->server_sig_algs = NULL;
-	for ((alg = strsep(&algs, ",")); alg != NULL && *alg != '\0';
+	விடுவி(ssh->kex->server_sig_algs);
+	ssh->kex->server_sig_algs = வெற்று;
+	க்கு ((alg = strsep(&algs, ",")); alg != வெற்று && *alg != '\0';
 	    (alg = strsep(&algs, ","))) {
-		if ((sigalg = sshkey_sigalg_by_name(alg)) == NULL)
-			continue;
-		if (!kex_has_any_alg(sigalg, sigalgs))
-			continue;
+		எனில் ((sigalg = sshkey_sigalg_by_name(alg)) == வெற்று)
+			தொடர்;
+		எனில் (!kex_has_any_alg(sigalg, sigalgs))
+			தொடர்;
 		/* Don't add an algorithm twice. */
-		if (ssh->kex->server_sig_algs != NULL &&
+		எனில் (ssh->kex->server_sig_algs != வெற்று &&
 		    kex_has_any_alg(sigalg, ssh->kex->server_sig_algs))
-			continue;
+			தொடர்;
 		xextendf(&ssh->kex->server_sig_algs, ",", "%s", sigalg);
 	}
-	free(oalgs);
-	free(sigalgs);
-	if (ssh->kex->server_sig_algs == NULL)
+	விடுவி(oalgs);
+	விடுவி(sigalgs);
+	எனில் (ssh->kex->server_sig_algs == வெற்று)
 		ssh->kex->server_sig_algs = xstrdup("");
 }
 
-void
-kex_set_warn_weak_crypto(struct ssh *ssh, int warn_weak_crypto)
+வெறுமை
+kex_set_warn_weak_crypto(கட்டமைப்பு ssh *ssh, முழு warn_weak_crypto)
 {
-	if (ssh != NULL && ssh->kex != NULL)
+	எனில் (ssh != வெற்று && ssh->kex != வெற்று)
 		ssh->kex->warn_weak_crypto = warn_weak_crypto != 0;
 }
 
-void
-kex_check_warn_weak_crypto(struct ssh *ssh)
+வெறுமை
+kex_check_warn_weak_crypto(கட்டமைப்பு ssh *ssh)
 {
-	char remote_id[512];
-	int rekeyed = 0;
+	எழுத்து remote_id[512];
+	முழு rekeyed = 0;
 
-	if (ssh == NULL || ssh->kex == NULL || ssh->kex->name == NULL ||
+	எனில் (ssh == வெற்று || ssh->kex == வெற்று || ssh->kex->name == வெற்று ||
 	    !ssh->kex->warn_weak_crypto || ssh->kex->non_pq_kex_warned)
-		return;
-	if (kex_is_pq_from_name(ssh->kex->name)) {
+		திரும்பு;
+	எனில் (kex_is_pq_from_name(ssh->kex->name)) {
 		ssh->kex->pq_kex_negotiated = 1;
-		return;
+		திரும்பு;
 	}
 
-	if (ssh->kex->pq_kex_negotiated)
+	எனில் (ssh->kex->pq_kex_negotiated)
 		rekeyed = 1;
-	if (!rekeyed && !ssh->kex->server)
-		return; /* client logs initial KEX warning separately */
+	எனில் (!rekeyed && !ssh->kex->server)
+		திரும்பு; /* client logs initial KEX warning separately */
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, அளவு(remote_id));
 	logit("WARNING: %sconnection%s%s is not using a post-quantum "
 	    "key exchange algorithm: \"%s\"", rekeyed ? "rekeyed " : "",
 	    ssh->kex->server ? " from " : "",
@@ -323,15 +323,15 @@ kex_check_warn_weak_crypto(struct ssh *ssh)
 	ssh->kex->non_pq_kex_warned = 1;
 }
 
-static int
-kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
+நிலையான முழு
+kex_compose_ext_info_server(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshbuf *m)
 {
-	int r;
+	முழு r;
 
-	if (ssh->kex->server_sig_algs == NULL &&
-	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(m, 4)) != 0 ||
+	எனில் (ssh->kex->server_sig_algs == வெற்று &&
+	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u32(m, 4)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "server-sig-algs")) != 0 ||
 	    (r = sshbuf_put_cstring(m, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshbuf_put_cstring(m,
@@ -342,344 +342,344 @@ kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
 	    (r = sshbuf_put_cstring(m, "agent-forward")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-kex_compose_ext_info_client(struct ssh *ssh, struct sshbuf *m)
+நிலையான முழு
+kex_compose_ext_info_client(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshbuf *m)
 {
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_put_u32(m, 1)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(m, 1)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "ext-info-in-auth@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		செல் out;
 	}
 	/* success */
 	r = 0;
  out:
-	return r;
+	திரும்பு r;
 }
 
-static int
-kex_maybe_send_ext_info(struct ssh *ssh)
+நிலையான முழு
+kex_maybe_send_ext_info(கட்டமைப்பு ssh *ssh)
 {
-	int r;
-	struct sshbuf *m = NULL;
+	முழு r;
+	கட்டமைப்பு sshbuf *m = வெற்று;
 
-	if ((ssh->kex->flags & KEX_INITIAL) == 0)
-		return 0;
-	if (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
-		return 0;
+	எனில் ((ssh->kex->flags & KEX_INITIAL) == 0)
+		திரும்பு 0;
+	எனில் (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
+		திரும்பு 0;
 
 	/* Compose EXT_INFO packet. */
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if (ssh->kex->ext_info_c &&
+	எனில் (ssh->kex->ext_info_c &&
 	    (r = kex_compose_ext_info_server(ssh, m)) != 0)
-		goto fail;
-	if (ssh->kex->ext_info_s &&
+		செல் fail;
+	எனில் (ssh->kex->ext_info_s &&
 	    (r = kex_compose_ext_info_client(ssh, m)) != 0)
-		goto fail;
+		செல் fail;
 
 	/* Send the actual KEX_INFO packet */
 	debug("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_EXT_INFO)) != 0 ||
 	    (r = sshpkt_putb(ssh, m)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		goto fail;
+		செல் fail;
 	}
 
 	r = 0;
 
  fail:
 	sshbuf_free(m);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_server_update_ext_info(struct ssh *ssh)
+முழு
+kex_server_update_ext_info(கட்டமைப்பு ssh *ssh)
 {
-	int r;
+	முழு r;
 
-	if ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
-		return 0;
+	எனில் ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
+		திரும்பு 0;
 
 	debug_f("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_EXT_INFO)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "server-sig-algs")) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-int
-kex_send_newkeys(struct ssh *ssh)
+முழு
+kex_send_newkeys(கட்டமைப்பு ssh *ssh)
 {
-	int r;
+	முழு r;
 
 	kex_reset_dispatch(ssh);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_NEWKEYS)) != 0 ||
+	எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_NEWKEYS)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		திரும்பு r;
 	debug("SSH2_MSG_NEWKEYS sent");
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_input_newkeys);
-	if ((r = kex_maybe_send_ext_info(ssh)) != 0)
-		return r;
+	ssh_dispatch_set(ssh, SSH2_செய்தி_NEWKEYS, &kex_உள்ளீடு_newkeys);
+	எனில் ((r = kex_maybe_send_ext_info(ssh)) != 0)
+		திரும்பு r;
 	debug("expecting SSH2_MSG_NEWKEYS");
-	return 0;
+	திரும்பு 0;
 }
 
 /* Check whether an ext_info value contains the expected version string */
-static int
-kex_ext_info_check_ver(struct kex *kex, const char *name,
-    const u_char *val, size_t len, const char *want_ver, u_int flag)
+நிலையான முழு
+kex_ext_info_check_ver(கட்டமைப்பு kex *kex, மாறிலி எழுத்து *name,
+    மாறிலி u_char *val, size_t len, மாறிலி எழுத்து *want_ver, u_int flag)
 {
-	if (memchr(val, '\0', len) != NULL) {
+	எனில் (memchr(val, '\0', len) != வெற்று) {
 		error("SSH2_MSG_EXT_INFO: %s value contains nul byte", name);
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
 	debug_f("%s=<%s>", name, val);
-	if (strcmp(val, want_ver) == 0)
+	எனில் (strcmp(val, want_ver) == 0)
 		kex->flags |= flag;
-	else
+	இல்லையெனில்
 		debug_f("unsupported version of %s extension", name);
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-kex_ext_info_client_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+நிலையான முழு
+kex_ext_info_client_parse(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *name,
+    மாறிலி u_char *மதிப்பு, size_t vlen)
 {
-	int r;
+	முழு r;
 
 	/* NB. some messages are only accepted in the initial EXT_INFO */
-	if (strcmp(name, "server-sig-algs") == 0) {
+	எனில் (strcmp(name, "server-sig-algs") == 0) {
 		/* Ensure no \0 lurking in value */
-		if (memchr(value, '\0', vlen) != NULL) {
+		எனில் (memchr(மதிப்பு, '\0', vlen) != வெற்று) {
 			error_f("nul byte in %s", name);
-			return SSH_ERR_INVALID_FORMAT;
+			திரும்பு SSH_ERR_INVALID_FORMAT;
 		}
-		debug_f("%s=<%s>", name, value);
-		free(ssh->kex->server_sig_algs);
-		ssh->kex->server_sig_algs = xstrdup((const char *)value);
-	} else if (ssh->kex->ext_info_received == 1 &&
+		debug_f("%s=<%s>", name, மதிப்பு);
+		விடுவி(ssh->kex->server_sig_algs);
+		ssh->kex->server_sig_algs = xstrdup((மாறிலி எழுத்து *)மதிப்பு);
+	} இல்லையெனில் எனில் (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "publickey-hostbound@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		எனில் ((r = kex_ext_info_check_ver(ssh->kex, name, மதிப்பு, vlen,
 		    "0", KEX_HAS_PUBKEY_HOSTBOUND)) != 0) {
-			return r;
+			திரும்பு r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} இல்லையெனில் எனில் (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "ping@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		எனில் ((r = kex_ext_info_check_ver(ssh->kex, name, மதிப்பு, vlen,
 		    "0", KEX_HAS_PING)) != 0) {
-			return r;
+			திரும்பு r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} இல்லையெனில் எனில் (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "agent-forward") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		எனில் ((r = kex_ext_info_check_ver(ssh->kex, name, மதிப்பு, vlen,
 		    "0", KEX_HAS_NEWAGENT)) != 0) {
-			return r;
+			திரும்பு r;
 		}
-	} else
+	} இல்லையெனில்
 		debug_f("%s (unrecognised)", name);
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-kex_ext_info_server_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+நிலையான முழு
+kex_ext_info_server_parse(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *name,
+    மாறிலி u_char *மதிப்பு, size_t vlen)
 {
-	int r;
+	முழு r;
 
-	if (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+	எனில் (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
+		எனில் ((r = kex_ext_info_check_ver(ssh->kex, name, மதிப்பு, vlen,
 		    "0", KEX_HAS_EXT_INFO_IN_AUTH)) != 0) {
-			return r;
+			திரும்பு r;
 		}
-	} else
+	} இல்லையெனில்
 		debug_f("%s (unrecognised)", name);
-	return 0;
+	திரும்பு 0;
 }
 
-int
-kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
+முழு
+kex_உள்ளீடு_ext_info(முழு type, uint32_t seq, கட்டமைப்பு ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const int max_ext_info = kex->server ? 1 : 2;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	மாறிலி முழு max_ext_info = kex->server ? 1 : 2;
 	uint32_t i, ninfo;
-	char *name;
+	எழுத்து *name;
 	u_char *val;
 	size_t vlen;
-	int r;
+	முழு r;
 
 	debug("SSH2_MSG_EXT_INFO received");
-	if (++kex->ext_info_received > max_ext_info) {
+	எனில் (++kex->ext_info_received > max_ext_info) {
 		error("too many SSH2_MSG_EXT_INFO messages sent by peer");
-		return dispatch_protocol_error(type, seq, ssh);
+		திரும்பு dispatch_protocol_error(type, seq, ssh);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_protocol_error);
-	if ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
-		return r;
-	if (ninfo >= 1024) {
+	ssh_dispatch_set(ssh, SSH2_செய்தி_EXT_INFO, &kex_protocol_error);
+	எனில் ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
+		திரும்பு r;
+	எனில் (ninfo >= 1024) {
 		error("SSH2_MSG_EXT_INFO with too many entries, expected "
 		    "<=1024, received %u", ninfo);
-		return dispatch_protocol_error(type, seq, ssh);
+		திரும்பு dispatch_protocol_error(type, seq, ssh);
 	}
-	for (i = 0; i < ninfo; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0)
-			return r;
-		if ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
-			free(name);
-			return r;
+	க்கு (i = 0; i < ninfo; i++) {
+		எனில் ((r = sshpkt_get_cstring(ssh, &name, வெற்று)) != 0)
+			திரும்பு r;
+		எனில் ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
+			விடுவி(name);
+			திரும்பு r;
 		}
 		debug3_f("extension %s", name);
-		if (kex->server) {
-			if ((r = kex_ext_info_server_parse(ssh, name,
+		எனில் (kex->server) {
+			எனில் ((r = kex_ext_info_server_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
-		} else {
-			if ((r = kex_ext_info_client_parse(ssh, name,
+				திரும்பு r;
+		} இல்லையெனில் {
+			எனில் ((r = kex_ext_info_client_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
+				திரும்பு r;
 		}
-		free(name);
-		free(val);
+		விடுவி(name);
+		விடுவி(val);
 	}
-	return sshpkt_get_end(ssh);
+	திரும்பு sshpkt_get_end(ssh);
 }
 
-static int
-kex_input_newkeys(int type, uint32_t seq, struct ssh *ssh)
+நிலையான முழு
+kex_உள்ளீடு_newkeys(முழு type, uint32_t seq, கட்டமைப்பு ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r, initial = (kex->flags & KEX_INITIAL) != 0;
-	char *cp, **prop;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	முழு r, initial = (kex->flags & KEX_INITIAL) != 0;
+	எழுத்து *cp, **prop;
 
 	debug("SSH2_MSG_NEWKEYS received");
-	if (kex->ext_info_c && initial)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		return r;
-	if ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
-		return r;
-	if (initial) {
+	எனில் (kex->ext_info_c && initial)
+		ssh_dispatch_set(ssh, SSH2_செய்தி_EXT_INFO, &kex_உள்ளீடு_ext_info);
+	ssh_dispatch_set(ssh, SSH2_செய்தி_NEWKEYS, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_செய்தி_KEXINIT, &kex_உள்ளீடு_kexinit);
+	எனில் ((r = sshpkt_get_end(ssh)) != 0)
+		திரும்பு r;
+	எனில் ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
+		திரும்பு r;
+	எனில் (initial) {
 		/* Remove initial KEX signalling from proposal for rekeying */
-		if ((r = kex_buf2prop(kex->my, NULL, &prop)) != 0)
-			return r;
-		if ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
+		எனில் ((r = kex_buf2prop(kex->my, வெற்று, &prop)) != 0)
+			திரும்பு r;
+		எனில் ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
 		    kex->server ?
 		    "ext-info-s,kex-strict-s-v00@openssh.com" :
-		    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL) {
+		    "ext-info-c,kex-strict-c-v00@openssh.com")) == வெற்று) {
 			error_f("match_filter_denylist failed");
-			goto fail;
+			செல் fail;
 		}
-		free(prop[PROPOSAL_KEX_ALGS]);
+		விடுவி(prop[PROPOSAL_KEX_ALGS]);
 		prop[PROPOSAL_KEX_ALGS] = cp;
-		if ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
+		எனில் ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
 			error_f("kex_prop2buf failed");
  fail:
 			kex_proposal_free_entries(prop);
-			free(prop);
-			return SSH_ERR_INTERNAL_ERROR;
+			விடுவி(prop);
+			திரும்பு SSH_ERR_INTERNAL_ERROR;
 		}
 		kex_proposal_free_entries(prop);
-		free(prop);
+		விடுவி(prop);
 	}
 	kex->done = 1;
 	kex->flags &= ~KEX_INITIAL;
 	sshbuf_reset(kex->peer);
 	kex->flags &= ~(KEX_INIT_SENT|KEX_INIT_RECVD);
 	kex_check_warn_weak_crypto(ssh);
-	return 0;
+	திரும்பு 0;
 }
 
-int
-kex_send_kexinit(struct ssh *ssh)
+முழு
+kex_send_kexinit(கட்டமைப்பு ssh *ssh)
 {
 	u_char *cookie;
-	struct kex *kex = ssh->kex;
-	int r;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	முழு r;
 
-	if (kex == NULL) {
+	எனில் (kex == வெற்று) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
-	if (kex->flags & KEX_INIT_SENT)
-		return 0;
+	எனில் (kex->flags & KEX_INIT_SENT)
+		திரும்பு 0;
 	kex->done = 0;
 
 	/* generate a random cookie */
-	if (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
+	எனில் (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
 		error_f("bad kex length: %zu < %d",
 		    sshbuf_len(kex->my), KEX_COOKIE_LEN);
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
-	if ((cookie = sshbuf_mutable_ptr(kex->my)) == NULL) {
+	எனில் ((cookie = sshbuf_mutable_ptr(kex->my)) == வெற்று) {
 		error_f("buffer error");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	arc4random_buf(cookie, KEX_COOKIE_LEN);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEXINIT)) != 0 ||
+	எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_KEXINIT)) != 0 ||
 	    (r = sshpkt_putb(ssh, kex->my)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "compose reply");
-		return r;
+		திரும்பு r;
 	}
 	debug("SSH2_MSG_KEXINIT sent");
 	kex->flags |= KEX_INIT_SENT;
-	return 0;
+	திரும்பு 0;
 }
 
-int
-kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
+முழு
+kex_உள்ளீடு_kexinit(முழு type, uint32_t seq, கட்டமைப்பு ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const u_char *ptr;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	மாறிலி u_char *ptr;
 	u_int i;
 	size_t dlen;
-	int r;
+	முழு r;
 
 	debug("SSH2_MSG_KEXINIT received");
-	if (kex == NULL) {
+	எனில் (kex == வெற்று) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
-	free(kex->name);
-	kex->name = NULL;
-	if ((kex->flags & KEX_INIT_RECVD) != 0) {
+	விடுவி(kex->name);
+	kex->name = வெற்று;
+	எனில் ((kex->flags & KEX_INIT_RECVD) != 0) {
 		ssh_packet_disconnect(ssh,
 		    "multiple KEXINIT received from peer");
 	}
 	kex->flags |= KEX_INIT_RECVD;
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_செய்தி_KEXINIT, &kex_protocol_error);
 	ptr = sshpkt_ptr(ssh, &dlen);
-	if ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
-		return r;
+	எனில் ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
+		திரும்பு r;
 
 	/* discard packet */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshpkt_get_u8(ssh, NULL)) != 0) {
+	க்கு (i = 0; i < KEX_COOKIE_LEN; i++) {
+		எனில் ((r = sshpkt_get_u8(ssh, வெற்று)) != 0) {
 			error_fr(r, "discard cookie");
-			return r;
+			திரும்பு r;
 		}
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshpkt_get_string(ssh, NULL, NULL)) != 0) {
+	க்கு (i = 0; i < PROPOSAL_MAX; i++) {
+		எனில் ((r = sshpkt_get_string(ssh, வெற்று, வெற்று)) != 0) {
 			error_fr(r, "discard proposal");
-			return r;
+			திரும்பு r;
 		}
 	}
 	/*
@@ -692,86 +692,86 @@ kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
 	 * for cases where the server *doesn't* go first. I guess we should
 	 * ignore it when it is set for these cases, which is what we do now.
 	 */
-	if ((r = sshpkt_get_u8(ssh, NULL)) != 0 ||	/* first_kex_follows */
-	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* reserved */
+	எனில் ((r = sshpkt_get_u8(ssh, வெற்று)) != 0 ||	/* first_kex_follows */
+	    (r = sshpkt_get_u32(ssh, வெற்று)) != 0 ||	/* reserved */
 	    (r = sshpkt_get_end(ssh)) != 0)
-			return r;
+			திரும்பு r;
 
-	if (!(kex->flags & KEX_INIT_SENT))
-		if ((r = kex_send_kexinit(ssh)) != 0)
-			return r;
-	if ((r = kex_choose_conf(ssh, seq)) != 0)
-		return r;
+	எனில் (!(kex->flags & KEX_INIT_SENT))
+		எனில் ((r = kex_send_kexinit(ssh)) != 0)
+			திரும்பு r;
+	எனில் ((r = kex_choose_conf(ssh, seq)) != 0)
+		திரும்பு r;
 
-	if (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != NULL)
-		return (kex->kex[kex->kex_type])(ssh);
+	எனில் (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != வெற்று)
+		திரும்பு (kex->kex[kex->kex_type])(ssh);
 
 	error_f("unknown kex type %u", kex->kex_type);
-	return SSH_ERR_INTERNAL_ERROR;
+	திரும்பு SSH_ERR_INTERNAL_ERROR;
 }
 
-struct kex *
-kex_new(void)
+கட்டமைப்பு kex *
+kex_new(வெறுமை)
 {
-	struct kex *kex;
+	கட்டமைப்பு kex *kex;
 
-	if ((kex = calloc(1, sizeof(*kex))) == NULL ||
-	    (kex->peer = sshbuf_new()) == NULL ||
-	    (kex->my = sshbuf_new()) == NULL ||
-	    (kex->client_version = sshbuf_new()) == NULL ||
-	    (kex->server_version = sshbuf_new()) == NULL ||
-	    (kex->session_id = sshbuf_new()) == NULL) {
+	எனில் ((kex = calloc(1, அளவு(*kex))) == வெற்று ||
+	    (kex->peer = sshbuf_new()) == வெற்று ||
+	    (kex->my = sshbuf_new()) == வெற்று ||
+	    (kex->client_version = sshbuf_new()) == வெற்று ||
+	    (kex->server_version = sshbuf_new()) == வெற்று ||
+	    (kex->session_id = sshbuf_new()) == வெற்று) {
 		kex_free(kex);
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	return kex;
+	திரும்பு kex;
 }
 
-void
-kex_free_newkeys(struct newkeys *newkeys)
+வெறுமை
+kex_free_newkeys(கட்டமைப்பு newkeys *newkeys)
 {
-	if (newkeys == NULL)
-		return;
-	if (newkeys->enc.key) {
-		explicit_bzero(newkeys->enc.key, newkeys->enc.key_len);
-		free(newkeys->enc.key);
-		newkeys->enc.key = NULL;
+	எனில் (newkeys == வெற்று)
+		திரும்பு;
+	எனில் (newkeys->enc.சாவி) {
+		explicit_bzero(newkeys->enc.சாவி, newkeys->enc.சாவி_len);
+		விடுவி(newkeys->enc.சாவி);
+		newkeys->enc.சாவி = வெற்று;
 	}
-	if (newkeys->enc.iv) {
+	எனில் (newkeys->enc.iv) {
 		explicit_bzero(newkeys->enc.iv, newkeys->enc.iv_len);
-		free(newkeys->enc.iv);
-		newkeys->enc.iv = NULL;
+		விடுவி(newkeys->enc.iv);
+		newkeys->enc.iv = வெற்று;
 	}
-	free(newkeys->enc.name);
-	explicit_bzero(&newkeys->enc, sizeof(newkeys->enc));
-	free(newkeys->comp.name);
-	explicit_bzero(&newkeys->comp, sizeof(newkeys->comp));
+	விடுவி(newkeys->enc.name);
+	explicit_bzero(&newkeys->enc, அளவு(newkeys->enc));
+	விடுவி(newkeys->comp.name);
+	explicit_bzero(&newkeys->comp, அளவு(newkeys->comp));
 	mac_clear(&newkeys->mac);
-	if (newkeys->mac.key) {
-		explicit_bzero(newkeys->mac.key, newkeys->mac.key_len);
-		free(newkeys->mac.key);
-		newkeys->mac.key = NULL;
+	எனில் (newkeys->mac.சாவி) {
+		explicit_bzero(newkeys->mac.சாவி, newkeys->mac.சாவி_len);
+		விடுவி(newkeys->mac.சாவி);
+		newkeys->mac.சாவி = வெற்று;
 	}
-	free(newkeys->mac.name);
-	explicit_bzero(&newkeys->mac, sizeof(newkeys->mac));
-	freezero(newkeys, sizeof(*newkeys));
+	விடுவி(newkeys->mac.name);
+	explicit_bzero(&newkeys->mac, அளவு(newkeys->mac));
+	freezero(newkeys, அளவு(*newkeys));
 }
 
-void
-kex_free(struct kex *kex)
+வெறுமை
+kex_free(கட்டமைப்பு kex *kex)
 {
 	u_int mode;
 
-	if (kex == NULL)
-		return;
+	எனில் (kex == வெற்று)
+		திரும்பு;
 
 #ifdef WITH_OPENSSL
 	DH_free(kex->dh);
-	EC_KEY_free(kex->ec_client_key);
+	EC_சாவி_free(kex->ec_client_சாவி);
 #endif /* WITH_OPENSSL */
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	க்கு (mode = 0; mode < MODE_MAX; mode++) {
 		kex_free_newkeys(kex->newkeys[mode]);
-		kex->newkeys[mode] = NULL;
+		kex->newkeys[mode] = வெற்று;
 	}
 	sshbuf_free(kex->peer);
 	sshbuf_free(kex->my);
@@ -781,230 +781,230 @@ kex_free(struct kex *kex)
 	sshbuf_free(kex->session_id);
 	sshbuf_free(kex->initial_sig);
 	sshkey_free(kex->initial_hostkey);
-	free(kex->failed_choice);
-	free(kex->hostkey_alg);
-	free(kex->name);
-	free(kex->server_sig_algs);
-	free(kex);
+	விடுவி(kex->failed_choice);
+	விடுவி(kex->hostkey_alg);
+	விடுவி(kex->name);
+	விடுவி(kex->server_sig_algs);
+	விடுவி(kex);
 }
 
-int
-kex_ready(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+முழு
+kex_ready(கட்டமைப்பு ssh *ssh, எழுத்து *proposal[PROPOSAL_MAX])
 {
-	int r;
+	முழு r;
 
-	if ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
-		return r;
+	எனில் ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
+		திரும்பு r;
 	ssh->kex->flags = KEX_INITIAL;
 	kex_reset_dispatch(ssh);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_செய்தி_KEXINIT, &kex_உள்ளீடு_kexinit);
+	திரும்பு 0;
 }
 
-int
-kex_setup(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+முழு
+kex_setup(கட்டமைப்பு ssh *ssh, எழுத்து *proposal[PROPOSAL_MAX])
 {
-	int r;
+	முழு r;
 
-	if ((r = kex_ready(ssh, proposal)) != 0)
-		return r;
-	if ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
+	எனில் ((r = kex_ready(ssh, proposal)) != 0)
+		திரும்பு r;
+	எனில் ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
 		kex_free(ssh->kex);
-		ssh->kex = NULL;
-		return r;
+		ssh->kex = வெற்று;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Request key re-exchange, returns 0 on success or a ssherr.h error
  * code otherwise. Must not be called if KEX is incomplete or in-progress.
  */
-int
-kex_start_rekex(struct ssh *ssh)
+முழு
+kex_start_rekex(கட்டமைப்பு ssh *ssh)
 {
-	if (ssh->kex == NULL) {
+	எனில் (ssh->kex == வெற்று) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
-	if (ssh->kex->done == 0) {
+	எனில் (ssh->kex->done == 0) {
 		error_f("requested twice");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	ssh->kex->done = 0;
-	return kex_send_kexinit(ssh);
+	திரும்பு kex_send_kexinit(ssh);
 }
 
-static int
-choose_enc(struct sshenc *enc, char *client, char *server)
+நிலையான முழு
+choose_enc(கட்டமைப்பு sshenc *enc, எழுத்து *client, எழுத்து *server)
 {
-	char *name = match_list(client, server, NULL);
+	எழுத்து *name = match_list(client, server, வெற்று);
 
-	if (name == NULL)
-		return SSH_ERR_NO_CIPHER_ALG_MATCH;
-	if ((enc->cipher = cipher_by_name(name)) == NULL) {
+	எனில் (name == வெற்று)
+		திரும்பு SSH_ERR_NO_CIPHER_ALG_MATCH;
+	எனில் ((enc->cipher = cipher_by_name(name)) == வெற்று) {
 		error_f("unsupported cipher %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		விடுவி(name);
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	enc->name = name;
 	enc->enabled = 0;
-	enc->iv = NULL;
+	enc->iv = வெற்று;
 	enc->iv_len = cipher_ivlen(enc->cipher);
-	enc->key = NULL;
-	enc->key_len = cipher_keylen(enc->cipher);
+	enc->சாவி = வெற்று;
+	enc->சாவி_len = cipher_keylen(enc->cipher);
 	enc->block_size = cipher_blocksize(enc->cipher);
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-choose_mac(struct ssh *ssh, struct sshmac *mac, char *client, char *server)
+நிலையான முழு
+choose_mac(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshmac *mac, எழுத்து *client, எழுத்து *server)
 {
-	char *name = match_list(client, server, NULL);
+	எழுத்து *name = match_list(client, server, வெற்று);
 
-	if (name == NULL)
-		return SSH_ERR_NO_MAC_ALG_MATCH;
-	if (mac_setup(mac, name) < 0) {
+	எனில் (name == வெற்று)
+		திரும்பு SSH_ERR_NO_MAC_ALG_MATCH;
+	எனில் (mac_setup(mac, name) < 0) {
 		error_f("unsupported MAC %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		விடுவி(name);
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	mac->name = name;
-	mac->key = NULL;
+	mac->சாவி = வெற்று;
 	mac->enabled = 0;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-choose_comp(struct sshcomp *comp, char *client, char *server)
+நிலையான முழு
+choose_comp(கட்டமைப்பு sshcomp *comp, எழுத்து *client, எழுத்து *server)
 {
-	char *name = match_list(client, server, NULL);
+	எழுத்து *name = match_list(client, server, வெற்று);
 
-	if (name == NULL)
-		return SSH_ERR_NO_COMPRESS_ALG_MATCH;
+	எனில் (name == வெற்று)
+		திரும்பு SSH_ERR_NO_COMPRESS_ALG_MATCH;
 #ifdef WITH_ZLIB
-	if (strcmp(name, "zlib@openssh.com") == 0) {
+	எனில் (strcmp(name, "zlib@openssh.com") == 0) {
 		comp->type = COMP_DELAYED;
-	} else
+	} இல்லையெனில்
 #endif	/* WITH_ZLIB */
-	if (strcmp(name, "none") == 0) {
+	எனில் (strcmp(name, "none") == 0) {
 		comp->type = COMP_NONE;
-	} else {
+	} இல்லையெனில் {
 		error_f("unsupported compression scheme %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		விடுவி(name);
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	comp->name = name;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-choose_kex(struct kex *k, char *client, char *server)
+நிலையான முழு
+choose_kex(கட்டமைப்பு kex *k, எழுத்து *client, எழுத்து *server)
 {
-	k->name = match_list(client, server, NULL);
+	k->name = match_list(client, server, வெற்று);
 
 	debug("kex: algorithm: %s", k->name ? k->name : "(no match)");
-	if (k->name == NULL)
-		return SSH_ERR_NO_KEX_ALG_MATCH;
-	if (!kex_name_valid(k->name)) {
+	எனில் (k->name == வெற்று)
+		திரும்பு SSH_ERR_NO_KEX_ALG_MATCH;
+	எனில் (!kex_name_valid(k->name)) {
 		error_f("unsupported KEX method %s", k->name);
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	k->kex_type = kex_type_from_name(k->name);
 	k->hash_alg = kex_hash_from_name(k->name);
 	k->ec_nid = kex_nid_from_name(k->name);
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-choose_hostkeyalg(struct kex *k, char *client, char *server)
+நிலையான முழு
+choose_hostkeyalg(கட்டமைப்பு kex *k, எழுத்து *client, எழுத்து *server)
 {
-	free(k->hostkey_alg);
-	k->hostkey_alg = match_list(client, server, NULL);
+	விடுவி(k->hostkey_alg);
+	k->hostkey_alg = match_list(client, server, வெற்று);
 
 	debug("kex: host key algorithm: %s",
 	    k->hostkey_alg ? k->hostkey_alg : "(no match)");
-	if (k->hostkey_alg == NULL)
-		return SSH_ERR_NO_HOSTKEY_ALG_MATCH;
+	எனில் (k->hostkey_alg == வெற்று)
+		திரும்பு SSH_ERR_NO_HOSTKEY_ALG_MATCH;
 	k->hostkey_type = sshkey_type_from_name(k->hostkey_alg);
-	if (k->hostkey_type == KEY_UNSPEC) {
+	எனில் (k->hostkey_type == சாவி_UNSPEC) {
 		error_f("unsupported hostkey algorithm %s", k->hostkey_alg);
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	k->hostkey_nid = sshkey_ecdsa_nid_from_name(k->hostkey_alg);
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-proposals_match(char *my[PROPOSAL_MAX], char *peer[PROPOSAL_MAX])
+நிலையான முழு
+proposals_match(எழுத்து *my[PROPOSAL_MAX], எழுத்து *peer[PROPOSAL_MAX])
 {
-	static int check[] = {
-		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_KEY_ALGS, -1
+	நிலையான முழு check[] = {
+		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_சாவி_ALGS, -1
 	};
-	int *idx;
-	char *p;
+	முழு *idx;
+	எழுத்து *p;
 
-	for (idx = &check[0]; *idx != -1; idx++) {
-		if ((p = strchr(my[*idx], ',')) != NULL)
+	க்கு (idx = &check[0]; *idx != -1; idx++) {
+		எனில் ((p = strchr(my[*idx], ',')) != வெற்று)
 			*p = '\0';
-		if ((p = strchr(peer[*idx], ',')) != NULL)
+		எனில் ((p = strchr(peer[*idx], ',')) != வெற்று)
 			*p = '\0';
-		if (strcmp(my[*idx], peer[*idx]) != 0) {
+		எனில் (strcmp(my[*idx], peer[*idx]) != 0) {
 			debug2("proposal mismatch: my %s peer %s",
 			    my[*idx], peer[*idx]);
-			return (0);
+			திரும்பு (0);
 		}
 	}
 	debug2("proposals match");
-	return (1);
+	திரும்பு (1);
 }
 
-static int
-kexalgs_contains(char **peer, const char *ext)
+நிலையான முழு
+kexalgs_contains(எழுத்து **peer, மாறிலி எழுத்து *ext)
 {
-	return kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
+	திரும்பு kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
 }
 
-static int
-kex_choose_conf(struct ssh *ssh, uint32_t seq)
+நிலையான முழு
+kex_choose_conf(கட்டமைப்பு ssh *ssh, uint32_t seq)
 {
-	struct kex *kex = ssh->kex;
-	struct newkeys *newkeys;
-	char **my = NULL, **peer = NULL;
-	char **cprop, **sprop;
-	int nenc, nmac, ncomp;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	கட்டமைப்பு newkeys *newkeys;
+	எழுத்து **my = வெற்று, **peer = வெற்று;
+	எழுத்து **cprop, **sprop;
+	முழு nenc, nmac, ncomp;
 	u_int mode, ctos, need, dh_need, authlen;
-	int r, first_kex_follows;
+	முழு r, first_kex_follows;
 
 	debug2("local %s KEXINIT proposal", kex->server ? "server" : "client");
-	if ((r = kex_buf2prop(kex->my, NULL, &my)) != 0)
-		goto out;
+	எனில் ((r = kex_buf2prop(kex->my, வெற்று, &my)) != 0)
+		செல் out;
 	debug2("peer %s KEXINIT proposal", kex->server ? "client" : "server");
-	if ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
-		goto out;
+	எனில் ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
+		செல் out;
 
-	if (kex->server) {
+	எனில் (kex->server) {
 		cprop=peer;
 		sprop=my;
-	} else {
+	} இல்லையெனில் {
 		cprop=my;
 		sprop=peer;
 	}
 
 	/* Check whether peer supports ext_info/kex_strict */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->server) {
+	எனில் ((kex->flags & KEX_INITIAL) != 0) {
+		எனில் (kex->server) {
 			kex->ext_info_c = kexalgs_contains(peer, "ext-info-c");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-c-v00@openssh.com");
-		} else {
+		} இல்லையெனில் {
 			kex->ext_info_s = kexalgs_contains(peer, "ext-info-s");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-s-v00@openssh.com");
 		}
-		if (kex->kex_strict) {
+		எனில் (kex->kex_strict) {
 			debug3_f("will use strict KEX ordering");
-			if (seq != 0)
+			எனில் (seq != 0)
 				ssh_packet_disconnect(ssh,
 				    "strict KEX violation: "
 				    "KEXINIT was not the first packet");
@@ -1012,32 +1012,32 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 	}
 
 	/* Check whether client supports rsa-sha2 algorithms */
-	if (kex->server && (kex->flags & KEX_INITIAL)) {
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+	எனில் (kex->server && (kex->flags & KEX_INITIAL)) {
+		எனில் (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_சாவி_ALGS],
 		    "rsa-sha2-256,rsa-sha2-256-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_256_SUPPORTED;
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+		எனில் (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_சாவி_ALGS],
 		    "rsa-sha2-512,rsa-sha2-512-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_512_SUPPORTED;
 	}
 
 	/* Algorithm Negotiation */
-	if ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
+	எனில் ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
 	    sprop[PROPOSAL_KEX_ALGS])) != 0) {
 		kex->failed_choice = peer[PROPOSAL_KEX_ALGS];
-		peer[PROPOSAL_KEX_ALGS] = NULL;
-		goto out;
+		peer[PROPOSAL_KEX_ALGS] = வெற்று;
+		செல் out;
 	}
-	if ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_KEY_ALGS],
-	    sprop[PROPOSAL_SERVER_HOST_KEY_ALGS])) != 0) {
-		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_KEY_ALGS];
-		peer[PROPOSAL_SERVER_HOST_KEY_ALGS] = NULL;
-		goto out;
+	எனில் ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_சாவி_ALGS],
+	    sprop[PROPOSAL_SERVER_HOST_சாவி_ALGS])) != 0) {
+		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_சாவி_ALGS];
+		peer[PROPOSAL_SERVER_HOST_சாவி_ALGS] = வெற்று;
+		செல் out;
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
-		if ((newkeys = calloc(1, sizeof(*newkeys))) == NULL) {
+	க்கு (mode = 0; mode < MODE_MAX; mode++) {
+		எனில் ((newkeys = calloc(1, அளவு(*newkeys))) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			செல் out;
 		}
 		kex->newkeys[mode] = newkeys;
 		ctos = (!kex->server && mode == MODE_OUT) ||
@@ -1045,26 +1045,26 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		nenc  = ctos ? PROPOSAL_ENC_ALGS_CTOS  : PROPOSAL_ENC_ALGS_STOC;
 		nmac  = ctos ? PROPOSAL_MAC_ALGS_CTOS  : PROPOSAL_MAC_ALGS_STOC;
 		ncomp = ctos ? PROPOSAL_COMP_ALGS_CTOS : PROPOSAL_COMP_ALGS_STOC;
-		if ((r = choose_enc(&newkeys->enc, cprop[nenc],
+		எனில் ((r = choose_enc(&newkeys->enc, cprop[nenc],
 		    sprop[nenc])) != 0) {
 			kex->failed_choice = peer[nenc];
-			peer[nenc] = NULL;
-			goto out;
+			peer[nenc] = வெற்று;
+			செல் out;
 		}
 		authlen = cipher_authlen(newkeys->enc.cipher);
 		/* ignore mac for authenticated encryption */
-		if (authlen == 0 &&
+		எனில் (authlen == 0 &&
 		    (r = choose_mac(ssh, &newkeys->mac, cprop[nmac],
 		    sprop[nmac])) != 0) {
 			kex->failed_choice = peer[nmac];
-			peer[nmac] = NULL;
-			goto out;
+			peer[nmac] = வெற்று;
+			செல் out;
 		}
-		if ((r = choose_comp(&newkeys->comp, cprop[ncomp],
+		எனில் ((r = choose_comp(&newkeys->comp, cprop[ncomp],
 		    sprop[ncomp])) != 0) {
 			kex->failed_choice = peer[ncomp];
-			peer[ncomp] = NULL;
-			goto out;
+			peer[ncomp] = வெற்று;
+			செல் out;
 		}
 		debug("kex: %s cipher: %s MAC: %s compression: %s",
 		    ctos ? "client->server" : "server->client",
@@ -1073,52 +1073,52 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		    newkeys->comp.name);
 	}
 	need = dh_need = 0;
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	க்கு (mode = 0; mode < MODE_MAX; mode++) {
 		newkeys = kex->newkeys[mode];
-		need = MAXIMUM(need, newkeys->enc.key_len);
+		need = MAXIMUM(need, newkeys->enc.சாவி_len);
 		need = MAXIMUM(need, newkeys->enc.block_size);
 		need = MAXIMUM(need, newkeys->enc.iv_len);
-		need = MAXIMUM(need, newkeys->mac.key_len);
+		need = MAXIMUM(need, newkeys->mac.சாவி_len);
 		dh_need = MAXIMUM(dh_need, cipher_seclen(newkeys->enc.cipher));
 		dh_need = MAXIMUM(dh_need, newkeys->enc.block_size);
 		dh_need = MAXIMUM(dh_need, newkeys->enc.iv_len);
-		dh_need = MAXIMUM(dh_need, newkeys->mac.key_len);
+		dh_need = MAXIMUM(dh_need, newkeys->mac.சாவி_len);
 	}
 	/* XXX need runden? */
 	kex->we_need = need;
 	kex->dh_need = dh_need;
 
 	/* ignore the next message if the proposals do not match */
-	if (first_kex_follows && !proposals_match(my, peer))
+	எனில் (first_kex_follows && !proposals_match(my, peer))
 		ssh->dispatch_skip_packets = 1;
 	r = 0;
  out:
 	kex_prop_free(my);
 	kex_prop_free(peer);
-	return r;
+	திரும்பு r;
 }
 
-static int
-derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret, u_char **keyp)
+நிலையான முழு
+derive_சாவி(கட்டமைப்பு ssh *ssh, முழு id, u_int need, u_char *hash, u_int hashlen,
+    மாறிலி கட்டமைப்பு sshbuf *shared_secret, u_char **keyp)
 {
-	struct kex *kex = ssh->kex;
-	struct ssh_digest_ctx *hashctx = NULL;
-	char c = id;
+	கட்டமைப்பு kex *kex = ssh->kex;
+	கட்டமைப்பு ssh_digest_ctx *hashctx = வெற்று;
+	எழுத்து c = id;
 	u_int have;
 	size_t mdsz;
 	u_char *digest;
-	int r;
+	முழு r;
 
-	if ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((digest = calloc(1, ROUNDUP(need, mdsz))) == NULL) {
+	எனில் ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((digest = calloc(1, ROUNDUP(need, mdsz))) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
 
 	/* K1 = HASH(K || H || "A" || session_id) */
-	if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
+	எனில் ((hashctx = ssh_digest_start(kex->hash_alg)) == வெற்று ||
 	    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
 	    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 	    ssh_digest_update(hashctx, &c, 1) != 0 ||
@@ -1126,126 +1126,126 @@ derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
 	    ssh_digest_final(hashctx, digest, mdsz) != 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		error_f("KEX hash failed");
-		goto out;
+		செல் out;
 	}
 	ssh_digest_free(hashctx);
-	hashctx = NULL;
+	hashctx = வெற்று;
 
 	/*
 	 * expand key:
 	 * Kn = HASH(K || H || K1 || K2 || ... || Kn-1)
 	 * Key = K1 || K2 || ... || Kn
 	 */
-	for (have = mdsz; need > have; have += mdsz) {
-		if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
+	க்கு (have = mdsz; need > have; have += mdsz) {
+		எனில் ((hashctx = ssh_digest_start(kex->hash_alg)) == வெற்று ||
 		    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
 		    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 		    ssh_digest_update(hashctx, digest, have) != 0 ||
 		    ssh_digest_final(hashctx, digest + have, mdsz) != 0) {
 			error_f("KDF failed");
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			செல் out;
 		}
 		ssh_digest_free(hashctx);
-		hashctx = NULL;
+		hashctx = வெற்று;
 	}
 #ifdef DEBUG_KEX
 	fprintf(stderr, "key '%c'== ", c);
 	dump_digest("key", digest, need);
 #endif
 	*keyp = digest;
-	digest = NULL;
+	digest = வெற்று;
 	r = 0;
  out:
-	free(digest);
+	விடுவி(digest);
 	ssh_digest_free(hashctx);
-	return r;
+	திரும்பு r;
 }
 
 #define NKEYS	6
-int
-kex_derive_keys(struct ssh *ssh, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret)
+முழு
+kex_derive_சாவிகள்(கட்டமைப்பு ssh *ssh, u_char *hash, u_int hashlen,
+    மாறிலி கட்டமைப்பு sshbuf *shared_secret)
 {
-	struct kex *kex = ssh->kex;
-	u_char *keys[NKEYS];
+	கட்டமைப்பு kex *kex = ssh->kex;
+	u_char *சாவிகள்[NKEYS];
 	u_int i, j, mode, ctos;
-	int r;
+	முழு r;
 
 	/* save initial hash as session id */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (sshbuf_len(kex->session_id) != 0) {
+	எனில் ((kex->flags & KEX_INITIAL) != 0) {
+		எனில் (sshbuf_len(kex->session_id) != 0) {
 			error_f("already have session ID at kex");
-			return SSH_ERR_INTERNAL_ERROR;
+			திரும்பு SSH_ERR_INTERNAL_ERROR;
 		}
-		if ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
-			return r;
-	} else if (sshbuf_len(kex->session_id) == 0) {
+		எனில் ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
+			திரும்பு r;
+	} இல்லையெனில் எனில் (sshbuf_len(kex->session_id) == 0) {
 		error_f("no session ID in rekex");
-		return SSH_ERR_INTERNAL_ERROR;
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
-	for (i = 0; i < NKEYS; i++) {
-		if ((r = derive_key(ssh, 'A'+i, kex->we_need, hash, hashlen,
-		    shared_secret, &keys[i])) != 0) {
-			for (j = 0; j < i; j++)
-				free(keys[j]);
-			return r;
+	க்கு (i = 0; i < NKEYS; i++) {
+		எனில் ((r = derive_சாவி(ssh, 'A'+i, kex->we_need, hash, hashlen,
+		    shared_secret, &சாவிகள்[i])) != 0) {
+			க்கு (j = 0; j < i; j++)
+				விடுவி(சாவிகள்[j]);
+			திரும்பு r;
 		}
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	க்கு (mode = 0; mode < MODE_MAX; mode++) {
 		ctos = (!kex->server && mode == MODE_OUT) ||
 		    (kex->server && mode == MODE_IN);
-		kex->newkeys[mode]->enc.iv  = keys[ctos ? 0 : 1];
-		kex->newkeys[mode]->enc.key = keys[ctos ? 2 : 3];
-		kex->newkeys[mode]->mac.key = keys[ctos ? 4 : 5];
+		kex->newkeys[mode]->enc.iv  = சாவிகள்[ctos ? 0 : 1];
+		kex->newkeys[mode]->enc.சாவி = சாவிகள்[ctos ? 2 : 3];
+		kex->newkeys[mode]->mac.சாவி = சாவிகள்[ctos ? 4 : 5];
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-int
-kex_load_hostkey(struct ssh *ssh, struct sshkey **prvp, struct sshkey **pubp)
+முழு
+kex_load_hostkey(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshkey **prvp, கட்டமைப்பு sshkey **pubp)
 {
-	struct kex *kex = ssh->kex;
+	கட்டமைப்பு kex *kex = ssh->kex;
 
-	*pubp = NULL;
-	*prvp = NULL;
-	if (kex->load_host_public_key == NULL ||
-	    kex->load_host_private_key == NULL) {
+	*pubp = வெற்று;
+	*prvp = வெற்று;
+	எனில் (kex->load_host_public_சாவி == வெற்று ||
+	    kex->load_host_private_சாவி == வெற்று) {
 		error_f("missing hostkey loader");
-		return SSH_ERR_INVALID_ARGUMENT;
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 	}
-	*pubp = kex->load_host_public_key(kex->hostkey_type,
+	*pubp = kex->load_host_public_சாவி(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	*prvp = kex->load_host_private_key(kex->hostkey_type,
+	*prvp = kex->load_host_private_சாவி(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	if (*pubp == NULL)
-		return SSH_ERR_NO_HOSTKEY_LOADED;
-	return 0;
+	எனில் (*pubp == வெற்று)
+		திரும்பு SSH_ERR_NO_HOSTKEY_LOADED;
+	திரும்பு 0;
 }
 
-int
-kex_verify_host_key(struct ssh *ssh, struct sshkey *server_host_key)
+முழு
+kex_verify_host_சாவி(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshkey *server_host_சாவி)
 {
-	struct kex *kex = ssh->kex;
+	கட்டமைப்பு kex *kex = ssh->kex;
 
-	if (kex->verify_host_key == NULL) {
+	எனில் (kex->verify_host_சாவி == வெற்று) {
 		error_f("missing hostkey verifier");
-		return SSH_ERR_INVALID_ARGUMENT;
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (server_host_key->type != kex->hostkey_type ||
-	    (kex->hostkey_type == KEY_ECDSA &&
-	    server_host_key->ecdsa_nid != kex->hostkey_nid))
-		return SSH_ERR_KEY_TYPE_MISMATCH;
-	if (kex->verify_host_key(server_host_key, ssh) == -1)
-		return  SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	எனில் (server_host_சாவி->type != kex->hostkey_type ||
+	    (kex->hostkey_type == சாவி_ECDSA &&
+	    server_host_சாவி->ecdsa_nid != kex->hostkey_nid))
+		திரும்பு SSH_ERR_சாவி_TYPE_MISMATCH;
+	எனில் (kex->verify_host_சாவி(server_host_சாவி, ssh) == -1)
+		திரும்பு  SSH_ERR_SIGNATURE_INVALID;
+	திரும்பு 0;
 }
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void
-dump_digest(const char *msg, const u_char *digest, int len)
+#எனில் defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+வெறுமை
+dump_digest(மாறிலி எழுத்து *செய்தி, மாறிலி u_char *digest, முழு len)
 {
-	fprintf(stderr, "%s\n", msg);
+	fprintf(stderr, "%s\n", செய்தி);
 	sshbuf_dump_data(digest, len, stderr);
 }
 #endif
@@ -1254,16 +1254,16 @@ dump_digest(const char *msg, const u_char *digest, int len)
  * Send a plaintext error message to the peer, suffixed by \r\n.
  * Only used during banner exchange, and there only for the server.
  */
-static void
-send_error(struct ssh *ssh, char *msg)
+நிலையான வெறுமை
+send_error(கட்டமைப்பு ssh *ssh, எழுத்து *செய்தி)
 {
-	char *crnl = "\r\n";
+	எழுத்து *crnl = "\r\n";
 
-	if (!ssh->kex->server)
-		return;
+	எனில் (!ssh->kex->server)
+		திரும்பு;
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
-	    msg, strlen(msg)) != strlen(msg) ||
+	எனில் (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	    செய்தி, strlen(செய்தி)) != strlen(செய்தி) ||
 	    atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    crnl, strlen(crnl)) != strlen(crnl))
 		error_f("write: %.100s", strerror(errno));
@@ -1274,208 +1274,208 @@ send_error(struct ssh *ssh, char *msg)
  * up to timeout_ms (or indefinitely if timeout_ms <= 0).
  * Returns on 0 success or a ssherr.h code on failure.
  */
-int
-kex_exchange_identification(struct ssh *ssh, int timeout_ms,
-    const char *version_addendum)
+முழு
+kex_exchange_identification(கட்டமைப்பு ssh *ssh, முழு timeout_ms,
+    மாறிலி எழுத்து *version_addendum)
 {
-	int remote_major, remote_minor, mismatch, oerrno = 0;
+	முழு remote_major, remote_minor, mismatch, oerrno = 0;
 	size_t len, n;
-	int r, expect_nl;
+	முழு r, expect_nl;
 	u_char c;
-	struct sshbuf *our_version = ssh->kex->server ?
+	கட்டமைப்பு sshbuf *our_version = ssh->kex->server ?
 	    ssh->kex->server_version : ssh->kex->client_version;
-	struct sshbuf *peer_version = ssh->kex->server ?
+	கட்டமைப்பு sshbuf *peer_version = ssh->kex->server ?
 	    ssh->kex->client_version : ssh->kex->server_version;
-	char *our_version_string = NULL, *peer_version_string = NULL;
-	char *cp, *remote_version = NULL;
+	எழுத்து *our_version_string = வெற்று, *peer_version_string = வெற்று;
+	எழுத்து *cp, *remote_version = வெற்று;
 
 	/* Prepare and send our banner */
 	sshbuf_reset(our_version);
-	if (version_addendum != NULL && *version_addendum == '\0')
-		version_addendum = NULL;
-	if ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
+	எனில் (version_addendum != வெற்று && *version_addendum == '\0')
+		version_addendum = வெற்று;
+	எனில் ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
 	    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
-	    version_addendum == NULL ? "" : " ",
-	    version_addendum == NULL ? "" : version_addendum)) != 0) {
+	    version_addendum == வெற்று ? "" : " ",
+	    version_addendum == வெற்று ? "" : version_addendum)) != 0) {
 		oerrno = errno;
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		செல் out;
 	}
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	எனில் (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    sshbuf_mutable_ptr(our_version),
 	    sshbuf_len(our_version)) != sshbuf_len(our_version)) {
 		oerrno = errno;
 		debug_f("write: %.100s", strerror(errno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
+	எனில் ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
 		oerrno = errno;
 		error_fr(r, "sshbuf_consume_end");
-		goto out;
+		செல் out;
 	}
 	our_version_string = sshbuf_dup_string(our_version);
-	if (our_version_string == NULL) {
+	எனில் (our_version_string == வெற்று) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
 	debug("Local version string %.100s", our_version_string);
 
 	/* Read other side's version identification. */
-	for (n = 0; ; n++) {
-		if (n >= SSH_MAX_PRE_BANNER_LINES) {
+	க்கு (n = 0; ; n++) {
+		எனில் (n >= SSH_MAX_PRE_BANNER_வரிகள்) {
 			send_error(ssh, "No SSH identification string "
 			    "received.");
 			error_f("No SSH version received in first %u lines "
-			    "from server", SSH_MAX_PRE_BANNER_LINES);
+			    "from server", SSH_MAX_PRE_BANNER_வரிகள்);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
 		sshbuf_reset(peer_version);
 		expect_nl = 0;
-		for (;;) {
-			if (timeout_ms > 0) {
+		க்கு (;;) {
+			எனில் (timeout_ms > 0) {
 				r = waitrfd(ssh_packet_get_connection_in(ssh),
-				    &timeout_ms, NULL);
-				if (r == -1 && errno == ETIMEDOUT) {
+				    &timeout_ms, வெற்று);
+				எனில் (r == -1 && errno == ETIMEDOUT) {
 					send_error(ssh, "Timed out waiting "
 					    "for SSH identification string.");
 					error("Connection timed out during "
 					    "banner exchange");
 					r = SSH_ERR_CONN_TIMEOUT;
-					goto out;
-				} else if (r == -1) {
+					செல் out;
+				} இல்லையெனில் எனில் (r == -1) {
 					oerrno = errno;
 					error_f("%s", strerror(errno));
 					r = SSH_ERR_SYSTEM_ERROR;
-					goto out;
+					செல் out;
 				}
 			}
 
-			len = atomicio(read, ssh_packet_get_connection_in(ssh),
+			len = atomicio(பட, ssh_packet_get_connection_in(ssh),
 			    &c, 1);
-			if (len != 1 && errno == EPIPE) {
+			எனில் (len != 1 && errno == EPIPE) {
 				verbose_f("Connection closed by remote host");
 				r = SSH_ERR_CONN_CLOSED;
-				goto out;
-			} else if (len != 1) {
+				செல் out;
+			} இல்லையெனில் எனில் (len != 1) {
 				oerrno = errno;
 				error_f("read: %.100s", strerror(errno));
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				செல் out;
 			}
-			if (c == '\r') {
+			எனில் (c == '\r') {
 				expect_nl = 1;
-				continue;
+				தொடர்;
 			}
-			if (c == '\n')
-				break;
-			if (c == '\0' || expect_nl) {
+			எனில் (c == '\n')
+				நிறுத்து;
+			எனில் (c == '\0' || expect_nl) {
 				verbose_f("banner line contains invalid "
 				    "characters");
-				goto invalid;
+				செல் invalid;
 			}
-			if ((r = sshbuf_put_u8(peer_version, c)) != 0) {
+			எனில் ((r = sshbuf_put_u8(peer_version, c)) != 0) {
 				oerrno = errno;
 				error_fr(r, "sshbuf_put");
-				goto out;
+				செல் out;
 			}
-			if (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
+			எனில் (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
 				verbose_f("banner line too long");
-				goto invalid;
+				செல் invalid;
 			}
 		}
 		/* Is this an actual protocol banner? */
-		if (sshbuf_len(peer_version) > 4 &&
+		எனில் (sshbuf_len(peer_version) > 4 &&
 		    memcmp(sshbuf_ptr(peer_version), "SSH-", 4) == 0)
-			break;
+			நிறுத்து;
 		/* If not, then just log the line and continue */
-		if ((cp = sshbuf_dup_string(peer_version)) == NULL) {
+		எனில் ((cp = sshbuf_dup_string(peer_version)) == வெற்று) {
 			error_f("sshbuf_dup_string failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			செல் out;
 		}
 		/* Do not accept lines before the SSH ident from a client */
-		if (ssh->kex->server) {
+		எனில் (ssh->kex->server) {
 			verbose_f("client sent invalid protocol identifier "
 			    "\"%.256s\"", cp);
-			free(cp);
-			goto invalid;
+			விடுவி(cp);
+			செல் invalid;
 		}
 		debug_f("banner line %zu: %s", n, cp);
-		free(cp);
+		விடுவி(cp);
 	}
 	peer_version_string = sshbuf_dup_string(peer_version);
-	if (peer_version_string == NULL)
+	எனில் (peer_version_string == வெற்று)
 		fatal_f("sshbuf_dup_string failed");
 	/* XXX must be same size for sscanf */
-	if ((remote_version = calloc(1, sshbuf_len(peer_version))) == NULL) {
+	எனில் ((remote_version = calloc(1, sshbuf_len(peer_version))) == வெற்று) {
 		error_f("calloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
+	எனில் (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) != 3) {
 		error("Bad remote protocol version identification: '%.100s'",
 		    peer_version_string);
  invalid:
 		send_error(ssh, "Invalid SSH identification string.");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
 	    remote_major, remote_minor, remote_version);
 	compat_banner(ssh, remote_version);
 
 	mismatch = 0;
-	switch (remote_major) {
-	case 2:
-		break;
-	case 1:
-		if (remote_minor != 99)
+	தேர்வு (remote_major) {
+	நிலை 2:
+		நிறுத்து;
+	நிலை 1:
+		எனில் (remote_minor != 99)
 			mismatch = 1;
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		mismatch = 1;
-		break;
+		நிறுத்து;
 	}
-	if (mismatch) {
+	எனில் (mismatch) {
 		error("Protocol major versions differ: %d vs. %d",
 		    PROTOCOL_MAJOR_2, remote_major);
 		send_error(ssh, "Protocol major versions differ.");
 		r = SSH_ERR_NO_PROTOCOL_VERSION;
-		goto out;
+		செல் out;
 	}
 
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
+	எனில் (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
 		logit("probed from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		செல் out;
 	}
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
+	எனில் (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
 		logit("scanned from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		செல் out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(our_version_string);
-	free(peer_version_string);
+	விடுவி(our_version_string);
+	விடுவி(peer_version_string);
 	ssh->remote_version = remote_version;  /* transferred */
-	if (r == SSH_ERR_SYSTEM_ERROR)
+	எனில் (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
-	return r;
+	திரும்பு r;
 }
 

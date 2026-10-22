@@ -23,15 +23,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#எனில் defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifdef WITH_IRIX_PROJECT
 # include <proj.h>
@@ -43,46 +43,46 @@
 # include <sat.h>
 #endif /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#அந்தர்பாவ "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+வெறுமை
+irix_setusercontext(கட்டமைப்பு passwd *pw)
 {
 #ifdef WITH_IRIX_PROJECT
 	prid_t projid;
 #endif
 #ifdef WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
+#அல்லதெனில் defined(WITH_IRIX_ARRAY)
+	முழு jid = 0;
 #endif
 
 #ifdef WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	எனில் (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
 #endif /* WITH_IRIX_JOBS */
 #ifdef WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	எனில் (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
 #endif /* WITH_IRIX_ARRAY */
 #ifdef WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	எனில் ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	எனில் (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
+		    (முழு)projid, pw->pw_name, strerror(errno));
 #endif /* WITH_IRIX_PROJECT */
 #ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+	எனில் (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (முழு) pw->pw_uid);
+		எனில் (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
 #endif /* WITH_IRIX_AUDIT */

@@ -18,18 +18,18 @@
 #ifndef OPENSSH_AESCTR_H
 #define OPENSSH_AESCTR_H
 
-#include "rijndael.h"
+#அந்தர்பாவ "rijndael.h"
 
 #define AES_BLOCK_SIZE 16
 
-typedef struct aesctr_ctx {
-	int	rounds;				/* keylen-dependent #rounds */
+வகைவரை கட்டமைப்பு aesctr_ctx {
+	முழு	rounds;				/* keylen-dependent #rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u8	ctr[AES_BLOCK_SIZE];		/* counter */
 } aesctr_ctx;
 
-void aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits);
-void aesctr_ivsetup(aesctr_ctx *x,const u8 *iv);
-void aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes);
+வெறுமை aesctr_keysetup(aesctr_ctx *x,மாறிலி u8 *k,u32 kbits,u32 ivbits);
+வெறுமை aesctr_ivsetup(aesctr_ctx *x,மாறிலி u8 *iv);
+வெறுமை aesctr_encrypt_bytes(aesctr_ctx *x,மாறிலி u8 *m,u8 *c,u32 bytes);
 
 #endif

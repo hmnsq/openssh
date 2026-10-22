@@ -24,72 +24,72 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/queue.h>
-#include <sys/wait.h>
-#include <sys/utsname.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/ioctl.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/time.h>
+#அந்தர்பாவ <sys/queue.h>
+#அந்தர்பாவ <sys/wait.h>
+#அந்தர்பாவ <sys/utsname.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <grp.h>
-#include <poll.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <paths.h>
+#அந்தர்பாவ <grp.h>
+#அந்தர்பாவ <poll.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <limits.h>
 
 #ifdef HAVE_SECUREWARE
-#include <sys/security.h>
-#include <prot.h>
+#அந்தர்பாவ <sys/security.h>
+#அந்தர்பாவ <prot.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshpty.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "compat.h"
-#include "digest.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "authfd.h"
-#include "msg.h"
-#include "version.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "addr.h"
-#include "srclimit.h"
-#include "atomicio.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "sshpty.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
+#அந்தர்பாவ "compat.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "authfile.h"
+#அந்தர்பாவ "pathnames.h"
+#அந்தர்பாவ "canohost.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "authfd.h"
+#அந்தர்பாவ "msg.h"
+#அந்தர்பாவ "version.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "sk-api.h"
+#அந்தர்பாவ "addr.h"
+#அந்தர்பாவ "srclimit.h"
+#அந்தர்பாவ "atomicio.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#அந்தர்பாவ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#அந்தர்பாவ "monitor_wrap.h"
 
 /* Re-exec fds */
 #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
 #define REEXEC_CONFIG_PASS_FD		(STDERR_FILENO + 2)
 #define REEXEC_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+வெளி எழுத்து *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
@@ -100,20 +100,20 @@ ServerOptions options;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+முழு debug_flag = 0;
 
 /* Saved arguments to main(). */
-static char execpath[PATH_MAX];
-static char **saved_argv;
-static int saved_argc;
+நிலையான எழுத்து execpath[PATH_MAX];
+நிலையான எழுத்து **saved_argv;
+நிலையான முழு saved_argc;
 
 /*
  * The sockets that the server is listening; this is used in the SIGHUP
  * signal handler.
  */
 #define	MAX_LISTEN_SOCKS	16
-static int listen_socks[MAX_LISTEN_SOCKS];
-static int num_listen_socks = 0;
+நிலையான முழு listen_socks[MAX_LISTEN_SOCKS];
+நிலையான முழு இலக்கம்_listen_socks = 0;
 
 /*
  * Any really sensitive data in the application is contained in this
@@ -123,18 +123,18 @@ static int num_listen_socks = 0;
  * have access to the internals of them, and locking just the structure is
  * not very useful.  Currently, memory locking is not implemented.
  */
-struct {
-	struct sshkey	**host_keys;		/* all private host keys */
-	struct sshkey	**host_pubkeys;		/* all public host keys */
-	struct sshkey	**host_certificates;	/* all public host certificates */
-	int		have_ssh2_key;
+கட்டமைப்பு {
+	கட்டமைப்பு sshkey	**host_சாவிகள்;		/* all private host keys */
+	கட்டமைப்பு sshkey	**host_pubkeys;		/* all public host keys */
+	கட்டமைப்பு sshkey	**host_certificates;	/* all public host certificates */
+	முழு		have_ssh2_சாவி;
 } sensitive_data;
 
 /* This is set to true when a signal is received. */
-static volatile sig_atomic_t received_siginfo = 0;
-static volatile sig_atomic_t received_sigchld = 0;
-static volatile sig_atomic_t received_sighup = 0;
-static volatile sig_atomic_t received_sigterm = 0;
+நிலையான நிலையற்ற sig_atomic_t received_siginfo = 0;
+நிலையான நிலையற்ற sig_atomic_t received_sigchld = 0;
+நிலையான நிலையற்ற sig_atomic_t received_sighup = 0;
+நிலையான நிலையற்ற sig_atomic_t received_sigterm = 0;
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
@@ -165,128 +165,128 @@ u_int utmp_len = HOST_NAME_MAX+1;
  * preauth processes will exit with a status of EXIT_LOGIN_GRACE to indicate
  * they did not authenticate before the LoginGraceTime alarm fired.
  */
-struct early_child {
-	int pipefd;
-	int early;		/* Indicates child closed listener */
-	char *id;		/* human readable connection identifier */
+கட்டமைப்பு early_child {
+	முழு pipefd;
+	முழு early;		/* Indicates child closed listener */
+	எழுத்து *id;		/* human readable connection identifier */
 	pid_t pid;
-	struct xaddr addr;
-	int have_addr;
-	int status, have_status;
-	struct sshbuf *config;
-	struct sshbuf *keys;
+	கட்டமைப்பு xaddr addr;
+	முழு have_addr;
+	முழு status, have_status;
+	கட்டமைப்பு sshbuf *config;
+	கட்டமைப்பு sshbuf *சாவிகள்;
 };
-static struct early_child *children;
-static int children_active;
+நிலையான கட்டமைப்பு early_child *children;
+நிலையான முழு children_active;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
-struct sshbuf *config;	/* packed */
+கட்டமைப்பு sshbuf *cfg;
+கட்டமைப்பு sshbuf *config;	/* packed */
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+கட்டமைப்பு include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+கட்டமைப்பு sshbuf *loginmsg;
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+கட்டமைப்பு passwd *privsep_pw = வெற்று;
 
-static char *listener_proctitle;
+நிலையான எழுத்து *listener_proctitle;
 
 /*
  * Close all listening sockets
  */
-static void
-close_listen_socks(void)
+நிலையான வெறுமை
+close_listen_socks(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	for (i = 0; i < num_listen_socks; i++)
+	க்கு (i = 0; i < இலக்கம்_listen_socks; i++)
 		close(listen_socks[i]);
-	num_listen_socks = 0;
+	இலக்கம்_listen_socks = 0;
 }
 
 /* Allocate and initialise the children array */
-static void
-child_alloc(void)
+நிலையான வெறுமை
+child_alloc(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	children = xcalloc(options.max_startups, sizeof(*children));
-	for (i = 0; i < options.max_startups; i++) {
+	children = xcalloc(options.max_startups, அளவு(*children));
+	க்கு (i = 0; i < options.max_startups; i++) {
 		children[i].pipefd = -1;
 		children[i].pid = -1;
 	}
 }
 
 /* Register a new connection in the children array; child pid comes later */
-static struct early_child *
-child_register(int pipefd, int sockfd)
+நிலையான கட்டமைப்பு early_child *
+child_register(முழு pipefd, முழு sockfd)
 {
-	int i, lport, rport;
-	char *laddr = NULL, *raddr = NULL;
-	struct early_child *child = NULL;
-	struct sockaddr_storage addr;
-	socklen_t addrlen = sizeof(addr);
-	struct sockaddr *sa = (struct sockaddr *)&addr;
+	முழு i, lport, rport;
+	எழுத்து *laddr = வெற்று, *raddr = வெற்று;
+	கட்டமைப்பு early_child *child = வெற்று;
+	கட்டமைப்பு sockaddr_storage addr;
+	socklen_t addrlen = அளவு(addr);
+	கட்டமைப்பு sockaddr *sa = (கட்டமைப்பு sockaddr *)&addr;
 
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd != -1 ||
-		    children[i].config != NULL ||
-		    children[i].keys != NULL ||
+	க்கு (i = 0; i < options.max_startups; i++) {
+		எனில் (children[i].pipefd != -1 ||
+		    children[i].config != வெற்று ||
+		    children[i].சாவிகள் != வெற்று ||
 		    children[i].pid > 0)
-			continue;
+			தொடர்;
 		child = &(children[i]);
-		break;
+		நிறுத்து;
 	}
-	if (child == NULL) {
+	எனில் (child == வெற்று) {
 		fatal_f("error: accepted connection when all %d child "
 		    " slots full", options.max_startups);
 	}
 	child->pipefd = pipefd;
 	child->early = 1;
-	if ((child->config = sshbuf_fromb(config)) == NULL)
+	எனில் ((child->config = sshbuf_fromb(config)) == வெற்று)
 		fatal_f("sshbuf_fromb failed");
 	/* record peer address, if available */
-	if (getpeername(sockfd, sa, &addrlen) == 0 &&
+	எனில் (getpeername(sockfd, sa, &addrlen) == 0 &&
 	   addr_sa_to_xaddr(sa, addrlen, &child->addr) == 0)
 		child->have_addr = 1;
 	/* format peer address string for logs */
-	if ((lport = get_local_port(sockfd)) == 0 ||
+	எனில் ((lport = get_local_port(sockfd)) == 0 ||
 	    (rport = get_peer_port(sockfd)) == 0) {
 		/* Not a TCP socket */
 		raddr = get_peer_ipaddr(sockfd);
 		xasprintf(&child->id, "connection from %s", raddr);
-	} else {
+	} இல்லையெனில் {
 		laddr = get_local_ipaddr(sockfd);
 		raddr = get_peer_ipaddr(sockfd);
 		xasprintf(&child->id, "connection from %s to %s", raddr, laddr);
 	}
-	free(laddr);
-	free(raddr);
-	if (++children_active > options.max_startups)
+	விடுவி(laddr);
+	விடுவி(raddr);
+	எனில் (++children_active > options.max_startups)
 		fatal_f("internal error: more children than max_startups");
 
-	return child;
+	திரும்பு child;
 }
 
 /*
  * Finally free a child entry. Don't call this directly.
  */
-static void
-child_finish(struct early_child *child)
+நிலையான வெறுமை
+child_finish(கட்டமைப்பு early_child *child)
 {
-	if (children_active == 0)
+	எனில் (children_active == 0)
 		fatal_f("internal error: children_active underflow");
-	if (child->pipefd != -1) {
+	எனில் (child->pipefd != -1) {
 		srclimit_done(child->pipefd);
 		close(child->pipefd);
 	}
 	sshbuf_free(child->config);
-	sshbuf_free(child->keys);
-	free(child->id);
-	memset(child, '\0', sizeof(*child));
+	sshbuf_free(child->சாவிகள்);
+	விடுவி(child->id);
+	memset(child, '\0', அளவு(*child));
 	child->pipefd = -1;
 	child->pid = -1;
 	children_active--;
@@ -297,33 +297,33 @@ child_finish(struct early_child *child)
  * (it will still be tracked for waitpid()) unless force_final is set, or
  * child has already exited.
  */
-static void
-child_close(struct early_child *child, int force_final, int quiet)
+நிலையான வெறுமை
+child_close(கட்டமைப்பு early_child *child, முழு force_final, முழு quiet)
 {
-	if (!quiet)
+	எனில் (!quiet)
 		debug_f("enter%s", force_final ? " (forcing)" : "");
-	if (child->pipefd != -1) {
+	எனில் (child->pipefd != -1) {
 		srclimit_done(child->pipefd);
 		close(child->pipefd);
 		child->pipefd = -1;
 	}
-	if (child->pid == -1 || force_final)
+	எனில் (child->pid == -1 || force_final)
 		child_finish(child);
 }
 
 /* Record a child exit. Safe to call from signal handlers */
-static void
-child_exit(pid_t pid, int status)
+நிலையான வெறுமை
+child_exit(pid_t pid, முழு status)
 {
-	int i;
+	முழு i;
 
-	if (children == NULL || pid <= 0)
-		return;
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pid == pid) {
+	எனில் (children == வெற்று || pid <= 0)
+		திரும்பு;
+	க்கு (i = 0; i < options.max_startups; i++) {
+		எனில் (children[i].pid == pid) {
 			children[i].have_status = 1;
 			children[i].status = status;
-			break;
+			நிறுத்து;
 		}
 	}
 }
@@ -334,160 +334,160 @@ child_exit(pid_t pid, int status)
  * Handles logging of exit condition and will finalise the child if its pipe
  * had already been closed.
  */
-static void
-child_reap(struct early_child *child)
+நிலையான வெறுமை
+child_reap(கட்டமைப்பு early_child *child)
 {
 	LogLevel level = SYSLOG_LEVEL_DEBUG1;
-	int was_crash, penalty_type = SRCLIMIT_PENALTY_NONE;
-	const char *child_status;
+	முழு was_crash, penalty_type = SRCLIMIT_PENALTY_NONE;
+	மாறிலி எழுத்து *child_status;
 
-	if (child->config)
+	எனில் (child->config)
 		child_status = " (sending config)";
-	else if (child->keys)
+	இல்லையெனில் எனில் (child->சாவிகள்)
 		child_status = " (sending keys)";
-	else if (child->early)
+	இல்லையெனில் எனில் (child->early)
 		child_status = " (early)";
-	else
+	இல்லையெனில்
 		child_status = "";
 
 	/* Log exit information */
-	if (WIFSIGNALED(child->status)) {
+	எனில் (WIFSIGNALED(child->status)) {
 		/*
 		 * Increase logging for signals potentially associated
 		 * with serious conditions.
 		 */
-		if ((was_crash = signal_is_crash(WTERMSIG(child->status))))
+		எனில் ((was_crash = signal_is_crash(WTERMSIG(child->status))))
 			level = SYSLOG_LEVEL_ERROR;
 		do_log2(level, "session process %ld for %s killed by "
 		    "signal %d%s", (long)child->pid, child->id,
 		    WTERMSIG(child->status), child_status);
-		if (was_crash)
+		எனில் (was_crash)
 			penalty_type = SRCLIMIT_PENALTY_CRASH;
-	} else if (!WIFEXITED(child->status)) {
+	} இல்லையெனில் எனில் (!WIFEXITED(child->status)) {
 		penalty_type = SRCLIMIT_PENALTY_CRASH;
 		error("session process %ld for %s terminated abnormally, "
 		    "status=0x%x%s", (long)child->pid, child->id, child->status,
 		    child_status);
-	} else {
+	} இல்லையெனில் {
 		/* Normal exit. We care about the status */
-		switch (WEXITSTATUS(child->status)) {
-		case 0:
+		தேர்வு (WEXITSTATUS(child->status)) {
+		நிலை 0:
 			debug3_f("preauth child %ld for %s completed "
 			    "normally%s", (long)child->pid, child->id,
 			    child_status);
-			break;
-		case EXIT_LOGIN_GRACE:
+			நிறுத்து;
+		நிலை EXIT_LOGIN_GRACE:
 			penalty_type = SRCLIMIT_PENALTY_GRACE_EXCEEDED;
 			logit("Timeout before authentication for %s, "
 			    "pid = %ld%s", child->id, (long)child->pid,
 			    child_status);
-			break;
-		case EXIT_CHILD_CRASH:
+			நிறுத்து;
+		நிலை EXIT_CHILD_CRASH:
 			penalty_type = SRCLIMIT_PENALTY_CRASH;
 			logit("Session process %ld unpriv child crash for %s%s",
 			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_AUTH_ATTEMPTED:
+			நிறுத்து;
+		நிலை EXIT_AUTH_ATTEMPTED:
 			penalty_type = SRCLIMIT_PENALTY_AUTHFAIL;
 			debug_f("preauth child %ld for %s exited "
 			    "after unsuccessful auth attempt%s",
 			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_INVALID_USER:
+			நிறுத்து;
+		நிலை EXIT_INVALID_USER:
 			penalty_type = SRCLIMIT_PENALTY_INVALIDUSER;
 			debug_f("preauth child %ld for %s exited "
 			    "after auth attempt by invalid user%s",
 			    (long)child->pid, child->id, child_status);
-			break;
-		case EXIT_CONFIG_REFUSED:
+			நிறுத்து;
+		நிலை EXIT_CONFIG_REFUSED:
 			penalty_type = SRCLIMIT_PENALTY_REFUSECONNECTION;
 			debug_f("preauth child %ld for %s prohibited by"
 			    "RefuseConnection%s",
 			    (long)child->pid, child->id, child_status);
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			penalty_type = SRCLIMIT_PENALTY_NOAUTH;
 			debug_f("preauth child %ld for %s exited "
 			    "with status %d%s", (long)child->pid, child->id,
 			    WEXITSTATUS(child->status), child_status);
-			break;
+			நிறுத்து;
 		}
 	}
 
-	if (child->have_addr)
+	எனில் (child->have_addr)
 		srclimit_penalise(&child->addr, penalty_type);
 
 	child->pid = -1;
 	child->have_status = 0;
-	if (child->pipefd == -1)
+	எனில் (child->pipefd == -1)
 		child_finish(child);
 }
 
 /* Reap all children that have exited; called after SIGCHLD */
-static void
-child_reap_all_exited(void)
+நிலையான வெறுமை
+child_reap_all_exited(வெறுமை)
 {
-	int i;
+	முழு i;
 	pid_t pid;
-	int status;
+	முழு status;
 
-	if (children == NULL)
-		return;
+	எனில் (children == வெற்று)
+		திரும்பு;
 
-	for (;;) {
-		if ((pid = waitpid(-1, &status, WNOHANG)) == 0)
-			break;
-		else if (pid == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
-			if (errno != ECHILD)
+	க்கு (;;) {
+		எனில் ((pid = waitpid(-1, &status, WNOHANG)) == 0)
+			நிறுத்து;
+		இல்லையெனில் எனில் (pid == -1) {
+			எனில் (errno == EINTR || errno == EAGAIN)
+				தொடர்;
+			எனில் (errno != ECHILD)
 				error_f("waitpid: %s", strerror(errno));
-			break;
+			நிறுத்து;
 		}
 		child_exit(pid, status);
 	}
 
-	for (i = 0; i < options.max_startups; i++) {
-		if (!children[i].have_status)
-			continue;
+	க்கு (i = 0; i < options.max_startups; i++) {
+		எனில் (!children[i].have_status)
+			தொடர்;
 		child_reap(&(children[i]));
 	}
 }
 
-static void
-close_startup_pipes(void)
+நிலையான வெறுமை
+close_startup_pipes(வெறுமை)
 {
-	int i;
+	முழு i;
 
-	if (children == NULL)
-		return;
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd != -1)
+	எனில் (children == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < options.max_startups; i++) {
+		எனில் (children[i].pipefd != -1)
 			child_close(&(children[i]), 1, 1);
 	}
 }
 
 /* Called after SIGINFO */
-static void
-show_info(void)
+நிலையான வெறுமை
+show_info(வெறுமை)
 {
-	int i;
-	const char *child_status;
+	முழு i;
+	மாறிலி எழுத்து *child_status;
 
 	/* XXX print listening sockets here too */
-	if (children == NULL)
-		return;
+	எனில் (children == வெற்று)
+		திரும்பு;
 	logit("%d active startups", children_active);
-	for (i = 0; i < options.max_startups; i++) {
-		if (children[i].pipefd == -1 && children[i].pid <= 0)
-			continue;
-		if (children[i].config)
+	க்கு (i = 0; i < options.max_startups; i++) {
+		எனில் (children[i].pipefd == -1 && children[i].pid <= 0)
+			தொடர்;
+		எனில் (children[i].config)
 			child_status = " (sending config)";
-		else if (children[i].keys)
+		இல்லையெனில் எனில் (children[i].சாவிகள்)
 			child_status = " (sending keys)";
-		else if (children[i].early)
+		இல்லையெனில் எனில் (children[i].early)
 			child_status = " (early)";
-		else
+		இல்லையெனில்
 			child_status = "";
 		logit("child %d: fd=%d pid=%ld %s%s", i, children[i].pipefd,
 		    (long)children[i].pid, children[i].id, child_status);
@@ -501,8 +501,8 @@ show_info(void)
  * the server key).
  */
 
-static void
-sighup_handler(int sig)
+நிலையான வெறுமை
+sighup_handler(முழு sig)
 {
 	received_sighup = 1;
 }
@@ -511,11 +511,11 @@ sighup_handler(int sig)
  * Called from the main program after receiving SIGHUP.
  * Restarts the server.
  */
-static void
-sighup_restart(void)
+நிலையான வெறுமை
+sighup_restart(வெறுமை)
 {
 	logit("Received SIGHUP; restarting.");
-	if (options.pid_file != NULL)
+	எனில் (options.pid_file != வெற்று)
 		unlink(options.pid_file);
 	platform_pre_restart();
 	close_listen_socks();
@@ -530,22 +530,22 @@ sighup_restart(void)
 /*
  * Generic signal handler for terminating signals in the master daemon.
  */
-static void
-sigterm_handler(int sig)
+நிலையான வெறுமை
+sigterm_handler(முழு sig)
 {
 	received_sigterm = sig;
 }
 
 #ifdef SIGINFO
-static void
-siginfo_handler(int sig)
+நிலையான வெறுமை
+siginfo_handler(முழு sig)
 {
 	received_siginfo = 1;
 }
 #endif
 
-static void
-main_sigchld_handler(int sig)
+நிலையான வெறுமை
+main_sigchld_handler(முழு sig)
 {
 	received_sigchld = 1;
 }
@@ -556,17 +556,17 @@ main_sigchld_handler(int sig)
  * of (max_startups_rate/100). the probability increases linearly until
  * all connections are dropped for startups > max_startups
  */
-static int
-should_drop_connection(int startups)
+நிலையான முழு
+should_drop_connection(முழு startups)
 {
-	int p, r;
+	முழு p, r;
 
-	if (startups < options.max_startups_begin)
-		return 0;
-	if (startups >= options.max_startups)
-		return 1;
-	if (options.max_startups_rate == 100)
-		return 1;
+	எனில் (startups < options.max_startups_begin)
+		திரும்பு 0;
+	எனில் (startups >= options.max_startups)
+		திரும்பு 1;
+	எனில் (options.max_startups_rate == 100)
+		திரும்பு 1;
 
 	p  = 100 - options.max_startups_rate;
 	p *= startups - options.max_startups_begin;
@@ -575,7 +575,7 @@ should_drop_connection(int startups)
 	r = arc4random_uniform(100);
 
 	debug_f("p %d, r %d", p, r);
-	return (r < p) ? 1 : 0;
+	திரும்பு (r < p) ? 1 : 0;
 }
 
 /*
@@ -585,61 +585,61 @@ should_drop_connection(int startups)
  * Logs when the MaxStartups condition is entered or exited, and periodically
  * while in that state.
  */
-static int
-drop_connection(int sock, int startups, int notify_pipe)
+நிலையான முழு
+drop_connection(முழு sock, முழு startups, முழு notify_pipe)
 {
-	static struct log_ratelimit_ctx ratelimit_maxstartups;
-	static struct log_ratelimit_ctx ratelimit_penalty;
-	static int init_done;
-	char *laddr, *raddr;
-	const char *reason = NULL, *subreason = NULL;
-	const char msg[] = "Not allowed at this time\r\n";
-	struct log_ratelimit_ctx *rl = NULL;
-	int ratelimited;
+	நிலையான கட்டமைப்பு log_ratelimit_ctx ratelimit_maxstartups;
+	நிலையான கட்டமைப்பு log_ratelimit_ctx ratelimit_penalty;
+	நிலையான முழு init_done;
+	எழுத்து *laddr, *raddr;
+	மாறிலி எழுத்து *reason = வெற்று, *subreason = வெற்று;
+	மாறிலி எழுத்து செய்தி[] = "Not allowed at this time\r\n";
+	கட்டமைப்பு log_ratelimit_ctx *rl = வெற்று;
+	முழு ratelimited;
 	u_int ndropped;
 
-	if (!init_done) {
+	எனில் (!init_done) {
 		init_done = 1;
 		log_ratelimit_init(&ratelimit_maxstartups, 4, 60, 20, 5*60);
 		log_ratelimit_init(&ratelimit_penalty, 8, 60, 30, 2*60);
 	}
 
 	/* PerSourcePenalties */
-	if (!srclimit_penalty_check_allow(sock, &subreason)) {
+	எனில் (!srclimit_penalty_check_allow(sock, &subreason)) {
 		reason = "PerSourcePenalties";
 		rl = &ratelimit_penalty;
-	} else {
+	} இல்லையெனில் {
 		/* MaxStartups */
-		if (!should_drop_connection(startups) &&
+		எனில் (!should_drop_connection(startups) &&
 		    srclimit_check_allow(sock, notify_pipe) == 1)
-			return 0;
+			திரும்பு 0;
 		reason = "MaxStartups";
 		rl = &ratelimit_maxstartups;
 	}
 
 	laddr = get_local_ipaddr(sock);
 	raddr = get_peer_ipaddr(sock);
-	ratelimited = log_ratelimit(rl, time(NULL), NULL, &ndropped);
+	ratelimited = log_ratelimit(rl, time(வெற்று), வெற்று, &ndropped);
 	do_log2(ratelimited ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    "drop connection #%d from [%s]:%d on [%s]:%d %s",
 	    startups,
 	    raddr, get_peer_port(sock),
 	    laddr, get_local_port(sock),
-	    subreason != NULL ? subreason : reason);
-	free(laddr);
-	free(raddr);
-	if (ndropped != 0) {
+	    subreason != வெற்று ? subreason : reason);
+	விடுவி(laddr);
+	விடுவி(raddr);
+	எனில் (ndropped != 0) {
 		logit("%s logging rate-limited: additional %u connections "
 		    "dropped", reason, ndropped);
 	}
 
 	/* best-effort notification to client */
-	(void)write(sock, msg, sizeof(msg) - 1);
-	return 1;
+	(வெறுமை)லிக(sock, செய்தி, அளவு(செய்தி) - 1);
+	திரும்பு 1;
 }
 
-static void
-usage(void)
+நிலையான வெறுமை
+usage(வெறுமை)
 {
 	fprintf(stderr, "%s, %s\n", SSH_RELEASE, SSH_OPENSSL_VERSION);
 	fprintf(stderr,
@@ -650,100 +650,100 @@ usage(void)
 	exit(1);
 }
 
-static struct sshbuf *
-pack_hostkeys(void)
+நிலையான கட்டமைப்பு sshbuf *
+pack_hostkeys(வெறுமை)
 {
-	struct sshbuf *m = NULL, *keybuf = NULL, *hostkeys = NULL;
-	int r;
+	கட்டமைப்பு sshbuf *m = வெற்று, *keybuf = வெற்று, *hostkeys = வெற்று;
+	முழு r;
 	u_int i;
 	size_t len;
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (keybuf = sshbuf_new()) == NULL ||
-	    (hostkeys = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று ||
+	    (keybuf = sshbuf_new()) == வெற்று ||
+	    (hostkeys = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 
 	/* pack hostkeys into a string. Empty key slots get empty strings */
-	for (i = 0; i < options.num_host_key_files; i++) {
+	க்கு (i = 0; i < options.இலக்கம்_host_சாவி_files; i++) {
 		/* private key */
 		sshbuf_reset(keybuf);
-		if (sensitive_data.host_keys[i] != NULL &&
-		    (r = sshkey_private_serialize(sensitive_data.host_keys[i],
+		எனில் (sensitive_data.host_சாவிகள்[i] != வெற்று &&
+		    (r = sshkey_private_serialize(sensitive_data.host_சாவிகள்[i],
 		    keybuf)) != 0)
 			fatal_fr(r, "serialize hostkey private");
-		if ((r = sshbuf_put_stringb(hostkeys, keybuf)) != 0)
+		எனில் ((r = sshbuf_put_stringb(hostkeys, keybuf)) != 0)
 			fatal_fr(r, "compose hostkey private");
 		/* public key */
-		if (sensitive_data.host_pubkeys[i] != NULL) {
-			if ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
+		எனில் (sensitive_data.host_pubkeys[i] != வெற்று) {
+			எனில் ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose hostkey public");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} இல்லையெனில் {
+			எனில் ((r = sshbuf_put_string(hostkeys, வெற்று, 0)) != 0)
 				fatal_fr(r, "compose hostkey empty public");
 		}
 		/* cert */
-		if (sensitive_data.host_certificates[i] != NULL) {
-			if ((r = sshkey_puts(
+		எனில் (sensitive_data.host_certificates[i] != வெற்று) {
+			எனில் ((r = sshkey_puts(
 			    sensitive_data.host_certificates[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose host cert");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} இல்லையெனில் {
+			எனில் ((r = sshbuf_put_string(hostkeys, வெற்று, 0)) != 0)
 				fatal_fr(r, "compose host cert empty");
 		}
 	}
 
-	if ((r = sshbuf_put_u32(m, 0)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(m, 0)) != 0 ||
 	    (r = sshbuf_put_u8(m, 0)) != 0 ||
 	    (r = sshbuf_put_stringb(m, hostkeys)) != 0)
 		fatal_fr(r, "compose message");
-	if ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
+	எனில் ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(m), len - 4);
 
 	sshbuf_free(keybuf);
 	sshbuf_free(hostkeys);
-	return m;
+	திரும்பு m;
 }
 
-static struct sshbuf *
-pack_config(struct sshbuf *conf)
+நிலையான கட்டமைப்பு sshbuf *
+pack_config(கட்டமைப்பு sshbuf *conf)
 {
-	struct sshbuf *m = NULL, *inc = NULL;
-	struct include_item *item = NULL;
+	கட்டமைப்பு sshbuf *m = வெற்று, *inc = வெற்று;
+	கட்டமைப்பு include_item *item = வெற்று;
 	size_t len;
-	int r;
+	முழு r;
 
 	debug3_f("d config len %zu", sshbuf_len(conf));
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (inc = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று ||
+	    (inc = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 
 	/* pack includes into a string */
 	TAILQ_FOREACH(item, &includes, entry) {
-		if ((r = sshbuf_put_cstring(inc, item->selector)) != 0 ||
+		எனில் ((r = sshbuf_put_cstring(inc, item->selector)) != 0 ||
 		    (r = sshbuf_put_cstring(inc, item->filename)) != 0 ||
 		    (r = sshbuf_put_stringb(inc, item->contents)) != 0)
 			fatal_fr(r, "compose includes");
 	}
 
-	if ((r = sshbuf_put_u32(m, 0)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(m, 0)) != 0 ||
 	    (r = sshbuf_put_u8(m, 0)) != 0 ||
 	    (r = sshbuf_put_stringb(m, conf)) != 0 ||
 	    (r = sshbuf_put_u64(m, options.timing_secret)) != 0 ||
 	    (r = sshbuf_put_stringb(m, inc)) != 0)
 		fatal_fr(r, "compose config");
 
-	if ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
+	எனில் ((len = sshbuf_len(m)) < 5 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(m), len - 4);
 
 	sshbuf_free(inc);
 
 	debug3_f("done");
-	return m;
+	திரும்பு m;
 }
 
 /*
@@ -772,31 +772,31 @@ pack_config(struct sshbuf *conf)
  * It sends the config from a child process back to the parent.
  * The parent will read the config after exec.
  */
-static void
-send_rexec_state(int fd)
+நிலையான வெறுமை
+send_rexec_state(முழு fd)
 {
-	struct sshbuf *keys;
+	கட்டமைப்பு sshbuf *சாவிகள்;
 	u_int mlen;
 	pid_t pid;
 
-	if ((pid = fork()) == -1)
+	எனில் ((pid = fork()) == -1)
 		fatal_f("fork failed: %s", strerror(errno));
-	if (pid != 0)
-		return;
+	எனில் (pid != 0)
+		திரும்பு;
 
 	debug3_f("entering fd = %d config len %zu", fd,
 	    sshbuf_len(config));
 
 	mlen = sshbuf_len(config);
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(config), mlen) != mlen)
+	எனில் (atomicio(vwrite, fd, sshbuf_mutable_ptr(config), mlen) != mlen)
 		error_f("write: %s", strerror(errno));
 
-	keys = pack_hostkeys();
-	mlen = sshbuf_len(keys);
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(keys), mlen) != mlen)
+	சாவிகள் = pack_hostkeys();
+	mlen = sshbuf_len(சாவிகள்);
+	எனில் (atomicio(vwrite, fd, sshbuf_mutable_ptr(சாவிகள்), mlen) != mlen)
 		error_f("write: %s", strerror(errno));
 
-	sshbuf_free(keys);
+	sshbuf_free(சாவிகள்);
 	debug3_f("done");
 	exit(0);
 }
@@ -804,80 +804,80 @@ send_rexec_state(int fd)
 /*
  * Listen for TCP connections
  */
-static void
-listen_on_addrs(struct listenaddr *la)
+நிலையான வெறுமை
+listen_on_addrs(கட்டமைப்பு listenaddr *la)
 {
-	int ret, listen_sock;
-	struct addrinfo *ai;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	முழு ret, listen_sock;
+	கட்டமைப்பு addrinfo *ai;
+	எழுத்து ntop[NI_MAXHOST], strport[NI_MAXSERV];
 
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if (ai->ai_family != AF_INET && ai->ai_family != AF_INET6)
-			continue;
-		if (num_listen_socks >= MAX_LISTEN_SOCKS)
+	க்கு (ai = la->addrs; ai; ai = ai->ai_next) {
+		எனில் (ai->ai_family != AF_INET && ai->ai_family != AF_INET6)
+			தொடர்;
+		எனில் (இலக்கம்_listen_socks >= MAX_LISTEN_SOCKS)
 			fatal("Too many listen sockets. "
 			    "Enlarge MAX_LISTEN_SOCKS");
-		if ((ret = getnameinfo(ai->ai_addr, ai->ai_addrlen,
-		    ntop, sizeof(ntop), strport, sizeof(strport),
+		எனில் ((ret = getnameinfo(ai->ai_addr, ai->ai_addrlen,
+		    ntop, அளவு(ntop), strport, அளவு(strport),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo failed: %.100s",
 			    ssh_gai_strerror(ret));
-			continue;
+			தொடர்;
 		}
 		/* Create socket for listening. */
 		listen_sock = socket(ai->ai_family, ai->ai_socktype,
 		    ai->ai_protocol);
-		if (listen_sock == -1) {
+		எனில் (listen_sock == -1) {
 			/* kernel may not support ipv6 */
 			verbose("socket: %.100s", strerror(errno));
-			continue;
+			தொடர்;
 		}
-		if (set_nonblock(listen_sock) == -1) {
+		எனில் (set_nonblock(listen_sock) == -1) {
 			close(listen_sock);
-			continue;
+			தொடர்;
 		}
-		if (fcntl(listen_sock, F_SETFD, FD_CLOEXEC) == -1) {
+		எனில் (fcntl(listen_sock, F_SETFD, FD_CLOEXEC) == -1) {
 			verbose("socket: CLOEXEC: %s", strerror(errno));
 			close(listen_sock);
-			continue;
+			தொடர்;
 		}
 		/* Socket options */
 		set_reuseaddr(listen_sock);
-		if (la->rdomain != NULL &&
+		எனில் (la->rdomain != வெற்று &&
 		    set_rdomain(listen_sock, la->rdomain) == -1) {
 			close(listen_sock);
-			continue;
+			தொடர்;
 		}
 
 		/* Only communicate in IPv6 over AF_INET6 sockets. */
-		if (ai->ai_family == AF_INET6)
+		எனில் (ai->ai_family == AF_INET6)
 			sock_set_v6only(listen_sock);
 
 		debug("Bind to port %s on %s.", strport, ntop);
 
 		/* Bind the socket to the desired port. */
-		if (bind(listen_sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+		எனில் (bind(listen_sock, ai->ai_addr, ai->ai_addrlen) == -1) {
 			error("Bind to port %s on %s failed: %.200s.",
 			    strport, ntop, strerror(errno));
 			close(listen_sock);
-			continue;
+			தொடர்;
 		}
-		listen_socks[num_listen_socks] = listen_sock;
-		num_listen_socks++;
+		listen_socks[இலக்கம்_listen_socks] = listen_sock;
+		இலக்கம்_listen_socks++;
 
 		/* Start listening on the port. */
-		if (listen(listen_sock, SSH_LISTEN_BACKLOG) == -1)
+		எனில் (listen(listen_sock, SSH_LISTEN_BACKLOG) == -1)
 			fatal("listen on [%s]:%s: %.100s",
 			    ntop, strport, strerror(errno));
 		logit("Server listening on %s port %s%s%s.",
 		    ntop, strport,
-		    la->rdomain == NULL ? "" : " rdomain ",
-		    la->rdomain == NULL ? "" : la->rdomain);
+		    la->rdomain == வெற்று ? "" : " rdomain ",
+		    la->rdomain == வெற்று ? "" : la->rdomain);
 	}
 }
 
-static void
-server_listen(void)
+நிலையான வெறுமை
+server_listen(வெறுமை)
 {
 	u_int i;
 
@@ -889,18 +889,18 @@ server_listen(void)
 	    &options.per_source_penalty,
 	    options.per_source_penalty_exempt);
 
-	for (i = 0; i < options.num_listen_addrs; i++) {
+	க்கு (i = 0; i < options.இலக்கம்_listen_addrs; i++) {
 		listen_on_addrs(&options.listen_addrs[i]);
 		freeaddrinfo(options.listen_addrs[i].addrs);
-		free(options.listen_addrs[i].rdomain);
+		விடுவி(options.listen_addrs[i].rdomain);
 		memset(&options.listen_addrs[i], 0,
-		    sizeof(options.listen_addrs[i]));
+		    அளவு(options.listen_addrs[i]));
 	}
-	free(options.listen_addrs);
-	options.listen_addrs = NULL;
-	options.num_listen_addrs = 0;
+	விடுவி(options.listen_addrs);
+	options.listen_addrs = வெற்று;
+	options.இலக்கம்_listen_addrs = 0;
 
-	if (!num_listen_socks)
+	எனில் (!இலக்கம்_listen_socks)
 		fatal("Cannot bind any address.");
 }
 
@@ -908,26 +908,26 @@ server_listen(void)
  * The main TCP accept loop. Note that, for the non-debug case, returns
  * from this function are in a forked subprocess.
  */
-static void
-server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
-    int log_stderr)
+நிலையான வெறுமை
+server_accept_loop(முழு *sock_in, முழு *sock_out, முழு *newsock, முழு *config_s,
+    முழு log_stderr)
 {
-	struct pollfd *pfd = NULL;
-	int i, ret, npfd, r;
-	int oactive = -1, listening = 0, lameduck = 0;
-	int *startup_pollfd;
+	கட்டமைப்பு pollfd *pfd = வெற்று;
+	முழு i, ret, npfd, r;
+	முழு oactive = -1, listening = 0, lameduck = 0;
+	முழு *startup_pollfd;
 	ssize_t len;
-	const u_char *ptr;
-	char c = 0;
-	struct sockaddr_storage from;
-	struct early_child *child;
-	struct sshbuf *buf;
+	மாறிலி u_char *ptr;
+	எழுத்து c = 0;
+	கட்டமைப்பு sockaddr_storage from;
+	கட்டமைப்பு early_child *child;
+	கட்டமைப்பு sshbuf *buf;
 	socklen_t fromlen;
 	sigset_t nsigset, osigset;
 
 	/* pipes connected to unauthenticated child sshd processes */
 	child_alloc();
-	startup_pollfd = xcalloc(options.max_startups, sizeof(int));
+	startup_pollfd = xcalloc(options.max_startups, அளவு(முழு));
 
 	/*
 	 * Prepare signal mask that we use to block signals that might set
@@ -945,223 +945,223 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 	sigaddset(&nsigset, SIGQUIT);
 
 	/* sized for worst-case */
-	pfd = xcalloc(num_listen_socks + options.max_startups,
-	    sizeof(struct pollfd));
+	pfd = xcalloc(இலக்கம்_listen_socks + options.max_startups,
+	    அளவு(கட்டமைப்பு pollfd));
 
 	/*
 	 * Stay listening for connections until the system crashes or
 	 * the daemon is killed with a signal.
 	 */
-	for (;;) {
+	க்கு (;;) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (received_sigterm) {
+		எனில் (received_sigterm) {
 			logit("Received signal %d; terminating.",
-			    (int) received_sigterm);
+			    (முழு) received_sigterm);
 			close_listen_socks();
-			if (options.pid_file != NULL)
+			எனில் (options.pid_file != வெற்று)
 				unlink(options.pid_file);
 			exit(received_sigterm == SIGTERM ? 0 : 255);
 		}
-		if (received_sigchld) {
+		எனில் (received_sigchld) {
 			child_reap_all_exited();
 			received_sigchld = 0;
 		}
-		if (received_siginfo) {
+		எனில் (received_siginfo) {
 			show_info();
 			received_siginfo = 0;
 		}
-		if (oactive != children_active) {
+		எனில் (oactive != children_active) {
 			setproctitle("%s [listener] %d of %d-%d startups",
 			    listener_proctitle, children_active,
 			    options.max_startups_begin, options.max_startups);
 			oactive = children_active;
 		}
-		if (received_sighup) {
-			if (!lameduck) {
+		எனில் (received_sighup) {
+			எனில் (!lameduck) {
 				debug("Received SIGHUP; waiting for children");
 				close_listen_socks();
 				lameduck = 1;
 			}
-			if (listening <= 0) {
+			எனில் (listening <= 0) {
 				/*
 				 * Leave termination signals blocked, so
 				 * they don't get lost across a restart.
 				 */
 				sigaddset(&osigset, SIGTERM);
 				sigaddset(&osigset, SIGQUIT);
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
+				sigprocmask(SIG_SETMASK, &osigset, வெற்று);
 				sighup_restart();
 			}
 		}
 
-		for (i = 0; i < num_listen_socks; i++) {
+		க்கு (i = 0; i < இலக்கம்_listen_socks; i++) {
 			pfd[i].fd = listen_socks[i];
 			pfd[i].events = POLLIN;
 		}
-		npfd = num_listen_socks;
-		for (i = 0; i < options.max_startups; i++) {
+		npfd = இலக்கம்_listen_socks;
+		க்கு (i = 0; i < options.max_startups; i++) {
 			startup_pollfd[i] = -1;
-			if (children[i].pipefd != -1) {
+			எனில் (children[i].pipefd != -1) {
 				pfd[npfd].fd = children[i].pipefd;
 				pfd[npfd].events = POLLIN;
-				if (children[i].config != NULL ||
-				    children[i].keys != NULL)
+				எனில் (children[i].config != வெற்று ||
+				    children[i].சாவிகள் != வெற்று)
 					pfd[npfd].events |= POLLOUT;
 				startup_pollfd[i] = npfd++;
 			}
 		}
 
 		/* Wait until a connection arrives or a child exits. */
-		ret = ppoll(pfd, npfd, NULL, &osigset);
-		if (ret == -1 && errno != EINTR) {
+		ret = ppoll(pfd, npfd, வெற்று, &osigset);
+		எனில் (ret == -1 && errno != EINTR) {
 			error("ppoll: %.100s", strerror(errno));
-			if (errno == EINVAL)
+			எனில் (errno == EINVAL)
 				cleanup_exit(1); /* can't recover */
 		}
-		sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (ret == -1)
-			continue;
+		sigprocmask(SIG_SETMASK, &osigset, வெற்று);
+		எனில் (ret == -1)
+			தொடர்;
 
-		for (i = 0; i < options.max_startups; i++) {
-			if (children[i].pipefd == -1 ||
+		க்கு (i = 0; i < options.max_startups; i++) {
+			எனில் (children[i].pipefd == -1 ||
 			    startup_pollfd[i] == -1 ||
 			    !(pfd[startup_pollfd[i]].revents & POLLOUT))
-				continue;
-			if (children[i].config)
+				தொடர்;
+			எனில் (children[i].config)
 				buf = children[i].config;
-			else if (children[i].keys)
-				buf = children[i].keys;
-			else {
+			இல்லையெனில் எனில் (children[i].சாவிகள்)
+				buf = children[i].சாவிகள்;
+			இல்லையெனில் {
 				error_f("no buffer to send");
-				continue;
+				தொடர்;
 			}
 			ptr = sshbuf_ptr(buf);
 			len = sshbuf_len(buf);
-			ret = write(children[i].pipefd, ptr, len);
-			if (ret == -1 && (errno == EINTR || errno == EAGAIN))
-				continue;
-			if (ret <= 0) {
-				if (children[i].early)
+			ret = லிக(children[i].pipefd, ptr, len);
+			எனில் (ret == -1 && (errno == EINTR || errno == EAGAIN))
+				தொடர்;
+			எனில் (ret <= 0) {
+				எனில் (children[i].early)
 					listening--;
 				child_close(&(children[i]), 0, 0);
-				continue;
+				தொடர்;
 			}
-			if (ret == len) {
+			எனில் (ret == len) {
 				/* finished sending buffer */
 				sshbuf_free(buf);
-				if (children[i].config == buf) {
+				எனில் (children[i].config == buf) {
 					/* sent config, now send keys */
-					children[i].config = NULL;
-					children[i].keys = pack_hostkeys();
-				} else if (children[i].keys == buf) {
+					children[i].config = வெற்று;
+					children[i].சாவிகள் = pack_hostkeys();
+				} இல்லையெனில் எனில் (children[i].சாவிகள் == buf) {
 					/* sent both config and keys */
-					children[i].keys = NULL;
-				} else {
+					children[i].சாவிகள் = வெற்று;
+				} இல்லையெனில் {
 					fatal("config buf not set");
 				}
 
-			} else {
-				if ((r = sshbuf_consume(buf, ret)) != 0)
+			} இல்லையெனில் {
+				எனில் ((r = sshbuf_consume(buf, ret)) != 0)
 					fatal_fr(r, "config buf inconsistent");
 			}
 		}
-		for (i = 0; i < options.max_startups; i++) {
-			if (children[i].pipefd == -1 ||
+		க்கு (i = 0; i < options.max_startups; i++) {
+			எனில் (children[i].pipefd == -1 ||
 			    startup_pollfd[i] == -1 ||
 			    !(pfd[startup_pollfd[i]].revents & (POLLIN|POLLHUP)))
-				continue;
-			switch (read(children[i].pipefd, &c, sizeof(c))) {
-			case -1:
-				if (errno == EINTR || errno == EAGAIN)
-					continue;
-				if (errno != EPIPE) {
+				தொடர்;
+			தேர்வு (பட(children[i].pipefd, &c, அளவு(c))) {
+			நிலை -1:
+				எனில் (errno == EINTR || errno == EAGAIN)
+					தொடர்;
+				எனில் (errno != EPIPE) {
 					error_f("startup pipe %d (fd=%d): "
 					    "read %s", i, children[i].pipefd,
 					    strerror(errno));
 				}
 				/* FALLTHROUGH */
-			case 0:
+			நிலை 0:
 				/* child closed pipe */
-				if (children[i].early)
+				எனில் (children[i].early)
 					listening--;
 				debug3_f("child %lu for %s closed pipe",
 				    (long)children[i].pid, children[i].id);
 				child_close(&(children[i]), 0, 0);
-				break;
-			case 1:
-				if (children[i].config) {
+				நிறுத்து;
+			நிலை 1:
+				எனில் (children[i].config) {
 					error_f("startup pipe %d (fd=%d)"
 					    " early read",
 					    i, children[i].pipefd);
-					goto problem_child;
+					செல் problem_child;
 				}
-				if (children[i].early && c == '\0') {
+				எனில் (children[i].early && c == '\0') {
 					/* child has finished preliminaries */
 					listening--;
 					children[i].early = 0;
 					debug2_f("child %lu for %s received "
 					    "config", (long)children[i].pid,
 					    children[i].id);
-				} else if (!children[i].early && c == '\001') {
+				} இல்லையெனில் எனில் (!children[i].early && c == '\001') {
 					/* child has completed auth */
 					debug2_f("child %lu for %s auth done",
 					    (long)children[i].pid,
 					    children[i].id);
 					child_close(&(children[i]), 1, 0);
-				} else {
+				} இல்லையெனில் {
 					error_f("unexpected message 0x%02x "
 					    "child %ld for %s in state %d",
-					    (int)c, (long)children[i].pid,
+					    (முழு)c, (long)children[i].pid,
 					    children[i].id, children[i].early);
  problem_child:
-					if (children[i].early)
+					எனில் (children[i].early)
 						listening--;
-					if (children[i].pid > 0)
+					எனில் (children[i].pid > 0)
 						kill(children[i].pid, SIGTERM);
 					child_close(&(children[i]), 0, 0);
 				}
-				break;
+				நிறுத்து;
 			}
 		}
-		for (i = 0; i < num_listen_socks; i++) {
-			if (!(pfd[i].revents & POLLIN))
-				continue;
-			fromlen = sizeof(from);
+		க்கு (i = 0; i < இலக்கம்_listen_socks; i++) {
+			எனில் (!(pfd[i].revents & POLLIN))
+				தொடர்;
+			fromlen = அளவு(from);
 			*newsock = accept(listen_socks[i],
-			    (struct sockaddr *)&from, &fromlen);
-			if (*newsock == -1) {
-				if (errno != EINTR && errno != EWOULDBLOCK &&
+			    (கட்டமைப்பு sockaddr *)&from, &fromlen);
+			எனில் (*newsock == -1) {
+				எனில் (errno != EINTR && errno != EWOULDBLOCK &&
 				    errno != ECONNABORTED && errno != EAGAIN)
 					error("accept: %.100s",
 					    strerror(errno));
-				if (errno == EMFILE || errno == ENFILE)
+				எனில் (errno == EMFILE || errno == ENFILE)
 					usleep(100 * 1000);
-				continue;
+				தொடர்;
 			}
-			if (unset_nonblock(*newsock) == -1) {
+			எனில் (unset_nonblock(*newsock) == -1) {
 				close(*newsock);
-				continue;
+				தொடர்;
 			}
-			if (socketpair(AF_UNIX,
+			எனில் (socketpair(AF_UNIX,
 			    SOCK_STREAM, 0, config_s) == -1) {
 				error("reexec socketpair: %s",
 				    strerror(errno));
 				close(*newsock);
-				continue;
+				தொடர்;
 			}
-			if (drop_connection(*newsock,
+			எனில் (drop_connection(*newsock,
 			    children_active, config_s[0])) {
 				close(*newsock);
 				close(config_s[0]);
 				close(config_s[1]);
-				continue;
+				தொடர்;
 			}
 
 			/*
 			 * Got connection.  Fork a child to handle it, unless
 			 * we are in debugging mode.
 			 */
-			if (debug_flag) {
+			எனில் (debug_flag) {
 				/*
 				 * In debugging mode.  Close the listening
 				 * socket, and start processing the
@@ -1173,9 +1173,9 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 				*sock_out = *newsock;
 				send_rexec_state(config_s[0]);
 				close(config_s[0]);
-				free(pfd);
-				free(startup_pollfd);
-				return;
+				விடுவி(pfd);
+				விடுவி(startup_pollfd);
+				திரும்பு;
 			}
 
 			/*
@@ -1187,7 +1187,7 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 			set_nonblock(config_s[0]);
 			listening++;
 			child = child_register(config_s[0], *newsock);
-			if ((child->pid = fork()) == 0) {
+			எனில் ((child->pid = fork()) == 0) {
 				/*
 				 * Child.  Close the listening and
 				 * max_startup sockets.  Start using
@@ -1206,16 +1206,16 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 				    options.log_facility,
 				    log_stderr);
 				close(config_s[0]);
-				free(pfd);
-				free(startup_pollfd);
-				return;
+				விடுவி(pfd);
+				விடுவி(startup_pollfd);
+				திரும்பு;
 			}
 
 			/* Parent.  Stay in the loop. */
 			platform_post_fork_parent(child->pid);
-			if (child->pid == -1)
+			எனில் (child->pid == -1)
 				error("fork: %.100s", strerror(errno));
-			else
+			இல்லையெனில்
 				debug("Forked child %ld.", (long)child->pid);
 
 			close(config_s[1]);
@@ -1230,73 +1230,73 @@ server_accept_loop(int *sock_in, int *sock_out, int *newsock, int *config_s,
 	}
 }
 
-static void
-accumulate_host_timing_secret(struct sshbuf *server_cfg,
-    struct sshkey *key)
+நிலையான வெறுமை
+accumulate_host_timing_secret(கட்டமைப்பு sshbuf *server_cfg,
+    கட்டமைப்பு sshkey *சாவி)
 {
-	static struct ssh_digest_ctx *ctx;
+	நிலையான கட்டமைப்பு ssh_digest_ctx *ctx;
 	u_char *hash;
 	size_t len;
-	struct sshbuf *buf;
-	int r;
+	கட்டமைப்பு sshbuf *buf;
+	முழு r;
 
-	if (ctx == NULL && (ctx = ssh_digest_start(SSH_DIGEST_SHA512)) == NULL)
+	எனில் (ctx == வெற்று && (ctx = ssh_digest_start(SSH_DIGEST_SHA512)) == வெற்று)
 		fatal_f("ssh_digest_start");
-	if (key == NULL) { /* finalize */
+	எனில் (சாவி == வெற்று) { /* finalize */
 		/* add server config in case we are using agent for host keys */
-		if (ssh_digest_update(ctx, sshbuf_ptr(server_cfg),
+		எனில் (ssh_digest_update(ctx, sshbuf_ptr(server_cfg),
 		    sshbuf_len(server_cfg)) != 0)
 			fatal_f("ssh_digest_update");
 		len = ssh_digest_bytes(SSH_DIGEST_SHA512);
 		hash = xmalloc(len);
-		if (ssh_digest_final(ctx, hash, len) != 0)
+		எனில் (ssh_digest_final(ctx, hash, len) != 0)
 			fatal_f("ssh_digest_final");
 		options.timing_secret = PEEK_U64(hash);
 		freezero(hash, len);
 		ssh_digest_free(ctx);
-		ctx = NULL;
-		return;
+		ctx = வெற்று;
+		திரும்பு;
 	}
-	if ((buf = sshbuf_new()) == NULL)
+	எனில் ((buf = sshbuf_new()) == வெற்று)
 		fatal_f("could not allocate buffer");
-	if ((r = sshkey_private_serialize(key, buf)) != 0)
-		fatal_fr(r, "encode %s key", sshkey_ssh_name(key));
-	if (ssh_digest_update(ctx, sshbuf_ptr(buf), sshbuf_len(buf)) != 0)
+	எனில் ((r = sshkey_private_serialize(சாவி, buf)) != 0)
+		fatal_fr(r, "encode %s key", sshkey_ssh_name(சாவி));
+	எனில் (ssh_digest_update(ctx, sshbuf_ptr(buf), sshbuf_len(buf)) != 0)
 		fatal_f("ssh_digest_update");
 	sshbuf_reset(buf);
 	sshbuf_free(buf);
 }
 
-static char *
-prepare_proctitle(int ac, char **av)
+நிலையான எழுத்து *
+prepare_proctitle(முழு ac, எழுத்து **av)
 {
-	char *ret = NULL;
-	int i;
+	எழுத்து *ret = வெற்று;
+	முழு i;
 
-	for (i = 0; i < ac; i++)
+	க்கு (i = 0; i < ac; i++)
 		xextendf(&ret, " ", "%s", av[i]);
-	return ret;
+	திரும்பு ret;
 }
 
 /* Disconnect from the controlling tty. */
-static void
-disconnect_controlling_tty(void)
+நிலையான வெறுமை
+disconnect_controlling_tty(வெறுமை)
 {
 #ifdef TIOCNOTTY
 # ifndef O_NOCTTY
 #  define O_NOCTTY 0
 # endif
-	int fd;
+	முழு fd;
 
-	if ((fd = open(_PATH_TTY, O_RDWR | O_NOCTTY)) >= 0) {
-		(void) ioctl(fd, TIOCNOTTY, NULL);
+	எனில் ((fd = open(_PATH_TTY, O_RDWR | O_NOCTTY)) >= 0) {
+		(வெறுமை) ioctl(fd, TIOCNOTTY, வெற்று);
 		close(fd);
 	}
 #endif /* TIOCNOTTY */
 }
 
-static void
-print_config(struct connection_info *connection_info)
+நிலையான வெறுமை
+print_config(கட்டமைப்பு connection_info *connection_info)
 {
 	connection_info->test = 1;
 	parse_server_match_config(&options, &includes, connection_info);
@@ -1307,43 +1307,43 @@ print_config(struct connection_info *connection_info)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+முழு
+முதன்மை(முழு ac, எழுத்து **av)
 {
-	extern char *optarg;
-	extern int optind;
-	int log_stderr = 0, inetd_flag = 0, test_flag = 0, no_daemon_flag = 0;
-	char *config_file_name = _PATH_SERVER_CONFIG_FILE;
-	int r, opt, do_dump_cfg = 0, keytype, already_daemon, have_agent = 0;
-	int sock_in = -1, sock_out = -1, newsock = -1, rexec_argc = 0;
-	int devnull, config_s[2] = { -1 , -1 }, have_connection_info = 0;
-	int need_chroot = 1;
-	char *args, *fp, *line, *logfile = NULL, **rexec_argv = NULL;
-	struct stat sb;
+	வெளி எழுத்து *optarg;
+	வெளி முழு optind;
+	முழு log_stderr = 0, inetd_flag = 0, test_flag = 0, no_daemon_flag = 0;
+	எழுத்து *config_file_name = _PATH_SERVER_CONFIG_FILE;
+	முழு r, opt, do_dump_cfg = 0, keytype, already_daemon, have_agent = 0;
+	முழு sock_in = -1, sock_out = -1, newsock = -1, rexec_argc = 0;
+	முழு devnull, config_s[2] = { -1 , -1 }, have_connection_info = 0;
+	முழு need_chroot = 1;
+	எழுத்து *args, *fp, *வரி, *logfile = வெற்று, **rexec_argv = வெற்று;
+	கட்டமைப்பு stat sb;
 	u_int i, j;
 	mode_t new_umask;
-	struct sshkey *key;
-	struct sshkey *pubkey;
-	struct connection_info connection_info;
-	struct utsname utsname;
+	கட்டமைப்பு sshkey *சாவி;
+	கட்டமைப்பு sshkey *pubkey;
+	கட்டமைப்பு connection_info connection_info;
+	கட்டமைப்பு utsname utsname;
 	sigset_t sigmask;
 
-	memset(&connection_info, 0, sizeof(connection_info));
+	memset(&connection_info, 0, அளவு(connection_info));
 #ifdef HAVE_SECUREWARE
-	(void)set_auth_parameters(ac, av);
+	(வெறுமை)set_auth_parameters(ac, av);
 #endif
 	__progname = ssh_get_progname(av[0]);
 
 	sigemptyset(&sigmask);
-	sigprocmask(SIG_SETMASK, &sigmask, NULL);
+	sigprocmask(SIG_SETMASK, &sigmask, வெற்று);
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
 	rexec_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, அளவு(*saved_argv));
+	க்கு (i = 0; (முழு)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
-	saved_argv[i] = NULL;
+	saved_argv[i] = வெற்று;
 
 #ifndef HAVE_SETPROCTITLE
 	/* Prepare for later setproctitle emulation */
@@ -1351,7 +1351,7 @@ main(int ac, char **av)
 	av = saved_argv;
 #endif
 
-	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+	எனில் (geteuid() == 0 && setgroups(0, வெற்று) == -1)
 		debug("setgroups(): %.200s", strerror(errno));
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -1362,154 +1362,154 @@ main(int ac, char **av)
 
 	/* Parse command-line arguments. */
 	args = argv_assemble(ac, av); /* logged later */
-	while ((opt = getopt(ac, av,
+	போது ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
-		switch (opt) {
-		case '4':
+		தேர்வு (opt) {
+		நிலை '4':
 			options.address_family = AF_INET;
-			break;
-		case '6':
+			நிறுத்து;
+		நிலை '6':
 			options.address_family = AF_INET6;
-			break;
-		case 'f':
+			நிறுத்து;
+		நிலை 'f':
 			config_file_name = optarg;
-			break;
-		case 'c':
+			நிறுத்து;
+		நிலை 'c':
 			servconf_add_hostcert("[command-line]", 0,
 			    &options, optarg);
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			நிறுத்து;
+		நிலை 'd':
+			எனில் (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} இல்லையெனில் எனில் (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
+			நிறுத்து;
+		நிலை 'D':
 			no_daemon_flag = 1;
-			break;
-		case 'G':
+			நிறுத்து;
+		நிலை 'G':
 			do_dump_cfg = 1;
-			break;
-		case 'E':
+			நிறுத்து;
+		நிலை 'E':
 			logfile = optarg;
 			/* FALLTHROUGH */
-		case 'e':
+		நிலை 'e':
 			log_stderr = 1;
-			break;
-		case 'i':
+			நிறுத்து;
+		நிலை 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			நிறுத்து;
+		நிலை 'r':
 			logit("-r option is deprecated");
-			break;
-		case 'R':
+			நிறுத்து;
+		நிலை 'R':
 			fatal("-R not supported here");
-			break;
-		case 'Q':
+			நிறுத்து;
+		நிலை 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			நிறுத்து;
+		நிலை 'q':
 			options.log_level = SYSLOG_LEVEL_QUIET;
-			break;
-		case 'b':
+			நிறுத்து;
+		நிலை 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			நிறுத்து;
+		நிலை 'p':
 			options.ports_from_cmdline = 1;
-			if (options.num_ports >= MAX_PORTS) {
+			எனில் (options.இலக்கம்_ports >= MAX_PORTS) {
 				fprintf(stderr, "too many ports.\n");
 				exit(1);
 			}
-			options.ports[options.num_ports++] = a2port(optarg);
-			if (options.ports[options.num_ports-1] <= 0) {
+			options.ports[options.இலக்கம்_ports++] = a2port(optarg);
+			எனில் (options.ports[options.இலக்கம்_ports-1] <= 0) {
 				fprintf(stderr, "Bad port number.\n");
 				exit(1);
 			}
-			break;
-		case 'g':
-			if ((options.login_grace_time = convtime(optarg)) == -1) {
+			நிறுத்து;
+		நிலை 'g':
+			எனில் ((options.login_grace_time = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid login grace time.\n");
 				exit(1);
 			}
-			break;
-		case 'k':
+			நிறுத்து;
+		நிலை 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			நிறுத்து;
+		நிலை 'h':
 			servconf_add_hostkey("[command-line]", 0,
 			    &options, optarg, 1);
-			break;
-		case 't':
+			நிறுத்து;
+		நிலை 't':
 			test_flag = 1;
-			break;
-		case 'T':
+			நிறுத்து;
+		நிலை 'T':
 			test_flag = 2;
-			break;
-		case 'C':
-			if (parse_server_match_testspec(&connection_info,
+			நிறுத்து;
+		நிலை 'C':
+			எனில் (parse_server_match_testspec(&connection_info,
 			    optarg) == -1)
 				exit(1);
 			have_connection_info = 1;
-			break;
-		case 'u':
+			நிறுத்து;
+		நிலை 'u':
 			utmp_len = (u_int)strtonum(optarg, 0,
-			    HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			    HOST_NAME_MAX+1+1, வெற்று);
+			எனில் (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
-			break;
-		case 'o':
-			line = xstrdup(optarg);
-			if (process_server_config_line(&options, line,
-			    "command-line", 0, NULL, NULL, &includes) != 0)
+			நிறுத்து;
+		நிலை 'o':
+			வரி = xstrdup(optarg);
+			எனில் (process_server_config_வரி(&options, வரி,
+			    "command-line", 0, வெற்று, வெற்று, &includes) != 0)
 				exit(1);
-			free(line);
-			break;
-		case 'V':
+			விடுவி(வரி);
+			நிறுத்து;
+		நிலை 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_RELEASE, SSH_OPENSSL_VERSION);
 			exit(0);
-		default:
+		இயல்பு:
 			usage();
-			break;
+			நிறுத்து;
 		}
 	}
 
-	if (getexecpath(execpath, sizeof execpath) != 0) {
-		if (strlcpy(execpath, av[0], sizeof execpath) >=
-		    sizeof execpath) {
+	எனில் (getexecpath(execpath, அளவு execpath) != 0) {
+		எனில் (strlcpy(execpath, av[0], அளவு execpath) >=
+		    அளவு execpath) {
 			fprintf(stderr, "execution path is too long\n");
 			exit(1);
 		}
 	}
-	if (!test_flag && !inetd_flag && !do_dump_cfg && !path_absolute(execpath))
+	எனில் (!test_flag && !inetd_flag && !do_dump_cfg && !path_absolute(execpath))
 		fatal("sshd requires execution with an absolute path");
 
 	closefrom(STDERR_FILENO + 1);
 
 	/* Reserve fds we'll need later for reexec things */
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
+	எனில் ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
 		fatal("open %s: %s", _PATH_DEVNULL, strerror(errno));
-	while (devnull < REEXEC_MIN_FREE_FD) {
-		if ((devnull = dup(devnull)) == -1)
+	போது (devnull < REEXEC_MIN_FREE_FD) {
+		எனில் ((devnull = dup(devnull)) == -1)
 			fatal("dup %s: %s", _PATH_DEVNULL, strerror(errno));
 	}
 
 	seed_rng();
 
 	/* If requested, redirect the logs to the specified logfile. */
-	if (logfile != NULL) {
-		char *cp, pid_s[32];
+	எனில் (logfile != வெற்று) {
+		எழுத்து *cp, pid_s[32];
 
-		snprintf(pid_s, sizeof(pid_s), "%ld", (unsigned long)getpid());
+		snprintf(pid_s, அளவு(pid_s), "%ld", (unsigned long)getpid());
 		cp = percent_expand(logfile,
 		    "p", pid_s,
 		    "P", "sshd",
-		    (char *)NULL);
+		    (எழுத்து *)வெற்று);
 		log_redirect_stderr_to(cp);
-		free(cp);
+		விடுவி(cp);
 	}
 
 	/*
@@ -1527,49 +1527,49 @@ main(int ac, char **av)
 	 * Unset KRB5CCNAME, otherwise the user's session may inherit it from
 	 * root's environment
 	 */
-	if (getenv("KRB5CCNAME") != NULL)
-		(void) unsetenv("KRB5CCNAME");
+	எனில் (getenv("KRB5CCNAME") != வெற்று)
+		(வெறுமை) unsetenv("KRB5CCNAME");
 
-	sensitive_data.have_ssh2_key = 0;
+	sensitive_data.have_ssh2_சாவி = 0;
 
 	/*
 	 * If we're not doing an extended test do not silently ignore connection
 	 * test params.
 	 */
-	if (test_flag < 2 && have_connection_info)
+	எனில் (test_flag < 2 && have_connection_info)
 		fatal("Config test connection parameter (-C) provided without "
 		    "test mode (-T)");
 
 	debug("sshd version %s, %s", SSH_VERSION, SSH_OPENSSL_VERSION);
-	if (uname(&utsname) != 0) {
-		memset(&utsname, 0, sizeof(utsname));
-		strlcpy(utsname.sysname, "UNKNOWN", sizeof(utsname.sysname));
+	எனில் (uname(&utsname) != 0) {
+		memset(&utsname, 0, அளவு(utsname));
+		strlcpy(utsname.sysname, "UNKNOWN", அளவு(utsname.sysname));
 	}
 	debug3("Running on %s %s %s %s", utsname.sysname, utsname.release,
 	    utsname.version, utsname.machine);
 	debug3("Started with: %s", args);
-	free(args);
+	விடுவி(args);
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	எனில் ((cfg = sshbuf_new()) == வெற்று)
 		fatal("sshbuf_new config failed");
-	if (strcasecmp(config_file_name, "none") != 0)
+	எனில் (strcasecmp(config_file_name, "none") != 0)
 		load_server_config(config_file_name, cfg);
 
 	parse_server_config(&options, config_file_name, cfg,
-	    &includes, NULL, 0);
+	    &includes, வெற்று, 0);
 
 	/* Fill in default values for those options not explicitly set. */
 	fill_default_server_options(&options);
 
 	/* Check that options are sensible */
-	if (options.authorized_keys_command_user == NULL &&
-	    (options.authorized_keys_command != NULL &&
-	    strcasecmp(options.authorized_keys_command, "none") != 0))
+	எனில் (options.authorized_சாவிகள்_command_user == வெற்று &&
+	    (options.authorized_சாவிகள்_command != வெற்று &&
+	    strcasecmp(options.authorized_சாவிகள்_command, "none") != 0))
 		fatal("AuthorizedKeysCommand set without "
 		    "AuthorizedKeysCommandUser");
-	if (options.authorized_principals_command_user == NULL &&
-	    (options.authorized_principals_command != NULL &&
+	எனில் (options.authorized_principals_command_user == வெற்று &&
+	    (options.authorized_principals_command != வெற்று &&
 	    strcasecmp(options.authorized_principals_command, "none") != 0))
 		fatal("AuthorizedPrincipalsCommand set without "
 		    "AuthorizedPrincipalsCommandUser");
@@ -1580,129 +1580,129 @@ main(int ac, char **av)
 	 * daemonisation in the presence of Match blocks, but this catches
 	 * and warns for trivial misconfigurations that could break login.
 	 */
-	if (options.num_auth_methods != 0) {
-		for (i = 0; i < options.num_auth_methods; i++) {
-			if (auth2_methods_valid(options.auth_methods[i],
+	எனில் (options.இலக்கம்_auth_methods != 0) {
+		க்கு (i = 0; i < options.இலக்கம்_auth_methods; i++) {
+			எனில் (auth2_methods_valid(options.auth_methods[i],
 			    1) == 0)
-				break;
+				நிறுத்து;
 		}
-		if (i >= options.num_auth_methods)
+		எனில் (i >= options.இலக்கம்_auth_methods)
 			fatal("AuthenticationMethods cannot be satisfied by "
 			    "enabled authentication methods");
 	}
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	எனில் (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
-	if (do_dump_cfg)
+	எனில் (do_dump_cfg)
 		print_config(&connection_info);
 
 	/* load host keys */
-	sensitive_data.host_keys = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
-	sensitive_data.host_pubkeys = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
+	sensitive_data.host_சாவிகள் = xcalloc(options.இலக்கம்_host_சாவி_files,
+	    அளவு(கட்டமைப்பு sshkey *));
+	sensitive_data.host_pubkeys = xcalloc(options.இலக்கம்_host_சாவி_files,
+	    அளவு(கட்டமைப்பு sshkey *));
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	எனில் (options.host_சாவி_agent) {
+		எனில் (strcmp(options.host_சாவி_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+			    options.host_சாவி_agent, 1);
+		எனில் ((r = ssh_get_authentication_socket(வெற்று)) == 0)
 			have_agent = 1;
-		else
+		இல்லையெனில்
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_சாவி_agent);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		int ll = options.host_key_file_userprovided[i] ?
+	க்கு (i = 0; i < options.இலக்கம்_host_சாவி_files; i++) {
+		முழு ll = options.host_சாவி_file_userprovided[i] ?
 		    SYSLOG_LEVEL_ERROR : SYSLOG_LEVEL_DEBUG1;
 
-		if (options.host_key_files[i] == NULL)
-			continue;
-		if ((r = sshkey_load_private(options.host_key_files[i], "",
-		    &key, NULL)) != 0 &&
+		எனில் (options.host_சாவி_files[i] == வெற்று)
+			தொடர்;
+		எனில் ((r = sshkey_load_private(options.host_சாவி_files[i], "",
+		    &சாவி, வெற்று)) != 0 &&
 		    r != SSH_ERR_SYSTEM_ERROR && !have_agent)
 			do_log2_r(r, ll, "Unable to load host key \"%s\"",
-			    options.host_key_files[i]);
-		if (sshkey_is_sk(key) &&
-		    key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+			    options.host_சாவி_files[i]);
+		எனில் (sshkey_is_sk(சாவி) &&
+		    சாவி->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
 			debug("host key %s requires user presence, ignoring",
-			    options.host_key_files[i]);
-			key->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
+			    options.host_சாவி_files[i]);
+			சாவி->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
 		}
-		if (r == 0 && key != NULL &&
-		    (r = sshkey_shield_private(key)) != 0) {
+		எனில் (r == 0 && சாவி != வெற்று &&
+		    (r = sshkey_shield_private(சாவி)) != 0) {
 			do_log2_r(r, ll, "Unable to shield host key \"%s\"",
-			    options.host_key_files[i]);
-			sshkey_free(key);
-			key = NULL;
+			    options.host_சாவி_files[i]);
+			sshkey_free(சாவி);
+			சாவி = வெற்று;
 		}
-		if ((r = sshkey_load_public(options.host_key_files[i],
-		    &pubkey, NULL)) != 0 && r != SSH_ERR_SYSTEM_ERROR)
+		எனில் ((r = sshkey_load_public(options.host_சாவி_files[i],
+		    &pubkey, வெற்று)) != 0 && r != SSH_ERR_SYSTEM_ERROR)
 			do_log2_r(r, ll, "Unable to load host key \"%s\"",
-			    options.host_key_files[i]);
-		if (pubkey != NULL && key != NULL) {
-			if (!sshkey_equal(pubkey, key)) {
+			    options.host_சாவி_files[i]);
+		எனில் (pubkey != வெற்று && சாவி != வெற்று) {
+			எனில் (!sshkey_equal(pubkey, சாவி)) {
 				error("Public key for %s does not match "
-				    "private key", options.host_key_files[i]);
+				    "private key", options.host_சாவி_files[i]);
 				sshkey_free(pubkey);
-				pubkey = NULL;
+				pubkey = வெற்று;
 			}
 		}
-		if (pubkey == NULL && key != NULL) {
-			if ((r = sshkey_from_private(key, &pubkey)) != 0)
+		எனில் (pubkey == வெற்று && சாவி != வெற்று) {
+			எனில் ((r = sshkey_from_private(சாவி, &pubkey)) != 0)
 				fatal_r(r, "Could not demote key: \"%s\"",
-				    options.host_key_files[i]);
+				    options.host_சாவி_files[i]);
 		}
-		if (pubkey != NULL && (r = sshkey_check_rsa_length(pubkey,
+		எனில் (pubkey != வெற்று && (r = sshkey_check_rsa_length(pubkey,
 		    options.required_rsa_size)) != 0) {
-			error_fr(r, "Host key %s", options.host_key_files[i]);
+			error_fr(r, "Host key %s", options.host_சாவி_files[i]);
 			sshkey_free(pubkey);
-			sshkey_free(key);
-			continue;
+			sshkey_free(சாவி);
+			தொடர்;
 		}
-		sensitive_data.host_keys[i] = key;
+		sensitive_data.host_சாவிகள்[i] = சாவி;
 		sensitive_data.host_pubkeys[i] = pubkey;
 
-		if (key == NULL && pubkey != NULL && have_agent) {
+		எனில் (சாவி == வெற்று && pubkey != வெற்று && have_agent) {
 			debug("will rely on agent for hostkey %s",
-			    options.host_key_files[i]);
+			    options.host_சாவி_files[i]);
 			keytype = pubkey->type;
-		} else if (key != NULL) {
-			keytype = key->type;
-			accumulate_host_timing_secret(cfg, key);
-		} else {
+		} இல்லையெனில் எனில் (சாவி != வெற்று) {
+			keytype = சாவி->type;
+			accumulate_host_timing_secret(cfg, சாவி);
+		} இல்லையெனில் {
 			do_log2(ll, "Unable to load host key: %s",
-			    options.host_key_files[i]);
-			sensitive_data.host_keys[i] = NULL;
-			sensitive_data.host_pubkeys[i] = NULL;
-			continue;
+			    options.host_சாவி_files[i]);
+			sensitive_data.host_சாவிகள்[i] = வெற்று;
+			sensitive_data.host_pubkeys[i] = வெற்று;
+			தொடர்;
 		}
 
-		switch (keytype) {
-		case KEY_RSA:
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			if (have_agent || key != NULL)
-				sensitive_data.have_ssh2_key = 1;
-			break;
+		தேர்வு (keytype) {
+		நிலை சாவி_RSA:
+		நிலை சாவி_ECDSA:
+		நிலை சாவி_ED25519:
+		நிலை சாவி_MLDSA44_ED25519:
+		நிலை சாவி_ECDSA_SK:
+		நிலை சாவி_ED25519_SK:
+			எனில் (have_agent || சாவி != வெற்று)
+				sensitive_data.have_ssh2_சாவி = 1;
+			நிறுத்து;
 		}
-		if ((fp = sshkey_fingerprint(pubkey, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+		எனில் ((fp = sshkey_fingerprint(pubkey, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == வெற்று)
 			fatal("sshkey_fingerprint failed");
 		debug("%s host key #%d: %s %s",
-		    key ? "private" : "agent", i, sshkey_ssh_name(pubkey), fp);
-		free(fp);
+		    சாவி ? "private" : "agent", i, sshkey_ssh_name(pubkey), fp);
+		விடுவி(fp);
 	}
-	accumulate_host_timing_secret(cfg, NULL);
-	if (!sensitive_data.have_ssh2_key) {
+	accumulate_host_timing_secret(cfg, வெற்று);
+	எனில் (!sensitive_data.have_ssh2_சாவி) {
 		logit("sshd: no hostkeys available -- exiting.");
 		exit(1);
 	}
@@ -1711,81 +1711,81 @@ main(int ac, char **av)
 	 * Load certificates. They are stored in an array at identical
 	 * indices to the public keys that they relate to.
 	 */
-	sensitive_data.host_certificates = xcalloc(options.num_host_key_files,
-	    sizeof(struct sshkey *));
-	for (i = 0; i < options.num_host_key_files; i++)
-		sensitive_data.host_certificates[i] = NULL;
+	sensitive_data.host_certificates = xcalloc(options.இலக்கம்_host_சாவி_files,
+	    அளவு(கட்டமைப்பு sshkey *));
+	க்கு (i = 0; i < options.இலக்கம்_host_சாவி_files; i++)
+		sensitive_data.host_certificates[i] = வெற்று;
 
-	for (i = 0; i < options.num_host_cert_files; i++) {
-		if (options.host_cert_files[i] == NULL)
-			continue;
-		if ((r = sshkey_load_public(options.host_cert_files[i],
-		    &key, NULL)) != 0) {
+	க்கு (i = 0; i < options.இலக்கம்_host_cert_files; i++) {
+		எனில் (options.host_cert_files[i] == வெற்று)
+			தொடர்;
+		எனில் ((r = sshkey_load_public(options.host_cert_files[i],
+		    &சாவி, வெற்று)) != 0) {
 			error_r(r, "Could not load host certificate \"%s\"",
 			    options.host_cert_files[i]);
-			continue;
+			தொடர்;
 		}
-		if (!sshkey_is_cert(key)) {
+		எனில் (!sshkey_is_cert(சாவி)) {
 			error("Certificate file is not a certificate: %s",
 			    options.host_cert_files[i]);
-			sshkey_free(key);
-			continue;
+			sshkey_free(சாவி);
+			தொடர்;
 		}
 		/* Find matching private key */
-		for (j = 0; j < options.num_host_key_files; j++) {
-			if (sshkey_equal_public(key,
+		க்கு (j = 0; j < options.இலக்கம்_host_சாவி_files; j++) {
+			எனில் (sshkey_equal_public(சாவி,
 			    sensitive_data.host_pubkeys[j])) {
-				sensitive_data.host_certificates[j] = key;
-				break;
+				sensitive_data.host_certificates[j] = சாவி;
+				நிறுத்து;
 			}
 		}
-		if (j >= options.num_host_key_files) {
+		எனில் (j >= options.இலக்கம்_host_சாவி_files) {
 			error("No matching private key for certificate: %s",
 			    options.host_cert_files[i]);
-			sshkey_free(key);
-			continue;
+			sshkey_free(சாவி);
+			தொடர்;
 		}
-		sensitive_data.host_certificates[j] = key;
-		debug("host certificate: #%u type %d %s", j, key->type,
-		    sshkey_type(key));
+		sensitive_data.host_certificates[j] = சாவி;
+		debug("host certificate: #%u type %d %s", j, சாவி->type,
+		    sshkey_type(சாவி));
 	}
 
 	/* Ensure privsep directory is correctly configured. */
 	need_chroot = ((getuid() == 0 || geteuid() == 0) ||
 	    options.kerberos_authentication);
-	if ((getpwnam(SSH_PRIVSEP_USER)) == NULL && need_chroot) {
+	எனில் ((getpwnam(SSH_PRIVSEP_USER)) == வெற்று && need_chroot) {
 		fatal("Privilege separation user %s does not exist",
 		    SSH_PRIVSEP_USER);
 	}
 	endpwent();
 
-	if (need_chroot) {
-		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &sb) == -1) ||
+	எனில் (need_chroot) {
+		எனில் ((stat(_PATH_PRIVSEP_CHROOT_DIR, &sb) == -1) ||
 		    (S_ISDIR(sb.st_mode) == 0))
 			fatal("Missing privilege separation directory: %s",
 			    _PATH_PRIVSEP_CHROOT_DIR);
 #ifdef HAVE_CYGWIN
-		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
+		எனில் (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
 		    (sb.st_uid != getuid () ||
 		    (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0))
-#else
-		if (sb.st_uid != 0 || (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0)
+#இல்லையெனில்
+		எனில் (sb.st_uid != 0 || (sb.st_mode & (S_IWGRP|S_IWOTH)) != 0)
 #endif
 			fatal("%s must be owned by root and not group or "
 			    "world-writable.", _PATH_PRIVSEP_CHROOT_DIR);
 	}
 
-	if (test_flag > 1)
+	எனில் (test_flag > 1)
 		print_config(&connection_info);
 
 	config = pack_config(cfg);
-	if (sshbuf_len(config) > MONITOR_MAX_CFGLEN) {
+	எனில் (sshbuf_len(config) > MONITOR_MAX_CFGLEN) {
 		fatal("Configuration file is too large (have %zu, max %d)",
 		    sshbuf_len(config), MONITOR_MAX_CFGLEN);
 	}
 
 	/* Configuration looks good, so exit if in test mode. */
-	if (test_flag)
+	எனில் (test_flag)
 		exit(0);
 
 	/*
@@ -1795,27 +1795,27 @@ main(int ac, char **av)
 	 * to create a file, and we can't control the code in every
 	 * module which might be used).
 	 */
-	if (setgroups(0, NULL) < 0)
+	எனில் (setgroups(0, வெற்று) < 0)
 		debug("setgroups() failed: %.200s", strerror(errno));
 
 	/* Prepare arguments for sshd-session */
-	if (rexec_argc < 0)
+	எனில் (rexec_argc < 0)
 		fatal("rexec_argc %d < 0", rexec_argc);
-	rexec_argv = xcalloc(rexec_argc + 3, sizeof(char *));
+	rexec_argv = xcalloc(rexec_argc + 3, அளவு(எழுத்து *));
 	/* Point to the sshd-session binary instead of sshd */
 	rexec_argv[0] = options.sshd_session_path;
-	for (i = 1; i < (u_int)rexec_argc; i++) {
+	க்கு (i = 1; i < (u_int)rexec_argc; i++) {
 		debug("rexec_argv[%d]='%s'", i, saved_argv[i]);
 		rexec_argv[i] = saved_argv[i];
 	}
 	rexec_argv[rexec_argc++] = "-R";
-	rexec_argv[rexec_argc] = NULL;
-	if (stat(rexec_argv[0], &sb) != 0 || !(sb.st_mode & (S_IXOTH|S_IXUSR)))
+	rexec_argv[rexec_argc] = வெற்று;
+	எனில் (stat(rexec_argv[0], &sb) != 0 || !(sb.st_mode & (S_IXOTH|S_IXUSR)))
 		fatal("%s does not exist or is not executable", rexec_argv[0]);
 	debug3("using %s for re-exec", rexec_argv[0]);
 
 	/* Ensure that the privsep binary exists now too. */
-	if (stat(options.sshd_auth_path, &sb) != 0 ||
+	எனில் (stat(options.sshd_auth_path, &sb) != 0 ||
 	    !(sb.st_mode & (S_IXOTH|S_IXUSR))) {
 		fatal("%s does not exist or is not executable",
 		    options.sshd_auth_path);
@@ -1825,14 +1825,14 @@ main(int ac, char **av)
 
 	/* Ensure that umask disallows at least group and world write */
 	new_umask = umask(0077) | 0022;
-	(void) umask(new_umask);
+	(வெறுமை) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
-	if (debug_flag && !inetd_flag)
+	எனில் (debug_flag && !inetd_flag)
 		log_stderr = 1;
 	log_init(__progname, options.log_level,
 	    options.log_facility, log_stderr);
-	for (i = 0; i < options.num_log_verbose; i++)
+	க்கு (i = 0; i < options.இலக்கம்_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/*
@@ -1841,9 +1841,9 @@ main(int ac, char **av)
 	 * terminal, and fork.  The original process exits.
 	 */
 	already_daemon = daemonized();
-	if (!(debug_flag || inetd_flag || no_daemon_flag || already_daemon)) {
+	எனில் (!(debug_flag || inetd_flag || no_daemon_flag || already_daemon)) {
 
-		if (daemon(0, 0) == -1)
+		எனில் (daemon(0, 0) == -1)
 			fatal("daemon() failed: %.200s", strerror(errno));
 
 		disconnect_controlling_tty();
@@ -1855,20 +1855,20 @@ main(int ac, char **av)
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	எனில் (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* ignore SIGPIPE */
 	ssh_signal(SIGPIPE, SIG_IGN);
 
 	/* Get a connection, either from inetd or a listening TCP socket */
-	if (inetd_flag) {
+	எனில் (inetd_flag) {
 		/* Send configuration to ancestor sshd-session process */
-		if (socketpair(AF_UNIX, SOCK_STREAM, 0, config_s) == -1)
+		எனில் (socketpair(AF_UNIX, SOCK_STREAM, 0, config_s) == -1)
 			fatal("socketpair: %s", strerror(errno));
 		send_rexec_state(config_s[0]);
 		close(config_s[0]);
-	} else {
+	} இல்லையெனில் {
 		platform_pre_listen();
 		server_listen();
 
@@ -1886,13 +1886,13 @@ main(int ac, char **av)
 		 * Write out the pid file after the sigterm handler
 		 * is setup and the listen sockets are bound
 		 */
-		if (options.pid_file != NULL && !debug_flag) {
+		எனில் (options.pid_file != வெற்று && !debug_flag) {
 			FILE *f = fopen(options.pid_file, "w");
 
-			if (f == NULL) {
+			எனில் (f == வெற்று) {
 				error("Couldn't create pid file \"%s\": %s",
 				    options.pid_file, strerror(errno));
-			} else {
+			} இல்லையெனில் {
 				fprintf(f, "%ld\n", (long) getpid());
 				fclose(f);
 			}
@@ -1911,25 +1911,25 @@ main(int ac, char **av)
 	 * setlogin() affects the entire process group.  We don't
 	 * want the child to be able to affect the parent.
 	 */
-	if (!debug_flag && !inetd_flag && setsid() == -1)
+	எனில் (!debug_flag && !inetd_flag && setsid() == -1)
 		error("setsid: %.100s", strerror(errno));
 
 	debug("rexec start in %d out %d newsock %d config_s %d/%d",
 	    sock_in, sock_out, newsock, config_s[0], config_s[1]);
-	if (!inetd_flag) {
-		if (dup2(newsock, STDIN_FILENO) == -1)
+	எனில் (!inetd_flag) {
+		எனில் (dup2(newsock, STDIN_FILENO) == -1)
 			fatal("dup2 stdin: %s", strerror(errno));
-		if (dup2(STDIN_FILENO, STDOUT_FILENO) == -1)
+		எனில் (dup2(STDIN_FILENO, STDOUT_FILENO) == -1)
 			fatal("dup2 stdout: %s", strerror(errno));
-		if (newsock > STDOUT_FILENO)
+		எனில் (newsock > STDOUT_FILENO)
 			close(newsock);
 	}
-	if (config_s[1] != REEXEC_CONFIG_PASS_FD) {
-		if (dup2(config_s[1], REEXEC_CONFIG_PASS_FD) == -1)
+	எனில் (config_s[1] != REEXEC_CONFIG_PASS_FD) {
+		எனில் (dup2(config_s[1], REEXEC_CONFIG_PASS_FD) == -1)
 			fatal("dup2 config_s: %s", strerror(errno));
 		close(config_s[1]);
 	}
-	log_redirect_stderr_to(NULL);
+	log_redirect_stderr_to(வெற்று);
 	closefrom(REEXEC_MIN_FREE_FD);
 
 	ssh_signal(SIGHUP, SIG_IGN); /* avoid reset to SIG_DFL */
@@ -1939,8 +1939,8 @@ main(int ac, char **av)
 }
 
 /* server specific fatal cleanup */
-void
-cleanup_exit(int i)
+வெறுமை
+cleanup_exit(முழு i)
 {
 	_exit(i);
 }

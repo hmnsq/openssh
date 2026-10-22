@@ -26,11 +26,11 @@
 #ifndef _PORT_IRIX_H
 #define _PORT_IRIX_H
 
-#if defined(WITH_IRIX_PROJECT) || \
+#எனில் defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-void irix_setusercontext(struct passwd *pw);
+வெறுமை irix_setusercontext(கட்டமைப்பு passwd *pw);
 
 #endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
 

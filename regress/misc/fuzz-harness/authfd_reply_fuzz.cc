@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+வெளி "C" {
+#அந்தர்பாவ "includes.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "authfd.h"
+#அந்தர்பாவ "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+வெறுமை fuzz_arena_begin(வெறுமை);
+வெறுமை fuzz_arena_cleanup(வெறுமை);
 }
 
-#include "fixed-keys.h"
+#அந்தர்பாவ "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+நிலையான கட்டமைப்பு sshkey *test_சாவிகள்[3] = { வெற்று, வெற்று, வெற்று };
+நிலையான முழு initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+நிலையான கட்டமைப்பு sshkey *
+load_pubkey_or_die(மாறிலி எழுத்து *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	எழுத்து *tmp, *cp;
+	கட்டமைப்பு sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	எனில் ((k = sshkey_new(சாவி_UNSPEC)) == வெற்று)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	எனில் ((tmp = cp = strdup(txt)) == வெற்று)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	எனில் (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	விடுவி(tmp);
+	திரும்பு k;
 }
 
-static void
-setup(void)
+நிலையான வெறுமை
+setup(வெறுமை)
 {
-	if (initialized)
-		return;
+	எனில் (initialized)
+		திரும்பு;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_சாவிகள்[0] = load_pubkey_or_die(PUB_RSA);
+	test_சாவிகள்[1] = load_pubkey_or_die(PUB_ECDSA);
+	test_சாவிகள்[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+எண்ணிக்கை {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_சாவி,
 	API_QUERY_EXTENSIONS,
 	API_LOCK_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+நிலையான வெறுமை
+run_one(முழு api, கட்டமைப்பு sshkey *k, முழு lock_arg,
+    மாறிலி uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	முழு sv[2] = { -1, -1 };
+	எனில் (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		திரும்பு;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(வெறுமை)லிக(sv[0], hdr, அளவு(hdr));
+	எனில் (bsize > 0)
+		(வெறுமை)லிக(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	தேர்வு (api) {
+	நிலை API_FETCH_IDENTITYLIST: {
+		கட்டமைப்பு ssh_identitylist *idl = வெற்று;
+		(வெறுமை)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		நிறுத்து;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
+	நிலை API_AGENT_SIGN: {
+		மாறிலி u_char செய்தி[16] = { 0 };
+		u_char *sig = வெற்று;
 		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+		(வெறுமை)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    செய்தி, அளவு(செய்தி), வெற்று, 0);
+		விடுவி(sig);
+		நிறுத்து;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	நிலை API_AGENT_HAS_சாவி:
+		(வெறுமை)ssh_agent_has_சாவி(sv[1], k);
+		நிறுத்து;
+	நிலை API_QUERY_EXTENSIONS: {
+		எழுத்து **exts = வெற்று;
+		முழு n = ssh_agent_query_extensions(sv[1], &exts);
+		எனில் (n == 0 && exts != வெற்று) {
+			க்கு (முழு i = 0; exts[i] != வெற்று; i++)
+				விடுவி(exts[i]);
+			விடுவி(exts);
 		}
-		break;
+		நிறுத்து;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	நிலை API_LOCK_AGENT:
+		(வெறுமை)ssh_lock_agent(sv[1], lock_arg, "fuzz");
+		நிறுத்து;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+வெளி "C" முழு
+LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	எனில் (size > 65536)
+		திரும்பு 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	run_one(API_FETCH_IDENTITYLIST, வெற்று,           0, data, size);
+	run_one(API_AGENT_SIGN,         test_சாவிகள்[0],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_சாவிகள்[1],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_சாவிகள்[2],   0, data, size);
+	run_one(API_AGENT_HAS_சாவி,      test_சாவிகள்[2],   0, data, size);
+	run_one(API_QUERY_EXTENSIONS,   வெற்று,           0, data, size);
+	run_one(API_LOCK_AGENT,         வெற்று,           1, data, size);
 
-	return 0;
+	திரும்பு 0;
 }

@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <limits.h>
 
-#include "addr.h"
+#அந்தர்பாவ "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#define _SA(x)	((கட்டமைப்பு sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+நிலையான முழு
+addr_unicast_masklen(முழு af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	தேர்வு (af) {
+	நிலை AF_INET:
+		திரும்பு 32;
+	நிலை AF_INET6:
+		திரும்பு 128;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+நிலையான உள்வரி முழு
+masklen_valid(முழு af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	தேர்வு (af) {
+	நிலை AF_INET:
+		திரும்பு masklen <= 32 ? 0 : -1;
+	நிலை AF_INET6:
+		திரும்பு masklen <= 128 ? 0 : -1;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
+நிலையான முழு
+addr_xaddr_to_sa(மாறிலி கட்டமைப்பு xaddr *xa, கட்டமைப்பு sockaddr *sa, socklen_t *len,
     uint16_t port)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	கட்டமைப்பு sockaddr_in *in4 = (கட்டமைப்பு sockaddr_in *)sa;
+	கட்டமைப்பு sockaddr_in6 *in6 = (கட்டமைப்பு sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	எனில் (xa == வெற்று || sa == வெற்று || len == வெற்று)
+		திரும்பு -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
+	தேர்வு (xa->af) {
+	நிலை AF_INET:
+		எனில் (*len < அளவு(*in4))
+			திரும்பு -1;
+		memset(sa, '\0', அளவு(*in4));
+		*len = அளவு(*in4);
 #ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
+		in4->sin_len = அளவு(*in4);
 #endif
 		in4->sin_family = AF_INET;
 		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
+		memcpy(&in4->sin_addr, &xa->v4, அளவு(in4->sin_addr));
+		நிறுத்து;
+	நிலை AF_INET6:
+		எனில் (*len < அளவு(*in6))
+			திரும்பு -1;
+		memset(sa, '\0', அளவு(*in6));
+		*len = அளவு(*in6);
 #ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
+		in6->sin6_len = அளவு(*in6);
 #endif
 		in6->sin6_family = AF_INET6;
 		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
+		memcpy(&in6->sin6_addr, &xa->v6, அளவு(in6->sin6_addr));
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
 #endif
-		break;
-	default:
-		return -1;
+		நிறுத்து;
+	இயல்பு:
+		திரும்பு -1;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+முழு
+addr_sa_to_xaddr(கட்டமைப்பு sockaddr *sa, socklen_t slen, கட்டமைப்பு xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	கட்டமைப்பு sockaddr_in *in4 = (கட்டமைப்பு sockaddr_in *)sa;
+	கட்டமைப்பு sockaddr_in6 *in6 = (கட்டமைப்பு sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	memset(xa, '\0', அளவு(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	தேர்வு (sa->sa_family) {
+	நிலை AF_INET:
+		எனில் (slen < (socklen_t)அளவு(*in4))
+			திரும்பு -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		memcpy(&xa->v4, &in4->sin_addr, அளவு(xa->v4));
+		நிறுத்து;
+	நிலை AF_INET6:
+		எனில் (slen < (socklen_t)அளவு(*in6))
+			திரும்பு -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
+		memcpy(&xa->v6, &in6->sin6_addr, அளவு(xa->v6));
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
 #endif
-		break;
-	default:
-		return -1;
+		நிறுத்து;
+	இயல்பு:
+		திரும்பு -1;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+நிலையான முழு
+addr_invert(கட்டமைப்பு xaddr *n)
 {
-	int i;
+	முழு i;
 
-	if (n == NULL)
-		return -1;
+	எனில் (n == வெற்று)
+		திரும்பு -1;
 
-	switch (n->af) {
-	case AF_INET:
+	தேர்வு (n->af) {
+	நிலை AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		திரும்பு 0;
+	நிலை AF_INET6:
+		க்கு (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		திரும்பு 0;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+முழு
+addr_netmask(முழு af, u_int l, கட்டமைப்பு xaddr *n)
 {
-	int i;
+	முழு i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	எனில் (masklen_valid(af, l) != 0 || n == வெற்று)
+		திரும்பு -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	memset(n, '\0', அளவு(*n));
+	தேர்வு (af) {
+	நிலை AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		எனில் (l == 0)
+			திரும்பு 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		திரும்பு 0;
+	நிலை AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		க்கு (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		எனில் (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		திரும்பு 0;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+நிலையான முழு
+addr_hostmask(முழு af, u_int l, கட்டமைப்பு xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	எனில் (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		திரும்பு -1;
+	திரும்பு 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+முழு
+addr_and(கட்டமைப்பு xaddr *dst, மாறிலி கட்டமைப்பு xaddr *a, மாறிலி கட்டமைப்பு xaddr *b)
 {
-	int i;
+	முழு i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	எனில் (dst == வெற்று || a == வெற்று || b == வெற்று || a->af != b->af)
+		திரும்பு -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	memcpy(dst, a, அளவு(*dst));
+	தேர்வு (a->af) {
+	நிலை AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		திரும்பு 0;
+	நிலை AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		க்கு (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		திரும்பு 0;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+நிலையான முழு
+addr_or(கட்டமைப்பு xaddr *dst, மாறிலி கட்டமைப்பு xaddr *a, மாறிலி கட்டமைப்பு xaddr *b)
 {
-	int i;
+	முழு i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	எனில் (dst == வெற்று || a == வெற்று || b == வெற்று || a->af != b->af)
+		திரும்பு (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	memcpy(dst, a, அளவு(*dst));
+	தேர்வு (a->af) {
+	நிலை AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		திரும்பு (0);
+	நிலை AF_INET6:
+		க்கு (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		திரும்பு (0);
+	இயல்பு:
+		திரும்பு (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+முழு
+addr_cmp(மாறிலி கட்டமைப்பு xaddr *a, மாறிலி கட்டமைப்பு xaddr *b)
 {
-	int i;
+	முழு i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	எனில் (a->af != b->af)
+		திரும்பு (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	தேர்வு (a->af) {
+	நிலை AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		எனில் (a->v4.s_addr == b->v4.s_addr)
+			திரும்பு 0;
+		திரும்பு (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	நிலை AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		க்கு (i = 0; i < 16; i++)
+			எனில் (a->addr8[i] - b->addr8[i] != 0)
+				திரும்பு (a->addr8[i] - b->addr8[i]);
+		எனில் (a->scope_id == b->scope_id)
+			திரும்பு (0);
+		திரும்பு (a->scope_id > b->scope_id ? 1 : -1);
+	இயல்பு:
+		திரும்பு (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+நிலையான முழு
+addr_is_all0s(மாறிலி கட்டமைப்பு xaddr *a)
 {
-	int i;
+	முழு i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	தேர்வு (a->af) {
+	நிலை AF_INET:
+		திரும்பு (a->v4.s_addr == 0 ? 0 : -1);
+	நிலை AF_INET6:
+		க்கு (i = 0; i < 4; i++)
+			எனில் (a->addr32[i] != 0)
+				திரும்பு -1;
+		திரும்பு 0;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+வெறுமை
+addr_increment(கட்டமைப்பு xaddr *a)
 {
-	int i;
+	முழு i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	தேர்வு (a->af) {
+	நிலை AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		நிறுத்து;
+	நிலை AF_INET6:
+		க்கு (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			எனில் (n != 0)
+				நிறுத்து;
 		}
-		break;
+		நிறுத்து;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+நிலையான முழு
+addr_host_is_all0s(மாறிலி கட்டமைப்பு xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	கட்டமைப்பு xaddr tmp_addr, tmp_mask, tmp_result;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	memcpy(&tmp_addr, a, அளவு(tmp_addr));
+	எனில் (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		திரும்பு -1;
+	எனில் (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
+		திரும்பு -1;
+	திரும்பு addr_is_all0s(&tmp_result);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#எனில் 0
+நிலையான முழு
+addr_host_to_all0s(கட்டமைப்பு xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	கட்டமைப்பு xaddr tmp_mask;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	எனில் (addr_netmask(a->af, masklen, &tmp_mask) == -1)
+		திரும்பு (-1);
+	எனில் (addr_and(a, a, &tmp_mask) == -1)
+		திரும்பு (-1);
+	திரும்பு (0);
 }
 #endif
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+முழு
+addr_host_to_all1s(கட்டமைப்பு xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	கட்டமைப்பு xaddr tmp_mask;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	எனில் (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		திரும்பு (-1);
+	எனில் (addr_or(a, a, &tmp_mask) == -1)
+		திரும்பு (-1);
+	திரும்பு (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+முழு
+addr_pton(மாறிலி எழுத்து *p, கட்டமைப்பு xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	கட்டமைப்பு addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', அளவு(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	எனில் (p == வெற்று || getaddrinfo(p, வெற்று, &hints, &ai) != 0)
+		திரும்பு -1;
 
-	if (ai == NULL)
-		return -1;
+	எனில் (ai == வெற்று)
+		திரும்பு -1;
 
-	if (ai->ai_addr == NULL) {
+	எனில் (ai->ai_addr == வெற்று) {
 		freeaddrinfo(ai);
-		return -1;
+		திரும்பு -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	எனில் (n != வெற்று && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		திரும்பு -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	திரும்பு 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#எனில் 0
+நிலையான முழு
+addr_sa_pton(மாறிலி எழுத்து *h, மாறிலி எழுத்து *s, கட்டமைப்பு sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	கட்டமைப்பு addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', அளவு(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	எனில் (h == வெற்று || getaddrinfo(h, s, &hints, &ai) != 0)
+		திரும்பு -1;
 
-	if (ai == NULL)
-		return -1;
+	எனில் (ai == வெற்று)
+		திரும்பு -1;
 
-	if (ai->ai_addr == NULL) {
+	எனில் (ai->ai_addr == வெற்று) {
 		freeaddrinfo(ai);
-		return -1;
+		திரும்பு -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	எனில் (sa != வெற்று) {
+		எனில் (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			திரும்பு -1;
 		}
 		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+முழு
+addr_ntop(மாறிலி கட்டமைப்பு xaddr *n, எழுத்து *p, size_t len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	கட்டமைப்பு sockaddr_storage ss;
+	socklen_t slen = அளவு(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	எனில் (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
+		திரும்பு -1;
+	எனில் (p == வெற்று || len == 0)
+		திரும்பு -1;
+	எனில் (getnameinfo(_SA(&ss), slen, p, len, வெற்று, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		திரும்பு -1;
 
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+முழு
+addr_pton_cidr(மாறிலி எழுத்து *p, கட்டமைப்பு xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	கட்டமைப்பு xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	எழுத்து addrbuf[64], *mp;
+	மாறிலி எழுத்து *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	எனில் (p == வெற்று || strlcpy(addrbuf, p, அளவு(addrbuf)) >= அளவு(addrbuf))
+		திரும்பு -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	எனில் ((mp = strchr(addrbuf, '/')) != வெற்று) {
 		*mp = '\0';
 		mp++;
 		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		எனில் (errstr)
+			திரும்பு -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	எனில் (addr_pton(addrbuf, &tmp) == -1)
+		திரும்பு -1;
 
-	if (mp == NULL)
+	எனில் (mp == வெற்று)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	எனில் (masklen_valid(tmp.af, masklen) == -1)
+		திரும்பு -2;
+	எனில் (addr_host_is_all0s(&tmp, masklen) != 0)
+		திரும்பு -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	எனில் (n != வெற்று)
+		memcpy(n, &tmp, அளவு(*n));
+	எனில் (l != வெற்று)
 		*l = masklen;
 
-	return 0;
+	திரும்பு 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+முழு
+addr_netmatch(மாறிலி கட்டமைப்பு xaddr *host, மாறிலி கட்டமைப்பு xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	கட்டமைப்பு xaddr tmp_mask, tmp_result;
 
-	if (host->af != net->af)
-		return -1;
+	எனில் (host->af != net->af)
+		திரும்பு -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	எனில் (addr_netmask(host->af, masklen, &tmp_mask) == -1)
+		திரும்பு -1;
+	எனில் (addr_and(&tmp_result, host, &tmp_mask) == -1)
+		திரும்பு -1;
+	திரும்பு addr_cmp(&tmp_result, net);
 }

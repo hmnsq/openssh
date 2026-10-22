@@ -58,8 +58,8 @@
 #define SSH_BUG_HOSTKEYS	0x20000000
 #define SSH_BUG_DHGEX_LARGE	0x40000000
 
-struct ssh;
+கட்டமைப்பு ssh;
 
-void    compat_banner(struct ssh *, const char *);
-char	*compat_kex_proposal(struct ssh *, const char *);
+வெறுமை    compat_banner(கட்டமைப்பு ssh *, மாறிலி எழுத்து *);
+எழுத்து	*compat_kex_proposal(கட்டமைப்பு ssh *, மாறிலி எழுத்து *);
 #endif

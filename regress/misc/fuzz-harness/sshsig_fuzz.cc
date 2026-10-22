@@ -1,29 +1,29 @@
 // cc_fuzz_target test for sshsig verification.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-extern "C" {
+வெளி "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#அந்தர்பாவ "includes.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "sshsig.h"
+#அந்தர்பாவ "log.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+முழு LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t* sig, size_t slen)
 {
-  static const char *data = "If everyone started announcing his nose had "
+  நிலையான மாறிலி எழுத்து *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  struct sshbuf *signature = sshbuf_from(sig, slen);
-  struct sshbuf *message = sshbuf_from(data, strlen(data));
-  struct sshkey *k = NULL;
-  struct sshkey_sig_details *details = NULL;
-  extern char *__progname;
+  கட்டமைப்பு sshbuf *signature = sshbuf_from(sig, slen);
+  கட்டமைப்பு sshbuf *message = sshbuf_from(data, strlen(data));
+  கட்டமைப்பு sshkey *k = வெற்று;
+  கட்டமைப்பு sshkey_sig_details *details = வெற்று;
+  வெளி எழுத்து *__progname;
 
   log_init(__progname, SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_USER, 1);
   sshsig_verifyb(signature, message, "castle", &k, &details);
@@ -31,7 +31,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
   sshkey_free(k);
   sshbuf_free(signature);
   sshbuf_free(message);
-  return 0;
+  திரும்பு 0;
 }
 
 } // extern

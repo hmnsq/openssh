@@ -18,18 +18,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntop.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE_INET_NTOP
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
+#அந்தர்பாவ <arpa/nameser.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdio.h>
 
 #ifndef IN6ADDRSZ
 #define IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
@@ -44,8 +44,8 @@
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4(const u_char *src, char *dst, size_t size);
-static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
+நிலையான மாறிலி எழுத்து *inet_ntop4(மாறிலி u_char *src, எழுத்து *dst, size_t size);
+நிலையான மாறிலி எழுத்து *inet_ntop6(மாறிலி u_char *src, எழுத்து *dst, size_t size);
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -55,17 +55,17 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+மாறிலி எழுத்து *
+inet_ntop(முழு af, மாறிலி வெறுமை *src, எழுத்து *dst, socklen_t size)
 {
-	switch (af) {
-	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
-	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
-	default:
+	தேர்வு (af) {
+	நிலை AF_INET:
+		திரும்பு (inet_ntop4(src, dst, (size_t)size));
+	நிலை AF_INET6:
+		திரும்பு (inet_ntop6(src, dst, (size_t)size));
+	இயல்பு:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		திரும்பு (வெற்று);
 	}
 	/* NOTREACHED */
 }
@@ -81,20 +81,20 @@ inet_ntop(int af, const void *src, char *dst, socklen_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, size_t size)
+நிலையான மாறிலி எழுத்து *
+inet_ntop4(மாறிலி u_char *src, எழுத்து *dst, size_t size)
 {
-	static const char fmt[] = "%u.%u.%u.%u";
-	char tmp[sizeof "255.255.255.255"];
-	int l;
+	நிலையான மாறிலி எழுத்து fmt[] = "%u.%u.%u.%u";
+	எழுத்து tmp[அளவு "255.255.255.255"];
+	முழு l;
 
 	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	எனில் (l <= 0 || l >= size) {
 		errno = ENOSPC;
-		return (NULL);
+		திரும்பு (வெற்று);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	திரும்பு (dst);
 }
 
 /* const char *
@@ -103,8 +103,8 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, size_t size)
+நிலையான மாறிலி எழுத்து *
+inet_ntop6(மாறிலி u_char *src, எழுத்து *dst, size_t size)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -113,98 +113,98 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 * Keep this in mind if you think this function should have been coded
 	 * to use pointer overlays.  All the world's not a VAX.
 	 */
-	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
-	char *tp, *ep;
-	struct { int base, len; } best, cur;
-	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	எழுத்து tmp[அளவு "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
+	எழுத்து *tp, *ep;
+	கட்டமைப்பு { முழு base, len; } best, cur;
+	u_int சொற்கள்[IN6ADDRSZ / INT16SZ];
+	முழு i;
+	முழு advance;
 
 	/*
 	 * Preprocess:
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
-	for (i = 0; i < IN6ADDRSZ; i++)
-		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
+	memset(சொற்கள், '\0', அளவு சொற்கள்);
+	க்கு (i = 0; i < IN6ADDRSZ; i++)
+		சொற்கள்[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
 	cur.base = -1;
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
+	க்கு (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
+		எனில் (சொற்கள்[i] == 0) {
+			எனில் (cur.base == -1)
 				cur.base = i, cur.len = 1;
-			else
+			இல்லையெனில்
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
+		} இல்லையெனில் {
+			எனில் (cur.base != -1) {
+				எனில் (best.base == -1 || cur.len > best.len)
 					best = cur;
 				cur.base = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
+	எனில் (cur.base != -1) {
+		எனில் (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	if (best.base != -1 && best.len < 2)
+	எனில் (best.base != -1 && best.len < 2)
 		best.base = -1;
 
 	/*
 	 * Format the result.
 	 */
 	tp = tmp;
-	ep = tmp + sizeof(tmp);
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
+	ep = tmp + அளவு(tmp);
+	க்கு (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
+		எனில் (best.base != -1 && i >= best.base &&
 		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+			எனில் (i == best.base) {
+				எனில் (tp + 1 >= ep)
+					திரும்பு (வெற்று);
 				*tp++ = ':';
 			}
-			continue;
+			தொடர்;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		எனில் (i != 0) {
+			எனில் (tp + 1 >= ep)
+				திரும்பு (வெற்று);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
-		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
+		எனில் (i == 6 && best.base == 0 &&
+		    (best.len == 6 || (best.len == 5 && சொற்கள்[5] == 0xffff))) {
+			எனில் (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
+				திரும்பு (வெற்று);
 			tp += strlen(tp);
-			break;
+			நிறுத்து;
 		}
-		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		advance = snprintf(tp, ep - tp, "%x", சொற்கள்[i]);
+		எனில் (advance <= 0 || advance >= ep - tp)
+			திரும்பு (வெற்று);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	எனில் (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
+		எனில் (tp + 1 >= ep)
+			திரும்பு (வெற்று);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	எனில் (tp + 1 >= ep)
+		திரும்பு (வெற்று);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	எனில் ((size_t)(tp - tmp) > size) {
 		errno = ENOSPC;
-		return (NULL);
+		திரும்பு (வெற்று);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	திரும்பு (dst);
 }
 
 #endif /* !HAVE_INET_NTOP */

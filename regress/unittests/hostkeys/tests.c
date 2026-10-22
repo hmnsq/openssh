@@ -5,23 +5,23 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdio.h>
+#அந்தர்பாவ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-void tests(void);
-void test_iterate(void); /* test_iterate.c */
+வெறுமை tests(வெறுமை);
+வெறுமை test_iterate(வெறுமை); /* test_iterate.c */
 
-void
-tests(void)
+வெறுமை
+tests(வெறுமை)
 {
 	test_iterate();
 }
 
-void
-benchmarks(void)
+வெறுமை
+benchmarks(வெறுமை)
 {
 	printf("no benchmarks\n");
 }

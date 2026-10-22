@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#அந்தர்பாவ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#அந்தர்பாவ "monitor_wrap.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+வெளி ServerOptions options;
+வெளி கட்டமைப்பு authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+நிலையான முழு
+userauth_passwd(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	எழுத்து *password = வெற்று;
+	முழு authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	எனில் ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, வெற்று, வெற்று)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	எனில் (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	இல்லையெனில் எனில் (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	திரும்பு authenticated;
 }
 
 Authmethod method_passwd = {

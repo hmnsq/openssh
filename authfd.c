@@ -35,28 +35,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/un.h>
-#include <sys/socket.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/un.h>
+#அந்தர்பாவ <sys/socket.h>
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <errno.h>
 
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "atomicio.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "authfd.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "atomicio.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "xmalloc.h"
 
 #define MAX_AGENT_IDENTITIES	2048		/* Max keys in agent reply */
 #define MAX_AGENT_REPLY_LEN	(256 * 1024)	/* Max bytes in agent reply */
@@ -69,132 +69,132 @@
     (x == SSH2_AGENT_FAILURE))
 
 /* Convert success/failure response from agent to a err.h status */
-static int
+நிலையான முழு
 decode_reply(u_char type)
 {
-	if (agent_failed(type))
-		return SSH_ERR_AGENT_FAILURE;
-	else if (type == SSH_AGENT_SUCCESS)
-		return 0;
-	else
-		return SSH_ERR_INVALID_FORMAT;
+	எனில் (agent_failed(type))
+		திரும்பு SSH_ERR_AGENT_FAILURE;
+	இல்லையெனில் எனில் (type == SSH_AGENT_SUCCESS)
+		திரும்பு 0;
+	இல்லையெனில்
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 }
 
 /*
  * Opens an authentication socket at the provided path and stores the file
  * descriptor in fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
+முழு
+ssh_get_authentication_socket_path(மாறிலி எழுத்து *authsocket, முழு *fdp)
 {
-	int sock, oerrno;
-	struct sockaddr_un sunaddr;
+	முழு sock, oerrno;
+	கட்டமைப்பு sockaddr_un sunaddr;
 
 	debug3_f("path '%s'", authsocket);
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, அளவு(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
+	strlcpy(sunaddr.sun_path, authsocket, அளவு(sunaddr.sun_path));
 
-	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	எனில் ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+		திரும்பு SSH_ERR_SYSTEM_ERROR;
 
 	/* close on exec */
-	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
-	    connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	எனில் (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+	    connect(sock, (கட்டமைப்பு sockaddr *)&sunaddr, அளவு(sunaddr)) == -1) {
 		oerrno = errno;
 		close(sock);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		திரும்பு SSH_ERR_SYSTEM_ERROR;
 	}
-	if (fdp != NULL)
+	எனில் (fdp != வெற்று)
 		*fdp = sock;
-	else
+	இல்லையெனில்
 		close(sock);
-	return 0;
+	திரும்பு 0;
 }
 
 /*
  * Opens the default authentication socket and stores the file descriptor in
  * fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket(int *fdp)
+முழு
+ssh_get_authentication_socket(முழு *fdp)
 {
-	const char *authsocket;
+	மாறிலி எழுத்து *authsocket;
 
-	if (fdp != NULL)
+	எனில் (fdp != வெற்று)
 		*fdp = -1;
 
 	authsocket = getenv(SSH_AUTHSOCKET_ENV_NAME);
-	if (authsocket == NULL || *authsocket == '\0')
-		return SSH_ERR_AGENT_NOT_PRESENT;
+	எனில் (authsocket == வெற்று || *authsocket == '\0')
+		திரும்பு SSH_ERR_AGENT_NOT_PRESENT;
 
-	return ssh_get_authentication_socket_path(authsocket, fdp);
+	திரும்பு ssh_get_authentication_socket_path(authsocket, fdp);
 }
 
 /* Communicate with agent: send request and read reply */
-static int
-ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
+நிலையான முழு
+ssh_request_reply(முழு sock, கட்டமைப்பு sshbuf *request, கட்டமைப்பு sshbuf *reply)
 {
-	int r;
+	முழு r;
 	size_t l, len;
-	char buf[1024];
+	எழுத்து buf[1024];
 
 	/* Get the length of the message, and format it in the buffer. */
 	len = sshbuf_len(request);
 	POKE_U32(buf, len);
 
 	/* Send the length and then the packet to the agent. */
-	if (atomicio(vwrite, sock, buf, 4) != 4 ||
+	எனில் (atomicio(vwrite, sock, buf, 4) != 4 ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(request),
 	    sshbuf_len(request)) != sshbuf_len(request))
-		return SSH_ERR_AGENT_COMMUNICATION;
+		திரும்பு SSH_ERR_AGENT_COMMUNICATION;
 	/*
 	 * Wait for response from the agent.  First read the length of the
 	 * response packet.
 	 */
-	if (atomicio(read, sock, buf, 4) != 4)
-	    return SSH_ERR_AGENT_COMMUNICATION;
+	எனில் (atomicio(பட, sock, buf, 4) != 4)
+	    திரும்பு SSH_ERR_AGENT_COMMUNICATION;
 
 	/* Extract the length, and check it for sanity. */
 	len = PEEK_U32(buf);
-	if (len > MAX_AGENT_REPLY_LEN)
-		return SSH_ERR_INVALID_FORMAT;
+	எனில் (len > MAX_AGENT_REPLY_LEN)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 
 	/* Read the rest of the response in to the buffer. */
 	sshbuf_reset(reply);
-	while (len > 0) {
+	போது (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
-			l = sizeof(buf);
-		if (atomicio(read, sock, buf, l) != l)
-			return SSH_ERR_AGENT_COMMUNICATION;
-		if ((r = sshbuf_put(reply, buf, l)) != 0)
-			return r;
+		எனில் (l > அளவு(buf))
+			l = அளவு(buf);
+		எனில் (atomicio(பட, sock, buf, l) != l)
+			திரும்பு SSH_ERR_AGENT_COMMUNICATION;
+		எனில் ((r = sshbuf_put(reply, buf, l)) != 0)
+			திரும்பு r;
 		len -= l;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /* Communicate with agent: sent request, read and decode status reply */
-static int
-ssh_request_reply_decode(int sock, struct sshbuf *request)
+நிலையான முழு
+ssh_request_reply_decode(முழு sock, கட்டமைப்பு sshbuf *request)
 {
-	struct sshbuf *reply;
-	int r;
+	கட்டமைப்பு sshbuf *reply;
+	முழு r;
 	u_char type;
 
-	if ((reply = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = ssh_request_reply(sock, request, reply)) != 0 ||
+	எனில் ((reply = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = ssh_request_reply(sock, request, reply)) != 0 ||
 	    (r = sshbuf_get_u8(reply, &type)) != 0 ||
 	    (r = decode_reply(type)) != 0)
-		goto out;
+		செல் out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(reply);
-	return r;
+	திரும்பு r;
 }
 
 /*
@@ -202,177 +202,177 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
  * obtained).  The argument must have been returned by
  * ssh_get_authentication_socket().
  */
-void
-ssh_close_authentication_socket(int sock)
+வெறுமை
+ssh_close_authentication_socket(முழு sock)
 {
-	if (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
+	எனில் (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != வெற்று)
 		close(sock);
 }
 
 /* Lock/unlock agent */
-int
-ssh_lock_agent(int sock, int lock, const char *password)
+முழு
+ssh_lock_agent(முழு sock, முழு lock, மாறிலி எழுத்து *password)
 {
-	int r;
+	முழு r;
 	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
-	struct sshbuf *msg;
+	கட்டமைப்பு sshbuf *செய்தி;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
-	    (r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, type)) != 0 ||
+	    (r = sshbuf_put_cstring(செய்தி, password)) != 0 ||
+	    (r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 
-static int
-deserialise_identity2(struct sshbuf *ids, struct sshkey **keyp, char **commentp)
+நிலையான முழு
+deserialise_identity2(கட்டமைப்பு sshbuf *ids, கட்டமைப்பு sshkey **keyp, எழுத்து **commentp)
 {
-	int r;
-	char *comment = NULL;
-	const u_char *blob;
+	முழு r;
+	எழுத்து *comment = வெற்று;
+	மாறிலி u_char *blob;
 	size_t blen;
 
-	if ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
-	    (r = sshbuf_get_cstring(ids, &comment, NULL)) != 0)
-		goto out;
-	if ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
-		goto out;
-	if (commentp != NULL) {
+	எனில் ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
+	    (r = sshbuf_get_cstring(ids, &comment, வெற்று)) != 0)
+		செல் out;
+	எனில் ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
+		செல் out;
+	எனில் (commentp != வெற்று) {
 		*commentp = comment;
-		comment = NULL;
+		comment = வெற்று;
 	}
 	r = 0;
  out:
-	free(comment);
-	return r;
+	விடுவி(comment);
+	திரும்பு r;
 }
 
 /*
  * Fetch list of identities held by the agent.
  */
-int
-ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
+முழு
+ssh_fetch_identitylist(முழு sock, கட்டமைப்பு ssh_identitylist **idlp)
 {
 	u_char type;
-	uint32_t num, i;
-	struct sshbuf *msg;
-	struct ssh_identitylist *idl = NULL;
-	int r;
+	uint32_t இலக்கம், i;
+	கட்டமைப்பு sshbuf *செய்தி;
+	கட்டமைப்பு ssh_identitylist *idl = வெற்று;
+	முழு r;
 
 	/*
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
-		goto out;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+		செல் out;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
+	எனில் ((r = ssh_request_reply(sock, செய்தி, செய்தி)) != 0)
+		செல் out;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	எனில் ((r = sshbuf_get_u8(செய்தி, &type)) != 0)
+		செல் out;
+	எனில் (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_IDENTITIES_ANSWER) {
+		செல் out;
+	} இல்லையெனில் எனில் (type != SSH2_AGENT_IDENTITIES_ANSWER) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
-		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	எனில் ((r = sshbuf_get_u32(செய்தி, &இலக்கம்)) != 0)
+		செல் out;
+	எனில் (இலக்கம் > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	if (num == 0) {
+	எனில் (இலக்கம் == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
-		goto out;
+		செல் out;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
-	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
-	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
-	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
+	எனில் ((idl = calloc(1, அளவு(*idl))) == வெற்று ||
+	    (idl->சாவிகள் = calloc(இலக்கம், அளவு(*idl->சாவிகள்))) == வெற்று ||
+	    (idl->comments = calloc(இலக்கம், அளவு(*idl->comments))) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	க்கு (i = 0; i < இலக்கம்;) {
+		எனில் ((r = deserialise_identity2(செய்தி, &(idl->சாவிகள்[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			எனில் (r == SSH_ERR_சாவி_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
-				num--;
-				continue;
-			} else
-				goto out;
+				இலக்கம்--;
+				தொடர்;
+			} இல்லையெனில்
+				செல் out;
 		}
 		i++;
 	}
-	idl->nkeys = num;
+	idl->nkeys = இலக்கம்;
 	*idlp = idl;
-	idl = NULL;
+	idl = வெற்று;
 	r = 0;
  out:
-	sshbuf_free(msg);
-	if (idl != NULL)
+	sshbuf_free(செய்தி);
+	எனில் (idl != வெற்று)
 		ssh_free_identitylist(idl);
-	return r;
+	திரும்பு r;
 }
 
-void
-ssh_free_identitylist(struct ssh_identitylist *idl)
+வெறுமை
+ssh_free_identitylist(கட்டமைப்பு ssh_identitylist *idl)
 {
 	size_t i;
 
-	if (idl == NULL)
-		return;
-	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
-			sshkey_free(idl->keys[i]);
-		if (idl->comments != NULL)
-			free(idl->comments[i]);
+	எனில் (idl == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < idl->nkeys; i++) {
+		எனில் (idl->சாவிகள் != வெற்று)
+			sshkey_free(idl->சாவிகள்[i]);
+		எனில் (idl->comments != வெற்று)
+			விடுவி(idl->comments[i]);
 	}
-	free(idl->keys);
-	free(idl->comments);
-	free(idl);
+	விடுவி(idl->சாவிகள்);
+	விடுவி(idl->comments);
+	விடுவி(idl);
 }
 
 /*
  * Check if the ssh agent has a given key.
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
-int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+முழு
+ssh_agent_has_சாவி(முழு sock, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
+	முழு r, ret = SSH_ERR_சாவி_NOT_FOUND;
 	size_t i;
-	struct ssh_identitylist *idlist = NULL;
+	கட்டமைப்பு ssh_identitylist *idlist = வெற்று;
 
-	if ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
-		return r;
+	எனில் ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
+		திரும்பு r;
 	}
 
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+	க்கு (i = 0; i < idlist->nkeys; i++) {
+		எனில் (sshkey_equal_public(idlist->சாவிகள்[i], சாவி)) {
 			ret = 0;
-			break;
+			நிறுத்து;
 		}
 	}
 
 	ssh_free_identitylist(idlist);
-	return ret;
+	திரும்பு ret;
 }
 
 /*
@@ -384,58 +384,58 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 
 
 /* encode signature algorithm in flag bits, so we can keep the msg format */
-static u_int
-agent_encode_alg(const struct sshkey *key, const char *alg)
+நிலையான u_int
+agent_encode_alg(மாறிலி கட்டமைப்பு sshkey *சாவி, மாறிலி எழுத்து *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
-		if (strcmp(alg, "rsa-sha2-256") == 0 ||
+	எனில் (alg != வெற்று && sshkey_type_plain(சாவி->type) == சாவி_RSA) {
+		எனில் (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_256;
-		if (strcmp(alg, "rsa-sha2-512") == 0 ||
+			திரும்பு SSH_AGENT_RSA_SHA2_256;
+		எனில் (strcmp(alg, "rsa-sha2-512") == 0 ||
 		    strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_512;
+			திரும்பு SSH_AGENT_RSA_SHA2_512;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
-int
-ssh_agent_sign(int sock, const struct sshkey *key,
+முழு
+ssh_agent_sign(முழு sock, மாறிலி கட்டமைப்பு sshkey *சாவி,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *alg, u_int compat)
+    மாறிலி u_char *data, size_t datalen, மாறிலி எழுத்து *alg, u_int compat)
 {
-	struct sshbuf *msg;
-	u_char *sig = NULL, type = 0;
+	கட்டமைப்பு sshbuf *செய்தி;
+	u_char *sig = வெற்று, type = 0;
 	size_t len = 0;
 	u_int flags = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 
-	*sigp = NULL;
+	*sigp = வெற்று;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_u32(msg, flags)) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	எனில் (datalen > SSH_சாவி_MAX_SIGN_DATA_SIZE)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	flags |= agent_encode_alg(சாவி, alg);
+	எனில் ((r = sshbuf_put_u8(செய்தி, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts(சாவி, செய்தி)) != 0 ||
+	    (r = sshbuf_put_string(செய்தி, data, datalen)) != 0 ||
+	    (r = sshbuf_put_u32(செய்தி, flags)) != 0)
+		செல் out;
+	எனில் ((r = ssh_request_reply(sock, செய்தி, செய்தி)) != 0)
+		செல் out;
+	எனில் ((r = sshbuf_get_u8(செய்தி, &type)) != 0)
+		செல் out;
+	எனில் (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_SIGN_RESPONSE) {
+		செல் out;
+	} இல்லையெனில் எனில் (type != SSH2_AGENT_SIGN_RESPONSE) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_get_string(செய்தி, &sig, &len)) != 0)
+		செல் out;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
 	 * an incorrect RSA signature algorithm (e.g. "ssh-rsa" (RSA/SHA1) vs.
@@ -443,276 +443,276 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	எனில் (!sshkey_is_sk(சாவி) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
-		goto out;
+		செல் out;
 	/* success */
 	*sigp = sig;
 	*lenp = len;
-	sig = NULL;
+	sig = வெற்று;
 	len = 0;
 	r = 0;
  out:
 	freezero(sig, len);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /* Encode key for a message to the agent. */
 
-static int
-encode_dest_constraint_hop(struct sshbuf *m,
-    const struct dest_constraint_hop *dch)
+நிலையான முழு
+encode_dest_constraint_hop(கட்டமைப்பு sshbuf *m,
+    மாறிலி கட்டமைப்பு dest_constraint_hop *dch)
 {
-	struct sshbuf *b;
+	கட்டமைப்பு sshbuf *b;
 	u_int i;
-	int r;
+	முழு r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
+	எனில் ((b = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, dch->hostname)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
-		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
-			goto out;
+	    (r = sshbuf_put_string(b, வெற்று, 0)) != 0) /* reserved */
+		செல் out;
+	க்கு (i = 0; i < dch->nkeys; i++) {
+		எனில் ((r = sshkey_puts(dch->சாவிகள்[i], b)) != 0 ||
+		    (r = sshbuf_put_u8(b, dch->சாவி_is_ca[i] != 0)) != 0)
+			செல் out;
 	}
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_put_stringb(m, b)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	திரும்பு r;
 }
 
-static int
-encode_dest_constraint(struct sshbuf *m, const struct dest_constraint *dc)
+நிலையான முழு
+encode_dest_constraint(கட்டமைப்பு sshbuf *m, மாறிலி கட்டமைப்பு dest_constraint *dc)
 {
-	struct sshbuf *b;
-	int r;
+	கட்டமைப்பு sshbuf *b;
+	முழு r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
+	எனில் ((b = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
 	    (r = encode_dest_constraint_hop(b, &dc->to)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	    (r = sshbuf_put_string(b, வெற்று, 0)) != 0) /* reserved */
+		செல் out;
+	எனில் ((r = sshbuf_put_stringb(m, b)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	திரும்பு r;
 }
 
-static int
-encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
-    const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+நிலையான முழு
+encode_constraints(கட்டமைப்பு sshbuf *m, u_int life, u_int confirm,
+    மாறிலி எழுத்து *provider,
+    கட்டமைப்பு dest_constraint **dest_constraints, size_t ndest_constraints,
+    முழு cert_only, கட்டமைப்பு sshkey **certs, size_t ncerts)
 {
-	int r;
-	struct sshbuf *b = NULL;
+	முழு r;
+	கட்டமைப்பு sshbuf *b = வெற்று;
 	size_t i;
 
-	if (life != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
+	எனில் (life != 0) {
+		எனில் ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
 		    (r = sshbuf_put_u32(m, life)) != 0)
-			goto out;
+			செல் out;
 	}
-	if (confirm != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
-			goto out;
+	எனில் (confirm != 0) {
+		எனில் ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
+			செல் out;
 	}
-	if (provider != NULL) {
-		if ((r = sshbuf_put_u8(m,
+	எனில் (provider != வெற்று) {
+		எனில் ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "sk-provider@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(m, provider)) != 0)
-			goto out;
+			செல் out;
 	}
-	if (dest_constraints != NULL && ndest_constraints > 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	எனில் (dest_constraints != வெற்று && ndest_constraints > 0) {
+		எனில் ((b = sshbuf_new()) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			செல் out;
 		}
-		for (i = 0; i < ndest_constraints; i++) {
-			if ((r = encode_dest_constraint(b,
+		க்கு (i = 0; i < ndest_constraints; i++) {
+			எனில் ((r = encode_dest_constraint(b,
 			    dest_constraints[i])) != 0)
-				goto out;
+				செல் out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		எனில் ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "restrict-destination-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			செல் out;
 		sshbuf_free(b);
-		b = NULL;
+		b = வெற்று;
 	}
-	if (ncerts != 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	எனில் (ncerts != 0) {
+		எனில் ((b = sshbuf_new()) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			செல் out;
 		}
-		for (i = 0; i < ncerts; i++) {
-			if ((r = sshkey_puts(certs[i], b)) != 0)
-				goto out;
+		க்கு (i = 0; i < ncerts; i++) {
+			எனில் ((r = sshkey_puts(certs[i], b)) != 0)
+				செல் out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		எனில் ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "associated-certs-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_u8(m, cert_only != 0)) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			செல் out;
 		sshbuf_free(b);
-		b = NULL;
+		b = வெற்று;
 	}
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	திரும்பு r;
 }
 
 /*
  * Adds an identity to the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm,
-    const char *provider, struct dest_constraint **dest_constraints,
+முழு
+ssh_add_identity_constrained(முழு sock, கட்டமைப்பு sshkey *சாவி,
+    மாறிலி எழுத்து *comment, u_int life, u_int confirm,
+    மாறிலி எழுத்து *provider, கட்டமைப்பு dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || provider || dest_constraints);
+	கட்டமைப்பு sshbuf *செய்தி;
+	முழு r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 
-	switch (key->type) {
+	தேர்வு (சாவி->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
+	நிலை சாவி_RSA:
+	நிலை சாவி_RSA_CERT:
+	நிலை சாவி_ECDSA:
+	நிலை சாவி_ECDSA_CERT:
+	நிலை சாவி_ECDSA_SK:
+	நிலை சாவி_ECDSA_SK_CERT:
 #endif
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-	case KEY_MLDSA44_ED25519:
-	case KEY_MLDSA44_ED25519_CERT:
-	case KEY_ED25519_SK:
-	case KEY_ED25519_SK_CERT:
+	நிலை சாவி_ED25519:
+	நிலை சாவி_ED25519_CERT:
+	நிலை சாவி_MLDSA44_ED25519:
+	நிலை சாவி_MLDSA44_ED25519_CERT:
+	நிலை சாவி_ED25519_SK:
+	நிலை சாவி_ED25519_SK_CERT:
 		type = constrained ?
 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
 		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-		    (r = sshkey_private_serialize(key, msg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, comment)) != 0)
-			goto out;
-		break;
-	default:
+		எனில் ((r = sshbuf_put_u8(செய்தி, type)) != 0 ||
+		    (r = sshkey_private_serialize(சாவி, செய்தி)) != 0 ||
+		    (r = sshbuf_put_cstring(செய்தி, comment)) != 0)
+			செல் out;
+		நிறுத்து;
+	இயல்பு:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		செல் out;
 	}
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, provider,
-	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	எனில் (constrained &&
+	    (r = encode_constraints(செய்தி, life, confirm, provider,
+	    dest_constraints, ndest_constraints, 0, வெற்று, 0)) != 0)
+		செல் out;
+	எனில் ((r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /*
  * Removes an identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_remove_identity(int sock, const struct sshkey *key)
+முழு
+ssh_remove_identity(முழு sock, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
-	struct sshbuf *msg;
-	int r;
-	u_char *blob = NULL;
+	கட்டமைப்பு sshbuf *செய்தி;
+	முழு r;
+	u_char *blob = வெற்று;
 	size_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(msg,
+	எனில் (சாவி->type != சாவி_UNSPEC) {
+		எனில் ((r = sshkey_to_blob(சாவி, &blob, &blen)) != 0)
+			செல் out;
+		எனில் ((r = sshbuf_put_u8(செய்தி,
 		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
-		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
-			goto out;
-	} else {
+		    (r = sshbuf_put_string(செய்தி, blob, blen)) != 0)
+			செல் out;
+	} இல்லையெனில் {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		செல் out;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	எனில் ((r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	if (blob != NULL)
+	எனில் (blob != வெற்று)
 		freezero(blob, blen);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /*
  * Add/remove an token-based identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
+முழு
+ssh_update_card(முழு sock, முழு add, மாறிலி எழுத்து *reader_id, மாறிலி எழுத்து *pin,
     u_int life, u_int confirm,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    கட்டமைப்பு dest_constraint **dest_constraints, size_t ndest_constraints,
+    முழு cert_only, கட்டமைப்பு sshkey **certs, size_t ncerts)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || dest_constraints || certs);
+	கட்டமைப்பு sshbuf *செய்தி;
+	முழு r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
-	if (add) {
+	எனில் (add) {
 		type = constrained ?
-		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
-		    SSH_AGENTC_ADD_SMARTCARD_KEY;
-	} else
-		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
+		    SSH_AGENTC_ADD_SMARTCARD_சாவி_CONSTRAINED :
+		    SSH_AGENTC_ADD_SMARTCARD_சாவி;
+	} இல்லையெனில்
+		type = SSH_AGENTC_REMOVE_SMARTCARD_சாவி;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
-		goto out;
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, NULL,
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, type)) != 0 ||
+	    (r = sshbuf_put_cstring(செய்தி, reader_id)) != 0 ||
+	    (r = sshbuf_put_cstring(செய்தி, pin)) != 0)
+		செல் out;
+	எனில் (constrained &&
+	    (r = encode_constraints(செய்தி, life, confirm, வெற்று,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+		செல் out;
+	எனில் ((r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /*
@@ -723,104 +723,104 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
  * keys from an agent, we generally want to clear both protocol v1 and v2
  * keys.
  */
-int
-ssh_remove_all_identities(int sock, int version)
+முழு
+ssh_remove_all_identities(முழு sock, முழு version)
 {
-	struct sshbuf *msg;
+	கட்டமைப்பு sshbuf *செய்தி;
 	u_char type = (version == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
-	int r;
+	முழு r;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, type)) != 0)
+		செல் out;
+	எனில் ((r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
-int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding)
+முழு
+ssh_agent_bind_hostkey(முழு sock, மாறிலி கட்டமைப்பு sshkey *சாவி,
+    மாறிலி கட்டமைப்பு sshbuf *session_id, மாறிலி கட்டமைப்பு sshbuf *signature,
+    முழு forwarding)
 {
-	struct sshbuf *msg;
-	int r;
+	கட்டமைப்பு sshbuf *செய்தி;
+	முழு r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
-	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	எனில் (சாவி == வெற்று || session_id == வெற்று || signature == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(செய்தி, "session-bind@openssh.com")) != 0 ||
+	    (r = sshkey_puts(சாவி, செய்தி)) != 0 ||
+	    (r = sshbuf_put_stringb(செய்தி, session_id)) != 0 ||
+	    (r = sshbuf_put_stringb(செய்தி, signature)) != 0 ||
+	    (r = sshbuf_put_u8(செய்தி, forwarding ? 1 : 0)) != 0)
+		செல் out;
+	எனில் ((r = ssh_request_reply_decode(sock, செய்தி)) != 0)
+		செல் out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }
 
 /* Queries supported extension request types */
-int
-ssh_agent_query_extensions(int sock, char ***exts)
+முழு
+ssh_agent_query_extensions(முழு sock, எழுத்து ***exts)
 {
-	struct sshbuf *msg;
-	int r;
+	கட்டமைப்பு sshbuf *செய்தி;
+	முழு r;
 	u_char type;
-	char *cp = NULL, **ret = NULL;
+	எழுத்து *cp = வெற்று, **ret = வெற்று;
 	size_t i = 0;
 
-	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	*exts = வெற்று;
+	எனில் ((செய்தி = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u8(செய்தி, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(செய்தி, "query")) != 0)
+		செல் out;
+	எனில் ((r = ssh_request_reply(sock, செய்தி, செய்தி)) != 0)
+		செல் out;
+	எனில் ((r = sshbuf_get_u8(செய்தி, &type)) != 0)
+		செல் out;
+	எனில் (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
+		செல் out;
 	}
 	/* Reply should start with "query" */
-	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
-	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
+	எனில் (type != SSH_AGENT_EXTENSION_RESPONSE ||
+	   (r = sshbuf_get_cstring(செய்தி, &cp, வெற்று)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
-		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+	ret = xcalloc(1, அளவு(*ret));
+	போது (sshbuf_len(செய்தி)) {
+		ret = xrecallocarray(ret, i + 1, i + 2, அளவு(*ret));
+		எனில் ((r = sshbuf_get_cstring(செய்தி, ret + i, வெற்று)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
 		i++;
 	}
 	/* success */
 	r = 0;
 	*exts = ret;
-	ret = NULL; /* transferred */
+	ret = வெற்று; /* transferred */
  out:
-	free(cp);
+	விடுவி(cp);
 	stringlist_free(ret);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(செய்தி);
+	திரும்பு r;
 }

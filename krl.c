@@ -15,33 +15,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
-#include <sys/queue.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/tree.h>
+#அந்தர்பாவ <sys/queue.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <time.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "log.h"
-#include "digest.h"
-#include "bitmap.h"
-#include "utf8.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "bitmap.h"
+#அந்தர்பாவ "utf8.h"
 
-#include "krl.h"
+#அந்தர்பாவ "krl.h"
 
 /* #define DEBUG_KRL */
 #ifdef DEBUG_KRL
 # define KRL_DBG(x) debug3_f x
-#else
+#இல்லையெனில்
 # define KRL_DBG(x)
 #endif
 
@@ -51,235 +51,235 @@
  */
 
 /* Tree of serial numbers. XXX make smarter: really need a real sparse bitmap */
-struct revoked_serial {
+கட்டமைப்பு revoked_serial {
 	uint64_t lo, hi;
-	RB_ENTRY(revoked_serial) tree_entry;
+	RB_ENTRY(revoked_serial) மரம்_entry;
 };
-static int serial_cmp(struct revoked_serial *a, struct revoked_serial *b);
-RB_HEAD(revoked_serial_tree, revoked_serial);
-RB_GENERATE_STATIC(revoked_serial_tree, revoked_serial, tree_entry, serial_cmp)
+நிலையான முழு serial_cmp(கட்டமைப்பு revoked_serial *a, கட்டமைப்பு revoked_serial *b);
+RB_HEAD(revoked_serial_மரம், revoked_serial);
+RB_GENERATE_STATIC(revoked_serial_மரம், revoked_serial, மரம்_entry, serial_cmp)
 
 /* Tree of key IDs */
-struct revoked_key_id {
-	char *key_id;
-	RB_ENTRY(revoked_key_id) tree_entry;
+கட்டமைப்பு revoked_சாவி_id {
+	எழுத்து *சாவி_id;
+	RB_ENTRY(revoked_சாவி_id) மரம்_entry;
 };
-static int key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b);
-RB_HEAD(revoked_key_id_tree, revoked_key_id);
-RB_GENERATE_STATIC(revoked_key_id_tree, revoked_key_id, tree_entry, key_id_cmp)
+நிலையான முழு சாவி_id_cmp(கட்டமைப்பு revoked_சாவி_id *a, கட்டமைப்பு revoked_சாவி_id *b);
+RB_HEAD(revoked_சாவி_id_மரம், revoked_சாவி_id);
+RB_GENERATE_STATIC(revoked_சாவி_id_மரம், revoked_சாவி_id, மரம்_entry, சாவி_id_cmp)
 
 /* Tree of blobs (used for keys and fingerprints) */
-struct revoked_blob {
+கட்டமைப்பு revoked_blob {
 	u_char *blob;
 	size_t len;
-	RB_ENTRY(revoked_blob) tree_entry;
+	RB_ENTRY(revoked_blob) மரம்_entry;
 };
-static int blob_cmp(struct revoked_blob *a, struct revoked_blob *b);
-RB_HEAD(revoked_blob_tree, revoked_blob);
-RB_GENERATE_STATIC(revoked_blob_tree, revoked_blob, tree_entry, blob_cmp)
+நிலையான முழு blob_cmp(கட்டமைப்பு revoked_blob *a, கட்டமைப்பு revoked_blob *b);
+RB_HEAD(revoked_blob_மரம், revoked_blob);
+RB_GENERATE_STATIC(revoked_blob_மரம், revoked_blob, மரம்_entry, blob_cmp)
 
 /* Tracks revoked certs for a single CA */
-struct revoked_certs {
-	struct sshkey *ca_key;
-	struct revoked_serial_tree revoked_serials;
-	struct revoked_key_id_tree revoked_key_ids;
+கட்டமைப்பு revoked_certs {
+	கட்டமைப்பு sshkey *ca_சாவி;
+	கட்டமைப்பு revoked_serial_மரம் revoked_serials;
+	கட்டமைப்பு revoked_சாவி_id_மரம் revoked_சாவி_ids;
 	TAILQ_ENTRY(revoked_certs) entry;
 };
 TAILQ_HEAD(revoked_certs_list, revoked_certs);
 
-struct ssh_krl {
+கட்டமைப்பு ssh_krl {
 	uint64_t krl_version;
 	uint64_t generated_date;
 	uint64_t flags;
-	char *comment;
-	struct revoked_blob_tree revoked_keys;
-	struct revoked_blob_tree revoked_sha1s;
-	struct revoked_blob_tree revoked_sha256s;
-	struct revoked_certs_list revoked_certs;
+	எழுத்து *comment;
+	கட்டமைப்பு revoked_blob_மரம் revoked_சாவிகள்;
+	கட்டமைப்பு revoked_blob_மரம் revoked_sha1s;
+	கட்டமைப்பு revoked_blob_மரம் revoked_sha256s;
+	கட்டமைப்பு revoked_certs_list revoked_certs;
 };
 
 /* Return equal if a and b overlap */
-static int
-serial_cmp(struct revoked_serial *a, struct revoked_serial *b)
+நிலையான முழு
+serial_cmp(கட்டமைப்பு revoked_serial *a, கட்டமைப்பு revoked_serial *b)
 {
-	if (a->hi >= b->lo && a->lo <= b->hi)
-		return 0;
-	return a->lo < b->lo ? -1 : 1;
+	எனில் (a->hi >= b->lo && a->lo <= b->hi)
+		திரும்பு 0;
+	திரும்பு a->lo < b->lo ? -1 : 1;
 }
 
-static int
-key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b)
+நிலையான முழு
+சாவி_id_cmp(கட்டமைப்பு revoked_சாவி_id *a, கட்டமைப்பு revoked_சாவி_id *b)
 {
-	return strcmp(a->key_id, b->key_id);
+	திரும்பு strcmp(a->சாவி_id, b->சாவி_id);
 }
 
-static int
-blob_cmp(struct revoked_blob *a, struct revoked_blob *b)
+நிலையான முழு
+blob_cmp(கட்டமைப்பு revoked_blob *a, கட்டமைப்பு revoked_blob *b)
 {
-	int r;
+	முழு r;
 
-	if (a->len != b->len) {
-		if ((r = memcmp(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
-			return r;
-		return a->len > b->len ? 1 : -1;
-	} else
-		return memcmp(a->blob, b->blob, a->len);
+	எனில் (a->len != b->len) {
+		எனில் ((r = memcmp(a->blob, b->blob, MINIMUM(a->len, b->len))) != 0)
+			திரும்பு r;
+		திரும்பு a->len > b->len ? 1 : -1;
+	} இல்லையெனில்
+		திரும்பு memcmp(a->blob, b->blob, a->len);
 }
 
-struct ssh_krl *
-ssh_krl_init(void)
+கட்டமைப்பு ssh_krl *
+ssh_krl_init(வெறுமை)
 {
-	struct ssh_krl *krl;
+	கட்டமைப்பு ssh_krl *krl;
 
-	if ((krl = calloc(1, sizeof(*krl))) == NULL)
-		return NULL;
-	RB_INIT(&krl->revoked_keys);
+	எனில் ((krl = calloc(1, அளவு(*krl))) == வெற்று)
+		திரும்பு வெற்று;
+	RB_INIT(&krl->revoked_சாவிகள்);
 	RB_INIT(&krl->revoked_sha1s);
 	RB_INIT(&krl->revoked_sha256s);
 	TAILQ_INIT(&krl->revoked_certs);
-	return krl;
+	திரும்பு krl;
 }
 
-static void
-revoked_certs_free(struct revoked_certs *rc)
+நிலையான வெறுமை
+revoked_certs_free(கட்டமைப்பு revoked_certs *rc)
 {
-	struct revoked_serial *rs, *trs;
-	struct revoked_key_id *rki, *trki;
+	கட்டமைப்பு revoked_serial *rs, *trs;
+	கட்டமைப்பு revoked_சாவி_id *rki, *trki;
 
-	if (rc == NULL)
-		return;
-	RB_FOREACH_SAFE(rs, revoked_serial_tree, &rc->revoked_serials, trs) {
-		RB_REMOVE(revoked_serial_tree, &rc->revoked_serials, rs);
-		free(rs);
+	எனில் (rc == வெற்று)
+		திரும்பு;
+	RB_FOREACH_SAFE(rs, revoked_serial_மரம், &rc->revoked_serials, trs) {
+		RB_REMOVE(revoked_serial_மரம், &rc->revoked_serials, rs);
+		விடுவி(rs);
 	}
-	RB_FOREACH_SAFE(rki, revoked_key_id_tree, &rc->revoked_key_ids, trki) {
-		RB_REMOVE(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-		free(rki->key_id);
-		free(rki);
+	RB_FOREACH_SAFE(rki, revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids, trki) {
+		RB_REMOVE(revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids, rki);
+		விடுவி(rki->சாவி_id);
+		விடுவி(rki);
 	}
-	sshkey_free(rc->ca_key);
-	freezero(rc, sizeof(*rc));
+	sshkey_free(rc->ca_சாவி);
+	freezero(rc, அளவு(*rc));
 }
 
-void
-ssh_krl_free(struct ssh_krl *krl)
+வெறுமை
+ssh_krl_free(கட்டமைப்பு ssh_krl *krl)
 {
-	struct revoked_blob *rb, *trb;
-	struct revoked_certs *rc, *trc;
+	கட்டமைப்பு revoked_blob *rb, *trb;
+	கட்டமைப்பு revoked_certs *rc, *trc;
 
-	if (krl == NULL)
-		return;
+	எனில் (krl == வெற்று)
+		திரும்பு;
 
-	free(krl->comment);
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_keys, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_keys, rb);
-		free(rb->blob);
-		free(rb);
+	விடுவி(krl->comment);
+	RB_FOREACH_SAFE(rb, revoked_blob_மரம், &krl->revoked_சாவிகள், trb) {
+		RB_REMOVE(revoked_blob_மரம், &krl->revoked_சாவிகள், rb);
+		விடுவி(rb->blob);
+		விடுவி(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha1s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha1s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_மரம், &krl->revoked_sha1s, trb) {
+		RB_REMOVE(revoked_blob_மரம், &krl->revoked_sha1s, rb);
+		விடுவி(rb->blob);
+		விடுவி(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha256s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha256s, rb);
-		free(rb->blob);
-		free(rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_மரம், &krl->revoked_sha256s, trb) {
+		RB_REMOVE(revoked_blob_மரம், &krl->revoked_sha256s, rb);
+		விடுவி(rb->blob);
+		விடுவி(rb);
 	}
 	TAILQ_FOREACH_SAFE(rc, &krl->revoked_certs, entry, trc) {
 		TAILQ_REMOVE(&krl->revoked_certs, rc, entry);
 		revoked_certs_free(rc);
 	}
-	free(krl);
+	விடுவி(krl);
 }
 
-void
-ssh_krl_set_version(struct ssh_krl *krl, uint64_t version)
+வெறுமை
+ssh_krl_set_version(கட்டமைப்பு ssh_krl *krl, uint64_t version)
 {
 	krl->krl_version = version;
 }
 
-int
-ssh_krl_set_comment(struct ssh_krl *krl, const char *comment)
+முழு
+ssh_krl_set_comment(கட்டமைப்பு ssh_krl *krl, மாறிலி எழுத்து *comment)
 {
-	free(krl->comment);
-	if ((krl->comment = strdup(comment)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	விடுவி(krl->comment);
+	எனில் ((krl->comment = strdup(comment)) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	திரும்பு 0;
 }
 
 /*
  * Find the revoked_certs struct for a CA key. If allow_create is set then
  * create a new one in the tree if one did not exist already.
  */
-static int
-revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
-    struct revoked_certs **rcp, int allow_create)
+நிலையான முழு
+revoked_certs_for_ca_சாவி(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *ca_சாவி,
+    கட்டமைப்பு revoked_certs **rcp, முழு allow_create)
 {
-	struct revoked_certs *rc;
-	int r;
+	கட்டமைப்பு revoked_certs *rc;
+	முழு r;
 
-	*rcp = NULL;
+	*rcp = வெற்று;
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
-		if ((ca_key == NULL && rc->ca_key == NULL) ||
-		    sshkey_equal(rc->ca_key, ca_key)) {
+		எனில் ((ca_சாவி == வெற்று && rc->ca_சாவி == வெற்று) ||
+		    sshkey_equal(rc->ca_சாவி, ca_சாவி)) {
 			*rcp = rc;
-			return 0;
+			திரும்பு 0;
 		}
 	}
-	if (!allow_create)
-		return 0;
+	எனில் (!allow_create)
+		திரும்பு 0;
 	/* If this CA doesn't exist in the list then add it now */
-	if ((rc = calloc(1, sizeof(*rc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (ca_key == NULL)
-		rc->ca_key = NULL;
-	else if ((r = sshkey_from_private(ca_key, &rc->ca_key)) != 0) {
-		free(rc);
-		return r;
+	எனில் ((rc = calloc(1, அளவு(*rc))) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் (ca_சாவி == வெற்று)
+		rc->ca_சாவி = வெற்று;
+	இல்லையெனில் எனில் ((r = sshkey_from_private(ca_சாவி, &rc->ca_சாவி)) != 0) {
+		விடுவி(rc);
+		திரும்பு r;
 	}
 	RB_INIT(&rc->revoked_serials);
-	RB_INIT(&rc->revoked_key_ids);
+	RB_INIT(&rc->revoked_சாவி_ids);
 	TAILQ_INSERT_TAIL(&krl->revoked_certs, rc, entry);
-	KRL_DBG(("new CA %s", ca_key == NULL ? "*" : sshkey_type(ca_key)));
+	KRL_DBG(("new CA %s", ca_சாவி == வெற்று ? "*" : sshkey_type(ca_சாவி)));
 	*rcp = rc;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
+நிலையான முழு
+செருகு_serial_range(கட்டமைப்பு revoked_serial_மரம் *rt, uint64_t lo, uint64_t hi)
 {
-	struct revoked_serial rs, *ers, *crs, *irs;
+	கட்டமைப்பு revoked_serial rs, *ers, *crs, *irs;
 
 	KRL_DBG(("insert %llu:%llu",
 	    (unsigned long long)lo, (unsigned long long)hi));
-	memset(&rs, 0, sizeof(rs));
+	memset(&rs, 0, அளவு(rs));
 	rs.lo = lo;
 	rs.hi = hi;
-	ers = RB_NFIND(revoked_serial_tree, rt, &rs);
-	if (ers == NULL || serial_cmp(ers, &rs) != 0) {
+	ers = RB_NFIND(revoked_serial_மரம், rt, &rs);
+	எனில் (ers == வெற்று || serial_cmp(ers, &rs) != 0) {
 		/* No entry matches. Just insert */
-		if ((irs = malloc(sizeof(rs))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		memcpy(irs, &rs, sizeof(*irs));
-		ers = RB_INSERT(revoked_serial_tree, rt, irs);
-		if (ers != NULL) {
+		எனில் ((irs = malloc(அளவு(rs))) == வெற்று)
+			திரும்பு SSH_ERR_ALLOC_FAIL;
+		memcpy(irs, &rs, அளவு(*irs));
+		ers = RB_செருகு(revoked_serial_மரம், rt, irs);
+		எனில் (ers != வெற்று) {
 			KRL_DBG(("bad: ers != NULL"));
 			/* Shouldn't happen */
-			free(irs);
-			return SSH_ERR_INTERNAL_ERROR;
+			விடுவி(irs);
+			திரும்பு SSH_ERR_INTERNAL_ERROR;
 		}
 		ers = irs;
-	} else {
+	} இல்லையெனில் {
 		KRL_DBG(("overlap found %llu:%llu",
 		    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
 		/*
 		 * The inserted entry overlaps an existing one. Grow the
 		 * existing entry.
 		 */
-		if (ers->lo > lo)
+		எனில் (ers->lo > lo)
 			ers->lo = lo;
-		if (ers->hi < hi)
+		எனில் (ers->hi < hi)
 			ers->hi = hi;
 	}
 
@@ -289,189 +289,189 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 	 */
 
 	/* Check predecessors */
-	while ((crs = RB_PREV(revoked_serial_tree, rt, ers)) != NULL) {
+	போது ((crs = RB_PREV(revoked_serial_மரம், rt, ers)) != வெற்று) {
 		KRL_DBG(("pred %llu:%llu",
 		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->lo != 0 && crs->hi < ers->lo - 1)
-			break;
+		எனில் (ers->lo != 0 && crs->hi < ers->lo - 1)
+			நிறுத்து;
 		/* This entry overlaps. */
-		if (crs->lo < ers->lo) {
+		எனில் (crs->lo < ers->lo) {
 			ers->lo = crs->lo;
 			KRL_DBG(("pred extend %llu:%llu",
 			    (unsigned long long)ers->lo,
 			    (unsigned long long)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_மரம், rt, crs);
+		விடுவி(crs);
 	}
 	/* Check successors */
-	while ((crs = RB_NEXT(revoked_serial_tree, rt, ers)) != NULL) {
+	போது ((crs = RB_NEXT(revoked_serial_மரம், rt, ers)) != வெற்று) {
 		KRL_DBG(("succ %llu:%llu",
 		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
-		if (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
-			break;
+		எனில் (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
+			நிறுத்து;
 		/* This entry overlaps. */
-		if (crs->hi > ers->hi) {
+		எனில் (crs->hi > ers->hi) {
 			ers->hi = crs->hi;
 			KRL_DBG(("succ extend %llu:%llu",
 			    (unsigned long long)ers->lo,
 			    (unsigned long long)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
-		free(crs);
+		RB_REMOVE(revoked_serial_மரம், rt, crs);
+		விடுவி(crs);
 	}
 	KRL_DBG(("done, final %llu:%llu",
 	    (unsigned long long)ers->lo, (unsigned long long)ers->hi));
-	return 0;
+	திரும்பு 0;
 }
 
-int
-ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl, const struct sshkey *ca_key,
+முழு
+ssh_krl_revoke_cert_by_serial(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *ca_சாவி,
     uint64_t serial)
 {
-	return ssh_krl_revoke_cert_by_serial_range(krl, ca_key, serial, serial);
+	திரும்பு ssh_krl_revoke_cert_by_serial_range(krl, ca_சாவி, serial, serial);
 }
 
-int
-ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi)
+முழு
+ssh_krl_revoke_cert_by_serial_range(கட்டமைப்பு ssh_krl *krl,
+    மாறிலி கட்டமைப்பு sshkey *ca_சாவி, uint64_t lo, uint64_t hi)
 {
-	struct revoked_certs *rc;
-	int r;
+	கட்டமைப்பு revoked_certs *rc;
+	முழு r;
 
-	if (lo > hi || lo == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
-	return insert_serial_range(&rc->revoked_serials, lo, hi);
+	எனில் (lo > hi || lo == 0)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((r = revoked_certs_for_ca_சாவி(krl, ca_சாவி, &rc, 1)) != 0)
+		திரும்பு r;
+	திரும்பு செருகு_serial_range(&rc->revoked_serials, lo, hi);
 }
 
-int
-ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl, const struct sshkey *ca_key,
-    const char *key_id)
+முழு
+ssh_krl_revoke_cert_by_சாவி_id(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *ca_சாவி,
+    மாறிலி எழுத்து *சாவி_id)
 {
-	struct revoked_key_id *rki, *erki;
-	struct revoked_certs *rc;
-	int r;
+	கட்டமைப்பு revoked_சாவி_id *rki, *erki;
+	கட்டமைப்பு revoked_certs *rc;
+	முழு r;
 
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
-		return r;
+	எனில் ((r = revoked_certs_for_ca_சாவி(krl, ca_சாவி, &rc, 1)) != 0)
+		திரும்பு r;
 
-	KRL_DBG(("revoke %s", key_id));
-	if ((rki = calloc(1, sizeof(*rki))) == NULL ||
-	    (rki->key_id = strdup(key_id)) == NULL) {
-		free(rki);
-		return SSH_ERR_ALLOC_FAIL;
+	KRL_DBG(("revoke %s", சாவி_id));
+	எனில் ((rki = calloc(1, அளவு(*rki))) == வெற்று ||
+	    (rki->சாவி_id = strdup(சாவி_id)) == வெற்று) {
+		விடுவி(rki);
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	}
-	erki = RB_INSERT(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-	if (erki != NULL) {
-		free(rki->key_id);
-		free(rki);
+	erki = RB_செருகு(revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids, rki);
+	எனில் (erki != வெற்று) {
+		விடுவி(rki->சாவி_id);
+		விடுவி(rki);
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /* Convert "key" to a public key blob without any certificate information */
-static int
-plain_key_blob(const struct sshkey *key, u_char **blob, size_t *blen)
+நிலையான முழு
+plain_சாவி_blob(மாறிலி கட்டமைப்பு sshkey *சாவி, u_char **blob, size_t *blen)
 {
-	struct sshkey *kcopy;
-	int r;
+	கட்டமைப்பு sshkey *kcopy;
+	முழு r;
 
-	if ((r = sshkey_from_private(key, &kcopy)) != 0)
-		return r;
-	if (sshkey_is_cert(kcopy)) {
-		if ((r = sshkey_drop_cert(kcopy)) != 0) {
+	எனில் ((r = sshkey_from_private(சாவி, &kcopy)) != 0)
+		திரும்பு r;
+	எனில் (sshkey_is_cert(kcopy)) {
+		எனில் ((r = sshkey_drop_cert(kcopy)) != 0) {
 			sshkey_free(kcopy);
-			return r;
+			திரும்பு r;
 		}
 	}
 	r = sshkey_to_blob(kcopy, blob, blen);
 	sshkey_free(kcopy);
-	return r;
+	திரும்பு r;
 }
 
 /* Revoke a key blob. Ownership of blob is transferred to the tree */
-static int
-revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
+நிலையான முழு
+revoke_blob(கட்டமைப்பு revoked_blob_மரம் *rbt, u_char *blob, size_t len)
 {
-	struct revoked_blob *rb, *erb;
+	கட்டமைப்பு revoked_blob *rb, *erb;
 
-	if ((rb = calloc(1, sizeof(*rb))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((rb = calloc(1, அளவு(*rb))) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	rb->blob = blob;
 	rb->len = len;
-	erb = RB_INSERT(revoked_blob_tree, rbt, rb);
-	if (erb != NULL) {
-		free(rb->blob);
-		free(rb);
+	erb = RB_செருகு(revoked_blob_மரம், rbt, rb);
+	எனில் (erb != வெற்று) {
+		விடுவி(rb->blob);
+		விடுவி(rb);
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-int
-ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key)
+முழு
+ssh_krl_revoke_சாவி_explicit(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
 	u_char *blob;
 	size_t len;
-	int r;
+	முழு r;
 
-	debug3_f("revoke type %s", sshkey_type(key));
-	if ((r = plain_key_blob(key, &blob, &len)) != 0)
-		return r;
-	return revoke_blob(&krl->revoked_keys, blob, len);
+	debug3_f("revoke type %s", sshkey_type(சாவி));
+	எனில் ((r = plain_சாவி_blob(சாவி, &blob, &len)) != 0)
+		திரும்பு r;
+	திரும்பு revoke_blob(&krl->revoked_சாவிகள், blob, len);
 }
 
-static int
-revoke_by_hash(struct revoked_blob_tree *target, const u_char *p, size_t len)
+நிலையான முழு
+revoke_by_hash(கட்டமைப்பு revoked_blob_மரம் *target, மாறிலி u_char *p, size_t len)
 {
 	u_char *blob;
-	int r;
+	முழு r;
 
 	/* need to copy hash, as revoke_blob steals ownership */
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	எனில் ((blob = malloc(len)) == வெற்று)
+		திரும்பு SSH_ERR_SYSTEM_ERROR;
 	memcpy(blob, p, len);
-	if ((r = revoke_blob(target, blob, len)) != 0) {
-		free(blob);
-		return r;
+	எனில் ((r = revoke_blob(target, blob, len)) != 0) {
+		விடுவி(blob);
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-int
-ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
+முழு
+ssh_krl_revoke_சாவி_sha1(கட்டமைப்பு ssh_krl *krl, மாறிலி u_char *p, size_t len)
 {
 	debug3_f("revoke by sha1");
-	if (len != 20)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha1s, p, len);
+	எனில் (len != 20)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	திரும்பு revoke_by_hash(&krl->revoked_sha1s, p, len);
 }
 
-int
-ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
+முழு
+ssh_krl_revoke_சாவி_sha256(கட்டமைப்பு ssh_krl *krl, மாறிலி u_char *p, size_t len)
 {
 	debug3_f("revoke by sha256");
-	if (len != 32)
-		return SSH_ERR_INVALID_FORMAT;
-	return revoke_by_hash(&krl->revoked_sha256s, p, len);
+	எனில் (len != 32)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	திரும்பு revoke_by_hash(&krl->revoked_sha256s, p, len);
 }
 
-int
-ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
+முழு
+ssh_krl_revoke_சாவி(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
 	/* XXX replace with SHA256? */
-	if (!sshkey_is_cert(key))
-		return ssh_krl_revoke_key_explicit(krl, key);
+	எனில் (!sshkey_is_cert(சாவி))
+		திரும்பு ssh_krl_revoke_சாவி_explicit(krl, சாவி);
 
-	if (key->cert->serial == 0) {
-		return ssh_krl_revoke_cert_by_key_id(krl,
-		    key->cert->signature_key,
-		    key->cert->key_id);
-	} else {
-		return ssh_krl_revoke_cert_by_serial(krl,
-		    key->cert->signature_key,
-		    key->cert->serial);
+	எனில் (சாவி->cert->serial == 0) {
+		திரும்பு ssh_krl_revoke_cert_by_சாவி_id(krl,
+		    சாவி->cert->signature_சாவி,
+		    சாவி->cert->சாவி_id);
+	} இல்லையெனில் {
+		திரும்பு ssh_krl_revoke_cert_by_serial(krl,
+		    சாவி->cert->signature_சாவி,
+		    சாவி->cert->serial);
 	}
 }
 
@@ -482,12 +482,12 @@ ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
  * Applies a mostly-accurate bit cost model to select the section type
  * that will minimise the size of the resultant KRL.
  */
-static int
-choose_next_state(int current_state, uint64_t contig, int final,
+நிலையான முழு
+choose_next_state(முழு current_state, uint64_t contig, முழு final,
     uint64_t last_gap, uint64_t next_gap, size_t bitmap_len,
-    int *force_new_section)
+    முழு *force_new_section)
 {
-	int new_state;
+	முழு new_state;
 	uint64_t cost, cost_list, cost_range, cost_bitmap, cost_bitmap_restart;
 
 	/*
@@ -505,16 +505,16 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	 */
 	cost_list = cost_bitmap = cost_bitmap_restart = 0;
 	cost_range = 8;
-	switch (current_state) {
-	case KRL_SECTION_CERT_SERIAL_LIST:
+	தேர்வு (current_state) {
+	நிலை KRL_SECTION_CERT_SERIAL_LIST:
 		cost_bitmap_restart = cost_bitmap = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_BITMAP:
+		நிறுத்து;
+	நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
 		cost_list = 8;
 		cost_bitmap_restart = 8 + 64;
-		break;
-	case KRL_SECTION_CERT_SERIAL_RANGE:
-	case 0:
+		நிறுத்து;
+	நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+	நிலை 0:
 		cost_bitmap_restart = cost_bitmap = 8 + 64;
 		cost_list = 8;
 	}
@@ -532,7 +532,7 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	cost_range = (cost_range + 7) / 8;
 
 	/* Ensure that we never emit a bitmap larger than sshbuf can handle */
-	if (bitmap_len + cost_bitmap >= SSHBUF_MAX_BIGNUM) {
+	எனில் (bitmap_len + cost_bitmap >= SSHBUF_MAX_BIGNUM) {
 		KRL_DBG(("bitmap overfull len=%zu cost=%llu max=%u",
 		    bitmap_len, (unsigned long long)cost_bitmap,
 		    SSHBUF_MAX_BIGNUM));
@@ -543,15 +543,15 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	*force_new_section = 0;
 	new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
 	cost = cost_bitmap;
-	if (cost_range < cost) {
+	எனில் (cost_range < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_RANGE;
 		cost = cost_range;
 	}
-	if (cost_list < cost) {
+	எனில் (cost_list < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_LIST;
 		cost = cost_list;
 	}
-	if (cost_bitmap_restart < cost) {
+	எனில் (cost_bitmap_restart < cost) {
 		new_state = KRL_SECTION_CERT_SERIAL_BITMAP;
 		*force_new_section = 1;
 		cost = cost_bitmap_restart;
@@ -564,67 +564,67 @@ choose_next_state(int current_state, uint64_t contig, int final,
 	    (long long unsigned)cost_bitmap,
 	    (long long unsigned)cost_bitmap_restart, new_state,
 	    *force_new_section ? " restart" : ""));
-	return new_state;
+	திரும்பு new_state;
 }
 
-static int
-put_bitmap(struct sshbuf *buf, struct bitmap *bitmap)
+நிலையான முழு
+put_bitmap(கட்டமைப்பு sshbuf *buf, கட்டமைப்பு bitmap *bitmap)
 {
 	size_t len;
 	u_char *blob;
-	int r;
+	முழு r;
 
 	len = bitmap_nbytes(bitmap);
-	if ((blob = malloc(len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (bitmap_to_string(bitmap, blob, len) != 0) {
-		free(blob);
-		return SSH_ERR_INTERNAL_ERROR;
+	எனில் ((blob = malloc(len)) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் (bitmap_to_string(bitmap, blob, len) != 0) {
+		விடுவி(blob);
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
 	}
 	r = sshbuf_put_bignum2_bytes(buf, blob, len);
-	free(blob);
-	return r;
+	விடுவி(blob);
+	திரும்பு r;
 }
 
 /* Generate a KRL_SECTION_CERTIFICATES KRL section */
-static int
-revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
+நிலையான முழு
+revoked_certs_generate(கட்டமைப்பு revoked_certs *rc, கட்டமைப்பு sshbuf *buf)
 {
-	int final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
+	முழு final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
 	uint64_t i, contig, gap, last = 0, bitmap_start = 0;
-	struct revoked_serial *rs, *nrs;
-	struct revoked_key_id *rki;
-	int next_state, state = 0;
+	கட்டமைப்பு revoked_serial *rs, *nrs;
+	கட்டமைப்பு revoked_சாவி_id *rki;
+	முழு next_state, state = 0;
 	size_t bitmap_len;
-	struct sshbuf *sect;
-	struct bitmap *bitmap = NULL;
+	கட்டமைப்பு sshbuf *sect;
+	கட்டமைப்பு bitmap *bitmap = வெற்று;
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((sect = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header: optional CA scope key, reserved */
-	if (rc->ca_key == NULL) {
-		if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-			goto out;
-	} else {
-		if ((r = sshkey_puts(rc->ca_key, buf)) != 0)
-			goto out;
+	எனில் (rc->ca_சாவி == வெற்று) {
+		எனில் ((r = sshbuf_put_string(buf, வெற்று, 0)) != 0)
+			செல் out;
+	} இல்லையெனில் {
+		எனில் ((r = sshkey_puts(rc->ca_சாவி, buf)) != 0)
+			செல் out;
 	}
-	if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_put_string(buf, வெற்று, 0)) != 0)
+		செல் out;
 
 	/* Store the revoked serials.  */
-	for (rs = RB_MIN(revoked_serial_tree, &rc->revoked_serials);
-	     rs != NULL;
-	     rs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs)) {
+	க்கு (rs = RB_MIN(revoked_serial_மரம், &rc->revoked_serials);
+	     rs != வெற்று;
+	     rs = RB_NEXT(revoked_serial_மரம், &rc->revoked_serials, rs)) {
 		KRL_DBG(("serial %llu:%llu state 0x%02x",
 		    (long long unsigned)rs->lo, (long long unsigned)rs->hi,
 		    state));
 
 		/* Check contiguous length and gap to next section (if any) */
-		nrs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs);
-		final = nrs == NULL;
-		gap = nrs == NULL ? 0 : nrs->lo - rs->hi;
+		nrs = RB_NEXT(revoked_serial_மரம், &rc->revoked_serials, rs);
+		final = nrs == வெற்று;
+		gap = nrs == வெற்று ? 0 : nrs->lo - rs->hi;
 		contig = 1 + (rs->hi - rs->lo);
 
 		bitmap_len = state == KRL_SECTION_CERT_SERIAL_BITMAP ?
@@ -639,529 +639,529 @@ revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
 		 * If the current section is a range section or has a different
 		 * type to the next section, then finish it off now.
 		 */
-		if (state != 0 && (force_new_sect || next_state != state ||
+		எனில் (state != 0 && (force_new_sect || next_state != state ||
 		    state == KRL_SECTION_CERT_SERIAL_RANGE)) {
 			KRL_DBG(("finish state 0x%02x", state));
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((r = put_bitmap(sect, bitmap)) != 0)
-					goto out;
+			தேர்வு (state) {
+			நிலை KRL_SECTION_CERT_SERIAL_LIST:
+			நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+				நிறுத்து;
+			நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
+				எனில் ((r = put_bitmap(sect, bitmap)) != 0)
+					செல் out;
 				bitmap_free(bitmap);
-				bitmap = NULL;
-				break;
+				bitmap = வெற்று;
+				நிறுத்து;
 			}
-			if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+			எனில் ((r = sshbuf_put_u8(buf, state)) != 0 ||
 			    (r = sshbuf_put_stringb(buf, sect)) != 0)
-				goto out;
+				செல் out;
 			sshbuf_reset(sect);
 		}
 
 		/* If we are starting a new section then prepare it now */
-		if (next_state != state || force_new_sect) {
+		எனில் (next_state != state || force_new_sect) {
 			KRL_DBG(("start state 0x%02x",
 			    next_state));
 			state = next_state;
 			sshbuf_reset(sect);
-			switch (state) {
-			case KRL_SECTION_CERT_SERIAL_LIST:
-			case KRL_SECTION_CERT_SERIAL_RANGE:
-				break;
-			case KRL_SECTION_CERT_SERIAL_BITMAP:
-				if ((bitmap = bitmap_new()) == NULL) {
+			தேர்வு (state) {
+			நிலை KRL_SECTION_CERT_SERIAL_LIST:
+			நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+				நிறுத்து;
+			நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
+				எனில் ((bitmap = bitmap_new()) == வெற்று) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					செல் out;
 				}
 				bitmap_start = rs->lo;
-				if ((r = sshbuf_put_u64(sect,
+				எனில் ((r = sshbuf_put_u64(sect,
 				    bitmap_start)) != 0)
-					goto out;
-				break;
+					செல் out;
+				நிறுத்து;
 			}
 		}
 
 		/* Perform section-specific processing */
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			for (i = 0; i < contig; i++) {
-				if ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
-					goto out;
+		தேர்வு (state) {
+		நிலை KRL_SECTION_CERT_SERIAL_LIST:
+			க்கு (i = 0; i < contig; i++) {
+				எனில் ((r = sshbuf_put_u64(sect, rs->lo + i)) != 0)
+					செல் out;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+			எனில் ((r = sshbuf_put_u64(sect, rs->lo)) != 0 ||
 			    (r = sshbuf_put_u64(sect, rs->hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if (rs->lo - bitmap_start > INT_MAX) {
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
+			எனில் (rs->lo - bitmap_start > INT_MAX) {
 				r = SSH_ERR_INVALID_FORMAT;
 				error_f("insane bitmap gap");
-				goto out;
+				செல் out;
 			}
-			for (i = 0; i < contig; i++) {
-				if (bitmap_set_bit(bitmap,
+			க்கு (i = 0; i < contig; i++) {
+				எனில் (bitmap_set_bit(bitmap,
 				    rs->lo + i - bitmap_start) != 0) {
 					r = SSH_ERR_ALLOC_FAIL;
-					goto out;
+					செல் out;
 				}
 			}
-			break;
+			நிறுத்து;
 		}
 		last = rs->hi;
 	}
 	/* Flush the remaining section, if any */
-	if (state != 0) {
+	எனில் (state != 0) {
 		KRL_DBG(("serial final flush for state 0x%02x", state));
-		switch (state) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((r = put_bitmap(sect, bitmap)) != 0)
-				goto out;
+		தேர்வு (state) {
+		நிலை KRL_SECTION_CERT_SERIAL_LIST:
+		நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
+			எனில் ((r = put_bitmap(sect, bitmap)) != 0)
+				செல் out;
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
+			bitmap = வெற்று;
+			நிறுத்து;
 		}
-		if ((r = sshbuf_put_u8(buf, state)) != 0 ||
+		எனில் ((r = sshbuf_put_u8(buf, state)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 	KRL_DBG(("serial done "));
 
 	/* Now output a section for any revocations by key ID */
 	sshbuf_reset(sect);
-	RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
-		KRL_DBG(("key ID %s", rki->key_id));
-		if ((r = sshbuf_put_cstring(sect, rki->key_id)) != 0)
-			goto out;
+	RB_FOREACH(rki, revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids) {
+		KRL_DBG(("key ID %s", rki->சாவி_id));
+		எனில் ((r = sshbuf_put_cstring(sect, rki->சாவி_id)) != 0)
+			செல் out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_KEY_ID)) != 0 ||
+	எனில் (sshbuf_len(sect) != 0) {
+		எனில் ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_சாவி_ID)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 	r = 0;
  out:
 	bitmap_free(bitmap);
 	sshbuf_free(sect);
-	return r;
+	திரும்பு r;
 }
 
-int
-ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf)
+முழு
+ssh_krl_to_blob(கட்டமைப்பு ssh_krl *krl, கட்டமைப்பு sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct revoked_certs *rc;
-	struct revoked_blob *rb;
-	struct sshbuf *sect;
-	u_char *sblob = NULL;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
+	கட்டமைப்பு revoked_certs *rc;
+	கட்டமைப்பு revoked_blob *rb;
+	கட்டமைப்பு sshbuf *sect;
+	u_char *sblob = வெற்று;
 
-	if (krl->generated_date == 0)
-		krl->generated_date = time(NULL);
+	எனில் (krl->generated_date == 0)
+		krl->generated_date = time(வெற்று);
 
-	if ((sect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((sect = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header */
-	if ((r = sshbuf_put(buf, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0 ||
+	எனில் ((r = sshbuf_put(buf, KRL_MAGIC, அளவு(KRL_MAGIC) - 1)) != 0 ||
 	    (r = sshbuf_put_u32(buf, KRL_FORMAT_VERSION)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->krl_version)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->generated_date)) != 0 ||
 	    (r = sshbuf_put_u64(buf, krl->flags)) != 0 ||
-	    (r = sshbuf_put_string(buf, NULL, 0)) != 0 ||
+	    (r = sshbuf_put_string(buf, வெற்று, 0)) != 0 ||
 	    (r = sshbuf_put_cstring(buf, krl->comment)) != 0)
-		goto out;
+		செல் out;
 
 	/* Store sections for revoked certificates */
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
 		sshbuf_reset(sect);
-		if ((r = revoked_certs_generate(rc, sect)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
+		எனில் ((r = revoked_certs_generate(rc, sect)) != 0)
+			செல் out;
+		எனில் ((r = sshbuf_put_u8(buf, KRL_SECTION_CERTIFICATES)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 
 	/* Finally, output sections for revocations by public key/hash */
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_சாவிகள்) {
 		KRL_DBG(("key len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		எனில் ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			செல் out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_KEY)) != 0 ||
+	எனில் (sshbuf_len(sect) != 0) {
+		எனில் ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_சாவி)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_sha1s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		எனில் ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			செல் out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	எனில் (sshbuf_len(sect) != 0) {
+		எனில் ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA1)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_sha256s) {
 		KRL_DBG(("hash len %zu ", rb->len));
-		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
-			goto out;
+		எனில் ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
+			செல் out;
 	}
-	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf,
+	எனில் (sshbuf_len(sect) != 0) {
+		எனில் ((r = sshbuf_put_u8(buf,
 		    KRL_SECTION_FINGERPRINT_SHA256)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
-			goto out;
+			செல் out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(sblob);
+	விடுவி(sblob);
 	sshbuf_free(sect);
-	return r;
+	திரும்பு r;
 }
 
-static void
-format_timestamp(uint64_t timestamp, char *ts, size_t nts)
+நிலையான வெறுமை
+format_timestamp(uint64_t timestamp, எழுத்து *ts, size_t nts)
 {
 	time_t t;
-	struct tm *tm;
+	கட்டமைப்பு tm *tm;
 
 	t = timestamp;
 	tm = localtime(&t);
-	if (tm == NULL)
+	எனில் (tm == வெற்று)
 		strlcpy(ts, "<INVALID>", nts);
-	else {
+	இல்லையெனில் {
 		*ts = '\0';
 		strftime(ts, nts, "%Y%m%dT%H%M%S", tm);
 	}
 }
 
-static int
-cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
+நிலையான முழு
+cert_extension_subsection(கட்டமைப்பு sshbuf *subsect, கட்டமைப்பு ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	கட்டமைப்பு sshbuf *மதிப்பு = வெற்று;
+	எழுத்து *name = வெற்று;
 
-	if ((r = sshbuf_get_cstring(subsect, &name, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_cstring(subsect, &name, வெற்று)) != 0 ||
 	    (r = sshbuf_get_u8(subsect, &critical)) != 0 ||
-	    (r = sshbuf_froms(subsect, &value)) != 0) {
+	    (r = sshbuf_froms(subsect, &மதிப்பு)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid certificate extension subsection");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	if (sshbuf_len(subsect) != 0) {
+	எனில் (sshbuf_len(subsect) != 0) {
 		error("KRL has invalid certificate extension subsection: "
 		    "trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 	debug_f("cert extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(மதிப்பு));
 	/* no extensions are currently supported */
-	if (critical) {
+	எனில் (critical) {
 		error("KRL contains unsupported critical certificate "
 		    "subsection \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		செல் out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+	விடுவி(name);
+	sshbuf_free(மதிப்பு);
+	திரும்பு r;
 }
 
-static int
-parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
+நிலையான முழு
+parse_revoked_certs(கட்டமைப்பு sshbuf *buf, கட்டமைப்பு ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 	u_char type;
-	const u_char *blob;
+	மாறிலி u_char *blob;
 	size_t blen, nbits;
-	struct sshbuf *subsect = NULL;
+	கட்டமைப்பு sshbuf *subsect = வெற்று;
 	uint64_t serial, serial_lo, serial_hi;
-	struct bitmap *bitmap = NULL;
-	char *key_id = NULL;
-	struct sshkey *ca_key = NULL;
+	கட்டமைப்பு bitmap *bitmap = வெற்று;
+	எழுத்து *சாவி_id = வெற்று;
+	கட்டமைப்பு sshkey *ca_சாவி = வெற்று;
 
-	if ((subsect = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((subsect = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 
 	/* Header: key, reserved */
-	if ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
+	எனில் ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
 	    (r = sshbuf_skip_string(buf)) != 0)
-		goto out;
-	if (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_key)) != 0)
-		goto out;
+		செல் out;
+	எனில் (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_சாவி)) != 0)
+		செல் out;
 
-	while (sshbuf_len(buf) > 0) {
+	போது (sshbuf_len(buf) > 0) {
 		sshbuf_free(subsect);
-		subsect = NULL;
-		if ((r = sshbuf_get_u8(buf, &type)) != 0 ||
+		subsect = வெற்று;
+		எனில் ((r = sshbuf_get_u8(buf, &type)) != 0 ||
 		    (r = sshbuf_froms(buf, &subsect)) != 0)
-			goto out;
+			செல் out;
 		KRL_DBG(("subsection type 0x%02x", type));
 		/* sshbuf_dump(subsect, stderr); */
 
-		switch (type) {
-		case KRL_SECTION_CERT_SERIAL_LIST:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_u64(subsect, &serial)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial)) != 0)
-					goto out;
+		தேர்வு (type) {
+		நிலை KRL_SECTION_CERT_SERIAL_LIST:
+			போது (sshbuf_len(subsect) > 0) {
+				எனில் ((r = sshbuf_get_u64(subsect, &serial)) != 0)
+					செல் out;
+				எனில் ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_சாவி, serial)) != 0)
+					செல் out;
 			}
-			break;
-		case KRL_SECTION_CERT_SERIAL_RANGE:
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_SERIAL_RANGE:
+			எனில் ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
 			    (r = sshbuf_get_u64(subsect, &serial_hi)) != 0)
-				goto out;
-			if ((r = ssh_krl_revoke_cert_by_serial_range(krl,
-			    ca_key, serial_lo, serial_hi)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_CERT_SERIAL_BITMAP:
-			if ((bitmap = bitmap_new()) == NULL) {
+				செல் out;
+			எனில் ((r = ssh_krl_revoke_cert_by_serial_range(krl,
+			    ca_சாவி, serial_lo, serial_hi)) != 0)
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_SERIAL_BITMAP:
+			எனில் ((bitmap = bitmap_new()) == வெற்று) {
 				r = SSH_ERR_ALLOC_FAIL;
-				goto out;
+				செல் out;
 			}
-			if ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
+			எனில் ((r = sshbuf_get_u64(subsect, &serial_lo)) != 0 ||
 			    (r = sshbuf_get_bignum2_bytes_direct(subsect,
 			    &blob, &blen)) != 0)
-				goto out;
-			if (bitmap_from_string(bitmap, blob, blen) != 0) {
+				செல் out;
+			எனில் (bitmap_from_string(bitmap, blob, blen) != 0) {
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				செல் out;
 			}
 			nbits = bitmap_nbits(bitmap);
-			for (serial = 0; serial < (uint64_t)nbits; serial++) {
-				if (serial > 0 && serial_lo + serial == 0) {
+			க்கு (serial = 0; serial < (uint64_t)nbits; serial++) {
+				எனில் (serial > 0 && serial_lo + serial == 0) {
 					error_f("bitmap wraps u64");
 					r = SSH_ERR_INVALID_FORMAT;
-					goto out;
+					செல் out;
 				}
-				if (!bitmap_test_bit(bitmap, serial))
-					continue;
-				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial_lo + serial)) != 0)
-					goto out;
+				எனில் (!bitmap_test_bit(bitmap, serial))
+					தொடர்;
+				எனில் ((r = ssh_krl_revoke_cert_by_serial(krl,
+				    ca_சாவி, serial_lo + serial)) != 0)
+					செல் out;
 			}
 			bitmap_free(bitmap);
-			bitmap = NULL;
-			break;
-		case KRL_SECTION_CERT_KEY_ID:
-			while (sshbuf_len(subsect) > 0) {
-				if ((r = sshbuf_get_cstring(subsect,
-				    &key_id, NULL)) != 0)
-					goto out;
-				if ((r = ssh_krl_revoke_cert_by_key_id(krl,
-				    ca_key, key_id)) != 0)
-					goto out;
-				free(key_id);
-				key_id = NULL;
+			bitmap = வெற்று;
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_சாவி_ID:
+			போது (sshbuf_len(subsect) > 0) {
+				எனில் ((r = sshbuf_get_cstring(subsect,
+				    &சாவி_id, வெற்று)) != 0)
+					செல் out;
+				எனில் ((r = ssh_krl_revoke_cert_by_சாவி_id(krl,
+				    ca_சாவி, சாவி_id)) != 0)
+					செல் out;
+				விடுவி(சாவி_id);
+				சாவி_id = வெற்று;
 			}
-			break;
-		case KRL_SECTION_CERT_EXTENSION:
-			if ((r = cert_extension_subsection(subsect, krl)) != 0)
-				goto out;
-			break;
-		default:
+			நிறுத்து;
+		நிலை KRL_SECTION_CERT_EXTENSION:
+			எனில் ((r = cert_extension_subsection(subsect, krl)) != 0)
+				செல் out;
+			நிறுத்து;
+		இயல்பு:
 			error("Unsupported KRL certificate section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
-		if (sshbuf_len(subsect) > 0) {
+		எனில் (sshbuf_len(subsect) > 0) {
 			error("KRL certificate section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
 	}
 
 	r = 0;
  out:
-	if (bitmap != NULL)
+	எனில் (bitmap != வெற்று)
 		bitmap_free(bitmap);
-	free(key_id);
-	sshkey_free(ca_key);
+	விடுவி(சாவி_id);
+	sshkey_free(ca_சாவி);
 	sshbuf_free(subsect);
-	return r;
+	திரும்பு r;
 }
 
-static int
-blob_section(struct sshbuf *sect, struct revoked_blob_tree *target_tree,
+நிலையான முழு
+blob_section(கட்டமைப்பு sshbuf *sect, கட்டமைப்பு revoked_blob_மரம் *target_மரம்,
     size_t expected_len)
 {
-	u_char *rdata = NULL;
+	u_char *rdata = வெற்று;
 	size_t rlen = 0;
-	int r;
+	முழு r;
 
-	while (sshbuf_len(sect) > 0) {
-		if ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
-			return r;
-		if (expected_len != 0 && rlen != expected_len) {
+	போது (sshbuf_len(sect) > 0) {
+		எனில் ((r = sshbuf_get_string(sect, &rdata, &rlen)) != 0)
+			திரும்பு r;
+		எனில் (expected_len != 0 && rlen != expected_len) {
 			error_f("bad length");
-			free(rdata);
-			return SSH_ERR_INVALID_FORMAT;
+			விடுவி(rdata);
+			திரும்பு SSH_ERR_INVALID_FORMAT;
 		}
-		if ((r = revoke_blob(target_tree, rdata, rlen)) != 0) {
-			free(rdata);
-			return r;
+		எனில் ((r = revoke_blob(target_மரம், rdata, rlen)) != 0) {
+			விடுவி(rdata);
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-extension_section(struct sshbuf *sect, struct ssh_krl *krl)
+நிலையான முழு
+extension_section(கட்டமைப்பு sshbuf *sect, கட்டமைப்பு ssh_krl *krl)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
-	char *name = NULL;
+	கட்டமைப்பு sshbuf *மதிப்பு = வெற்று;
+	எழுத்து *name = வெற்று;
 
-	if ((r = sshbuf_get_cstring(sect, &name, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_cstring(sect, &name, வெற்று)) != 0 ||
 	    (r = sshbuf_get_u8(sect, &critical)) != 0 ||
-	    (r = sshbuf_froms(sect, &value)) != 0) {
+	    (r = sshbuf_froms(sect, &மதிப்பு)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid extension section");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	if (sshbuf_len(sect) != 0) {
+	எனில் (sshbuf_len(sect) != 0) {
 		error("KRL has invalid extension section: trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 	debug_f("extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(மதிப்பு));
 	/* no extensions are currently supported */
-	if (critical) {
+	எனில் (critical) {
 		error("KRL contains unsupported critical section \"%s\"", name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		செல் out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(name);
-	sshbuf_free(value);
-	return r;
+	விடுவி(name);
+	sshbuf_free(மதிப்பு);
+	திரும்பு r;
 }
 
 /* Attempt to parse a KRL */
-int
-ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
+முழு
+ssh_krl_from_blob(கட்டமைப்பு sshbuf *buf, கட்டமைப்பு ssh_krl **krlp)
 {
-	struct sshbuf *copy = NULL, *sect = NULL;
-	struct ssh_krl *krl = NULL;
-	char timestamp[64];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	கட்டமைப்பு sshbuf *copy = வெற்று, *sect = வெற்று;
+	கட்டமைப்பு ssh_krl *krl = வெற்று;
+	எழுத்து timestamp[64];
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 	u_char type;
 	u_int format_version;
 
-	*krlp = NULL;
+	*krlp = வெற்று;
 
 	/* KRL must begin with magic string */
-	if ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, sizeof(KRL_MAGIC) - 1)) != 0) {
+	எனில் ((r = sshbuf_cmp(buf, 0, KRL_MAGIC, அளவு(KRL_MAGIC) - 1)) != 0) {
 		debug2_f("bad KRL magic header");
-		return SSH_ERR_KRL_BAD_MAGIC;
+		திரும்பு SSH_ERR_KRL_BAD_MAGIC;
 	}
 
-	if ((krl = ssh_krl_init()) == NULL) {
+	எனில் ((krl = ssh_krl_init()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_f("alloc failed");
-		goto out;
+		செல் out;
 	}
 	/* Don't modify buffer */
-	if ((copy = sshbuf_fromb(buf)) == NULL) {
+	எனில் ((copy = sshbuf_fromb(buf)) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_consume(copy, sizeof(KRL_MAGIC) - 1)) != 0 ||
+	எனில் ((r = sshbuf_consume(copy, அளவு(KRL_MAGIC) - 1)) != 0 ||
 	    (r = sshbuf_get_u32(copy, &format_version)) != 0)
-		goto out;
-	if (format_version != KRL_FORMAT_VERSION) {
+		செல் out;
+	எனில் (format_version != KRL_FORMAT_VERSION) {
 		error_f("unsupported KRL format version %u", format_version);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_get_u64(copy, &krl->krl_version)) != 0 ||
+	எனில் ((r = sshbuf_get_u64(copy, &krl->krl_version)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->generated_date)) != 0 ||
 	    (r = sshbuf_get_u64(copy, &krl->flags)) != 0 ||
 	    (r = sshbuf_skip_string(copy)) != 0 ||
-	    (r = sshbuf_get_cstring(copy, &krl->comment, NULL)) != 0) {
+	    (r = sshbuf_get_cstring(copy, &krl->comment, வெற்று)) != 0) {
 		error_fr(r, "parse KRL header");
-		goto out;
+		செல் out;
 	}
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
+	format_timestamp(krl->generated_date, timestamp, அளவு(timestamp));
 	debug("KRL version %llu generated at %s%s%s",
 	    (long long unsigned)krl->krl_version, timestamp,
 	    *krl->comment ? ": " : "", krl->comment);
 
 	/* Parse and load the KRL sections. */
-	while (sshbuf_len(copy) > 0) {
+	போது (sshbuf_len(copy) > 0) {
 		sshbuf_free(sect);
-		sect = NULL;
-		if ((r = sshbuf_get_u8(copy, &type)) != 0 ||
+		sect = வெற்று;
+		எனில் ((r = sshbuf_get_u8(copy, &type)) != 0 ||
 		    (r = sshbuf_froms(copy, &sect)) != 0)
-			goto out;
+			செல் out;
 		KRL_DBG(("section 0x%02x", type));
 
-		switch (type) {
-		case KRL_SECTION_CERTIFICATES:
-			if ((r = parse_revoked_certs(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXPLICIT_KEY:
-			if ((r = blob_section(sect,
-			    &krl->revoked_keys, 0)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA1:
-			if ((r = blob_section(sect,
+		தேர்வு (type) {
+		நிலை KRL_SECTION_CERTIFICATES:
+			எனில் ((r = parse_revoked_certs(sect, krl)) != 0)
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_EXPLICIT_சாவி:
+			எனில் ((r = blob_section(sect,
+			    &krl->revoked_சாவிகள், 0)) != 0)
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_FINGERPRINT_SHA1:
+			எனில் ((r = blob_section(sect,
 			    &krl->revoked_sha1s, 20)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_FINGERPRINT_SHA256:
-			if ((r = blob_section(sect,
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_FINGERPRINT_SHA256:
+			எனில் ((r = blob_section(sect,
 			    &krl->revoked_sha256s, 32)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_EXTENSION:
-			if ((r = extension_section(sect, krl)) != 0)
-				goto out;
-			break;
-		case KRL_SECTION_SIGNATURE:
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_EXTENSION:
+			எனில் ((r = extension_section(sect, krl)) != 0)
+				செல் out;
+			நிறுத்து;
+		நிலை KRL_SECTION_SIGNATURE:
 			/* Handled above, but still need to stay in synch */
 			sshbuf_free(sect);
-			sect = NULL;
-			if ((r = sshbuf_skip_string(copy)) != 0)
-				goto out;
-			break;
-		default:
+			sect = வெற்று;
+			எனில் ((r = sshbuf_skip_string(copy)) != 0)
+				செல் out;
+			நிறுத்து;
+		இயல்பு:
 			error("Unsupported KRL section %u", type);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
-		if (sect != NULL && sshbuf_len(sect) > 0) {
+		எனில் (sect != வெற்று && sshbuf_len(sect) > 0) {
 			error("KRL section contains unparsed data");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			செல் out;
 		}
 	}
 
@@ -1169,244 +1169,244 @@ ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
 	*krlp = krl;
 	r = 0;
  out:
-	if (r != 0)
+	எனில் (r != 0)
 		ssh_krl_free(krl);
 	sshbuf_free(copy);
 	sshbuf_free(sect);
-	return r;
+	திரும்பு r;
 }
 
 /* Checks certificate serial number and key ID revocation */
-static int
-is_cert_revoked(const struct sshkey *key, struct revoked_certs *rc)
+நிலையான முழு
+is_cert_revoked(மாறிலி கட்டமைப்பு sshkey *சாவி, கட்டமைப்பு revoked_certs *rc)
 {
-	struct revoked_serial rs, *ers;
-	struct revoked_key_id rki, *erki;
+	கட்டமைப்பு revoked_serial rs, *ers;
+	கட்டமைப்பு revoked_சாவி_id rki, *erki;
 
 	/* Check revocation by cert key ID */
-	memset(&rki, 0, sizeof(rki));
-	rki.key_id = key->cert->key_id;
-	erki = RB_FIND(revoked_key_id_tree, &rc->revoked_key_ids, &rki);
-	if (erki != NULL) {
+	memset(&rki, 0, அளவு(rki));
+	rki.சாவி_id = சாவி->cert->சாவி_id;
+	erki = RB_FIND(revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids, &rki);
+	எனில் (erki != வெற்று) {
 		KRL_DBG(("revoked by key ID"));
-		return SSH_ERR_KEY_REVOKED;
+		திரும்பு SSH_ERR_சாவி_REVOKED;
 	}
 
 	/*
 	 * Zero serials numbers are ignored (it's the default when the
 	 * CA doesn't specify one).
 	 */
-	if (key->cert->serial == 0)
-		return 0;
+	எனில் (சாவி->cert->serial == 0)
+		திரும்பு 0;
 
-	memset(&rs, 0, sizeof(rs));
-	rs.lo = rs.hi = key->cert->serial;
-	ers = RB_FIND(revoked_serial_tree, &rc->revoked_serials, &rs);
-	if (ers != NULL) {
+	memset(&rs, 0, அளவு(rs));
+	rs.lo = rs.hi = சாவி->cert->serial;
+	ers = RB_FIND(revoked_serial_மரம், &rc->revoked_serials, &rs);
+	எனில் (ers != வெற்று) {
 		KRL_DBG(("revoked serial %llu matched %llu:%llu",
-		    (unsigned long long)key->cert->serial,
+		    (unsigned long long)சாவி->cert->serial,
 		    (unsigned long long)ers->lo,
 		    (unsigned long long)ers->hi));
-		return SSH_ERR_KEY_REVOKED;
+		திரும்பு SSH_ERR_சாவி_REVOKED;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /* Checks whether a given key/cert is revoked. Does not check its CA */
-static int
-is_key_revoked(struct ssh_krl *krl, const struct sshkey *key)
+நிலையான முழு
+is_சாவி_revoked(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
-	struct revoked_blob rb, *erb;
-	struct revoked_certs *rc;
-	int r;
+	கட்டமைப்பு revoked_blob rb, *erb;
+	கட்டமைப்பு revoked_certs *rc;
+	முழு r;
 
 	/* Check explicitly revoked hashes first */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA1,
+	memset(&rb, 0, அளவு(rb));
+	எனில் ((r = sshkey_fingerprint_raw(சாவி, SSH_DIGEST_SHA1,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha1s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		திரும்பு r;
+	erb = RB_FIND(revoked_blob_மரம், &krl->revoked_sha1s, &rb);
+	விடுவி(rb.blob);
+	எனில் (erb != வெற்று) {
 		KRL_DBG(("revoked by key SHA1"));
-		return SSH_ERR_KEY_REVOKED;
+		திரும்பு SSH_ERR_சாவி_REVOKED;
 	}
-	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA256,
+	memset(&rb, 0, அளவு(rb));
+	எனில் ((r = sshkey_fingerprint_raw(சாவி, SSH_DIGEST_SHA256,
 	    &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha256s, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+		திரும்பு r;
+	erb = RB_FIND(revoked_blob_மரம், &krl->revoked_sha256s, &rb);
+	விடுவி(rb.blob);
+	எனில் (erb != வெற்று) {
 		KRL_DBG(("revoked by key SHA256"));
-		return SSH_ERR_KEY_REVOKED;
+		திரும்பு SSH_ERR_சாவி_REVOKED;
 	}
 
 	/* Next, explicit keys */
-	memset(&rb, 0, sizeof(rb));
-	if ((r = plain_key_blob(key, &rb.blob, &rb.len)) != 0)
-		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_keys, &rb);
-	free(rb.blob);
-	if (erb != NULL) {
+	memset(&rb, 0, அளவு(rb));
+	எனில் ((r = plain_சாவி_blob(சாவி, &rb.blob, &rb.len)) != 0)
+		திரும்பு r;
+	erb = RB_FIND(revoked_blob_மரம், &krl->revoked_சாவிகள், &rb);
+	விடுவி(rb.blob);
+	எனில் (erb != வெற்று) {
 		KRL_DBG(("revoked by explicit key"));
-		return SSH_ERR_KEY_REVOKED;
+		திரும்பு SSH_ERR_சாவி_REVOKED;
 	}
 
-	if (!sshkey_is_cert(key))
-		return 0;
+	எனில் (!sshkey_is_cert(சாவி))
+		திரும்பு 0;
 
 	/* Check cert revocation for the specified CA */
-	if ((r = revoked_certs_for_ca_key(krl, key->cert->signature_key,
+	எனில் ((r = revoked_certs_for_ca_சாவி(krl, சாவி->cert->signature_சாவி,
 	    &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+		திரும்பு r;
+	எனில் (rc != வெற்று) {
+		எனில் ((r = is_cert_revoked(சாவி, rc)) != 0)
+			திரும்பு r;
 	}
 	/* Check cert revocation for the wildcard CA */
-	if ((r = revoked_certs_for_ca_key(krl, NULL, &rc, 0)) != 0)
-		return r;
-	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
-			return r;
+	எனில் ((r = revoked_certs_for_ca_சாவி(krl, வெற்று, &rc, 0)) != 0)
+		திரும்பு r;
+	எனில் (rc != வெற்று) {
+		எனில் ((r = is_cert_revoked(சாவி, rc)) != 0)
+			திரும்பு r;
 	}
 
-	KRL_DBG(("%llu no match", (unsigned long long)key->cert->serial));
-	return 0;
+	KRL_DBG(("%llu no match", (unsigned long long)சாவி->cert->serial));
+	திரும்பு 0;
 }
 
-int
-ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key)
+முழு
+ssh_krl_check_சாவி(கட்டமைப்பு ssh_krl *krl, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
-	int r;
+	முழு r;
 
 	KRL_DBG(("checking key"));
-	if ((r = is_key_revoked(krl, key)) != 0)
-		return r;
-	if (sshkey_is_cert(key)) {
+	எனில் ((r = is_சாவி_revoked(krl, சாவி)) != 0)
+		திரும்பு r;
+	எனில் (sshkey_is_cert(சாவி)) {
 		debug2_f("checking CA key");
-		if ((r = is_key_revoked(krl, key->cert->signature_key)) != 0)
-			return r;
+		எனில் ((r = is_சாவி_revoked(krl, சாவி->cert->signature_சாவி)) != 0)
+			திரும்பு r;
 	}
 	KRL_DBG(("key okay"));
-	return 0;
+	திரும்பு 0;
 }
 
-int
-ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
+முழு
+ssh_krl_file_contains_சாவி(மாறிலி எழுத்து *path, மாறிலி கட்டமைப்பு sshkey *சாவி)
 {
-	struct sshbuf *krlbuf = NULL;
-	struct ssh_krl *krl = NULL;
-	int oerrno = 0, r;
+	கட்டமைப்பு sshbuf *krlbuf = வெற்று;
+	கட்டமைப்பு ssh_krl *krl = வெற்று;
+	முழு oerrno = 0, r;
 
-	if (path == NULL)
-		return 0;
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0) {
+	எனில் (path == வெற்று)
+		திரும்பு 0;
+	எனில் ((r = sshbuf_load_file(path, &krlbuf)) != 0) {
 		oerrno = errno;
-		goto out;
+		செல் out;
 	}
-	if ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
-		goto out;
+	எனில் ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
+		செல் out;
 	debug2_f("checking KRL %s", path);
-	r = ssh_krl_check_key(krl, key);
+	r = ssh_krl_check_சாவி(krl, சாவி);
  out:
 	sshbuf_free(krlbuf);
 	ssh_krl_free(krl);
-	if (r != 0)
+	எனில் (r != 0)
 		errno = oerrno;
-	return r;
+	திரும்பு r;
 }
 
-int
-krl_dump(struct ssh_krl *krl, FILE *f)
+முழு
+krl_dump(கட்டமைப்பு ssh_krl *krl, FILE *f)
 {
-	struct sshkey *key = NULL;
-	struct revoked_blob *rb;
-	struct revoked_certs *rc;
-	struct revoked_serial *rs;
-	struct revoked_key_id *rki;
-	int r, ret = 0;
-	char *fp, timestamp[64];
+	கட்டமைப்பு sshkey *சாவி = வெற்று;
+	கட்டமைப்பு revoked_blob *rb;
+	கட்டமைப்பு revoked_certs *rc;
+	கட்டமைப்பு revoked_serial *rs;
+	கட்டமைப்பு revoked_சாவி_id *rki;
+	முழு r, ret = 0;
+	எழுத்து *fp, timestamp[64];
 
 	/* Try to print in a KRL spec-compatible format */
-	format_timestamp(krl->generated_date, timestamp, sizeof(timestamp));
+	format_timestamp(krl->generated_date, timestamp, அளவு(timestamp));
 	fprintf(f, "# KRL version %llu\n", (unsigned long long)krl->krl_version);
 	fprintf(f, "# Generated at %s\n", timestamp);
-	if (krl->comment != NULL && *krl->comment != '\0') {
+	எனில் (krl->comment != வெற்று && *krl->comment != '\0') {
 		r = INT_MAX;
 		asmprintf(&fp, INT_MAX, &r, "%s", krl->comment);
 		fprintf(f, "# Comment: %s\n", fp);
-		free(fp);
+		விடுவி(fp);
 	}
 	fputc('\n', f);
 
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
-		if ((r = sshkey_from_blob(rb->blob, rb->len, &key)) != 0) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_சாவிகள்) {
+		எனில் ((r = sshkey_from_blob(rb->blob, rb->len, &சாவி)) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error_r(r, "parse KRL key");
-			continue;
+			தொடர்;
 		}
-		if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL) {
+		எனில் ((fp = sshkey_fingerprint(சாவி, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == வெற்று) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error("sshkey_fingerprint failed");
-			continue;
+			தொடர்;
 		}
-		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(key));
-		free(fp);
-		free(key);
+		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(சாவி));
+		விடுவி(fp);
+		விடுவி(சாவி);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_sha256s) {
 		fp = tohex(rb->blob, rb->len);
 		fprintf(f, "hash: SHA256:%s\n", fp);
-		free(fp);
+		விடுவி(fp);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_மரம், &krl->revoked_sha1s) {
 		/*
 		 * There is not KRL spec keyword for raw SHA1 hashes, so
 		 * print them as comments.
 		 */
 		fp = tohex(rb->blob, rb->len);
 		fprintf(f, "# hash SHA1:%s\n", fp);
-		free(fp);
+		விடுவி(fp);
 	}
 
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
 		fputc('\n', f);
-		if (rc->ca_key == NULL)
+		எனில் (rc->ca_சாவி == வெற்று)
 			fprintf(f, "# Wildcard CA\n");
-		else {
-			if ((fp = sshkey_fingerprint(rc->ca_key,
-			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL) {
+		இல்லையெனில் {
+			எனில் ((fp = sshkey_fingerprint(rc->ca_சாவி,
+			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == வெற்று) {
 				ret = SSH_ERR_INVALID_FORMAT;
 				error("sshkey_fingerprint failed");
-				continue;
+				தொடர்;
 			}
 			fprintf(f, "# CA key %s %s\n",
-			    sshkey_ssh_name(rc->ca_key), fp);
-			free(fp);
+			    sshkey_ssh_name(rc->ca_சாவி), fp);
+			விடுவி(fp);
 		}
-		RB_FOREACH(rs, revoked_serial_tree, &rc->revoked_serials) {
-			if (rs->lo == rs->hi) {
+		RB_FOREACH(rs, revoked_serial_மரம், &rc->revoked_serials) {
+			எனில் (rs->lo == rs->hi) {
 				fprintf(f, "serial: %llu\n",
 				    (unsigned long long)rs->lo);
-			} else {
+			} இல்லையெனில் {
 				fprintf(f, "serial: %llu-%llu\n",
 				    (unsigned long long)rs->lo,
 				    (unsigned long long)rs->hi);
 			}
 		}
-		RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
+		RB_FOREACH(rki, revoked_சாவி_id_மரம், &rc->revoked_சாவி_ids) {
 			/*
 			 * We don't want key IDs with embedded newlines to
 			 * mess up the display.
 			 */
 			r = INT_MAX;
-			asmprintf(&fp, INT_MAX, &r, "%s", rki->key_id);
+			asmprintf(&fp, INT_MAX, &r, "%s", rki->சாவி_id);
 			fprintf(f, "id: %s\n", fp);
-			free(fp);
+			விடுவி(fp);
 		}
 	}
-	return ret;
+	திரும்பு ret;
 }

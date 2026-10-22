@@ -14,27 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <pwd.h>
+#அந்தர்பாவ <pwd.h>
 
-void platform_pre_listen(void);
-void platform_pre_fork(void);
-void platform_pre_restart(void);
-void platform_post_listen(void);
-void platform_post_fork_parent(pid_t child_pid);
-void platform_post_fork_child(void);
-void platform_pre_session_start(void);
-int  platform_privileged_uidswap(void);
-void platform_setusercontext(struct passwd *);
-void platform_setusercontext_post_groups(struct passwd *);
-char *platform_get_krb5_client(const char *);
-char *platform_krb5_get_principal_name(const char *);
-int platform_locked_account(struct passwd *);
-int platform_sys_dir_uid(uid_t);
-void platform_disable_tracing(int);
+வெறுமை platform_pre_listen(வெறுமை);
+வெறுமை platform_pre_fork(வெறுமை);
+வெறுமை platform_pre_restart(வெறுமை);
+வெறுமை platform_post_listen(வெறுமை);
+வெறுமை platform_post_fork_parent(pid_t child_pid);
+வெறுமை platform_post_fork_child(வெறுமை);
+வெறுமை platform_pre_session_start(வெறுமை);
+முழு  platform_privileged_uidswap(வெறுமை);
+வெறுமை platform_setusercontext(கட்டமைப்பு passwd *);
+வெறுமை platform_setusercontext_post_groups(கட்டமைப்பு passwd *);
+எழுத்து *platform_get_krb5_client(மாறிலி எழுத்து *);
+எழுத்து *platform_krb5_get_principal_name(மாறிலி எழுத்து *);
+முழு platform_locked_account(கட்டமைப்பு passwd *);
+முழு platform_sys_dir_uid(uid_t);
+வெறுமை platform_disable_tracing(முழு);
 
 /* in platform-pledge.c */
-void platform_pledge_agent(void);
-void platform_pledge_sftp_server(void);
-void platform_pledge_mux(void);
+வெறுமை platform_pledge_agent(வெறுமை);
+வெறுமை platform_pledge_sftp_server(வெறுமை);
+வெறுமை platform_pledge_mux(வெறுமை);

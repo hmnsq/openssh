@@ -17,52 +17,52 @@
 
 /* Utility functions/framework for fuzz tests */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/uio.h>
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
+#அந்தர்பாவ <assert.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "test_helper.h"
-#include "atomicio.h"
+#அந்தர்பாவ "test_helper.h"
+#அந்தர்பாவ "atomicio.h"
 
 /* #define FUZZ_DEBUG */
 
 #ifdef FUZZ_DEBUG
-# define FUZZ_DBG(x) do { \
+# define FUZZ_DBG(x) செய் { \
 		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} போது (0)
+#இல்லையெனில்
 # define FUZZ_DBG(x)
 #endif
 
 /* For brevity later */
-typedef unsigned long long fuzz_ullong;
+வகைவரை unsigned long long fuzz_ullong;
 
 /* For base-64 fuzzing */
-static const char fuzz_b64chars[] =
+நிலையான மாறிலி எழுத்து fuzz_b64chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-struct fuzz {
+கட்டமைப்பு fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	முழு strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	முழு strategies;
 
 	/* Original seed data blob */
-	void *seed;
+	வெறுமை *seed;
 	size_t slen;
 
 	/* Current working copy of seed with fuzz mutations applied */
@@ -72,104 +72,104 @@ struct fuzz {
 	size_t o1, o2;
 };
 
-static const char *
+நிலையான மாறிலி எழுத்து *
 fuzz_ntop(u_int n)
 {
-	switch (n) {
-	case 0:
-		return "NONE";
-	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
-	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
-	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
-	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
-	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
-	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
-	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
-	default:
+	தேர்வு (n) {
+	நிலை 0:
+		திரும்பு "NONE";
+	நிலை FUZZ_1_BIT_FLIP:
+		திரும்பு "FUZZ_1_BIT_FLIP";
+	நிலை FUZZ_2_BIT_FLIP:
+		திரும்பு "FUZZ_2_BIT_FLIP";
+	நிலை FUZZ_1_BYTE_FLIP:
+		திரும்பு "FUZZ_1_BYTE_FLIP";
+	நிலை FUZZ_2_BYTE_FLIP:
+		திரும்பு "FUZZ_2_BYTE_FLIP";
+	நிலை FUZZ_TRUNCATE_START:
+		திரும்பு "FUZZ_TRUNCATE_START";
+	நிலை FUZZ_TRUNCATE_END:
+		திரும்பு "FUZZ_TRUNCATE_END";
+	நிலை FUZZ_BASE64:
+		திரும்பு "FUZZ_BASE64";
+	இயல்பு:
 		abort();
 	}
 }
 
-static int
-fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
+நிலையான முழு
+fuzz_fmt(கட்டமைப்பு fuzz *fuzz, எழுத்து *s, size_t n)
 {
-	if (fuzz == NULL)
-		return -1;
+	எனில் (fuzz == வெற்று)
+		திரும்பு -1;
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	தேர்வு (fuzz->strategy) {
+	நிலை FUZZ_1_BIT_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
-	case FUZZ_2_BIT_FLIP:
+		திரும்பு 0;
+	நிலை FUZZ_2_BIT_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_1_BYTE_FLIP:
+		திரும்பு 0;
+	நிலை FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_2_BYTE_FLIP:
+		திரும்பு 0;
+	நிலை FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_TRUNCATE_START:
+		திரும்பு 0;
+	நிலை FUZZ_TRUNCATE_START:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_TRUNCATE_END:
+		திரும்பு 0;
+	நிலை FUZZ_TRUNCATE_END:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_BASE64:
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		திரும்பு 0;
+	நிலை FUZZ_BASE64:
+		ப்ரதிஜ்ஞா(fuzz->o2 < அளவு(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
-	default:
-		return -1;
+		திரும்பு 0;
+	இயல்பு:
+		திரும்பு -1;
 	}
 }
 
-static void
+நிலையான வெறுமை
 dump(u_char *p, size_t len)
 {
 	size_t i, j;
 
-	for (i = 0; i < len; i += 16) {
+	க்கு (i = 0; i < len; i += 16) {
 		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		க்கு (j = i; j < i + 16; j++) {
+			எனில் (j < len)
 				fprintf(stderr, "%02x ", p[j]);
-			else
+			இல்லையெனில்
 				fprintf(stderr, "   ");
 		}
 		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		க்கு (j = i; j < i + 16; j++) {
+			எனில் (j < len) {
+				எனில்  (isascii(p[j]) && isprint(p[j]))
 					fprintf(stderr, "%c", p[j]);
-				else
+				இல்லையெனில்
 					fprintf(stderr, ".");
 			}
 		}
@@ -177,12 +177,12 @@ dump(u_char *p, size_t len)
 	}
 }
 
-void
-fuzz_dump(struct fuzz *fuzz)
+வெறுமை
+fuzz_dump(கட்டமைப்பு fuzz *fuzz)
 {
-	char buf[256];
+	எழுத்து buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
+	எனில் (fuzz_fmt(fuzz, buf, அளவு(buf)) != 0) {
 		fprintf(stderr, "%s: fuzz invalid\n", __func__);
 		abort();
 	}
@@ -193,36 +193,36 @@ fuzz_dump(struct fuzz *fuzz)
 	dump(fuzz_ptr(fuzz), fuzz_len(fuzz));
 }
 
-static struct fuzz *last_fuzz;
+நிலையான கட்டமைப்பு fuzz *last_fuzz;
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+நிலையான வெறுமை
+siginfo(முழு unused __attribute__((__unused__)))
 {
-	char buf[256];
+	எழுத்து buf[256];
 
-	test_info(buf, sizeof(buf));
+	test_info(buf, அளவு(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
-		fuzz_fmt(last_fuzz, buf, sizeof(buf));
+	எனில் (last_fuzz != வெற்று) {
+		fuzz_fmt(last_fuzz, buf, அளவு(buf));
 		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 	}
 }
 
-struct fuzz *
-fuzz_begin(u_int strategies, const void *p, size_t l)
+கட்டமைப்பு fuzz *
+fuzz_begin(u_int strategies, மாறிலி வெறுமை *p, size_t l)
 {
-	struct fuzz *ret = calloc(1, sizeof(*ret));
+	கட்டமைப்பு fuzz *ret = calloc(1, அளவு(*ret));
 
-	assert(p != NULL);
-	assert(ret != NULL);
+	ப்ரதிஜ்ஞா(p != வெற்று);
+	ப்ரதிஜ்ஞா(ret != வெற்று);
 	ret->seed = malloc(l);
-	assert(ret->seed != NULL);
+	ப்ரதிஜ்ஞா(ret->seed != வெற்று);
 	memcpy(ret->seed, p, l);
 	ret->slen = l;
 	ret->strategies = strategies;
 
-	assert(ret->slen < SIZE_MAX / 8);
-	assert(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
+	ப்ரதிஜ்ஞா(ret->slen < SIZE_MAX / 8);
+	ப்ரதிஜ்ஞா(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
 
 	FUZZ_DBG(("begin, ret = %p", ret));
 
@@ -230,55 +230,55 @@ fuzz_begin(u_int strategies, const void *p, size_t l)
 
 	last_fuzz = ret;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	சமிக்ஞை(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	சமிக்ஞை(SIGUSR1, siginfo);
 
-	return ret;
+	திரும்பு ret;
 }
 
-void
-fuzz_cleanup(struct fuzz *fuzz)
+வெறுமை
+fuzz_cleanup(கட்டமைப்பு fuzz *fuzz)
 {
 	FUZZ_DBG(("cleanup, fuzz = %p", fuzz));
-	last_fuzz = NULL;
+	last_fuzz = வெற்று;
 #ifdef SIGINFO
-	signal(SIGINFO, SIG_DFL);
+	சமிக்ஞை(SIGINFO, SIG_DFL);
 #endif
-	signal(SIGUSR1, SIG_DFL);
-	assert(fuzz != NULL);
-	assert(fuzz->seed != NULL);
-	assert(fuzz->fuzzed != NULL);
-	free(fuzz->seed);
-	free(fuzz->fuzzed);
-	free(fuzz);
+	சமிக்ஞை(SIGUSR1, SIG_DFL);
+	ப்ரதிஜ்ஞா(fuzz != வெற்று);
+	ப்ரதிஜ்ஞா(fuzz->seed != வெற்று);
+	ப்ரதிஜ்ஞா(fuzz->fuzzed != வெற்று);
+	விடுவி(fuzz->seed);
+	விடுவி(fuzz->fuzzed);
+	விடுவி(fuzz);
 }
 
-static int
-fuzz_strategy_done(struct fuzz *fuzz)
+நிலையான முழு
+fuzz_strategy_done(கட்டமைப்பு fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
 	    fuzz, fuzz_ntop(fuzz->strategy), fuzz->o1, fuzz->o2, fuzz->slen));
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
-	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
-	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
-	default:
+	தேர்வு (fuzz->strategy) {
+	நிலை FUZZ_1_BIT_FLIP:
+		திரும்பு fuzz->o1 >= fuzz->slen * 8;
+	நிலை FUZZ_2_BIT_FLIP:
+		திரும்பு fuzz->o2 >= fuzz->slen * 8;
+	நிலை FUZZ_2_BYTE_FLIP:
+		திரும்பு fuzz->o2 >= fuzz->slen;
+	நிலை FUZZ_1_BYTE_FLIP:
+	நிலை FUZZ_TRUNCATE_START:
+	நிலை FUZZ_TRUNCATE_END:
+	நிலை FUZZ_BASE64:
+		திரும்பு fuzz->o1 >= fuzz->slen;
+	இயல்பு:
 		abort();
 	}
 }
 
-void
-fuzz_next(struct fuzz *fuzz)
+வெறுமை
+fuzz_next(கட்டமைப்பு fuzz *fuzz)
 {
 	u_int i;
 
@@ -286,86 +286,86 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	எனில் (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		எனில் (fuzz->fuzzed == வெற்று) {
 			FUZZ_DBG(("alloc"));
 			fuzz->fuzzed = calloc(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		க்கு (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			எனில் ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
-				break;
+				நிறுத்து;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		எனில் (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			திரும்பு;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
 	}
 
-	assert(fuzz->fuzzed != NULL);
+	ப்ரதிஜ்ஞா(fuzz->fuzzed != வெற்று);
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
+	தேர்வு (fuzz->strategy) {
+	நிலை FUZZ_1_BIT_FLIP:
+		ப்ரதிஜ்ஞா(fuzz->o1 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		assert(fuzz->o2 / 8 < fuzz->slen);
+		நிறுத்து;
+	நிலை FUZZ_2_BIT_FLIP:
+		ப்ரதிஜ்ஞா(fuzz->o1 / 8 < fuzz->slen);
+		ப்ரதிஜ்ஞா(fuzz->o2 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		எனில் (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_1_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
+		நிறுத்து;
+	நிலை FUZZ_1_BYTE_FLIP:
+		ப்ரதிஜ்ஞா(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < fuzz->slen);
+		நிறுத்து;
+	நிலை FUZZ_2_BYTE_FLIP:
+		ப்ரதிஜ்ஞா(fuzz->o1 < fuzz->slen);
+		ப்ரதிஜ்ஞா(fuzz->o2 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		எனில் (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 < fuzz->slen);
+		நிறுத்து;
+	நிலை FUZZ_TRUNCATE_START:
+	நிலை FUZZ_TRUNCATE_END:
+		ப்ரதிஜ்ஞா(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->o1++;
-		break;
-	case FUZZ_BASE64:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		நிறுத்து;
+	நிலை FUZZ_BASE64:
+		ப்ரதிஜ்ஞா(fuzz->o1 < fuzz->slen);
+		ப்ரதிஜ்ஞா(fuzz->o2 < அளவு(fuzz_b64chars) - 1);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		எனில் (fuzz->o2 >= அளவு(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		abort();
 	}
 
@@ -374,61 +374,61 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
-fuzz_matches_original(struct fuzz *fuzz)
+முழு
+fuzz_matches_original(கட்டமைப்பு fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	எனில் (fuzz_len(fuzz) != fuzz->slen)
+		திரும்பு 0;
+	திரும்பு memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
 }
 
-int
-fuzz_done(struct fuzz *fuzz)
+முழு
+fuzz_done(கட்டமைப்பு fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	திரும்பு fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
 }
 
 size_t
-fuzz_len(struct fuzz *fuzz)
+fuzz_len(கட்டமைப்பு fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->slen;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
-	default:
+	ப்ரதிஜ்ஞா(fuzz->fuzzed != வெற்று);
+	தேர்வு (fuzz->strategy) {
+	நிலை FUZZ_1_BIT_FLIP:
+	நிலை FUZZ_2_BIT_FLIP:
+	நிலை FUZZ_1_BYTE_FLIP:
+	நிலை FUZZ_2_BYTE_FLIP:
+	நிலை FUZZ_BASE64:
+		திரும்பு fuzz->slen;
+	நிலை FUZZ_TRUNCATE_START:
+	நிலை FUZZ_TRUNCATE_END:
+		ப்ரதிஜ்ஞா(fuzz->o1 <= fuzz->slen);
+		திரும்பு fuzz->slen - fuzz->o1;
+	இயல்பு:
 		abort();
 	}
 }
 
 u_char *
-fuzz_ptr(struct fuzz *fuzz)
+fuzz_ptr(கட்டமைப்பு fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->fuzzed;
-	case FUZZ_TRUNCATE_START:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
-	default:
+	ப்ரதிஜ்ஞா(fuzz->fuzzed != வெற்று);
+	தேர்வு (fuzz->strategy) {
+	நிலை FUZZ_1_BIT_FLIP:
+	நிலை FUZZ_2_BIT_FLIP:
+	நிலை FUZZ_1_BYTE_FLIP:
+	நிலை FUZZ_2_BYTE_FLIP:
+	நிலை FUZZ_BASE64:
+		திரும்பு fuzz->fuzzed;
+	நிலை FUZZ_TRUNCATE_START:
+		ப்ரதிஜ்ஞா(fuzz->o1 <= fuzz->slen);
+		திரும்பு fuzz->fuzzed + fuzz->o1;
+	நிலை FUZZ_TRUNCATE_END:
+		ப்ரதிஜ்ஞா(fuzz->o1 <= fuzz->slen);
+		திரும்பு fuzz->fuzzed;
+	இயல்பு:
 		abort();
 	}
 }

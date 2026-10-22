@@ -24,42 +24,42 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef GSSAPI
 
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/queue.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/param.h>
+#அந்தர்பாவ <sys/queue.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "channels.h"
-#include "session.h"
-#include "misc.h"
-#include "servconf.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "channels.h"
+#அந்தர்பாவ "session.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
 
-#include "ssh-gss.h"
+#அந்தர்பாவ "ssh-gss.h"
 
-extern ServerOptions options;
+வெளி ServerOptions options;
 
-static ssh_gssapi_client gssapi_client =
+நிலையான ssh_gssapi_client gssapi_client =
     { GSS_C_EMPTY_BUFFER, GSS_C_EMPTY_BUFFER,
-    GSS_C_NO_CREDENTIAL, NULL, {NULL, NULL, NULL, NULL}, 0};
+    GSS_C_NO_CREDENTIAL, வெற்று, {வெற்று, வெற்று, வெற்று, வெற்று}, 0};
 
 ssh_gssapi_mech gssapi_null_mech =
-    { NULL, NULL, {0, NULL}, NULL, NULL, NULL, NULL};
+    { வெற்று, வெற்று, {0, வெற்று}, வெற்று, வெற்று, வெற்று, வெற்று};
 
 #ifdef KRB5
-extern ssh_gssapi_mech gssapi_kerberos_mech;
+வெளி ssh_gssapi_mech gssapi_kerberos_mech;
 #endif
 
 ssh_gssapi_mech* supported_mechs[]= {
@@ -73,20 +73,20 @@ ssh_gssapi_mech* supported_mechs[]= {
  * ssh_gssapi_supported_oids() can cause sandbox violations, so prepare the
  * list of supported mechanisms before privsep is set up.
  */
-static gss_OID_set supported_oids;
+நிலையான gss_OID_set supported_oids;
 
-void
-ssh_gssapi_prepare_supported_oids(void)
+வெறுமை
+ssh_gssapi_prepare_supported_oids(வெறுமை)
 {
 	ssh_gssapi_supported_oids(&supported_oids);
 }
 
 OM_uint32
-ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, int *present)
+ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, முழு *present)
 {
-	if (supported_oids == NULL)
+	எனில் (supported_oids == வெற்று)
 		ssh_gssapi_prepare_supported_oids();
-	return gss_test_oid_set_member(ms, member, supported_oids, present);
+	திரும்பு gss_test_oid_set_member(ms, member, supported_oids, present);
 }
 
 /*
@@ -96,69 +96,69 @@ ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, int *present)
 
 /* Returns a GSSAPI error code */
 /* Privileged (called from ssh_gssapi_server_ctx) */
-static OM_uint32
+நிலையான OM_uint32
 ssh_gssapi_acquire_cred(Gssctxt *ctx)
 {
 	OM_uint32 status;
-	char lname[NI_MAXHOST];
+	எழுத்து lname[NI_MAXHOST];
 	gss_OID_set oidset;
 
-	if (options.gss_strict_acceptor) {
+	எனில் (options.gss_strict_acceptor) {
 		gss_create_empty_oid_set(&status, &oidset);
 		gss_add_oid_set_member(&status, ctx->oid, &oidset);
 
-		if (gethostname(lname, sizeof(lname))) {
+		எனில் (gethostname(lname, அளவு(lname))) {
 			gss_release_oid_set(&status, &oidset);
-			return (-1);
+			திரும்பு (-1);
 		}
 
-		if (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
+		எனில் (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
 			gss_release_oid_set(&status, &oidset);
-			return (ctx->major);
+			திரும்பு (ctx->major);
 		}
 
-		if ((ctx->major = gss_acquire_cred(&ctx->minor,
+		எனில் ((ctx->major = gss_acquire_cred(&ctx->minor,
 		    ctx->name, 0, oidset, GSS_C_ACCEPT, &ctx->creds,
-		    NULL, NULL)))
+		    வெற்று, வெற்று)))
 			ssh_gssapi_error(ctx);
 
 		gss_release_oid_set(&status, &oidset);
-		return (ctx->major);
-	} else {
+		திரும்பு (ctx->major);
+	} இல்லையெனில் {
 		ctx->name = GSS_C_NO_NAME;
 		ctx->creds = GSS_C_NO_CREDENTIAL;
 	}
-	return GSS_S_COMPLETE;
+	திரும்பு GSS_S_COMPLETE;
 }
 
 /* Privileged */
 OM_uint32
 ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID oid)
 {
-	if (*ctx)
+	எனில் (*ctx)
 		ssh_gssapi_delete_ctx(ctx);
 	ssh_gssapi_build_ctx(ctx);
 	ssh_gssapi_set_oid(*ctx, oid);
-	return (ssh_gssapi_acquire_cred(*ctx));
+	திரும்பு (ssh_gssapi_acquire_cred(*ctx));
 }
 
 /* Unprivileged */
-void
+வெறுமை
 ssh_gssapi_supported_oids(gss_OID_set *oidset)
 {
-	int i = 0;
+	முழு i = 0;
 	OM_uint32 min_status;
-	int present;
+	முழு present;
 	gss_OID_set supported;
 
 	gss_create_empty_oid_set(&min_status, oidset);
 	gss_indicate_mechs(&min_status, &supported);
 
-	while (supported_mechs[i]->name != NULL) {
-		if (GSS_ERROR(gss_test_oid_set_member(&min_status,
+	போது (supported_mechs[i]->name != வெற்று) {
+		எனில் (GSS_ERROR(gss_test_oid_set_member(&min_status,
 		    &supported_mechs[i]->oid, supported, &present)))
 			present = 0;
-		if (present)
+		எனில் (present)
 			gss_add_oid_set_member(&min_status,
 			    &supported_mechs[i]->oid, oidset);
 		i++;
@@ -184,14 +184,14 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
 	ctx->major = gss_accept_sec_context(&ctx->minor,
 	    &ctx->context, ctx->creds, recv_tok,
 	    GSS_C_NO_CHANNEL_BINDINGS, &ctx->client, &mech,
-	    send_tok, flags, NULL, &ctx->client_creds);
+	    send_tok, flags, வெற்று, &ctx->client_creds);
 
-	if (GSS_ERROR(ctx->major))
+	எனில் (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	if (ctx->client_creds)
+	எனில் (ctx->client_creds)
 		debug("Received some client credentials");
-	else
+	இல்லையெனில்
 		debug("Got no client credentials");
 
 	status = ctx->major;
@@ -200,13 +200,13 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
 	 * we flag the user as also having been authenticated
 	 */
 
-	if (((flags == NULL) || ((*flags & GSS_C_MUTUAL_FLAG) &&
+	எனில் (((flags == வெற்று) || ((*flags & GSS_C_MUTUAL_FLAG) &&
 	    (*flags & GSS_C_INTEG_FLAG))) && (ctx->major == GSS_S_COMPLETE)) {
-		if (ssh_gssapi_getclient(ctx, &gssapi_client))
+		எனில் (ssh_gssapi_getclient(ctx, &gssapi_client))
 			fatal("Couldn't convert client name");
 	}
 
-	return (status);
+	திரும்பு (status);
 }
 
 /*
@@ -214,22 +214,22 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
  * to use for ACL checking. It verifies that the name belongs the mechanism
  * originally selected.
  */
-static OM_uint32
+நிலையான OM_uint32
 ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 {
 	u_char *tok;
 	OM_uint32 offset;
 	OM_uint32 oidl;
 
-	tok = ename->value;
+	tok = ename->மதிப்பு;
 
 	/*
 	 * Check that ename is long enough for all of the fixed length
 	 * header, and that the initial ID bytes are correct
 	 */
 
-	if (ename->length < 6 || memcmp(tok, "\x04\x01", 2) != 0)
-		return GSS_S_FAILURE;
+	எனில் (ename->length < 6 || memcmp(tok, "\x04\x01", 2) != 0)
+		திரும்பு GSS_S_FAILURE;
 
 	/*
 	 * Extract the OID, and check it. Here GSSAPI breaks with tradition
@@ -245,29 +245,29 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	 * Check the BER encoding for correct type and length, that the
 	 * string is long enough and that the OID matches that in our context
 	 */
-	if (tok[4] != 0x06 || tok[5] != oidl ||
+	எனில் (tok[4] != 0x06 || tok[5] != oidl ||
 	    ename->length < oidl+6 ||
 	    !ssh_gssapi_check_oid(ctx, tok+6, oidl))
-		return GSS_S_FAILURE;
+		திரும்பு GSS_S_FAILURE;
 
 	offset = oidl+6;
 
-	if (ename->length < offset+4)
-		return GSS_S_FAILURE;
+	எனில் (ename->length < offset+4)
+		திரும்பு GSS_S_FAILURE;
 
 	name->length = get_u32(tok+offset);
 	offset += 4;
 
-	if (UINT_MAX - offset < name->length)
-		return GSS_S_FAILURE;
-	if (ename->length < offset+name->length)
-		return GSS_S_FAILURE;
+	எனில் (UINT_MAX - offset < name->length)
+		திரும்பு GSS_S_FAILURE;
+	எனில் (ename->length < offset+name->length)
+		திரும்பு GSS_S_FAILURE;
 
-	name->value = xmalloc(name->length+1);
-	memcpy(name->value, tok+offset, name->length);
-	((char *)name->value)[name->length] = 0;
+	name->மதிப்பு = xmalloc(name->length+1);
+	memcpy(name->மதிப்பு, tok+offset, name->length);
+	((எழுத்து *)name->மதிப்பு)[name->length] = 0;
 
-	return GSS_S_COMPLETE;
+	திரும்பு GSS_S_COMPLETE;
 }
 
 /* Extract the client details from a given context. This can only reliably
@@ -277,52 +277,52 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 OM_uint32
 ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
 {
-	int i = 0;
+	முழு i = 0;
 
 	gss_buffer_desc ename;
 
 	client->userok = 0;
-	client->mech = NULL;
+	client->mech = வெற்று;
 
-	while (supported_mechs[i]->name != NULL) {
-		if (supported_mechs[i]->oid.length == ctx->oid->length &&
+	போது (supported_mechs[i]->name != வெற்று) {
+		எனில் (supported_mechs[i]->oid.length == ctx->oid->length &&
 		    (memcmp(supported_mechs[i]->oid.elements,
 		    ctx->oid->elements, ctx->oid->length) == 0))
 			client->mech = supported_mechs[i];
 		i++;
 	}
 
-	if (client->mech == NULL)
-		return GSS_S_FAILURE;
+	எனில் (client->mech == வெற்று)
+		திரும்பு GSS_S_FAILURE;
 
-	if ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
-	    &client->displayname, NULL))) {
+	எனில் ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
+	    &client->displayname, வெற்று))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		திரும்பு (ctx->major);
 	}
 
-	if ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
+	எனில் ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
 	    &ename))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		திரும்பு (ctx->major);
 	}
 
-	if ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
+	எனில் ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
 	    &client->exportedname))) {
-		return (ctx->major);
+		திரும்பு (ctx->major);
 	}
 
 	/* We can't copy this structure, so we just move the pointer to it */
 	client->creds = ctx->client_creds;
 	ctx->client_creds = GSS_C_NO_CREDENTIAL;
-	return (ctx->major);
+	திரும்பு (ctx->major);
 }
 
 /* As user - called on fatal/exit */
-void
-ssh_gssapi_cleanup_creds(void)
+வெறுமை
+ssh_gssapi_cleanup_creds(வெறுமை)
 {
-	if (gssapi_client.store.filename != NULL) {
+	எனில் (gssapi_client.store.filename != வெற்று) {
 		/* Unlink probably isn't sufficient */
 		debug("removing gssapi cred file\"%s\"",
 		    gssapi_client.store.filename);
@@ -331,22 +331,22 @@ ssh_gssapi_cleanup_creds(void)
 }
 
 /* As user */
-void
-ssh_gssapi_storecreds(void)
+வெறுமை
+ssh_gssapi_storecreds(வெறுமை)
 {
-	if (!gssapi_client.userok) {
+	எனில் (!gssapi_client.userok) {
 		debug_f("GSSAPI client was not authorized, doing nothing");
-		return;
+		திரும்பு;
 	}
 
-	if (options.gss_deleg_creds == 0) {
+	எனில் (options.gss_deleg_creds == 0) {
 		debug_f("delegate credential is disabled, doing nothing");
-		return;
+		திரும்பு;
 	}
 
-	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+	எனில் (gssapi_client.mech && gssapi_client.mech->storecreds) {
 		(*gssapi_client.mech->storecreds)(&gssapi_client);
-	} else
+	} இல்லையெனில்
 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
 }
 
@@ -354,12 +354,12 @@ ssh_gssapi_storecreds(void)
  * on the passed authentication process and credentials.
  */
 /* As user */
-void
-ssh_gssapi_do_child(char ***envp, u_int *envsizep)
+வெறுமை
+ssh_gssapi_do_child(எழுத்து ***envp, u_int *envsizep)
 {
 
-	if (gssapi_client.store.envvar != NULL &&
-	    gssapi_client.store.envval != NULL) {
+	எனில் (gssapi_client.store.envvar != வெற்று &&
+	    gssapi_client.store.envval != வெற்று) {
 		debug("Setting %s to %s", gssapi_client.store.envvar,
 		    gssapi_client.store.envval);
 		child_set_env(envp, envsizep, gssapi_client.store.envvar,
@@ -367,38 +367,38 @@ ssh_gssapi_do_child(char ***envp, u_int *envsizep)
 	}
 }
 
-void
-ssh_gssapi_cleanup_global_client(void)
+வெறுமை
+ssh_gssapi_cleanup_global_client(வெறுமை)
 {
 	OM_uint32 lmin;
 
 	gss_release_buffer(&lmin, &gssapi_client.displayname);
 	gss_release_buffer(&lmin, &gssapi_client.exportedname);
 	gss_release_cred(&lmin, &gssapi_client.creds);
-	explicit_bzero(&gssapi_client, sizeof(ssh_gssapi_client));
+	explicit_bzero(&gssapi_client, அளவு(ssh_gssapi_client));
 }
 
 /* Privileged */
-int
-ssh_gssapi_userok(char *user)
+முழு
+ssh_gssapi_userok(எழுத்து *user)
 {
-	if (gssapi_client.exportedname.length == 0 ||
-	    gssapi_client.exportedname.value == NULL) {
+	எனில் (gssapi_client.exportedname.length == 0 ||
+	    gssapi_client.exportedname.மதிப்பு == வெற்று) {
 		debug("No suitable client data");
-		return 0;
+		திரும்பு 0;
 	}
-	if (gssapi_client.mech && gssapi_client.mech->userok)
-		if ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
+	எனில் (gssapi_client.mech && gssapi_client.mech->userok)
+		எனில் ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
 			gssapi_client.userok = 1;
-			return 1;
-		} else {
+			திரும்பு 1;
+		} இல்லையெனில் {
 			/* Destroy delegated credentials if userok fails */
 			ssh_gssapi_cleanup_global_client();
-			return 0;
+			திரும்பு 0;
 		}
-	else
+	இல்லையெனில்
 		debug("ssh_gssapi_userok: Unknown GSSAPI mechanism");
-	return (0);
+	திரும்பு (0);
 }
 
 /* Privileged */
@@ -406,18 +406,18 @@ OM_uint32
 ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 {
 	ctx->major = gss_verify_mic(&ctx->minor, ctx->context,
-	    gssbuf, gssmic, NULL);
+	    gssbuf, gssmic, வெற்று);
 
-	return (ctx->major);
+	திரும்பு (ctx->major);
 }
 
 /* Privileged */
-const char *ssh_gssapi_displayname(void)
+மாறிலி எழுத்து *ssh_gssapi_displayname(வெறுமை)
 {
-	if (gssapi_client.displayname.length == 0 ||
-	    gssapi_client.displayname.value == NULL)
-		return NULL;
-	return (char *)gssapi_client.displayname.value;
+	எனில் (gssapi_client.displayname.length == 0 ||
+	    gssapi_client.displayname.மதிப்பு == வெற்று)
+		திரும்பு வெற்று;
+	திரும்பு (எழுத்து *)gssapi_client.displayname.மதிப்பு;
 }
 
 #endif

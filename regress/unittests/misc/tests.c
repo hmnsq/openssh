@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+வெறுமை test_parse(வெறுமை);
+வெறுமை test_convtime(வெறுமை);
+வெறுமை test_expand(வெறுமை);
+வெறுமை test_argv(வெறுமை);
+வெறுமை test_strdelim(வெறுமை);
+வெறுமை test_hpdelim(வெறுமை);
+வெறுமை test_ptimeout(வெறுமை);
+வெறுமை test_xextendf(வெறுமை);
+வெறுமை test_misc(வெறுமை);
 
-void
-tests(void)
+வெறுமை
+tests(வெறுமை)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+வெறுமை
+benchmarks(வெறுமை)
 {
 	printf("no benchmarks\n");
 }

@@ -1,17 +1,17 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
 
-extern "C" {
+வெளி "C" {
 
-#include "sshkey.h"
+#அந்தர்பாவ "sshkey.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+முழு LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t* data, size_t size)
 {
-	struct sshkey *k = NULL;
-	int r = sshkey_from_blob(data, size, &k);
-	if (r == 0) sshkey_free(k);
-	return 0;
+	கட்டமைப்பு sshkey *k = வெற்று;
+	முழு r = sshkey_from_blob(data, size, &k);
+	எனில் (r == 0) sshkey_free(k);
+	திரும்பு 0;
 }
 
 } // extern

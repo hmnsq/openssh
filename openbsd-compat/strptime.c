@@ -31,16 +31,16 @@
 
 /* OPENBSD ORIGINAL: lib/libc/time/strptime.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE_STRPTIME
 
 #define TM_YEAR_BASE 1900	/* from tzfile.h */
 
-#include <ctype.h>
-#include <locale.h>
-#include <string.h>
-#include <time.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <locale.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <time.h>
 
 /* #define	_ctloc(x)		(_CurrentTimeLocale->x) */
 
@@ -50,261 +50,261 @@
  */
 #define _ALT_E			0x01
 #define _ALT_O			0x02
-#define	_LEGAL_ALT(x)		{ if (alt_format & ~(x)) return (0); }
+#define	_LEGAL_ALT(x)		{ எனில் (alt_format & ~(x)) திரும்பு (0); }
 
 
-static	int _conv_num(const unsigned char **, int *, int, int);
-static	char *_strptime(const char *, const char *, struct tm *, int);
+நிலையான	முழு conv_இலக்கம்(மாறிலி unsigned எழுத்து **, முழு *, முழு, முழு);
+நிலையான	எழுத்து *_strptime(மாறிலி எழுத்து *, மாறிலி எழுத்து *, கட்டமைப்பு tm *, முழு);
 
 
-char *
-strptime(const char *buf, const char *fmt, struct tm *tm)
+எழுத்து *
+strptime(மாறிலி எழுத்து *buf, மாறிலி எழுத்து *fmt, கட்டமைப்பு tm *tm)
 {
-	return(_strptime(buf, fmt, tm, 1));
+	திரும்பு(_strptime(buf, fmt, tm, 1));
 }
 
-static char *
-_strptime(const char *buf, const char *fmt, struct tm *tm, int initialize)
+நிலையான எழுத்து *
+_strptime(மாறிலி எழுத்து *buf, மாறிலி எழுத்து *fmt, கட்டமைப்பு tm *tm, முழு initialize)
 {
-	unsigned char c;
-	const unsigned char *bp;
+	unsigned எழுத்து c;
+	மாறிலி unsigned எழுத்து *bp;
 	size_t len;
-	int alt_format, i;
-	static int century, relyear;
+	முழு alt_format, i;
+	நிலையான முழு century, relyear;
 
-	if (initialize) {
+	எனில் (initialize) {
 		century = TM_YEAR_BASE;
 		relyear = -1;
 	}
 
-	bp = (unsigned char *)buf;
-	while ((c = *fmt) != '\0') {
+	bp = (unsigned எழுத்து *)buf;
+	போது ((c = *fmt) != '\0') {
 		/* Clear `alternate' modifier prior to new conversion. */
 		alt_format = 0;
 
 		/* Eat up white-space. */
-		if (isspace(c)) {
-			while (isspace(*bp))
+		எனில் (isspace(c)) {
+			போது (isspace(*bp))
 				bp++;
 
 			fmt++;
-			continue;
+			தொடர்;
 		}
 				
-		if ((c = *fmt++) != '%')
-			goto literal;
+		எனில் ((c = *fmt++) != '%')
+			செல் literal;
 
 
-again:		switch (c = *fmt++) {
-		case '%':	/* "%%" is converted to "%". */
+again:		தேர்வு (c = *fmt++) {
+		நிலை '%':	/* "%%" is converted to "%". */
 literal:
-		if (c != *bp++)
-			return (NULL);
+		எனில் (c != *bp++)
+			திரும்பு (வெற்று);
 
-		break;
+		நிறுத்து;
 
 		/*
 		 * "Alternative" modifiers. Just set the appropriate flag
 		 * and start over again.
 		 */
-		case 'E':	/* "%E?" alternative conversion modifier. */
+		நிலை 'E':	/* "%E?" alternative conversion modifier. */
 			_LEGAL_ALT(0);
 			alt_format |= _ALT_E;
-			goto again;
+			செல் again;
 
-		case 'O':	/* "%O?" alternative conversion modifier. */
+		நிலை 'O':	/* "%O?" alternative conversion modifier. */
 			_LEGAL_ALT(0);
 			alt_format |= _ALT_O;
-			goto again;
+			செல் again;
 			
 		/*
 		 * "Complex" conversion rules, implemented through recursion.
 		 */
-#if 0
-		case 'c':	/* Date and time, using the locale's format. */
+#எனில் 0
+		நிலை 'c':	/* Date and time, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(d_t_fmt), tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, _ctloc(d_t_fmt), tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 #endif
-		case 'D':	/* The date as "%m/%d/%y". */
+		நிலை 'D':	/* The date as "%m/%d/%y". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%m/%d/%y", tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, "%m/%d/%y", tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 	
-		case 'R':	/* The time as "%H:%M". */
+		நிலை 'R':	/* The time as "%H:%M". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%H:%M", tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, "%H:%M", tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'r':	/* The time as "%I:%M:%S %p". */
+		நிலை 'r':	/* The time as "%I:%M:%S %p". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%I:%M:%S %p", tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, "%I:%M:%S %p", tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'T':	/* The time as "%H:%M:%S". */
+		நிலை 'T':	/* The time as "%H:%M:%S". */
 			_LEGAL_ALT(0);
-			if (!(bp = _strptime(bp, "%H:%M:%S", tm, 0)))
-				return (NULL);
-			break;
-#if 0
-		case 'X':	/* The time, using the locale's format. */
+			எனில் (!(bp = _strptime(bp, "%H:%M:%S", tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
+#எனில் 0
+		நிலை 'X':	/* The time, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(t_fmt), tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, _ctloc(t_fmt), tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'x':	/* The date, using the locale's format. */
+		நிலை 'x':	/* The date, using the locale's format. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(bp = _strptime(bp, _ctloc(d_fmt), tm, 0)))
-				return (NULL);
-			break;
+			எனில் (!(bp = _strptime(bp, _ctloc(d_fmt), tm, 0)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 #endif
 		/*
 		 * "Elementary" conversion rules.
 		 */
-#if 0
-		case 'A':	/* The day of week, using the locale's form. */
-		case 'a':
+#எனில் 0
+		நிலை 'A':	/* The day of week, using the locale's form. */
+		நிலை 'a':
 			_LEGAL_ALT(0);
-			for (i = 0; i < 7; i++) {
+			க்கு (i = 0; i < 7; i++) {
 				/* Full name. */
 				len = strlen(_ctloc(day[i]));
-				if (strncasecmp(_ctloc(day[i]), bp, len) == 0)
-					break;
+				எனில் (strncasecmp(_ctloc(day[i]), bp, len) == 0)
+					நிறுத்து;
 
 				/* Abbreviated name. */
 				len = strlen(_ctloc(abday[i]));
-				if (strncasecmp(_ctloc(abday[i]), bp, len) == 0)
-					break;
+				எனில் (strncasecmp(_ctloc(abday[i]), bp, len) == 0)
+					நிறுத்து;
 			}
 
 			/* Nothing matched. */
-			if (i == 7)
-				return (NULL);
+			எனில் (i == 7)
+				திரும்பு (வெற்று);
 
 			tm->tm_wday = i;
 			bp += len;
-			break;
+			நிறுத்து;
 
-		case 'B':	/* The month, using the locale's form. */
-		case 'b':
-		case 'h':
+		நிலை 'B':	/* The month, using the locale's form. */
+		நிலை 'b':
+		நிலை 'h':
 			_LEGAL_ALT(0);
-			for (i = 0; i < 12; i++) {
+			க்கு (i = 0; i < 12; i++) {
 				/* Full name. */
 				len = strlen(_ctloc(mon[i]));
-				if (strncasecmp(_ctloc(mon[i]), bp, len) == 0)
-					break;
+				எனில் (strncasecmp(_ctloc(mon[i]), bp, len) == 0)
+					நிறுத்து;
 
 				/* Abbreviated name. */
 				len = strlen(_ctloc(abmon[i]));
-				if (strncasecmp(_ctloc(abmon[i]), bp, len) == 0)
-					break;
+				எனில் (strncasecmp(_ctloc(abmon[i]), bp, len) == 0)
+					நிறுத்து;
 			}
 
 			/* Nothing matched. */
-			if (i == 12)
-				return (NULL);
+			எனில் (i == 12)
+				திரும்பு (வெற்று);
 
 			tm->tm_mon = i;
 			bp += len;
-			break;
+			நிறுத்து;
 #endif
 
-		case 'C':	/* The century number. */
+		நிலை 'C':	/* The century number. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 99)))
-				return (NULL);
+			எனில் (!(conv_இலக்கம்(&bp, &i, 0, 99)))
+				திரும்பு (வெற்று);
 
 			century = i * 100;
-			break;
+			நிறுத்து;
 
-		case 'd':	/* The day of month. */
-		case 'e':
+		நிலை 'd':	/* The day of month. */
+		நிலை 'e':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mday, 1, 31)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_mday, 1, 31)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'k':	/* The hour (24-hour clock representation). */
+		நிலை 'k':	/* The hour (24-hour clock representation). */
 			_LEGAL_ALT(0);
 			/* FALLTHROUGH */
-		case 'H':
+		நிலை 'H':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 0, 23)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_hour, 0, 23)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'l':	/* The hour (12-hour clock representation). */
+		நிலை 'l':	/* The hour (12-hour clock representation). */
 			_LEGAL_ALT(0);
 			/* FALLTHROUGH */
-		case 'I':
+		நிலை 'I':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 1, 12)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_hour, 1, 12)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'j':	/* The day of year. */
+		நிலை 'j':	/* The day of year. */
 			_LEGAL_ALT(0);
-			if (!(_conv_num(&bp, &tm->tm_yday, 1, 366)))
-				return (NULL);
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_yday, 1, 366)))
+				திரும்பு (வெற்று);
 			tm->tm_yday--;
-			break;
+			நிறுத்து;
 
-		case 'M':	/* The minute. */
+		நிலை 'M':	/* The minute. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_min, 0, 59)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_min, 0, 59)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'm':	/* The month. */
+		நிலை 'm':	/* The month. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mon, 1, 12)))
-				return (NULL);
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_mon, 1, 12)))
+				திரும்பு (வெற்று);
 			tm->tm_mon--;
-			break;
+			நிறுத்து;
 
-#if 0
-		case 'p':	/* The locale's equivalent of AM/PM. */
+#எனில் 0
+		நிலை 'p':	/* The locale's equivalent of AM/PM. */
 			_LEGAL_ALT(0);
 			/* AM? */
 			len = strlen(_ctloc(am_pm[0]));
-			if (strncasecmp(_ctloc(am_pm[0]), bp, len) == 0) {
-				if (tm->tm_hour > 12)	/* i.e., 13:00 AM ?! */
-					return (NULL);
-				else if (tm->tm_hour == 12)
+			எனில் (strncasecmp(_ctloc(am_pm[0]), bp, len) == 0) {
+				எனில் (tm->tm_hour > 12)	/* i.e., 13:00 AM ?! */
+					திரும்பு (வெற்று);
+				இல்லையெனில் எனில் (tm->tm_hour == 12)
 					tm->tm_hour = 0;
 
 				bp += len;
-				break;
+				நிறுத்து;
 			}
 			/* PM? */
 			len = strlen(_ctloc(am_pm[1]));
-			if (strncasecmp(_ctloc(am_pm[1]), bp, len) == 0) {
-				if (tm->tm_hour > 12)	/* i.e., 13:00 PM ?! */
-					return (NULL);
-				else if (tm->tm_hour < 12)
+			எனில் (strncasecmp(_ctloc(am_pm[1]), bp, len) == 0) {
+				எனில் (tm->tm_hour > 12)	/* i.e., 13:00 PM ?! */
+					திரும்பு (வெற்று);
+				இல்லையெனில் எனில் (tm->tm_hour < 12)
 					tm->tm_hour += 12;
 
 				bp += len;
-				break;
+				நிறுத்து;
 			}
 
 			/* Nothing matched. */
-			return (NULL);
+			திரும்பு (வெற்று);
 #endif
-		case 'S':	/* The seconds. */
+		நிலை 'S':	/* The seconds. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_sec, 0, 61)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_sec, 0, 61)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'U':	/* The week of year, beginning on sunday. */
-		case 'W':	/* The week of year, beginning on monday. */
+		நிலை 'U':	/* The week of year, beginning on sunday. */
+		நிலை 'W':	/* The week of year, beginning on monday. */
 			_LEGAL_ALT(_ALT_O);
 			/*
 			 * XXX This is bogus, as we can not assume any valid
@@ -312,44 +312,44 @@ literal:
 			 * point to calculate a real value, so just check the
 			 * range for now.
 			 */
-			 if (!(_conv_num(&bp, &i, 0, 53)))
-				return (NULL);
-			 break;
+			 எனில் (!(conv_இலக்கம்(&bp, &i, 0, 53)))
+				திரும்பு (வெற்று);
+			 நிறுத்து;
 
-		case 'w':	/* The day of week, beginning on sunday. */
+		நிலை 'w':	/* The day of week, beginning on sunday. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_wday, 0, 6)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &tm->tm_wday, 0, 6)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
-		case 'Y':	/* The year. */
+		நிலை 'Y':	/* The year. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 9999)))
-				return (NULL);
+			எனில் (!(conv_இலக்கம்(&bp, &i, 0, 9999)))
+				திரும்பு (வெற்று);
 
 			relyear = -1;
 			tm->tm_year = i - TM_YEAR_BASE;
-			break;
+			நிறுத்து;
 
-		case 'y':	/* The year within the century (2 digits). */
+		நிலை 'y':	/* The year within the century (2 digits). */
 			_LEGAL_ALT(_ALT_E | _ALT_O);
-			if (!(_conv_num(&bp, &relyear, 0, 99)))
-				return (NULL);
-			break;
+			எனில் (!(conv_இலக்கம்(&bp, &relyear, 0, 99)))
+				திரும்பு (வெற்று);
+			நிறுத்து;
 
 		/*
 		 * Miscellaneous conversions.
 		 */
-		case 'n':	/* Any kind of white-space. */
-		case 't':
+		நிலை 'n':	/* Any kind of white-space. */
+		நிலை 't':
 			_LEGAL_ALT(0);
-			while (isspace(*bp))
+			போது (isspace(*bp))
 				bp++;
-			break;
+			நிறுத்து;
 
 
-		default:	/* Unknown/unsupported conversion. */
-			return (NULL);
+		இயல்பு:	/* Unknown/unsupported conversion. */
+			திரும்பு (வெற்று);
 		}
 
 
@@ -359,42 +359,42 @@ literal:
 	 * We need to evaluate the two digit year spec (%y)
 	 * last as we can get a century spec (%C) at any time.
 	 */
-	if (relyear != -1) {
-		if (century == TM_YEAR_BASE) {
-			if (relyear <= 68)
+	எனில் (relyear != -1) {
+		எனில் (century == TM_YEAR_BASE) {
+			எனில் (relyear <= 68)
 				tm->tm_year = relyear + 2000 - TM_YEAR_BASE;
-			else
+			இல்லையெனில்
 				tm->tm_year = relyear + 1900 - TM_YEAR_BASE;
-		} else {
+		} இல்லையெனில் {
 			tm->tm_year = relyear + century - TM_YEAR_BASE;
 		}
 	}
 
-	return ((char *)bp);
+	திரும்பு ((எழுத்து *)bp);
 }
 
 
-static int
-_conv_num(const unsigned char **buf, int *dest, int llim, int ulim)
+நிலையான முழு
+conv_இலக்கம்(மாறிலி unsigned எழுத்து **buf, முழு *dest, முழு llim, முழு ulim)
 {
-	int result = 0;
-	int rulim = ulim;
+	முழு result = 0;
+	முழு rulim = ulim;
 
-	if (**buf < '0' || **buf > '9')
-		return (0);
+	எனில் (**buf < '0' || **buf > '9')
+		திரும்பு (0);
 
 	/* we use rulim to break out of the loop when we run out of digits */
-	do {
+	செய் {
 		result *= 10;
 		result += *(*buf)++ - '0';
 		rulim /= 10;
-	} while ((result * 10 <= ulim) && rulim && **buf >= '0' && **buf <= '9');
+	} போது ((result * 10 <= ulim) && rulim && **buf >= '0' && **buf <= '9');
 
-	if (result < llim || result > ulim)
-		return (0);
+	எனில் (result < llim || result > ulim)
+		திரும்பு (0);
 
 	*dest = result;
-	return (1);
+	திரும்பு (1);
 }
 
 #endif /* HAVE_STRPTIME */

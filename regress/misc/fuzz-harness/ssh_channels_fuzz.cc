@@ -41,268 +41,268 @@ limitations under the License.
  * so per-iteration state survives.
  */
 
-#include <fcntl.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <setjmp.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
-extern "C" {
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "log.h"
-#include "ssh2.h"
-#include "channels.h"
+வெளி "C" {
+#அந்தர்பாவ "includes.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "ssh_api.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "myproposal.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "authfile.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "ssh2.h"
+#அந்தர்பாவ "channels.h"
 }
 
 
-#include "fixed-keys.h"
+#அந்தர்பாவ "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+நிலையான jmp_buf fuzz_env;
+நிலையான நிலையற்ற முழு in_fuzz = 0;
 
-static char *g_open_failure_msg = NULL;
+நிலையான எழுத்து *g_open_failure_செய்தி = வெற்று;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+வெளி "C" முழு
+my_channel_உள்ளீடு_open_failure(முழு type, uint32_t seq, கட்டமைப்பு ssh *ssh)
 {
-	(void)type;
-	(void)seq;
+	(வெறுமை)type;
+	(வெறுமை)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	முழு r;
+	எனில் ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
-	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	எனில் ((r = sshpkt_get_cstring(ssh, &g_open_failure_செய்தி, வெற்று)) != 0 ||
+	    (r = sshpkt_get_string_direct(ssh, வெற்று, வெற்று)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	திரும்பு 0;
 }
 
-extern "C" void
-cleanup_exit(int code)
+வெளி "C" வெறுமை
+cleanup_exit(முழு code)
 {
-	if (in_fuzz)
+	எனில் (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-extern "C" void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+வெளி "C" வெறுமை
+__wrap_ssh_packet_disconnect(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(வெறுமை)ssh;
+	(வெறுமை)fmt;
+	எனில் (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+வெளி "C" முழு
+__wrap_sshpkt_fatal(கட்டமைப்பு ssh *ssh, முழு r, மாறிலி எழுத்து *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(வெறுமை)ssh;
+	(வெறுமை)fmt;
+	எனில் (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-static struct sshkey *
-load_private(const char *str)
+நிலையான கட்டமைப்பு sshkey *
+load_private(மாறிலி எழுத்து *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	கட்டமைப்பு sshbuf *b = sshbuf_from(str, strlen(str));
+	கட்டமைப்பு sshkey *k = வெற்று;
+	எனில் (b == வெற்று || sshkey_parse_private_fileblob(b, "", &k, வெற்று) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	திரும்பு k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+நிலையான கட்டமைப்பு sshkey *
+load_public(மாறிலி எழுத்து *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	எழுத்து *tmp, *cp;
+	கட்டமைப்பு sshkey *k = sshkey_new(சாவி_UNSPEC);
+	எனில் (k == வெற்று)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	எனில் (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	விடுவி(tmp);
+	திரும்பு k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+நிலையான முழு
+pump(கட்டமைப்பு ssh *from, கட்டமைப்பு ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	மாறிலி u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	முழு r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	எனில் ((r = ssh_packet_next(from, &type)) != 0)
+		திரும்பு r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	எனில் (len == 0)
+		திரும்பு 0;
+	எனில் ((r = ssh_உள்ளீடு_append(to, buf, len)) != 0)
+		திரும்பு r;
+	எனில் ((r = ssh_output_consume(from, len)) != 0)
+		திரும்பு r;
 	*transferred = len;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+நிலையான முழு
+run_kex(கட்டமைப்பு ssh *client, கட்டமைப்பு ssh *server)
 {
-	int r;
+	முழு r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	க்கு (முழு i = 0; i < 100; i++) {
+		எனில் ((r = pump(server, client, &sn)) != 0) திரும்பு r;
+		எனில் ((r = pump(client, server, &cn)) != 0) திரும்பு r;
+		எனில் (server->kex->done && client->kex->done)
+			திரும்பு 0;
+		எனில் (cn == 0 && sn == 0)
+			திரும்பு SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	திரும்பு SSH_ERR_PROTOCOL_ERROR;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+நிலையான கட்டமைப்பு ssh *g_client = வெற்று;
+நிலையான கட்டமைப்பு ssh *g_server = வெற்று;
+நிலையான முழு g_init = 0;
+நிலையான முழு g_pipe[2] = { -1, -1 };
 
-static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+நிலையான வெறுமை
+dummy_open_confirm(கட்டமைப்பு ssh *ssh, முழு id, முழு success, வெறுமை *ctx)
 {
-	(void)ssh;
-	(void)id;
-	(void)success;
-	(void)ctx;
+	(வெறுமை)ssh;
+	(வெறுமை)id;
+	(வெறுமை)success;
+	(வெறுமை)ctx;
 }
 
-static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+நிலையான வெறுமை
+dummy_status_confirm(கட்டமைப்பு ssh *ssh, முழு type, Channel *c, வெறுமை *ctx)
 {
-	(void)ssh;
-	(void)type;
-	(void)c;
-	(void)ctx;
+	(வெறுமை)ssh;
+	(வெறுமை)type;
+	(வெறுமை)c;
+	(வெறுமை)ctx;
 }
 
-static void
-dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
+நிலையான வெறுமை
+dummy_status_abandon(கட்டமைப்பு ssh *ssh, Channel *c, வெறுமை *ctx)
 {
-	(void)ssh;
-	(void)c;
-	(void)ctx;
+	(வெறுமை)ssh;
+	(வெறுமை)c;
+	(வெறுமை)ctx;
 }
 
-static int
-init_once(void)
+நிலையான முழு
+init_once(வெறுமை)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	எனில் (g_init)
+		திரும்பு 0;
+	சமிக்ஞை(SIGPIPE, SIG_IGN);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	முழு pfd[2];
+	எனில் (ப்ரணால(pfd) != 0)
+		திரும்பு -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
 	close(pfd[0]);
 	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
-	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
-	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
+	எனில் (g_pipe[0] < 0 || g_pipe[1] < 0)
+		திரும்பு -1;
+	முழு fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	முழு fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	(வெறுமை)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
+	(வெறுமை)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	கட்டமைப்பு sshkey *priv = load_private(PRIV_ED25519);
+	கட்டமைப்பு sshkey *pub = load_public(PUB_ED25519);
+	எழுத்து *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	மாறிலி எழுத்து *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	எழுத்து *proposal[PROPOSAL_MAX] = { 0 };
+	முழு i;
+	க்கு (i = 0; i < PROPOSAL_MAX; i++) {
+		மாறிலி எழுத்து *p = defaults[i];
+		எனில் (i == PROPOSAL_SERVER_HOST_சாவி_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		இல்லையெனில் எனில் (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		இல்லையெனில் எனில் (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		இல்லையெனில் எனில் (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	கட்டமைப்பு kex_params kp;
+	memcpy(kp.proposal, proposal, அளவு(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	எனில் (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		திரும்பு -1;
+	எனில் (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		திரும்பு -1;
+	எனில் (run_kex(g_client, g_server) != 0)
+		திரும்பு -1;
 
 	channel_init_channels(g_client);
 
 	ssh_dispatch_init(g_client, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_DATA,
-	    &channel_input_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	    &channel_input_extended_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EOF,
-	    &channel_input_ieof);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_CLOSE,
-	    &channel_input_oclose);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	    &channel_input_open_confirmation);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	    &my_channel_input_open_failure);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	    &channel_input_window_adjust);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_SUCCESS,
-	    &channel_input_status_confirm);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_FAILURE,
-	    &channel_input_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_DATA,
+	    &channel_உள்ளீடு_data);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_EXTENDED_DATA,
+	    &channel_உள்ளீடு_extended_data);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_EOF,
+	    &channel_உள்ளீடு_ieof);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_CLOSE,
+	    &channel_உள்ளீடு_oclose);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_OPEN_CONFIRMATION,
+	    &channel_உள்ளீடு_open_confirmation);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_OPEN_FAILURE,
+	    &my_channel_உள்ளீடு_open_failure);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_WINDOW_ADJUST,
+	    &channel_உள்ளீடு_window_adjust);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_SUCCESS,
+	    &channel_உள்ளீடு_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_செய்தி_CHANNEL_FAILURE,
+	    &channel_உள்ளீடு_status_confirm);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	விடுவி(keyname);
+	க்கு (i = 0; i < PROPOSAL_MAX; i++)
+		விடுவி(proposal[i]);
 	g_init = 1;
-	return 0;
+	திரும்பு 0;
 }
 
-struct chan_scenario {
-	const char *ctype;
-	int state;
-	int use_pipe;
+கட்டமைப்பு chan_scenario {
+	மாறிலி எழுத்து *ctype;
+	முழு state;
+	முழு use_pipe;
 };
 
-static const struct chan_scenario k_scenarios[] = {
+நிலையான மாறிலி கட்டமைப்பு chan_scenario k_scenarios[] = {
 	{ "session",         SSH_CHANNEL_OPEN,     0 },
 	{ "session",         SSH_CHANNEL_OPENING,  1 },
 	{ "x11",             SSH_CHANNEL_OPEN,     1 },
@@ -310,85 +310,85 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+நிலையான முழு g_channel_id = -1;
 
-static void
-drain_pipe(void)
+நிலையான வெறுமை
+drain_pipe(வெறுமை)
 {
-	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	எழுத்து buf[4096];
+	எனில் (g_pipe[0] < 0)
+		திரும்பு;
+	போது (பட(g_pipe[0], buf, அளவு(buf)) > 0) { }
 }
 
-static void
-reset_channel(struct ssh *ssh, const struct chan_scenario *s)
+நிலையான வெறுமை
+reset_channel(கட்டமைப்பு ssh *ssh, மாறிலி கட்டமைப்பு chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	எனில் (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		எனில் (c != வெற்று)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
-	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
-	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	முழு rfd = s->use_pipe ? g_pipe[1] : -1;
+	முழு wfd = s->use_pipe ? g_pipe[1] : -1;
+	Channel *c = channel_new(ssh, (எழுத்து *)s->ctype, s->state,
+	    rfd, wfd, -1, 32768, 32768, 0, (எழுத்து *)"fuzz", 0);
+	எனில் (c == வெற்று)
+		திரும்பு;
 	g_channel_id = c->self;
 	channel_register_open_confirm(ssh, g_channel_id,
-	    &dummy_open_confirm, NULL);
+	    &dummy_open_confirm, வெற்று);
 	channel_register_status_confirm(ssh, g_channel_id,
-	    &dummy_status_confirm, &dummy_status_abandon, NULL);
+	    &dummy_status_confirm, &dummy_status_abandon, வெற்று);
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	SSH2_MSG_CHANNEL_DATA,
-	SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	SSH2_MSG_CHANNEL_SUCCESS,
-	SSH2_MSG_CHANNEL_FAILURE,
-	SSH2_MSG_CHANNEL_EOF,
-	SSH2_MSG_CHANNEL_CLOSE,
+நிலையான மாறிலி uint8_t k_செய்தி_types[] = {
+	SSH2_செய்தி_CHANNEL_OPEN_CONFIRMATION,
+	SSH2_செய்தி_CHANNEL_OPEN_FAILURE,
+	SSH2_செய்தி_CHANNEL_WINDOW_ADJUST,
+	SSH2_செய்தி_CHANNEL_DATA,
+	SSH2_செய்தி_CHANNEL_EXTENDED_DATA,
+	SSH2_செய்தி_CHANNEL_SUCCESS,
+	SSH2_செய்தி_CHANNEL_FAILURE,
+	SSH2_செய்தி_CHANNEL_EOF,
+	SSH2_செய்தி_CHANNEL_CLOSE,
 };
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+வெளி "C" முழு
+LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	எனில் (init_once() != 0)
+		திரும்பு 0;
+	எனில் (size > 65000)
+		திரும்பு 0;
 
-	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
-	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
+	மாறிலி size_t n_scen = அளவு(k_scenarios) / அளவு(k_scenarios[0]);
+	மாறிலி size_t n_செய்தி = அளவு(k_செய்தி_types) / அளவு(k_செய்தி_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	க்கு (size_t s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
+		க்கு (size_t t = 0; t < n_செய்தி; t++) {
 			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
+			எனில் (setjmp(fuzz_env) == 0) {
 				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
+				எனில் (ssh_packet_put(g_server, k_செய்தி_types[t],
 				    data, size) != 0)
-					goto done;
-				if (pump(g_server, g_client,
+					செல் done;
+				எனில் (pump(g_server, g_client,
 				    &transferred) != 0)
-					goto done;
-				(void)ssh_dispatch_run(g_client,
-				    DISPATCH_NONBLOCK, NULL);
+					செல் done;
+				(வெறுமை)ssh_dispatch_run(g_client,
+				    DISPATCH_NONBLOCK, வெற்று);
 			done:
 				;
 			}
 			in_fuzz = 0;
-			free(g_open_failure_msg);
-			g_open_failure_msg = NULL;
+			விடுவி(g_open_failure_செய்தி);
+			g_open_failure_செய்தி = வெற்று;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }

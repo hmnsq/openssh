@@ -5,27 +5,27 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "ssherr.h"
 
-void test_convtime(void);
+வெறுமை test_convtime(வெறுமை);
 
-void
-test_convtime(void)
+வெறுமை
+test_convtime(வெறுமை)
 {
-	char buf[1024];
+	எழுத்து buf[1024];
 	uint64_t t;
 
 	TEST_START("misc_convtime");
@@ -47,12 +47,12 @@ test_convtime(void)
 	ASSERT_INT_EQ(convtime("trout"),  -1);
 	ASSERT_INT_EQ(convtime("-77"),  -1);
 	/* boundary conditions */
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX);
+	snprintf(buf, அளவு buf, "%llu", (long long unsigned)INT_MAX);
 	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX + 1);
+	snprintf(buf, அளவு buf, "%llu", (long long unsigned)INT_MAX + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("3550w5d3h14m7s"), 2147483647);
-#if INT_MAX == 2147483647
+#எனில் INT_MAX == 2147483647
 	ASSERT_INT_EQ(convtime("3550w5d3h14m8s"), -1);
 #endif
 	TEST_DONE();

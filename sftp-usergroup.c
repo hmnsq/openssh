@@ -16,114 +16,114 @@
 
 /* sftp client user/group lookup and caching */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/tree.h>
 
-#include <glob.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+#அந்தர்பாவ <glob.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <string.h>
 
-#include "log.h"
-#include "xmalloc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "xmalloc.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#அந்தர்பாவ "sftp-common.h"
+#அந்தர்பாவ "sftp-client.h"
+#அந்தர்பாவ "sftp-usergroup.h"
 
 /* Tree of id, name */
-struct idname {
+கட்டமைப்பு idname {
         u_int id;
-	char *name;
+	எழுத்து *name;
         RB_ENTRY(idname) entry;
 	/* XXX implement bounded cache as TAILQ */
 };
-static int
-idname_cmp(struct idname *a, struct idname *b)
+நிலையான முழு
+idname_cmp(கட்டமைப்பு idname *a, கட்டமைப்பு idname *b)
 {
-	if (a->id == b->id)
-		return 0;
-	return a->id > b->id ? 1 : -1;
+	எனில் (a->id == b->id)
+		திரும்பு 0;
+	திரும்பு a->id > b->id ? 1 : -1;
 }
-RB_HEAD(idname_tree, idname);
-RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
+RB_HEAD(idname_மரம், idname);
+RB_GENERATE_STATIC(idname_மரம், idname, entry, idname_cmp)
 
-static struct idname_tree user_idname = RB_INITIALIZER(&user_idname);
-static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
+நிலையான கட்டமைப்பு idname_மரம் user_idname = RB_INITIALIZER(&user_idname);
+நிலையான கட்டமைப்பு idname_மரம் group_idname = RB_INITIALIZER(&group_idname);
 
-static void
-idname_free(struct idname *idname)
+நிலையான வெறுமை
+idname_free(கட்டமைப்பு idname *idname)
 {
-	if (idname == NULL)
-		return;
-	free(idname->name);
-	free(idname);
+	எனில் (idname == வெற்று)
+		திரும்பு;
+	விடுவி(idname->name);
+	விடுவி(idname);
 }
 
-static void
-idname_enter(struct idname_tree *tree, u_int id, const char *name)
+நிலையான வெறுமை
+idname_enter(கட்டமைப்பு idname_மரம் *மரம், u_int id, மாறிலி எழுத்து *name)
 {
-	struct idname *idname;
+	கட்டமைப்பு idname *idname;
 
-	if ((idname = xcalloc(1, sizeof(*idname))) == NULL)
+	எனில் ((idname = xcalloc(1, அளவு(*idname))) == வெற்று)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	எனில் (RB_செருகு(idname_மரம், மரம், idname) != வெற்று)
 		idname_free(idname);
 }
 
-static const char *
-idname_lookup(struct idname_tree *tree, u_int id)
+நிலையான மாறிலி எழுத்து *
+idname_lookup(கட்டமைப்பு idname_மரம் *மரம், u_int id)
 {
-	struct idname idname, *found;
+	கட்டமைப்பு idname idname, *found;
 
-	memset(&idname, 0, sizeof(idname));
+	memset(&idname, 0, அளவு(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
-		return found->name;
-	return NULL;
+	எனில் ((found = RB_FIND(idname_மரம், மரம், &idname)) != வெற்று)
+		திரும்பு found->name;
+	திரும்பு வெற்று;
 }
 
-static void
-freenames(char **names, u_int nnames)
+நிலையான வெறுமை
+freenames(எழுத்து **names, u_int nnames)
 {
 	u_int i;
 
-	if (names == NULL)
-		return;
-	for (i = 0; i < nnames; i++)
-		free(names[i]);
-	free(names);
+	எனில் (names == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < nnames; i++)
+		விடுவி(names[i]);
+	விடுவி(names);
 }
 
-static void
-lookup_and_record(struct sftp_conn *conn,
+நிலையான வெறுமை
+lookup_and_record(கட்டமைப்பு sftp_conn *conn,
     u_int *uids, u_int nuids, u_int *gids, u_int ngids)
 {
-	int r;
+	முழு r;
 	u_int i;
-	char **usernames = NULL, **groupnames = NULL;
+	எழுத்து **usernames = வெற்று, **groupnames = வெற்று;
 
-	if ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
+	எனில் ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
 	    &usernames, &groupnames)) != 0) {
 		debug_fr(r, "sftp_get_users_groups_by_id");
-		return;
+		திரும்பு;
 	}
-	for (i = 0; i < nuids; i++) {
-		if (usernames[i] == NULL) {
+	க்கு (i = 0; i < nuids; i++) {
+		எனில் (usernames[i] == வெற்று) {
 			debug3_f("uid %u not resolved", uids[i]);
-			continue;
+			தொடர்;
 		}
 		debug3_f("record uid %u => \"%s\"", uids[i], usernames[i]);
 		idname_enter(&user_idname, uids[i], usernames[i]);
 	}
-	for (i = 0; i < ngids; i++) {
-		if (groupnames[i] == NULL) {
+	க்கு (i = 0; i < ngids; i++) {
+		எனில் (groupnames[i] == வெற்று) {
 			debug3_f("gid %u not resolved", gids[i]);
-			continue;
+			தொடர்;
 		}
 		debug3_f("record gid %u => \"%s\"", gids[i], groupnames[i]);
 		idname_enter(&group_idname, gids[i], groupnames[i]);
@@ -132,111 +132,111 @@ lookup_and_record(struct sftp_conn *conn,
 	freenames(groupnames, ngids);
 }
 
-static int
+நிலையான முழு
 has_id(u_int id, u_int *ids, u_int nids)
 {
 	u_int i;
 
-	if (nids == 0)
-		return 0;
+	எனில் (nids == 0)
+		திரும்பு 0;
 
 	/* XXX O(N^2) */
-	for (i = 0; i < nids; i++) {
-		if (ids[i] == id)
-			break;
+	க்கு (i = 0; i < nids; i++) {
+		எனில் (ids[i] == id)
+			நிறுத்து;
 	}
-	return i < nids;
+	திரும்பு i < nids;
 }
 
-static void
-collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
+நிலையான வெறுமை
+collect_ids_from_glob(glob_t *g, முழு user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = வெற்று;
 
-	for (i = 0; g->gl_pathv[i] != NULL; i++) {
-		if (g->gl_statv[i] == NULL) /* no stat information */
-			continue;
-		if (user) {
-			if (ruser_name(g->gl_statv[i]->st_uid) != NULL)
-				continue; /* Already seen */
+	க்கு (i = 0; g->gl_pathv[i] != வெற்று; i++) {
+		எனில் (g->gl_statv[i] == வெற்று) /* no stat information */
+			தொடர்;
+		எனில் (user) {
+			எனில் (ruser_name(g->gl_statv[i]->st_uid) != வெற்று)
+				தொடர்; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_uid;
-		} else {
-			if (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
-				continue; /* Already seen */
+		} இல்லையெனில் {
+			எனில் (rgroup_name(g->gl_statv[i]->st_gid) != வெற்று)
+				தொடர்; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		எனில் (has_id(id, ids, n))
+			தொடர்;
+		ids = xrecallocarray(ids, n, n + 1, அளவு(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
+வெறுமை
+get_remote_user_groups_from_glob(கட்டமைப்பு sftp_conn *conn, glob_t *g)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = வெற்று, nuids = 0, *gids = வெற்று, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	எனில் (!sftp_can_get_users_groups_by_id(conn))
+		திரும்பு;
 
 	collect_ids_from_glob(g, 1, &uids, &nuids);
 	collect_ids_from_glob(g, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	விடுவி(uids);
+	விடுவி(gids);
 }
 
-static void
-collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
+நிலையான வெறுமை
+collect_ids_from_dirents(SFTP_DIRENT **d, முழு user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = வெற்று;
 
-	for (i = 0; d[i] != NULL; i++) {
-		if (user) {
-			if (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
-				continue; /* Already seen */
+	க்கு (i = 0; d[i] != வெற்று; i++) {
+		எனில் (user) {
+			எனில் (ruser_name((uid_t)(d[i]->a.uid)) != வெற்று)
+				தொடர்; /* Already seen */
 			id = d[i]->a.uid;
-		} else {
-			if (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
-				continue; /* Already seen */
+		} இல்லையெனில் {
+			எனில் (rgroup_name((gid_t)(d[i]->a.gid)) != வெற்று)
+				தொடர்; /* Already seen */
 			id = d[i]->a.gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		எனில் (has_id(id, ids, n))
+			தொடர்;
+		ids = xrecallocarray(ids, n, n + 1, அளவு(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
+வெறுமை
+get_remote_user_groups_from_dirents(கட்டமைப்பு sftp_conn *conn, SFTP_DIRENT **d)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = வெற்று, nuids = 0, *gids = வெற்று, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	எனில் (!sftp_can_get_users_groups_by_id(conn))
+		திரும்பு;
 
 	collect_ids_from_dirents(d, 1, &uids, &nuids);
 	collect_ids_from_dirents(d, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	விடுவி(uids);
+	விடுவி(gids);
 }
 
-const char *
+மாறிலி எழுத்து *
 ruser_name(uid_t uid)
 {
-	return idname_lookup(&user_idname, (u_int)uid);
+	திரும்பு idname_lookup(&user_idname, (u_int)uid);
 }
 
-const char *
+மாறிலி எழுத்து *
 rgroup_name(uid_t gid)
 {
-	return idname_lookup(&group_idname, (u_int)gid);
+	திரும்பு idname_lookup(&group_idname, (u_int)gid);
 }
 

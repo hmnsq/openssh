@@ -15,11 +15,11 @@
 #ifndef _MISC_H
 #define _MISC_H
 
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <signal.h>
+#அந்தர்பாவ <sys/time.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <signal.h>
 
 /* special-case port number meaning allow any port */
 #define FWD_PERMIT_ANY_PORT	0
@@ -28,124 +28,124 @@
 #define FWD_PERMIT_ANY_HOST	"*"
 
 /* Data structure for representing a forwarding request. */
-struct Forward {
-	char	 *listen_host;		/* Host (address) to listen on. */
-	int	  listen_port;		/* Port to forward. */
-	char	 *listen_path;		/* Path to bind domain socket. */
-	char	 *connect_host;		/* Host to connect. */
-	int	  connect_port;		/* Port to connect on connect_host. */
-	char	 *connect_path;		/* Path to connect domain socket. */
-	int	  allocated_port;	/* Dynamically allocated listen port */
-	int	  handle;		/* Handle for dynamic listen ports */
+கட்டமைப்பு Forward {
+	எழுத்து	 *listen_host;		/* Host (address) to listen on. */
+	முழு	  listen_port;		/* Port to forward. */
+	எழுத்து	 *listen_path;		/* Path to bind domain socket. */
+	எழுத்து	 *connect_host;		/* Host to connect. */
+	முழு	  connect_port;		/* Port to connect on connect_host. */
+	எழுத்து	 *connect_path;		/* Path to connect domain socket. */
+	முழு	  allocated_port;	/* Dynamically allocated listen port */
+	முழு	  handle;		/* Handle for dynamic listen ports */
 };
 
-int forward_equals(const struct Forward *, const struct Forward *);
-int permitopen_port(const char *p);
+முழு forward_equals(மாறிலி கட்டமைப்பு Forward *, மாறிலி கட்டமைப்பு Forward *);
+முழு permitopen_port(மாறிலி எழுத்து *p);
 
-int daemonized(void);
+முழு daemonized(வெறுமை);
 
 /* Common server and client forwarding options. */
-struct ForwardOptions {
-	int	 gateway_ports; /* Allow remote connects to forwarded ports. */
+கட்டமைப்பு ForwardOptions {
+	முழு	 gateway_ports; /* Allow remote connects to forwarded ports. */
 	mode_t	 streamlocal_bind_mask; /* umask for streamlocal binds */
-	int	 streamlocal_bind_unlink; /* unlink socket before bind */
+	முழு	 streamlocal_bind_unlink; /* unlink socket before bind */
 };
 
 /* misc.c */
 
-char	*chop(char *);
-void	 rtrim(char *);
-void	skip_space(char **);
-const char *strprefix(const char *, const char *, int);
-char	*strdelim(char **);
-char	*strdelimw(char **);
-void	 stringlist_append(char ***listp, const char *s);
-void	 stringlist_free(char **list);
-int	 set_nonblock(int);
-int	 unset_nonblock(int);
-void	 set_nodelay(int);
-int	 set_reuseaddr(int);
-int	 set_keepalive(int);
-char	*get_rdomain(int);
-int	 set_rdomain(int, const char *);
-int	 get_sock_af(int);
-void	 set_sock_tos(int, int);
-int	 waitrfd(int, int *, volatile sig_atomic_t *);
-int	 timeout_connect(int, const struct sockaddr *, socklen_t, int *);
-int	 a2port(const char *);
-int	 a2tun(const char *, int *);
-char	*put_host_port(const char *, u_short);
-char	*hpdelim2(char **, char *);
-char	*hpdelim(char **);
-char	*cleanhostname(char *);
-char	*colon(char *);
-int	 parse_user_host_path(const char *, char **, char **, char **);
-int	 parse_user_host_port(const char *, char **, char **, int *);
-int	 parse_uri(const char *, const char *, char **, char **, int *, char **);
-double	 convtime_double(const char *);
-int	 convtime(const char *);
-double	 convtime_double(const char *);
-const char *fmt_timeframe(time_t t);
-int	 tilde_expand(const char *, uid_t, char **);
-char	*tilde_expand_filename(const char *, uid_t);
+எழுத்து	*chop(எழுத்து *);
+வெறுமை	 rtrim(எழுத்து *);
+வெறுமை	skip_space(எழுத்து **);
+மாறிலி எழுத்து *strprefix(மாறிலி எழுத்து *, மாறிலி எழுத்து *, முழு);
+எழுத்து	*strdelim(எழுத்து **);
+எழுத்து	*strdelimw(எழுத்து **);
+வெறுமை	 stringlist_append(எழுத்து ***listp, மாறிலி எழுத்து *s);
+வெறுமை	 stringlist_free(எழுத்து **list);
+முழு	 set_nonblock(முழு);
+முழு	 unset_nonblock(முழு);
+வெறுமை	 set_nodelay(முழு);
+முழு	 set_reuseaddr(முழு);
+முழு	 set_keepalive(முழு);
+எழுத்து	*get_rdomain(முழு);
+முழு	 set_rdomain(முழு, மாறிலி எழுத்து *);
+முழு	 get_sock_af(முழு);
+வெறுமை	 set_sock_tos(முழு, முழு);
+முழு	 waitrfd(முழு, முழு *, நிலையற்ற sig_atomic_t *);
+முழு	 timeout_connect(முழு, மாறிலி கட்டமைப்பு sockaddr *, socklen_t, முழு *);
+முழு	 a2port(மாறிலி எழுத்து *);
+முழு	 a2tun(மாறிலி எழுத்து *, முழு *);
+எழுத்து	*put_host_port(மாறிலி எழுத்து *, u_short);
+எழுத்து	*hpdelim2(எழுத்து **, எழுத்து *);
+எழுத்து	*hpdelim(எழுத்து **);
+எழுத்து	*cleanhostname(எழுத்து *);
+எழுத்து	*colon(எழுத்து *);
+முழு	 parse_user_host_path(மாறிலி எழுத்து *, எழுத்து **, எழுத்து **, எழுத்து **);
+முழு	 parse_user_host_port(மாறிலி எழுத்து *, எழுத்து **, எழுத்து **, முழு *);
+முழு	 parse_uri(மாறிலி எழுத்து *, மாறிலி எழுத்து *, எழுத்து **, எழுத்து **, முழு *, எழுத்து **);
+இரட்டை	 convtime_double(மாறிலி எழுத்து *);
+முழு	 convtime(மாறிலி எழுத்து *);
+இரட்டை	 convtime_double(மாறிலி எழுத்து *);
+மாறிலி எழுத்து *fmt_timeframe(time_t t);
+முழு	 tilde_expand(மாறிலி எழுத்து *, uid_t, எழுத்து **);
+எழுத்து	*tilde_expand_filename(மாறிலி எழுத்து *, uid_t);
 
-char	*dollar_expand(int *, const char *string, ...);
-char	*percent_expand(const char *, ...) __attribute__((__sentinel__));
-char	*percent_dollar_expand(const char *, ...) __attribute__((__sentinel__));
-char	*tohex(const void *, size_t);
-void	 xextendf(char **s, const char *sep, const char *fmt, ...)
+எழுத்து	*dollar_expand(முழு *, மாறிலி எழுத்து *string, ...);
+எழுத்து	*percent_expand(மாறிலி எழுத்து *, ...) __attribute__((__sentinel__));
+எழுத்து	*percent_dollar_expand(மாறிலி எழுத்து *, ...) __attribute__((__sentinel__));
+எழுத்து	*tohex(மாறிலி வெறுமை *, size_t);
+வெறுமை	 xextendf(எழுத்து **s, மாறிலி எழுத்து *sep, மாறிலி எழுத்து *fmt, ...)
     __attribute__((__format__ (printf, 3, 4))) __attribute__((__nonnull__ (3)));
-void	 sanitise_stdfd(void);
-void	 ms_subtract_diff(struct timeval *, int *);
-void	 ms_to_timespec(struct timespec *, int);
-void	 monotime_ts(struct timespec *);
-void	 monotime_tv(struct timeval *);
-time_t	 monotime(void);
-double	 monotime_double(void);
-void	 lowercase(char *s);
-int	 unix_listener(const char *, int, int);
-int	 valid_domain(char *, int, const char **);
-int	 valid_env_name(const char *);
-const char *atoi_err(const char *, int *);
-int	 parse_absolute_time(const char *, uint64_t *);
-void	 format_absolute_time(uint64_t, char *, size_t);
-int	 parse_pattern_interval(const char *, char **, double *);
-int	 path_absolute(const char *);
-int	 stdfd_devnull(int, int, int);
-int	 lib_contains_symbol(const char *, const char *);
-char	*get_homedir(void);
-int	 mkdir_path(const char *, mode_t);
+வெறுமை	 sanitise_stdfd(வெறுமை);
+வெறுமை	 ms_subtract_diff(கட்டமைப்பு timeval *, முழு *);
+வெறுமை	 ms_to_timespec(கட்டமைப்பு timespec *, முழு);
+வெறுமை	 monotime_ts(கட்டமைப்பு timespec *);
+வெறுமை	 monotime_tv(கட்டமைப்பு timeval *);
+time_t	 monotime(வெறுமை);
+இரட்டை	 monotime_double(வெறுமை);
+வெறுமை	 lowercase(எழுத்து *s);
+முழு	 unix_listener(மாறிலி எழுத்து *, முழு, முழு);
+முழு	 valid_domain(எழுத்து *, முழு, மாறிலி எழுத்து **);
+முழு	 valid_env_name(மாறிலி எழுத்து *);
+மாறிலி எழுத்து *atoi_err(மாறிலி எழுத்து *, முழு *);
+முழு	 parse_absolute_time(மாறிலி எழுத்து *, uint64_t *);
+வெறுமை	 format_absolute_time(uint64_t, எழுத்து *, size_t);
+முழு	 parse_pattern_interval(மாறிலி எழுத்து *, எழுத்து **, இரட்டை *);
+முழு	 path_absolute(மாறிலி எழுத்து *);
+முழு	 stdfd_devnull(முழு, முழு, முழு);
+முழு	 lib_contains_குறியீடு(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+எழுத்து	*get_homedir(வெறுமை);
+முழு	 mkdir_path(மாறிலி எழுத்து *, mode_t);
 
-void	 sock_set_v6only(int);
+வெறுமை	 sock_set_v6only(முழு);
 
-struct passwd *pwcopy(struct passwd *);
-void	 pwfree(struct passwd *); /* NB. only use with pwcopy */
+கட்டமைப்பு passwd *pwcopy(கட்டமைப்பு passwd *);
+வெறுமை	 pwfree(கட்டமைப்பு passwd *); /* NB. only use with pwcopy */
 
-const char *ssh_gai_strerror(int);
+மாறிலி எழுத்து *ssh_gai_strerror(முழு);
 
-typedef void privdrop_fn(struct passwd *);
-typedef void privrestore_fn(void);
+வகைவரை வெறுமை privdrop_fn(கட்டமைப்பு passwd *);
+வகைவரை வெறுமை privrestore_fn(வெறுமை);
 #define	SSH_SUBPROCESS_STDOUT_DISCARD	(1)     /* Discard stdout */
 #define	SSH_SUBPROCESS_STDOUT_CAPTURE	(1<<1)  /* Redirect stdout */
 #define	SSH_SUBPROCESS_STDERR_DISCARD	(1<<2)  /* Discard stderr */
 #define	SSH_SUBPROCESS_UNSAFE_PATH	(1<<3)	/* Don't check for safe cmd */
 #define	SSH_SUBPROCESS_PRESERVE_ENV	(1<<4)	/* Keep parent environment */
-pid_t subprocess(const char *, const char *, int, char **, FILE **, u_int,
-    struct passwd *, privdrop_fn *, privrestore_fn *);
+pid_t subprocess(மாறிலி எழுத்து *, மாறிலி எழுத்து *, முழு, எழுத்து **, FILE **, u_int,
+    கட்டமைப்பு passwd *, privdrop_fn *, privrestore_fn *);
 
-typedef struct arglist arglist;
-struct arglist {
-	char    **list;
-	u_int   num;
+வகைவரை கட்டமைப்பு arglist arglist;
+கட்டமைப்பு arglist {
+	எழுத்து    **list;
+	u_int   இலக்கம்;
 	u_int   nalloc;
 };
-void	 addargs(arglist *, char *, ...)
+வெறுமை	 addargs(arglist *, எழுத்து *, ...)
 	    __attribute__((format(printf, 2, 3)));
-void	 replacearg(arglist *, u_int, char *, ...)
+வெறுமை	 replacearg(arglist *, u_int, எழுத்து *, ...)
 	    __attribute__((format(printf, 3, 4)));
-void	 freeargs(arglist *);
+வெறுமை	 freeargs(arglist *);
 
-int	 tun_open(int, int, char **);
+முழு	 tun_open(முழு, முழு, எழுத்து **);
 
 /* Common definitions for ssh tunnel device forwarding */
 #define SSH_TUNMODE_NO		0x00
@@ -162,92 +162,92 @@ int	 tun_open(int, int, char **);
 #define PORT_STREAMLOCAL	-2
 
 /* Functions to extract or store big-endian words of various sizes */
-uint64_t	get_u64(const void *)
+uint64_t	get_u64(மாறிலி வெறுமை *)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-uint32_t	get_u32(const void *)
+uint32_t	get_u32(மாறிலி வெறுமை *)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-uint16_t	get_u16(const void *)
+uint16_t	get_u16(மாறிலி வெறுமை *)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
-void		put_u64(void *, uint64_t)
+வெறுமை		put_u64(வெறுமை *, uint64_t)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-void		put_u32(void *, uint32_t)
+வெறுமை		put_u32(வெறுமை *, uint32_t)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-void		put_u16(void *, uint16_t)
+வெறுமை		put_u16(வெறுமை *, uint16_t)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
 
 /* Little-endian store/load, used by umac.c */
-uint32_t	get_u32_le(const void *)
+uint32_t	get_u32_le(மாறிலி வெறுமை *)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
-void		put_u32_le(void *, uint32_t)
+வெறுமை		put_u32_le(வெறுமை *, uint32_t)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
 
-struct bwlimit {
+கட்டமைப்பு bwlimit {
 	size_t buflen;
 	uint64_t rate;		/* desired rate in kbit/s */
 	uint64_t thresh;	/* threshold after which we'll check timers */
 	uint64_t lamt;		/* amount written in last timer interval */
-	struct timeval bwstart, bwend;
+	கட்டமைப்பு timeval bwstart, bwend;
 };
 
-void bandwidth_limit_init(struct bwlimit *, uint64_t, size_t);
-void bandwidth_limit(struct bwlimit *, size_t);
+வெறுமை bandwidth_limit_init(கட்டமைப்பு bwlimit *, uint64_t, size_t);
+வெறுமை bandwidth_limit(கட்டமைப்பு bwlimit *, size_t);
 
-int parse_ipqos(const char *);
-const char *iptos2str(int);
-void mktemp_proto(char *, size_t);
+முழு parse_ipqos(மாறிலி எழுத்து *);
+மாறிலி எழுத்து *iptos2str(முழு);
+வெறுமை mktemp_proto(எழுத்து *, size_t);
 
-void	 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	    const char *value);
-const char *lookup_env_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
-const char *lookup_setenv_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
+வெறுமை	 child_set_env(எழுத்து ***envp, u_int *envsizep, மாறிலி எழுத்து *name,
+	    மாறிலி எழுத்து *மதிப்பு);
+மாறிலி எழுத்து *lookup_env_in_list(மாறிலி எழுத்து *env,
+	    எழுத்து * மாறிலி *envs, size_t nenvs);
+மாறிலி எழுத்து *lookup_setenv_in_list(மாறிலி எழுத்து *env,
+	    எழுத்து * மாறிலி *envs, size_t nenvs);
 
-int	 argv_split(const char *, int *, char ***, int);
-char	*argv_assemble(int, char **argv);
-char	*argv_next(int *, char ***);
-void	 argv_consume(int *);
-void	 argv_free(char **, int);
+முழு	 argv_split(மாறிலி எழுத்து *, முழு *, எழுத்து ***, முழு);
+எழுத்து	*argv_assemble(முழு, எழுத்து **argv);
+எழுத்து	*argv_next(முழு *, எழுத்து ***);
+வெறுமை	 argv_consume(முழு *);
+வெறுமை	 argv_free(எழுத்து **, முழு);
 
-int	 exited_cleanly(pid_t, const char *, const char *, int);
+முழு	 exited_cleanly(pid_t, மாறிலி எழுத்து *, மாறிலி எழுத்து *, முழு);
 
-struct stat;
-int	 safe_path(const char *, struct stat *, const char *, uid_t,
-	    char *, size_t);
-int	 safe_path_fd(int, const char *, struct passwd *,
-	    char *err, size_t errlen);
+கட்டமைப்பு stat;
+முழு	 safe_path(மாறிலி எழுத்து *, கட்டமைப்பு stat *, மாறிலி எழுத்து *, uid_t,
+	    எழுத்து *, size_t);
+முழு	 safe_path_fd(முழு, மாறிலி எழுத்து *, கட்டமைப்பு passwd *,
+	    எழுத்து *err, size_t errlen);
 
 /* authorized_key-style options parsing helpers */
-int	opt_flag(const char *opt, int allow_negate, const char **optsp);
-char	*opt_dequote(const char **sp, const char **errstrp);
-int	opt_match(const char **opts, const char *term);
+முழு	opt_flag(மாறிலி எழுத்து *opt, முழு allow_negate, மாறிலி எழுத்து **optsp);
+எழுத்து	*opt_dequote(மாறிலி எழுத்து **sp, மாறிலி எழுத்து **errstrp);
+முழு	opt_match(மாறிலி எழுத்து **opts, மாறிலி எழுத்து *term);
 
 /* readconf/servconf option lists */
-void	opt_array_append(const char *file, const int line,
-	    const char *directive, char ***array, u_int *lp, const char *s);
-void	opt_array_append2(const char *file, const int line,
-	    const char *directive, char ***array, int **iarray, u_int *lp,
-	    const char *s, int i);
-void	opt_array_free2(char **array, int **iarray, u_int l);
+வெறுமை	opt_array_append(மாறிலி எழுத்து *file, மாறிலி முழு வரி,
+	    மாறிலி எழுத்து *directive, எழுத்து ***array, u_int *lp, மாறிலி எழுத்து *s);
+வெறுமை	opt_array_append2(மாறிலி எழுத்து *file, மாறிலி முழு வரி,
+	    மாறிலி எழுத்து *directive, எழுத்து ***array, முழு **iarray, u_int *lp,
+	    மாறிலி எழுத்து *s, முழு i);
+வெறுமை	opt_array_free2(எழுத்து **array, முழு **iarray, u_int l);
 
-struct timespec;
-void ptimeout_init(struct timespec *pt);
-void ptimeout_deadline_sec(struct timespec *pt, long sec);
-void ptimeout_deadline_ms(struct timespec *pt, long ms);
-void ptimeout_deadline_sec_double(struct timespec *pt, double sec);
-void ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when);
-void ptimeout_deadline_monotime(struct timespec *pt, time_t when);
-void ptimeout_deadline_monotime_double(struct timespec *pt, double when);
-int ptimeout_get_ms(struct timespec *pt);
-struct timespec *ptimeout_get_tsp(struct timespec *pt);
-int ptimeout_isset(struct timespec *pt);
+கட்டமைப்பு timespec;
+வெறுமை ptimeout_init(கட்டமைப்பு timespec *pt);
+வெறுமை ptimeout_deadline_sec(கட்டமைப்பு timespec *pt, long sec);
+வெறுமை ptimeout_deadline_ms(கட்டமைப்பு timespec *pt, long ms);
+வெறுமை ptimeout_deadline_sec_double(கட்டமைப்பு timespec *pt, இரட்டை sec);
+வெறுமை ptimeout_deadline_monotime_tsp(கட்டமைப்பு timespec *pt, கட்டமைப்பு timespec *when);
+வெறுமை ptimeout_deadline_monotime(கட்டமைப்பு timespec *pt, time_t when);
+வெறுமை ptimeout_deadline_monotime_double(கட்டமைப்பு timespec *pt, இரட்டை when);
+முழு ptimeout_get_ms(கட்டமைப்பு timespec *pt);
+கட்டமைப்பு timespec *ptimeout_get_tsp(கட்டமைப்பு timespec *pt);
+முழு ptimeout_isset(கட்டமைப்பு timespec *pt);
 
 /* misc-agent.c */
-int	 agent_listener(const char *, const char *, uid_t, const char *,
-	    pid_t, const char *, int *, char **, char **);
-void	 agent_cleanup_stale(const char *, const char *, uid_t,
-	    const char *, int);
-int	 agent_listener_cleanup(const char *, const char *, const char *);
+முழு	 agent_listener(மாறிலி எழுத்து *, மாறிலி எழுத்து *, uid_t, மாறிலி எழுத்து *,
+	    pid_t, மாறிலி எழுத்து *, முழு *, எழுத்து **, எழுத்து **);
+வெறுமை	 agent_cleanup_stale(மாறிலி எழுத்து *, மாறிலி எழுத்து *, uid_t,
+	    மாறிலி எழுத்து *, முழு);
+முழு	 agent_listener_cleanup(மாறிலி எழுத்து *, மாறிலி எழுத்து *, மாறிலி எழுத்து *);
 
 /* readpass.c */
 
@@ -256,30 +256,30 @@ int	 agent_listener_cleanup(const char *, const char *, const char *);
 #define RP_ALLOW_EOF		0x0004
 #define RP_USE_ASKPASS		0x0008
 
-struct notifier_ctx;
+கட்டமைப்பு notifier_ctx;
 
-char	*read_passphrase(const char *, int);
-int	 ask_permission(const char *, ...) __attribute__((format(printf, 1, 2)));
-struct notifier_ctx *notify_start(int, const char *, ...)
+எழுத்து	*read_passphrase(மாறிலி எழுத்து *, முழு);
+முழு	 ask_permission(மாறிலி எழுத்து *, ...) __attribute__((format(printf, 1, 2)));
+கட்டமைப்பு notifier_ctx *notify_start(முழு, மாறிலி எழுத்து *, ...)
 	__attribute__((format(printf, 2, 3)));
-void	notify_complete(struct notifier_ctx *, const char *, ...)
+வெறுமை	notify_complete(கட்டமைப்பு notifier_ctx *, மாறிலி எழுத்து *, ...)
 	__attribute__((format(printf, 2, 3)));
 
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 #define ROUNDUP(x, y)   ((((x)+((y)-1))/(y))*(y))
 
-typedef void (*sshsig_t)(int);
-sshsig_t ssh_signal(int, sshsig_t);
-int signal_is_crash(int);
+வகைவரை வெறுமை (*sshsig_t)(முழு);
+sshsig_t ssh_signal(முழு, sshsig_t);
+முழு signal_is_crash(முழு);
 
 /* On OpenBSD time_t is int64_t which is long long. */
 /* #define SSH_TIME_T_MAX LLONG_MAX */
 
-#define FD_CLOSEONEXEC(x) do { \
-	if (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
+#define FD_CLOSEONEXEC(x) செய் { \
+	எனில் (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
 		fatal_f("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", x, \
 		    strerror(errno)); \
-} while (0)
+} போது (0)
 
 #endif /* _MISC_H */

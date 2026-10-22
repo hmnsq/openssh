@@ -34,14 +34,14 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#அந்தர்பாவ "includes.h"
+#எனில் !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <limits.h>
 
 /*
  * to select alternate encoding format
@@ -81,16 +81,16 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+எழுத்து	*vis(எழுத்து *, முழு, முழு, முழு);
+முழு	strvis(எழுத்து *, மாறிலி எழுத்து *, முழு);
+முழு	stravis(எழுத்து **, மாறிலி எழுத்து *, முழு);
+முழு	strnvis(எழுத்து *, மாறிலி எழுத்து *, size_t, முழு)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+முழு	strvisx(எழுத்து *, மாறிலி எழுத்து *, size_t, முழு)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+முழு	strunvis(எழுத்து *, மாறிலி எழுத்து *);
+முழு	unvis(எழுத்து *, எழுத்து, முழு *, முழு);
+ssize_t strnunvis(எழுத்து *, மாறிலி எழுத்து *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
 #endif /* !_VIS_H_ */

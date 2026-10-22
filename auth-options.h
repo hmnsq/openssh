@@ -19,8 +19,8 @@
 #ifndef AUTH_OPTIONS_H
 #define AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+கட்டமைப்பு passwd;
+கட்டமைப்பு sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
 #define SSH_AUTHOPT_PERMIT_MAX	4096
@@ -32,75 +32,75 @@ struct sshkey;
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+கட்டமைப்பு sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	முழு permit_port_forwarding_flag;
+	முழு permit_agent_forwarding_flag;
+	முழு permit_x11_forwarding_flag;
+	முழு permit_pty_flag;
+	முழு permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	முழு restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	முழு cert_authority;
+	எழுத்து *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	முழு force_tun_device;
+	எழுத்து *force_command;
 
 	/* Custom environment */
 	size_t nenv;
-	char **env;
+	எழுத்து **env;
 
 	/* Permitted port forwardings */
 	size_t npermitopen;
-	char **permitopen;
+	எழுத்து **permitopen;
 
 	/* Permitted listens (remote forwarding) */
 	size_t npermitlisten;
-	char **permitlisten;
+	எழுத்து **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	எழுத்து *required_from_host_cert;
+	எழுத்து *required_from_host_சாவிகள்;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	முழு no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	முழு require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+கட்டமைப்பு sshauthopt *sshauthopt_new(வெறுமை);
+கட்டமைப்பு sshauthopt *sshauthopt_new_with_சாவிகள்_defaults(வெறுமை);
+வெறுமை sshauthopt_free(கட்டமைப்பு sshauthopt *opts);
+கட்டமைப்பு sshauthopt *sshauthopt_copy(மாறிலி கட்டமைப்பு sshauthopt *orig);
+முழு sshauthopt_serialise(மாறிலி கட்டமைப்பு sshauthopt *opts, கட்டமைப்பு sshbuf *m, முழு);
+முழு sshauthopt_deserialise(கட்டமைப்பு sshbuf *m, கட்டமைப்பு sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+கட்டமைப்பு sshauthopt *sshauthopt_parse(மாறிலி எழுத்து *s, மாறிலி எழுத்து **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+கட்டமைப்பு sshauthopt *sshauthopt_from_cert(கட்டமைப்பு sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+கட்டமைப்பு sshauthopt *sshauthopt_merge(மாறிலி கட்டமைப்பு sshauthopt *primary,
+    மாறிலி கட்டமைப்பு sshauthopt *additional, மாறிலி எழுத்து **errstrp);
 
 #endif

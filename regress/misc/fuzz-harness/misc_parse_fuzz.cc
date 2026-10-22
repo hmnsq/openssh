@@ -36,132 +36,132 @@ limitations under the License.
  *   match_host_and_ip, match_user (match.c)
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <sys/types.h>
 
-extern "C" {
-#include "addr.h"
-#include "match.h"
-#include "misc.h"
-#include "log.h"
+வெளி "C" {
+#அந்தர்பாவ "addr.h"
+#அந்தர்பாவ "match.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "log.h"
 }
 
-static int log_initialized = 0;
+நிலையான முழு log_initialized = 0;
 
-static char *
-dup_n(const uint8_t *body, size_t blen)
+நிலையான எழுத்து *
+dup_n(மாறிலி uint8_t *body, size_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
+	எழுத்து *s = (எழுத்து *)malloc(blen + 1);
+	எனில் (s == வெற்று)
+		திரும்பு வெற்று;
 	memcpy(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	திரும்பு s;
 }
 
-static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+நிலையான வெறுமை
+split_two(மாறிலி uint8_t *body, size_t blen, எழுத்து **a, எழுத்து **b)
 {
-	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
-	*a = NULL;
-	*b = NULL;
-	if (nul == NULL) {
+	மாறிலி uint8_t *nul = (மாறிலி uint8_t *)memchr(body, 0, blen);
+	*a = வெற்று;
+	*b = வெற்று;
+	எனில் (nul == வெற்று) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		திரும்பு;
 	}
 	size_t alen = (size_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+வெளி "C" முழு
+LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	எனில் (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	எனில் (size == 0)
+		திரும்பு 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
+	எழுத்து *s = dup_n(data, size);
+	எழுத்து *a = வெற்று, *b = வெற்று;
 	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
-		free(s);
-		free(a);
-		free(b);
-		return 0;
+	எனில் (s == வெற்று || a == வெற்று || b == வெற்று) {
+		விடுவி(s);
+		விடுவி(a);
+		விடுவி(b);
+		திரும்பு 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
-			free(u);
-			free(h);
+		எழுத்து *u = வெற்று, *h = வெற்று;
+		முழு port = 0;
+		எனில் (parse_user_host_port(s, &u, &h, &port) == 0) {
+			விடுவி(u);
+			விடுவி(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
-			free(u);
-			free(h);
-			free(p);
+		எழுத்து *u = வெற்று, *h = வெற்று, *p = வெற்று;
+		முழு port = 0;
+		எனில் (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
+			விடுவி(u);
+			விடுவி(h);
+			விடுவி(p);
 		}
 	}
-	(void)convtime(s);
-	(void)a2port(s);
+	(வெறுமை)convtime(s);
+	(வெறுமை)a2port(s);
 	{
-		int tun = 0;
-		(void)a2tun(s, &tun);
+		முழு tun = 0;
+		(வெறுமை)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
-			free(back);
+		முழு ac = 0;
+		எழுத்து **av = வெற்று;
+		எனில் (argv_split(s, &ac, &av, 1) == 0) {
+			எழுத்து *back = argv_assemble(ac, av);
+			விடுவி(back);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
-		(void)valid_domain(s, 0, &err);
+		மாறிலி எழுத்து *err = வெற்று;
+		(வெறுமை)valid_domain(s, 0, &err);
 	}
-	(void)valid_env_name(s);
+	(வெறுமை)valid_env_name(s);
 	{
 		uint64_t t = 0;
-		(void)parse_absolute_time(s, &t);
+		(வெறுமை)parse_absolute_time(s, &t);
 	}
 
 	{
-		struct xaddr n;
-		(void)addr_pton(s, &n);
+		கட்டமைப்பு xaddr n;
+		(வெறுமை)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
+		கட்டமைப்பு xaddr n;
 		u_int prefix = 0;
-		(void)addr_pton_cidr(s, &n, &prefix);
+		(வெறுமை)addr_pton_cidr(s, &n, &prefix);
 	}
 
-	(void)addr_match_list(a, b);
-	(void)addr_match_cidr_list(a, b);
-	(void)match_pattern(a, b);
-	(void)match_pattern_list(a, b, 0);
-	(void)match_hostname(a, b);
-	(void)match_host_and_ip(a, "127.0.0.1", b);
-	(void)match_user("fuzz", a, "127.0.0.1", b);
+	(வெறுமை)addr_match_list(a, b);
+	(வெறுமை)addr_match_cidr_list(a, b);
+	(வெறுமை)match_pattern(a, b);
+	(வெறுமை)match_pattern_list(a, b, 0);
+	(வெறுமை)match_hostname(a, b);
+	(வெறுமை)match_host_and_ip(a, "127.0.0.1", b);
+	(வெறுமை)match_user("fuzz", a, "127.0.0.1", b);
 
-	free(s);
-	free(a);
-	free(b);
-	return 0;
+	விடுவி(s);
+	விடுவி(a);
+	விடுவி(b);
+	திரும்பு 0;
 }

@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "log.h"
+#அந்தர்பாவ "log.h"
 
-static void
-usage(void)
+நிலையான வெறுமை
+usage(வெறுமை)
 {
 	fprintf(stderr, "mkdtemp template\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+முழு
+முதன்மை(முழு argc, எழுத்து **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	மாறிலி எழுத்து *base;
+	மாறிலி எழுத்து *tmpdir;
+	எழுத்து template[PATH_MAX];
+	முழு r;
+	எழுத்து *dir;
 
-	if (argc != 2)
+	எனில் (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	எனில் ((tmpdir = getenv("TMPDIR")) == வெற்று)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(template, அளவு(template), "%s/%s", tmpdir, base);
+	எனில் (r < 0 || (size_t)r >= அளவு(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	எனில் (dir == வெற்று) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	திரும்பு 0;
 }

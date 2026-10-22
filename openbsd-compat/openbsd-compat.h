@@ -27,67 +27,67 @@
 #ifndef _OPENBSD_COMPAT_H
 #define _OPENBSD_COMPAT_H
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <pwd.h>
 
-#include <sys/socket.h>
+#அந்தர்பாவ <sys/socket.h>
 
-#include <stddef.h>  /* for wchar_t */
+#அந்தர்பாவ <stddef.h>  /* for wchar_t */
 
 /* OpenBSD function replacements */
-#include "base64.h"
-#include "sigact.h"
-#include "readpassphrase.h"
-#include "vis.h"
-#include "getrrsetbyname.h"
-#include "sha1.h"
-#include "bsd-sha2.h"
-#include "md5.h"
-#include "blf.h"
-#include "fnmatch.h"
+#அந்தர்பாவ "base64.h"
+#அந்தர்பாவ "sigact.h"
+#அந்தர்பாவ "readpassphrase.h"
+#அந்தர்பாவ "vis.h"
+#அந்தர்பாவ "getrrsetbyname.h"
+#அந்தர்பாவ "sha1.h"
+#அந்தர்பாவ "bsd-sha2.h"
+#அந்தர்பாவ "md5.h"
+#அந்தர்பாவ "blf.h"
+#அந்தர்பாவ "fnmatch.h"
 
 #ifndef __THROW
-# if defined __cplusplus
+# எனில் defined __cplusplus
 #  define __THROW throw()
-# else
+# இல்லையெனில்
 #  define __THROW
 # endif
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
+#எனில் defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
 # include <login_cap.h>
 # define login_getpwclass(pw) login_getclass(pw->pw_class)
 #endif
 
 #ifndef HAVE_BASENAME
-char *basename(const char *path);
+எழுத்து *basename(மாறிலி எழுத்து *path);
 #endif
 
 #ifndef HAVE_BINDRESVPORT_SA
-int bindresvport_sa(int sd, struct sockaddr *sa);
+முழு bindresvport_sa(முழு sd, கட்டமைப்பு sockaddr *sa);
 #endif
 
 #ifndef HAVE_CLOSEFROM
-void closefrom(int);
+வெறுமை closefrom(முழு);
 #endif
 
-#if defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
-int ftruncate(int filedes, off_t length);
+#எனில் defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
+முழு ftruncate(முழு filedes, off_t length);
 #endif
 
 #ifndef HAVE_GETLINE
-#include <stdio.h>
-ssize_t getline(char **, size_t *, FILE *);
+#அந்தர்பாவ <stdio.h>
+ssize_t getline(எழுத்து **, size_t *, FILE *);
 #endif
 
 #ifndef HAVE_GETPAGESIZE
-int getpagesize(void);
+முழு getpagesize(வெறுமை);
 #endif
 
 #ifndef HAVE_GETCWD
-char *getcwd(char *pt, size_t size);
+எழுத்து *getcwd(எழுத்து *pt, size_t size);
 #endif
 
 #ifndef HAVE_GETEXECPATH
@@ -96,146 +96,146 @@ char *getcwd(char *pt, size_t size);
 #endif
 
 #ifndef HAVE_KILLPG
-int killpg(pid_t, int);
+முழு killpg(pid_t, முழு);
 #endif
 
-#if defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
-void *memmem(const void *, size_t, const void *, size_t);
+#எனில் defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
+வெறுமை *memmem(மாறிலி வெறுமை *, size_t, மாறிலி வெறுமை *, size_t);
 #endif
 
 #ifndef HAVE_REALLOCARRAY
-void *reallocarray(void *, size_t, size_t);
+வெறுமை *reallocarray(வெறுமை *, size_t, size_t);
 #endif
 
 #ifndef HAVE_RECALLOCARRAY
-void *recallocarray(void *, size_t, size_t, size_t);
+வெறுமை *recallocarray(வெறுமை *, size_t, size_t, size_t);
 #endif
 
 #ifndef HAVE_RRESVPORT_AF
-int rresvport_af(int *alport, sa_family_t af);
+முழு rresvport_af(முழு *alport, sa_family_t af);
 #endif
 
 #ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);
+size_t strlcpy(எழுத்து *dst, மாறிலி எழுத்து *src, size_t siz);
 #endif
 
 #ifndef HAVE_STRLCAT
-size_t strlcat(char *dst, const char *src, size_t siz);
+size_t strlcat(எழுத்து *dst, மாறிலி எழுத்து *src, size_t siz);
 #endif
 
 #ifndef HAVE_STRCASESTR
-char *strcasestr(const char *, const char *);
+எழுத்து *strcasestr(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
 #endif
 
 #ifndef HAVE_STRNLEN
-size_t strnlen(const char *, size_t);
+size_t strnlen(மாறிலி எழுத்து *, size_t);
 #endif
 
 #ifndef HAVE_STRNDUP
-char *strndup(const char *s, size_t n);
+எழுத்து *strndup(மாறிலி எழுத்து *s, size_t n);
 #endif
 
 #ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
+முழு setenv(பதிவு மாறிலி எழுத்து *name, பதிவு மாறிலி எழுத்து *மதிப்பு, முழு rewrite);
 #endif
 
 #ifndef HAVE_STRMODE
-void strmode(int mode, char *p);
+வெறுமை strmode(முழு mode, எழுத்து *p);
 #endif
 
 #ifndef HAVE_STRPTIME
-#include  <time.h>
-char *strptime(const char *buf, const char *fmt, struct tm *tm);
+#அந்தர்பாவ  <time.h>
+எழுத்து *strptime(மாறிலி எழுத்து *buf, மாறிலி எழுத்து *fmt, கட்டமைப்பு tm *tm);
 #endif
 
-#if !defined(HAVE_MKDTEMP)
-int mkstemps(char *path, int slen);
-int mkstemp(char *path);
-char *mkdtemp(char *path);
+#எனில் !defined(HAVE_MKDTEMP)
+முழு mkstemps(எழுத்து *path, முழு slen);
+முழு mkstemp(எழுத்து *path);
+எழுத்து *mkdtemp(எழுத்து *path);
 #endif
 
 #define mkstemp(x) _ssh_mkstemp(x)
-int _ssh_mkstemp(char *);
+முழு _ssh_mkstemp(எழுத்து *);
 
 #ifndef HAVE_DAEMON
-int daemon(int nochdir, int noclose);
+முழு daemon(முழு nochdir, முழு noclose);
 #endif
 
 #ifndef HAVE_DIRNAME
-char *dirname(const char *path);
+எழுத்து *dirname(மாறிலி எழுத்து *path);
 #endif
 
 #ifndef HAVE_FMT_SCALED
 #define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
+முழு	fmt_scaled(long long எண், எழுத்து *result);
 #endif
 
 #ifndef HAVE_SCAN_SCALED
-int	scan_scaled(char *, long long *);
+முழு	scan_scaled(எழுத்து *, long long *);
 #endif
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
-char *inet_ntoa(struct in_addr in);
+#எனில் defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+எழுத்து *inet_ntoa(கட்டமைப்பு in_addr in);
 #endif
 
 #ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+மாறிலி எழுத்து *inet_ntop(முழு af, மாறிலி வெறுமை *src, எழுத்து *dst, socklen_t size);
 #endif
 
 #ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
+முழு inet_aton(மாறிலி எழுத்து *cp, கட்டமைப்பு in_addr *addr);
 #endif
 
 #ifndef HAVE_STRSEP
-char *strsep(char **stringp, const char *delim);
+எழுத்து *strsep(எழுத்து **stringp, மாறிலி எழுத்து *delim);
 #endif
 
 #ifndef HAVE_SETPROCTITLE
-void setproctitle(const char *fmt, ...);
-void compat_init_setproctitle(int argc, char *argv[]);
+வெறுமை setproctitle(மாறிலி எழுத்து *fmt, ...);
+வெறுமை compat_init_setproctitle(முழு argc, எழுத்து *argv[]);
 #endif
 
 #ifndef HAVE_GETGROUPLIST
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+முழு getgrouplist(மாறிலி எழுத்து *, gid_t, gid_t *, முழு *);
 #endif
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
-int BSDgetopt(int argc, char * const *argv, const char *opts) __THROW;
-#include "openbsd-compat/getopt.h"
+#எனில் !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+முழு BSDgetopt(முழு argc, எழுத்து * மாறிலி *argv, மாறிலி எழுத்து *opts) __THROW;
+#அந்தர்பாவ "openbsd-compat/getopt.h"
 #endif
 
-#if ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
+#எனில் ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
     (defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0))
 # include <sys/types.h>
 # include <sys/uio.h>
 
-# if defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
-int readv(int, struct iovec *, int);
+# எனில் defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
+முழு readv(முழு, கட்டமைப்பு iovec *, முழு);
 # endif
 
-# if defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
-int writev(int, struct iovec *, int);
+# எனில் defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
+முழு writev(முழு, கட்டமைப்பு iovec *, முழு);
 # endif
 #endif
 
 /* Home grown routines */
-#include "bsd-signal.h"
-#include "bsd-misc.h"
-#include "bsd-setres_id.h"
-#include "bsd-statvfs.h"
-#include "bsd-waitpid.h"
-#include "bsd-poll.h"
+#அந்தர்பாவ "bsd-signal.h"
+#அந்தர்பாவ "bsd-misc.h"
+#அந்தர்பாவ "bsd-setres_id.h"
+#அந்தர்பாவ "bsd-statvfs.h"
+#அந்தர்பாவ "bsd-waitpid.h"
+#அந்தர்பாவ "bsd-poll.h"
 
-#if defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
-int getpeereid(int , uid_t *, gid_t *);
+#எனில் defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
+முழு getpeereid(முழு , uid_t *, gid_t *);
 #endif
 
 #ifndef HAVE_ARC4RANDOM
-uint32_t arc4random(void);
+uint32_t arc4random(வெறுமை);
 #endif /* !HAVE_ARC4RANDOM */
 
 #ifndef HAVE_ARC4RANDOM_BUF
-void arc4random_buf(void *, size_t);
+வெறுமை arc4random_buf(வெறுமை *, size_t);
 #endif
 
 #ifndef HAVE_ARC4RANDOM_STIR
@@ -247,33 +247,33 @@ uint32_t arc4random_uniform(uint32_t);
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **, const char *, ...);
+முழு asprintf(எழுத்து **, மாறிலி எழுத்து *, ...);
 #endif
 
 #ifndef HAVE_OPENPTY
 # include <sys/ioctl.h>	/* for struct winsize */
-int openpty(int *, int *, char *, const struct termios *,
-    const struct winsize *);
+முழு openpty(முழு *, முழு *, எழுத்து *, மாறிலி கட்டமைப்பு termios *,
+    மாறிலி கட்டமைப்பு winsize *);
 #endif /* HAVE_OPENPTY */
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
+முழு snprintf(எழுத்து *, size_t, SNPRINTF_CONST எழுத்து *, ...);
 #endif
 
 #ifndef HAVE_STRTOLL
-long long strtoll(const char *, char **, int);
+long long strtoll(மாறிலி எழுத்து *, எழுத்து **, முழு);
 #endif
 
 #ifndef HAVE_STRTOUL
-unsigned long strtoul(const char *, char **, int);
+unsigned long strtoul(மாறிலி எழுத்து *, எழுத்து **, முழு);
 #endif
 
 #ifndef HAVE_STRTOULL
-unsigned long long strtoull(const char *, char **, int);
+unsigned long long strtoull(மாறிலி எழுத்து *, எழுத்து **, முழு);
 #endif
 
 #ifndef HAVE_STRTONUM
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(மாறிலி எழுத்து *, long long, long long, மாறிலி எழுத்து **);
 #endif
 
 /* multibyte character support */
@@ -294,10 +294,10 @@ long long strtonum(const char *, long long, long long, const char **);
 #endif
 
 #ifndef HAVE_MBTOWC
-int mbtowc(wchar_t *, const char*, size_t);
+முழு mbtowc(wchar_t *, மாறிலி எழுத்து*, size_t);
 #endif
 
-#if !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
+#எனில் !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
 # include <stdarg.h>
 #endif
 
@@ -309,85 +309,85 @@ int mbtowc(wchar_t *, const char*, size_t);
 #ifndef VA_COPY
 # ifdef HAVE_VA_COPY
 #  define VA_COPY(dest, src) va_copy(dest, src)
-# else
+# இல்லையெனில்
 #  ifdef HAVE___VA_COPY
 #   define VA_COPY(dest, src) __va_copy(dest, src)
-#  else
+#  இல்லையெனில்
 #   define VA_COPY(dest, src) (dest) = (src)
 #  endif
 # endif
 #endif
 
 #ifndef HAVE_VASPRINTF
-int vasprintf(char **, const char *, va_list);
+முழு vasprintf(எழுத்து **, மாறிலி எழுத்து *, va_list);
 #endif
 
 #ifndef HAVE_VSNPRINTF
-int vsnprintf(char *, size_t, const char *, va_list);
+முழு vsnprintf(எழுத்து *, size_t, மாறிலி எழுத்து *, va_list);
 #endif
 
 #ifndef HAVE_USER_FROM_UID
-char *user_from_uid(uid_t, int);
+எழுத்து *user_from_uid(uid_t, முழு);
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *group_from_gid(gid_t, int);
+எழுத்து *group_from_gid(gid_t, முழு);
 #endif
 
 #ifndef HAVE_TIMINGSAFE_BCMP
-int timingsafe_bcmp(const void *, const void *, size_t);
+முழு timingsafe_bcmp(மாறிலி வெறுமை *, மாறிலி வெறுமை *, size_t);
 #endif
 
 #ifndef HAVE_BCRYPT_PBKDF
-int	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
-    uint8_t *, size_t, unsigned int);
+முழு	bcrypt_pbkdf(மாறிலி எழுத்து *, size_t, மாறிலி uint8_t *, size_t,
+    uint8_t *, size_t, unsigned முழு);
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
-void explicit_bzero(void *p, size_t n);
+வெறுமை explicit_bzero(வெறுமை *p, size_t n);
 #endif
 
 #ifndef HAVE_FREEZERO
-void freezero(void *, size_t);
+வெறுமை freezero(வெறுமை *, size_t);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+கட்டமைப்பு tm *localtime_r(மாறிலி time_t *, கட்டமைப்பு tm *);
 #endif
 
 #ifndef HAVE_TIMEGM
-#include <time.h>
-time_t timegm(struct tm *);
+#அந்தர்பாவ <time.h>
+time_t timegm(கட்டமைப்பு tm *);
 #endif
 
-char *xcrypt(const char *password, const char *salt);
-char *shadow_pw(struct passwd *pw);
+எழுத்து *xcrypt(மாறிலி எழுத்து *password, மாறிலி எழுத்து *salt);
+எழுத்து *shadow_pw(கட்டமைப்பு passwd *pw);
 
 /* rfc2553 socket API replacements */
-#include "fake-rfc2553.h"
+#அந்தர்பாவ "fake-rfc2553.h"
 
 /* Routines for a single OS platform */
-#include "bsd-cygwin_util.h"
+#அந்தர்பாவ "bsd-cygwin_util.h"
 
-#include "port-aix.h"
-#include "port-irix.h"
-#include "port-linux.h"
-#include "port-solaris.h"
-#include "port-net.h"
-#include "port-uw.h"
+#அந்தர்பாவ "port-aix.h"
+#அந்தர்பாவ "port-irix.h"
+#அந்தர்பாவ "port-linux.h"
+#அந்தர்பாவ "port-solaris.h"
+#அந்தர்பாவ "port-net.h"
+#அந்தர்பாவ "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#எனில் defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# எனில் defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  எனில் __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
 #   include <sys/socket.h>  /* Ensure include guard is defined */
 #   undef FD_SET
 #   undef FD_ISSET
 #   define FD_SET(n, set)	kludge_FD_SET(n, set)
 #   define FD_ISSET(n, set)	kludge_FD_ISSET(n, set)
-void kludge_FD_SET(int, fd_set *);
-int kludge_FD_ISSET(int, fd_set *);
+வெறுமை kludge_FD_SET(முழு, fd_set *);
+முழு kludge_FD_ISSET(முழு, fd_set *);
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
 #endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */

@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <poll.h>
-#include <time.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <poll.h>
+#அந்தர்பாவ <time.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
 
-void test_ptimeout(void);
+வெறுமை test_ptimeout(வெறுமை);
 
-void
-test_ptimeout(void)
+வெறுமை
+test_ptimeout(வெறுமை)
 {
-	struct timespec pt, *ts;
+	கட்டமைப்பு timespec pt, *ts;
 
 	TEST_START("ptimeout_init");
 	ptimeout_init(&pt);
-	ASSERT_PTR_EQ(ptimeout_get_tsp(&pt), NULL);
+	ASSERT_PTR_EQ(ptimeout_get_tsp(&pt), வெற்று);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), -1);
 	TEST_DONE();
 
@@ -38,7 +38,7 @@ test_ptimeout(void)
 	ptimeout_deadline_sec(&pt, 200);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 100 * 1000);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, வெற்று);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 100);
 	TEST_DONE();
@@ -48,7 +48,7 @@ test_ptimeout(void)
 	ptimeout_deadline_ms(&pt, 50500);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 50123);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, வெற்று);
 	ASSERT_LONG_EQ(ts->tv_nsec, 123 * 1000000);
 	ASSERT_LONG_EQ(ts->tv_sec, 50);
 	TEST_DONE();
@@ -58,7 +58,7 @@ test_ptimeout(void)
 	ptimeout_deadline_ms(&pt, 0);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 0);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, வெற்று);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 0);
 	TEST_DONE();
@@ -69,7 +69,7 @@ test_ptimeout(void)
 	ASSERT_INT_GT(ptimeout_get_ms(&pt), 50000);
 	ASSERT_INT_LT(ptimeout_get_ms(&pt), 200000);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, வெற்று);
 	ASSERT_LONG_GT(ts->tv_sec, 50);
 	ASSERT_LONG_LT(ts->tv_sec, 200);
 	TEST_DONE();
@@ -80,7 +80,7 @@ test_ptimeout(void)
 	ptimeout_deadline_monotime(&pt, monotime() - 100);
 	ASSERT_INT_EQ(ptimeout_get_ms(&pt), 0);
 	ts = ptimeout_get_tsp(&pt);
-	ASSERT_PTR_NE(ts, NULL);
+	ASSERT_PTR_NE(ts, வெற்று);
 	ASSERT_LONG_EQ(ts->tv_nsec, 0);
 	ASSERT_LONG_EQ(ts->tv_sec, 0);
 	TEST_DONE();

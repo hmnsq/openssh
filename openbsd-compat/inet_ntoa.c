@@ -30,30 +30,30 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntoa.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#எனில் defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 
 /*
  * Convert network-format internet address
  * to base 256 d.d.d.d representation.
  */
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdio.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
+#அந்தர்பாவ <stdio.h>
 
-char *
-inet_ntoa(struct in_addr in)
+எழுத்து *
+inet_ntoa(கட்டமைப்பு in_addr in)
 {
-	static char b[18];
-	char *p;
+	நிலையான எழுத்து b[18];
+	எழுத்து *p;
 
-	p = (char *)&in;
-#define	UC(b)	(((int)b)&0xff)
-	(void)snprintf(b, sizeof(b),
+	p = (எழுத்து *)&in;
+#define	UC(b)	(((முழு)b)&0xff)
+	(வெறுமை)snprintf(b, அளவு(b),
 	    "%u.%u.%u.%u", UC(p[0]), UC(p[1]), UC(p[2]), UC(p[3]));
-	return (b);
+	திரும்பு (b);
 }
 
 #endif /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */

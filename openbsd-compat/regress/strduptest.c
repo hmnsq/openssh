@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-static int fail = 0;
+நிலையான முழு fail = 0;
 
-void
-test(const char *a)
+வெறுமை
+test(மாறிலி எழுத்து *a)
 {
-	char *b;
+	எழுத்து *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	எனில் (b == 0) {
 		fail = 1;
-		return;
+		திரும்பு;
 	}
-	if (strcmp(a, b) != 0)
+	எனில் (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	விடுவி(b);
 }
 
-int
-main(void)
+முழு
+முதன்மை(வெறுமை)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	திரும்பு fail;
 }

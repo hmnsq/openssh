@@ -14,35 +14,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-pam.h"
-#include "platform.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "auth-pam.h"
+#அந்தர்பாவ "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#அந்தர்பாவ "openbsd-compat/openbsd-compat.h"
 
-extern ServerOptions options;
+வெளி ServerOptions options;
 
 /* return 1 if we are running with privilege to swap UIDs, 0 otherwise */
-int
-platform_privileged_uidswap(void)
+முழு
+platform_privileged_uidswap(வெறுமை)
 {
 #ifdef HAVE_CYGWIN
 	/* uid 0 is not special on Cygwin so always try */
-	return 1;
-#else
-	return (getuid() == 0 || geteuid() == 0);
+	திரும்பு 1;
+#இல்லையெனில்
+	திரும்பு (getuid() == 0 || geteuid() == 0);
 #endif
 }
 
@@ -50,12 +50,12 @@ platform_privileged_uidswap(void)
  * This gets called before switching UIDs, and is called even when sshd is
  * not running as root.
  */
-void
-platform_setusercontext(struct passwd *pw)
+வெறுமை
+platform_setusercontext(கட்டமைப்பு passwd *pw)
 {
 #ifdef WITH_SELINUX
 	/* Cache selinux status for later use */
-	(void)ssh_selinux_enabled();
+	(வெறுமை)ssh_selinux_enabled();
 #endif
 
 #ifdef USE_SOLARIS_PROJECTS
@@ -64,31 +64,31 @@ platform_setusercontext(struct passwd *pw)
 	 * we are using PAM in which case it is the responsibility of the
 	 * PAM stack.
 	 */
-	if (!options.use_pam && (getuid() == 0 || geteuid() == 0))
+	எனில் (!options.use_pam && (getuid() == 0 || geteuid() == 0))
 		solaris_set_default_project(pw);
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
-	if (getuid() == 0 || geteuid() == 0)
+#எனில் defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
+	எனில் (getuid() == 0 || geteuid() == 0)
 		setpgid(0, 0);
 # endif
 
-#if defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#எனில் defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * If we have both LOGIN_CAP and PAM, we want to establish creds
 	 * before calling setusercontext (in session.c:do_setusercontext).
 	 */
-	if (getuid() == 0 || geteuid() == 0) {
-		if (options.use_pam) {
+	எனில் (getuid() == 0 || geteuid() == 0) {
+		எனில் (options.use_pam) {
 			do_pam_setcred();
 		}
 	}
 # endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
-	if (getuid() == 0 || geteuid() == 0) {
+#எனில் !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
+	எனில் (getuid() == 0 || geteuid() == 0) {
 		/* Sets login uid for accounting */
-		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
+		எனில் (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));
 	}
 #endif
@@ -98,21 +98,21 @@ platform_setusercontext(struct passwd *pw)
  * This gets called after we've established the user's groups, and is only
  * called if sshd is running as root.
  */
-void
-platform_setusercontext_post_groups(struct passwd *pw)
+வெறுமை
+platform_setusercontext_post_groups(கட்டமைப்பு passwd *pw)
 {
-#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#எனில் !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * PAM credentials may take the form of supplementary groups.
 	 * These will have been wiped by the above initgroups() call.
 	 * Reestablish them here.
 	 */
-	if (options.use_pam) {
+	எனில் (options.use_pam) {
 		do_pam_setcred();
 	}
 #endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
+#எனில் !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY))
 	irix_setusercontext(pw);
 #endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
@@ -128,14 +128,14 @@ platform_setusercontext_post_groups(struct passwd *pw)
 	 * chroot directory, we don't override anything.
 	 */
 	{
-		char **creds = NULL, *chroot_creds[] =
-		    { "REAL_USER=root", NULL };
+		எழுத்து **creds = வெற்று, *chroot_creds[] =
+		    { "REAL_USER=root", வெற்று };
 
-		if (options.chroot_directory != NULL &&
+		எனில் (options.chroot_directory != வெற்று &&
 		    strcasecmp(options.chroot_directory, "none") != 0)
 			creds = chroot_creds;
 
-		if (setpcred(pw->pw_name, creds) == -1)
+		எனில் (setpcred(pw->pw_name, creds) == -1)
 			fatal("Failed to set process credentials");
 	}
 #endif /* HAVE_SETPCRED */
@@ -144,53 +144,53 @@ platform_setusercontext_post_groups(struct passwd *pw)
 #endif
 }
 
-char *
-platform_krb5_get_principal_name(const char *pw_name)
+எழுத்து *
+platform_krb5_get_principal_name(மாறிலி எழுத்து *pw_name)
 {
 #ifdef USE_AIX_KRB_NAME
-	return aix_krb5_get_principal_name(pw_name);
-#else
-	return NULL;
+	திரும்பு aix_krb5_get_principal_name(pw_name);
+#இல்லையெனில்
+	திரும்பு வெற்று;
 #endif
 }
 
 /* returns 1 if account is locked */
-int
-platform_locked_account(struct passwd *pw)
+முழு
+platform_locked_account(கட்டமைப்பு passwd *pw)
 {
-	int locked = 0;
-	char *passwd = pw->pw_passwd;
+	முழு locked = 0;
+	எழுத்து *passwd = pw->pw_passwd;
 #ifdef USE_SHADOW
-	struct spwd *spw = NULL;
+	கட்டமைப்பு spwd *spw = வெற்று;
 #ifdef USE_LIBIAF
-	char *iaf_passwd = NULL;
+	எழுத்து *iaf_passwd = வெற்று;
 #endif
 
 	spw = getspnam(pw->pw_name);
 #ifdef HAS_SHADOW_EXPIRE
-	if (spw != NULL && auth_shadow_acctexpired(spw))
-		return 1;
+	எனில் (spw != வெற்று && auth_shadow_acctexpired(spw))
+		திரும்பு 1;
 #endif /* HAS_SHADOW_EXPIRE */
 
-	if (spw != NULL)
+	எனில் (spw != வெற்று)
 #ifdef USE_LIBIAF
 		iaf_passwd = passwd = get_iaf_password(pw);
-#else
+#இல்லையெனில்
 		passwd = spw->sp_pwdp;
 #endif /* USE_LIBIAF */
 #endif
 
 	/* check for locked account */
-	if (passwd && *passwd) {
+	எனில் (passwd && *passwd) {
 #ifdef LOCKED_PASSWD_STRING
-		if (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
+		எனில் (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
 			debug3_f("password matches locked string '%s'",
 			    LOCKED_PASSWD_STRING);
 			locked = 1;
 		}
 #endif
 #ifdef LOCKED_PASSWD_PREFIX
-		if (strncmp(passwd, LOCKED_PASSWD_PREFIX,
+		எனில் (strncmp(passwd, LOCKED_PASSWD_PREFIX,
 		    strlen(LOCKED_PASSWD_PREFIX)) == 0) {
 			debug3_f("password matches locked prefix '%s'",
 			    LOCKED_PASSWD_PREFIX);
@@ -198,7 +198,7 @@ platform_locked_account(struct passwd *pw)
 		}
 #endif
 #ifdef LOCKED_PASSWD_SUBSTR
-		if (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
+		எனில் (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
 			debug3_f("password matches locked substring '%s'",
 			   LOCKED_PASSWD_SUBSTR);
 			locked = 1;
@@ -206,9 +206,9 @@ platform_locked_account(struct passwd *pw)
 #endif
 	}
 #ifdef USE_LIBIAF
-	if (iaf_passwd != NULL)
+	எனில் (iaf_passwd != வெற்று)
 		freezero(iaf_passwd, strlen(iaf_passwd));
 #endif /* USE_LIBIAF */
 
-	return locked;
+	திரும்பு locked;
 }

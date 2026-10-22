@@ -35,202 +35,202 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+முழு getnameinfo(மாறிலி கட்டமைப்பு sockaddr *sa, size_t salen, எழுத்து *host,
+		size_t hostlen, எழுத்து *serv, size_t servlen, முழு flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	கட்டமைப்பு sockaddr_in *sin = (கட்டமைப்பு sockaddr_in *)sa;
+	கட்டமைப்பு hostent *hp;
+	எழுத்து tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	எனில் ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < அளவு(கட்டமைப்பு sockaddr_in))
+		திரும்பு (EAI_FAMILY);
+	எனில் (serv != வெற்று) {
+		snprintf(tmpserv, அளவு(tmpserv), "%d", ntohs(sin->sin_port));
+		எனில் (strlcpy(serv, tmpserv, servlen) >= servlen)
+			திரும்பு (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	எனில் (host != வெற்று) {
+		எனில் (flags & NI_NUMERICHOST) {
+			எனில் (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				திரும்பு (EAI_MEMORY);
+			இல்லையெனில்
+				திரும்பு (0);
+		} இல்லையெனில் {
+			hp = gethostbyaddr((எழுத்து *)&sin->sin_addr,
+			    அளவு(கட்டமைப்பு in_addr), AF_INET);
+			எனில் (hp == வெற்று)
+				திரும்பு (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			எனில் (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				திரும்பு (EAI_MEMORY);
+			இல்லையெனில்
+				திரும்பு (0);
 		}
 	}
-	return (0);
+	திரும்பு (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
+மாறிலி எழுத்து *
+#இல்லையெனில்
+எழுத்து *
 #endif
-gai_strerror(int err)
+gai_strerror(முழு err)
 {
-	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
-	default:
-		return ("unknown/invalid error");
+	தேர்வு (err) {
+	நிலை EAI_NODATA:
+		திரும்பு ("no address associated with name");
+	நிலை EAI_MEMORY:
+		திரும்பு ("memory allocation failure");
+	நிலை EAI_NONAME:
+		திரும்பு ("name or service is not known");
+	நிலை EAI_FAMILY:
+		திரும்பு ("ai_family not supported");
+	இயல்பு:
+		திரும்பு ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
 
 #ifndef HAVE_FREEADDRINFO
-void
-freeaddrinfo(struct addrinfo *ai)
+வெறுமை
+freeaddrinfo(கட்டமைப்பு addrinfo *ai)
 {
-	struct addrinfo *next;
+	கட்டமைப்பு addrinfo *next;
 
-	for(; ai != NULL;) {
+	க்கு(; ai != வெற்று;) {
 		next = ai->ai_next;
-		free(ai);
+		விடுவி(ai);
 		ai = next;
 	}
 }
 #endif /* !HAVE_FREEADDRINFO */
 
 #ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+நிலையான கட்டமைப்பு
+addrinfo *malloc_ai(முழு port, u_long addr, மாறிலி கட்டமைப்பு addrinfo *hints)
 {
-	struct addrinfo *ai;
+	கட்டமைப்பு addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = malloc(அளவு(*ai) + அளவு(கட்டமைப்பு sockaddr_in));
+	எனில் (ai == வெற்று)
+		திரும்பு (வெற்று);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	memset(ai, '\0', அளவு(*ai) + அளவு(கட்டமைப்பு sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (கட்டமைப்பு sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = அளவு(கட்டமைப்பு sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((கட்டமைப்பு sockaddr_in *)(ai)->ai_addr)->sin_port = port;
+	((கட்டமைப்பு sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	எனில் (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	இல்லையெனில்
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	எனில் (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	திரும்பு (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+முழு
+getaddrinfo(மாறிலி எழுத்து *hostname, மாறிலி எழுத்து *servname,
+    மாறிலி கட்டமைப்பு addrinfo *hints, கட்டமைப்பு addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	கட்டமைப்பு hostent *hp;
+	கட்டமைப்பு servent *sp;
+	கட்டமைப்பு in_addr in;
+	முழு i;
+	long முழு port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	எனில் (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		திரும்பு (EAI_FAMILY);
+	எனில் (servname != வெற்று) {
+		எழுத்து *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		எனில் (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		இல்லையெனில் எனில் ((sp = getservbyname(servname, வெற்று)) != வெற்று)
 			port = sp->s_port;
-		else
+		இல்லையெனில்
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	எனில் (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		எனில் (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		எனில் (*res == வெற்று)
+			திரும்பு (EAI_MEMORY);
+		திரும்பு (0);
 	}
 
-	if (!hostname) {
+	எனில் (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		எனில் (*res == வெற்று)
+			திரும்பு (EAI_MEMORY);
+		திரும்பு (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	எனில் (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		எனில் (*res == வெற்று)
+			திரும்பு (EAI_MEMORY);
+		திரும்பு (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	எனில் (hints && hints->ai_flags & AI_NUMERICHOST)
+		திரும்பு (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	எனில் (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		கட்டமைப்பு addrinfo *cur, *prev;
 
-		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		cur = prev = *res = வெற்று;
+		க்கு (i = 0; hp->h_addr_list[i]; i++) {
+			கட்டமைப்பு in_addr *in = (கட்டமைப்பு in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			எனில் (cur == வெற்று) {
+				எனில் (*res != வெற்று)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				திரும்பு (EAI_MEMORY);
 			}
-			if (prev)
+			எனில் (prev)
 				prev->ai_next = cur;
-			else
+			இல்லையெனில்
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		திரும்பு (0);
 	}
 
-	return (EAI_NODATA);
+	திரும்பு (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */

@@ -15,105 +15,105 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/ioctl.h>
 #ifdef HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
-#include <sys/time.h>
+#அந்தர்பாவ <sys/time.h>
 
-#include <fcntl.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifndef HAVE___PROGNAME
-char *__progname;
+எழுத்து *__progname;
 #endif
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+எழுத்து *ssh_get_progname(எழுத்து *argv0)
 {
-	char *p, *q;
+	எழுத்து *p, *q;
 #ifdef HAVE___PROGNAME
-	extern char *__progname;
+	வெளி எழுத்து *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#இல்லையெனில்
+	எனில் (argv0 == வெற்று)
+		திரும்பு ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	எனில் (p == வெற்று)
 		p = argv0;
-	else
+	இல்லையெனில்
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	எனில் ((q = strdup(p)) == வெற்று) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	திரும்பு q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+முழு setlogin(மாறிலி எழுத்து *name)
 {
-	return (0);
+	திரும்பு (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+முழு innetgr(மாறிலி எழுத்து *netgroup, மாறிலி எழுத்து *host,
+	    மாறிலி எழுத்து *user, மாறிலி எழுத்து *domain)
 {
-	return (0);
+	திரும்பு (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#எனில் !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+முழு seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	திரும்பு (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#எனில் !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+முழு setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	திரும்பு(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#எனில் !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+மாறிலி எழுத்து *strerror(முழு e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	வெளி முழு sys_nerr;
+	வெளி எழுத்து *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	எனில் ((e >= 0) && (e < sys_nerr))
+		திரும்பு (sys_errlist[e]);
 
-	return ("unlisted error");
+	திரும்பு ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+முழு utimes(மாறிலி எழுத்து *filename, கட்டமைப்பு timeval *tvp)
 {
-	struct utimbuf ub;
+	கட்டமைப்பு utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	திரும்பு (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+முழு
+utimensat(முழு fd, மாறிலி எழுத்து *path, மாறிலி கட்டமைப்பு timespec times[2],
+    முழு flag)
 {
-	struct timeval tv[2];
+	கட்டமைப்பு timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	முழு ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	எனில் (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	திரும்பு utimes(path, tv);
+# இல்லையெனில்
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	எனில் (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	எனில் ((fd = open(path, oflags)) == -1)
+		திரும்பு -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	திரும்பு ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
-dirfd(void *dir)
+முழு
+dirfd(வெறுமை *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	திரும்பு -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+முழு
+fchownat(முழு fd, மாறிலி எழுத்து *path, uid_t owner, gid_t group, முழு flag)
 {
-	int ret, oflags = O_WRONLY;
+	முழு ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	எனில் (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	திரும்பு chown(path, owner, group);
+# இல்லையெனில்
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	எனில் (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	எனில் ((fd = open(path, oflags)) == -1)
+		திரும்பு -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	திரும்பு ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+முழு
+fchmodat(முழு fd, மாறிலி எழுத்து *path, mode_t mode, முழு flag)
 {
-	int ret, oflags = O_WRONLY;
+	முழு ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	எனில் (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	திரும்பு chmod(path, mode);
+# இல்லையெனில்
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	எனில் (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	எனில் ((fd = open(path, oflags)) == -1)
+		திரும்பு -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	திரும்பு ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+முழு
+fstatat(முழு dirfd, மாறிலி எழுத்து *path, கட்டமைப்பு stat *sb, முழு flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	எனில் (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	எனில் (flag == 0)
+		திரும்பு stat(path, sb);
+	இல்லையெனில் எனில் (flag == AT_SYMLINK_NOFOLLOW)
+		திரும்பு lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	திரும்பு -1;
 }
 #endif
 
@@ -254,52 +254,52 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+முழு
+unlinkat(முழு dirfd, மாறிலி எழுத்து *path, முழு flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	எனில் (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	எனில் (flag == 0)
+		திரும்பு unlink(path);
 	errno = ENOSYS;
-	return -1;
+	திரும்பு -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+முழு truncate(மாறிலி எழுத்து *path, off_t length)
 {
-	int fd, ret, saverrno;
+	முழு fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	எனில் (fd < 0)
+		திரும்பு (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	எனில் (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	திரும்பு(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#எனில் !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+முழு nanosleep(மாறிலி கட்டமைப்பு timespec *req, கட்டமைப்பு timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	முழு rc, saverrno;
+	வெளி முழு errno;
+	கட்டமைப்பு timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
-	(void) gettimeofday(&tstart, NULL);
-	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	(வெறுமை) gettimeofday(&tstart, வெற்று);
+	rc = select(0, வெற்று, வெற்று, வெற்று, &time2wait);
+	எனில் (rc == -1) {
 		saverrno = errno;
-		(void) gettimeofday (&tstop, NULL);
+		(வெறுமை) gettimeofday (&tstop, வெற்று);
 		errno = saverrno;
 		tremain.tv_sec = time2wait.tv_sec -
 			(tstop.tv_sec - tstart.tv_sec);
@@ -307,82 +307,82 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} இல்லையெனில் {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	எனில் (rem != வெற்று)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	திரும்பு(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#எனில் !defined(HAVE_USLEEP)
+முழு usleep(unsigned முழு useconds)
 {
-	struct timespec ts;
+	கட்டமைப்பு timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	திரும்பு nanosleep(&ts, வெற்று);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(முழு fd)
 {
-	int ctty_pgrp;
+	முழு ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	எனில் (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		திரும்பு(-1);
+	இல்லையெனில்
+		திரும்பு(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+முழு
+tcsendbreak(முழு fd, முழு duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# எனில் defined(TIOCSBRK) && defined(TIOCCBRK)
+	கட்டமைப்பு timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
-	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	எனில் (ioctl(fd, TIOCSBRK, 0) == -1)
+		திரும்பு (-1);
+	(வெறுமை)select(0, 0, 0, 0, &sleepytime);
+	எனில் (ioctl(fd, TIOCCBRK, 0) == -1)
+		திரும்பு (-1);
+	திரும்பு (0);
+# இல்லையெனில்
+	திரும்பு -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
 
 #ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+எழுத்து *
+strdup(மாறிலி எழுத்து *str)
 {
 	size_t len;
-	char *cp;
+	எழுத்து *cp;
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	எனில் (cp != வெற்று)
+		திரும்பு(memcpy(cp, str, len));
+	திரும்பு வெற்று;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+முழு
+isblank(முழு c)
 {
-	return (c == ' ' || c == '\t');
+	திரும்பு (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
-#elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+#எனில் defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	திரும்பு getpgrp(pid);
+#அல்லதெனில் defined(HAVE_GETPGRP)
+	எனில் (pid == 0)
+		திரும்பு getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	திரும்பு -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+முழு
+pledge(மாறிலி எழுத்து *promises, மாறிலி எழுத்து *execpromises)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+முழு
+unveil(மாறிலி எழுத்து *path, மாறிலி எழுத்து *permissions)
 {
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+முழு
+mbtowc(wchar_t *pwc, மாறிலி எழுத்து *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	எனில் (s == வெற்று || *s == '\0')
+		திரும்பு 0;	/* ASCII is not state-dependent */
+	எனில் (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		திரும்பு -1;
 	}
-	if (pwc != NULL)
+	எனில் (pwc != வெற்று)
 		*pwc = *s;
-	return 1;
+	திரும்பு 1;
 }
 #endif
 
@@ -439,23 +439,23 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	திரும்பு (j < 0 ? -j : j);
 }
 #endif
 
 #ifndef HAVE_BZERO
-void
-bzero(void *b, size_t n)
+வெறுமை
+bzero(வெறுமை *b, size_t n)
 {
-	(void)memset(b, 0, n);
+	(வெறுமை)memset(b, 0, n);
 }
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+முழு
+எழுப்பு(முழு sig)
 {
-	return kill(getpid(), sig);
+	திரும்பு kill(getpid(), sig);
 }
 #endif
 
@@ -464,77 +464,77 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	திரும்பு -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+முழு
+killpg(pid_t pgrp, முழு sig)
 {
-	return kill(pgrp, sig);
+	திரும்பு kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+முழு _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	முழு r1, r2;
 
-	if (f == NULL) {
+	எனில் (f == வெற்று) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		எனில் (r1 == -1 || r2 == -1)
+			திரும்பு -1;
+		திரும்பு 0;
 	}
-	return fflush(f);
+	திரும்பு fflush(f);
 }
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+கட்டமைப்பு tm *
+localtime_r(மாறிலி time_t *timep, கட்டமைப்பு tm *result)
 {
-	struct tm *tm = localtime(timep);
+	கட்டமைப்பு tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	திரும்பு result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+முழு
+clock_gettime(clockid_t clockid, கட்டமைப்பு timespec *ts)
 {
-	struct timeval tv;
+	கட்டமைப்பு timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	எனில் (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		திரும்பு -1;
 	}
-	if (ts == NULL) {
+	எனில் (ts == வெற்று) {
 		errno = EFAULT;
-		return -1;
+		திரும்பு -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	எனில் (gettimeofday(&tv, வெற்று) == -1)
+		திரும்பு -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	திரும்பு 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+மாறிலி எழுத்து *__asan_default_options(வெறுமை) {
+	திரும்பு ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+மாறிலி எழுத்து *__msan_default_options(வெறுமை) {
+	திரும்பு MSAN_OPTIONS;
 }
 #endif

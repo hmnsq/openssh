@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
+#அந்தர்பாவ "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+வெறுமை mldsa_tests(வெறுமை);
+வெறுமை mlkem_tests(வெறுமை);
+வெறுமை ed25519_tests(வெறுமை);
+வெறுமை mldsa_eddsa_tests(வெறுமை);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+கட்டமைப்பு sshbuf *load_text_file(மாறிலி எழுத்து *name);
+எழுத்து *get_json_string(கட்டமைப்பு sshbuf *content, மாறிலி எழுத்து *சாவி, முழு consume);
 
-static struct sshbuf *
-load_file(const char *name)
+நிலையான கட்டமைப்பு sshbuf *
+load_file(மாறிலி எழுத்து *name)
 {
-	struct sshbuf *ret = NULL;
+	கட்டமைப்பு sshbuf *ret = வெற்று;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, வெற்று);
+	திரும்பு ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+கட்டமைப்பு sshbuf *
+load_text_file(மாறிலி எழுத்து *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	கட்டமைப்பு sshbuf *ret = load_file(name);
+	மாறிலி u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	க்கு (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		எனில் (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		இல்லையெனில்
+			நிறுத்து;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	திரும்பு ret;
 }
 
 
@@ -59,50 +59,50 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+எழுத்து *
+get_json_string(கட்டமைப்பு sshbuf *content, மாறிலி எழுத்து *சாவி, முழு consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
+	கட்டமைப்பு sshbuf *tmp;
+	எழுத்து *k, *ret;
 	size_t off, end_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, வெற்று);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", சாவி), 0);
+	எனில் (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
 	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	விடுவி(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	போது (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		எனில் (isspace(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		இல்லையெனில்
+			நிறுத்து;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
 	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
+	ASSERT_PTR_NE(ret = malloc(end_off + 1), வெற்று);
 	memcpy(ret, sshbuf_ptr(tmp), end_off);
 	ret[end_off] = '\0';
-	if (consume) {
+	எனில் (consume) {
 		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
 		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	திரும்பு ret;
 }
 
-void
-tests(void)
+வெறுமை
+tests(வெறுமை)
 {
 #ifdef USE_MLDSA
 	mldsa_tests();
@@ -116,8 +116,8 @@ tests(void)
 #endif
 }
 
-void
-benchmarks(void)
+வெறுமை
+benchmarks(வெறுமை)
 {
 	/* none */
 }

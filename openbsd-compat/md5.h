@@ -21,28 +21,28 @@
 #define	MD5_DIGEST_LENGTH		16
 #define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
 
-typedef struct MD5Context {
+வகைவரை கட்டமைப்பு MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
+	u_int64_t மொத்தம்;			/* number of bits, mod 2^64 */
 	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+வெறுமை	 MD5Init(MD5_CTX *);
+வெறுமை	 MD5Update(MD5_CTX *, மாறிலி u_int8_t *, size_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
+வெறுமை	 MD5Pad(MD5_CTX *);
+வெறுமை	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
 		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+வெறுமை	 MD5Transform(u_int32_t [4], மாறிலி u_int8_t [MD5_BLOCK_LENGTH])
 		__attribute__((__bounded__(__minbytes__,1,4)))
 		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
+எழுத்து	*MD5End(MD5_CTX *, எழுத்து *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
+எழுத்து	*MD5File(மாறிலி எழுத்து *, எழுத்து *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
+எழுத்து	*MD5FileChunk(மாறிலி எழுத்து *, எழுத்து *, off_t, off_t)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+எழுத்து	*MD5Data(மாறிலி u_int8_t *, size_t, எழுத்து *)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
 

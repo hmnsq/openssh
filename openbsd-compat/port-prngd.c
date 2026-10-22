@@ -22,27 +22,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stddef.h> /* for offsetof */
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <stddef.h> /* for offsetof */
 
-#include "atomicio.h"
-#include "misc.h"
-#include "log.h"
+#அந்தர்பாவ "atomicio.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "log.h"
 
-#if defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
+#எனில் defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
 /*
  * EGD/PRNGD interface.
  *
@@ -53,38 +53,38 @@
  * supplied.
  * Returns 0 on success, -1 on error
  */
-static int
-get_random_bytes_prngd(unsigned char *buf, int len,
-    unsigned short tcp_port, char *socket_path)
+நிலையான முழு
+get_random_bytes_prngd(unsigned எழுத்து *buf, முழு len,
+    unsigned short tcp_port, எழுத்து *socket_path)
 {
-	int fd, addr_len, rval, errors;
-	u_char msg[2];
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
+	முழு fd, addr_len, rval, errors;
+	u_char செய்தி[2];
+	கட்டமைப்பு sockaddr_storage addr;
+	கட்டமைப்பு sockaddr_in *addr_in = (கட்டமைப்பு sockaddr_in *)&addr;
+	கட்டமைப்பு sockaddr_un *addr_un = (கட்டமைப்பு sockaddr_un *)&addr;
 	sshsig_t old_sigpipe;
 
 	/* Sanity checks */
-	if (socket_path == NULL && tcp_port == 0)
+	எனில் (socket_path == வெற்று && tcp_port == 0)
 		fatal("You must specify a port or a socket");
-	if (socket_path != NULL &&
-	    strlen(socket_path) >= sizeof(addr_un->sun_path))
+	எனில் (socket_path != வெற்று &&
+	    strlen(socket_path) >= அளவு(addr_un->sun_path))
 		fatal("Random pool path is too long");
-	if (len <= 0 || len > 255)
+	எனில் (len <= 0 || len > 255)
 		fatal("Too many bytes (%d) to read from PRNGD", len);
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', அளவு(addr));
 
-	if (tcp_port != 0) {
+	எனில் (tcp_port != 0) {
 		addr_in->sin_family = AF_INET;
 		addr_in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		addr_in->sin_port = htons(tcp_port);
-		addr_len = sizeof(*addr_in);
-	} else {
+		addr_len = அளவு(*addr_in);
+	} இல்லையெனில் {
 		addr_un->sun_family = AF_UNIX;
 		strlcpy(addr_un->sun_path, socket_path,
-		    sizeof(addr_un->sun_path));
-		addr_len = offsetof(struct sockaddr_un, sun_path) +
+		    அளவு(addr_un->sun_path));
+		addr_len = offsetof(கட்டமைப்பு sockaddr_un, sun_path) +
 		    strlen(socket_path) + 1;
 	}
 
@@ -94,69 +94,69 @@ get_random_bytes_prngd(unsigned char *buf, int len,
 	rval = -1;
 reopen:
 	fd = socket(addr.ss_family, SOCK_STREAM, 0);
-	if (fd == -1) {
+	எனில் (fd == -1) {
 		error("Couldn't create socket: %s", strerror(errno));
-		goto done;
+		செல் done;
 	}
 
-	if (connect(fd, (struct sockaddr*)&addr, addr_len) == -1) {
-		if (tcp_port != 0) {
+	எனில் (connect(fd, (கட்டமைப்பு sockaddr*)&addr, addr_len) == -1) {
+		எனில் (tcp_port != 0) {
 			error("Couldn't connect to PRNGD port %d: %s",
 			    tcp_port, strerror(errno));
-		} else {
+		} இல்லையெனில் {
 			error("Couldn't connect to PRNGD socket \"%s\": %s",
 			    addr_un->sun_path, strerror(errno));
 		}
-		goto done;
+		செல் done;
 	}
 
 	/* Send blocking read request to PRNGD */
-	msg[0] = 0x02;
-	msg[1] = len;
+	செய்தி[0] = 0x02;
+	செய்தி[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
-		if (errno == EPIPE && errors < 10) {
+	எனில் (atomicio(vwrite, fd, செய்தி, அளவு(செய்தி)) != அளவு(செய்தி)) {
+		எனில் (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			செல் reopen;
 		}
 		error("Couldn't write to PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		செல் done;
 	}
 
-	if (atomicio(read, fd, buf, len) != (size_t)len) {
-		if (errno == EPIPE && errors < 10) {
+	எனில் (atomicio(பட, fd, buf, len) != (size_t)len) {
+		எனில் (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			செல் reopen;
 		}
 		error("Couldn't read from PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		செல் done;
 	}
 
 	rval = 0;
 done:
 	ssh_signal(SIGPIPE, old_sigpipe);
-	if (fd != -1)
+	எனில் (fd != -1)
 		close(fd);
-	return rval;
+	திரும்பு rval;
 }
 #endif /* PRNGD_PORT || PRNGD_SOCKET */
 
-int
-seed_from_prngd(unsigned char *buf, size_t bytes)
+முழு
+seed_from_prngd(unsigned எழுத்து *buf, size_t bytes)
 {
 #ifdef PRNGD_PORT
 	debug("trying egd/prngd port %d", PRNGD_PORT);
-	if (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
-		return 0;
+	எனில் (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, வெற்று) == 0)
+		திரும்பு 0;
 #endif
 #ifdef PRNGD_SOCKET
 	debug("trying egd/prngd socket %s", PRNGD_SOCKET);
-	if (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
-		return 0;
+	எனில் (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
+		திரும்பு 0;
 #endif
-	return -1;
+	திரும்பு -1;
 }

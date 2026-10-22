@@ -17,32 +17,32 @@
 #ifndef _PORT_TUN_H
 #define _PORT_TUN_H
 
-struct Channel;
-struct ssh;
+கட்டமைப்பு Channel;
+கட்டமைப்பு ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#எனில் defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+முழு	  sys_tun_open(முழு, முழு, எழுத்து **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#எனில் defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
+முழு	 sys_tun_infilter(கட்டமைப்பு ssh *, கட்டமைப்பு Channel *, எழுத்து *, முழு);
+u_char	*sys_tun_outfilter(கட்டமைப்பு ssh *, கட்டமைப்பு Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#எனில் defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+எழுத்து *sys_get_rdomain(முழு fd);
+முழு sys_set_rdomain(முழு fd, மாறிலி எழுத்து *name);
+முழு sys_valid_rdomain(மாறிலி எழுத்து *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#எனில் defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
+வெறுமை sys_set_process_rdomain(மாறிலி எழுத்து *name);
 #endif
 
 #endif

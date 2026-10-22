@@ -17,22 +17,22 @@
 
 /* draft-miller-sshm-mldsa44-ed25519-composite-sigs-00 */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef USE_MLDSA
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdlib.h>
 
-#include "crypto_api.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
+#அந்தர்பாவ "crypto_api.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "digest.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "log.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "log.h"
 
 #define COMPOSITE_PREFIX "CompositeAlgorithmSignatures2025"
 #define COMPOSITE_LABEL  "COMPSIG-MLDSA44-Ed25519-SHA512"
@@ -44,40 +44,40 @@
  * we can test them separately in unittests/crypto.
  */
 
-int
+முழு
 crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
 	uint8_t mldsa_seed[MLDSA44_SEEDBYTES];
 	uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES];
-	int r;
+	முழு r;
 
-	arc4random_buf(mldsa_seed, sizeof(mldsa_seed));
-	arc4random_buf(ed25519_seed, sizeof(ed25519_seed));
+	arc4random_buf(mldsa_seed, அளவு(mldsa_seed));
+	arc4random_buf(ed25519_seed, அளவு(ed25519_seed));
 
 	r = crypto_sign_mldsa44_ed25519_keygen_seeded(pk, sk, mldsa_seed,
 	    ed25519_seed);
-	explicit_bzero(mldsa_seed, sizeof(mldsa_seed));
-	explicit_bzero(ed25519_seed, sizeof(ed25519_seed));
-	return r;
+	explicit_bzero(mldsa_seed, அளவு(mldsa_seed));
+	explicit_bzero(ed25519_seed, அளவு(ed25519_seed));
+	திரும்பு r;
 }
 
-int
+முழு
 crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
-    const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
-    const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES])
+    மாறிலி uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
+    மாறிலி uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES])
 {
 	uint8_t ed25519_pk[MLDSA44_SEEDBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
-	int ret = -1;
+	முழு ret = -1;
 
-	if (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_seed) != 0)
-		goto out;
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
+	எனில் (crypto_sign_mldsa44_keypair_seeded(pk, mldsa_sk, mldsa_seed) != 0)
+		செல் out;
+	எனில் (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
 	    ed25519_seed) != 0)
-		goto out;
+		செல் out;
 
 	/* Serialize PK: mldsaPK || ed25519PK */
 	memcpy(pk + MLDSA44_PUBLICKEYBYTES, ed25519_pk,
@@ -91,365 +91,365 @@ crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
 	/* success */
 	ret = 0;
  out:
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return ret;
+	explicit_bzero(mldsa_sk, அளவு(mldsa_sk));
+	explicit_bzero(ed25519_sk, அளவு(ed25519_sk));
+	திரும்பு ret;
 }
 
-static int
-construct_m_prime(uint8_t **m_primep, size_t *m_prime_lenp,
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen)
+நிலையான முழு
+construct_m_பகாஎண்(uint8_t **m_primep, size_t *m_பகாஎண்_lenp,
+    மாறிலி uint8_t *செய்தி, size_t msglen,
+    மாறிலி uint8_t *ctx, size_t ctxlen)
 {
-	int r;
+	முழு r;
 	uint8_t hash[64];
-	struct sshbuf *m_prime;
+	கட்டமைப்பு sshbuf *m_பகாஎண்;
 
-	*m_primep = NULL;
-	*m_prime_lenp = 0;
+	*m_primep = வெற்று;
+	*m_பகாஎண்_lenp = 0;
 
-	if (ctxlen > 255)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512, msg, msglen,
-	    hash, sizeof(hash))) != 0)
-		return r;
-	if ((m_prime = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put(m_prime, COMPOSITE_PREFIX,
-	    sizeof(COMPOSITE_PREFIX) - 1)) != 0 ||
-	    (r = sshbuf_put(m_prime, COMPOSITE_LABEL,
-	    sizeof(COMPOSITE_LABEL) - 1)) != 0 ||
-	    (r = sshbuf_put_u8(m_prime, (uint8_t)ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, ctx, ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, hash, sizeof(hash))) != 0) {
-		sshbuf_free(m_prime);
-		return r;
+	எனில் (ctxlen > 255)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((r = ssh_digest_memory(SSH_DIGEST_SHA512, செய்தி, msglen,
+	    hash, அளவு(hash))) != 0)
+		திரும்பு r;
+	எனில் ((m_பகாஎண் = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put(m_பகாஎண், COMPOSITE_PREFIX,
+	    அளவு(COMPOSITE_PREFIX) - 1)) != 0 ||
+	    (r = sshbuf_put(m_பகாஎண், COMPOSITE_LABEL,
+	    அளவு(COMPOSITE_LABEL) - 1)) != 0 ||
+	    (r = sshbuf_put_u8(m_பகாஎண், (uint8_t)ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_பகாஎண், ctx, ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_பகாஎண், hash, அளவு(hash))) != 0) {
+		sshbuf_free(m_பகாஎண்);
+		திரும்பு r;
 	}
-	if ((*m_primep = malloc(sshbuf_len(m_prime))) == NULL) {
-		sshbuf_free(m_prime);
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((*m_primep = malloc(sshbuf_len(m_பகாஎண்))) == வெற்று) {
+		sshbuf_free(m_பகாஎண்);
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	}
-	memcpy(*m_primep, sshbuf_ptr(m_prime), sshbuf_len(m_prime));
-	*m_prime_lenp = sshbuf_len(m_prime);
+	memcpy(*m_primep, sshbuf_ptr(m_பகாஎண்), sshbuf_len(m_பகாஎண்));
+	*m_பகாஎண்_lenp = sshbuf_len(m_பகாஎண்);
 	/* success */
-	sshbuf_free(m_prime);
-	return 0;
+	sshbuf_free(m_பகாஎண்);
+	திரும்பு 0;
 }
 
-int
+முழு
 crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t sk[MLDSA44_ED25519_SK_SZ])
+    மாறிலி uint8_t *செய்தி, size_t msglen,
+    மாறிலி uint8_t *ctx, size_t ctxlen,
+    மாறிலி uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
+	uint8_t *m_பகாஎண் = வெற்று;
+	size_t m_பகாஎண்_len = 0;
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
 	uint8_t mldsa_pk_dummy[MLDSA44_PUBLICKEYBYTES];
 	uint8_t ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	uint8_t ed25519_sk[crypto_sign_ed25519_SECRETKEYBYTES];
 	uint8_t mldsa_rnd[MLDSA44_SEEDBYTES];
 	unsigned long long smlen;
-	int r = -1;
+	முழு r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	எனில் (construct_m_பகாஎண்(&m_பகாஎண், &m_பகாஎண்_len, செய்தி, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		திரும்பு -1;
 
 	/* Expand ML-DSA key from seed */
-	if (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
-		goto out;
+	எனில் (crypto_sign_mldsa44_keypair_seeded(mldsa_pk_dummy, mldsa_sk, sk) != 0)
+		செல் out;
 
 	/* Sign with ML-DSA */
-	arc4random_buf(mldsa_rnd, sizeof(mldsa_rnd));
-	if (crypto_sign_mldsa44_seeded(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	arc4random_buf(mldsa_rnd, அளவு(mldsa_rnd));
+	எனில் (crypto_sign_mldsa44_seeded(sig, m_பகாஎண், m_பகாஎண்_len,
+	    (மாறிலி uint8_t *)COMPOSITE_LABEL, அளவு(COMPOSITE_LABEL) - 1,
 	    mldsa_sk, mldsa_rnd) != 0)
-		goto out;
+		செல் out;
 
 	/* Expand Ed25519 key from seed */
-	if (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
+	எனில் (crypto_sign_ed25519_seed_keypair(ed25519_pk, ed25519_sk,
 	    sk + MLDSA44_SEEDBYTES) != 0)
-		goto out;
+		செல் out;
 
 	/* Sign with Ed25519 */
-	if (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
-	    m_prime, m_prime_len, ed25519_sk) != 0 ||
+	எனில் (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
+	    m_பகாஎண், m_பகாஎண்_len, ed25519_sk) != 0 ||
 	    smlen != crypto_sign_ed25519_BYTES)
-		goto out;
+		செல் out;
 
 	r = 0;
  out:
-	free(m_prime);
-	explicit_bzero(mldsa_rnd, sizeof(mldsa_rnd));
-	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
-	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
-	return r;
+	விடுவி(m_பகாஎண்);
+	explicit_bzero(mldsa_rnd, அளவு(mldsa_rnd));
+	explicit_bzero(mldsa_sk, அளவு(mldsa_sk));
+	explicit_bzero(ed25519_sk, அளவு(ed25519_sk));
+	திரும்பு r;
 }
 
-int
-crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
-    const uint8_t *ctx, size_t ctxlen,
-    const uint8_t pk[MLDSA44_ED25519_PK_SZ])
+முழு
+crypto_sign_mldsa44_ed25519_verify(மாறிலி uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+    மாறிலி uint8_t *செய்தி, size_t msglen,
+    மாறிலி uint8_t *ctx, size_t ctxlen,
+    மாறிலி uint8_t pk[MLDSA44_ED25519_PK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
-	int r = -1;
+	uint8_t *m_பகாஎண் = வெற்று;
+	size_t m_பகாஎண்_len = 0;
+	முழு r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	எனில் (construct_m_பகாஎண்(&m_பகாஎண், &m_பகாஎண்_len, செய்தி, msglen,
 	    ctx, ctxlen) != 0)
-		return -1;
+		திரும்பு -1;
 
 	/* Verify ML-DSA */
-	if (crypto_sign_mldsa44_verify(sig, m_prime, m_prime_len,
-	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
+	எனில் (crypto_sign_mldsa44_verify(sig, m_பகாஎண், m_பகாஎண்_len,
+	    (மாறிலி uint8_t *)COMPOSITE_LABEL, அளவு(COMPOSITE_LABEL) - 1,
 	    pk) != 0)
-		goto out;
+		செல் out;
 
 	/* Verify Ed25519 */
-	if (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
-	    m_prime, m_prime_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
-		goto out;
+	எனில் (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
+	    m_பகாஎண், m_பகாஎண்_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
+		செல் out;
 
 	r = 0;
  out:
-	free(m_prime);
-	return r;
+	விடுவி(m_பகாஎண்);
+	திரும்பு r;
 }
 
 /* sshkey integration */
 
-static void
-ssh_mldsa44_ed25519_cleanup(struct sshkey *k)
+நிலையான வெறுமை
+ssh_mldsa44_ed25519_cleanup(கட்டமைப்பு sshkey *k)
 {
 	freezero(k->mldsa_ed25519_pk, MLDSA44_ED25519_PK_SZ);
 	freezero(k->mldsa_ed25519_sk, MLDSA44_ED25519_SK_SZ);
-	k->mldsa_ed25519_pk = NULL;
-	k->mldsa_ed25519_sk = NULL;
+	k->mldsa_ed25519_pk = வெற்று;
+	k->mldsa_ed25519_sk = வெற்று;
 }
 
-static int
-ssh_mldsa44_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+நிலையான முழு
+ssh_mldsa44_ed25519_equal(மாறிலி கட்டமைப்பு sshkey *a, மாறிலி கட்டமைப்பு sshkey *b)
 {
-	if (a->mldsa_ed25519_pk == NULL || b->mldsa_ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
+	எனில் (a->mldsa_ed25519_pk == வெற்று || b->mldsa_ed25519_pk == வெற்று)
+		திரும்பு 0;
+	எனில் (memcmp(a->mldsa_ed25519_pk, b->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+		திரும்பு 0;
+	திரும்பு 1;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+நிலையான முழு
+ssh_mldsa44_ed25519_serialize_public(மாறிலி கட்டமைப்பு sshkey *சாவி, கட்டமைப்பு sshbuf *b,
+    எண்ணிக்கை sshkey_serialize_rep opts)
 {
-	int r;
+	முழு r;
 
-	if (key->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_pk,
+	எனில் (சாவி->mldsa_ed25519_pk == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((r = sshbuf_put_string(b, சாவி->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ)) != 0)
-		return r;
+		திரும்பு r;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-ssh_mldsa44_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+நிலையான முழு
+ssh_mldsa44_ed25519_serialize_private(மாறிலி கட்டமைப்பு sshkey *சாவி, கட்டமைப்பு sshbuf *b,
+    எண்ணிக்கை sshkey_serialize_rep opts)
 {
-	int r;
+	முழு r;
 
-	if (key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_serialize_public(key,
+	எனில் (சாவி->mldsa_ed25519_sk == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (!sshkey_is_cert(சாவி)) {
+		எனில் ((r = ssh_mldsa44_ed25519_serialize_public(சாவி,
 		    b, opts)) != 0)
-			return r;
+			திரும்பு r;
 	}
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_sk,
+	எனில் ((r = sshbuf_put_string(b, சாவி->mldsa_ed25519_sk,
 	    MLDSA44_ED25519_SK_SZ)) != 0)
-		return r;
+		திரும்பு r;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+நிலையான முழு
+ssh_mldsa44_ed25519_deserialize_public(மாறிலி எழுத்து *ktype, கட்டமைப்பு sshbuf *b,
+    கட்டமைப்பு sshkey *சாவி)
 {
-	u_char *pk = NULL;
+	u_char *pk = வெற்று;
 	size_t len = 0;
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != MLDSA44_ED25519_PK_SZ) {
+	எனில் ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		திரும்பு r;
+	எனில் (len != MLDSA44_ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
-	key->mldsa_ed25519_pk = pk;
-	return 0;
+	சாவி->mldsa_ed25519_pk = pk;
+	திரும்பு 0;
 }
 
-static int
-ssh_mldsa44_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+நிலையான முழு
+ssh_mldsa44_ed25519_deserialize_private(மாறிலி எழுத்து *ktype, கட்டமைப்பு sshbuf *b,
+    கட்டமைப்பு sshkey *சாவி)
 {
-	int r;
+	முழு r;
 	size_t sklen = 0;
-	u_char *sk = NULL;
+	u_char *sk = வெற்று;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	எனில் (!sshkey_is_cert(சாவி)) {
+		எனில் ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
+		    b, சாவி)) != 0)
+			திரும்பு r;
 	}
-	if ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
-		goto out;
-	if (sklen != MLDSA44_ED25519_SK_SZ) {
+	எனில் ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
+		செல் out;
+	எனில் (sklen != MLDSA44_ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
-	key->mldsa_ed25519_sk = sk;
-	sk = NULL; /* transferred */
+	சாவி->mldsa_ed25519_sk = sk;
+	sk = வெற்று; /* transferred */
 	r = 0;
  out:
 	freezero(sk, sklen);
-	return r;
+	திரும்பு r;
 }
 
-static int
-ssh_mldsa44_ed25519_generate(struct sshkey *k, int bits)
+நிலையான முழு
+ssh_mldsa44_ed25519_generate(கட்டமைப்பு sshkey *k, முழு bits)
 {
 	ssh_mldsa44_ed25519_cleanup(k);
-	if ((k->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL ||
-	    (k->mldsa_ed25519_sk = malloc(MLDSA44_ED25519_SK_SZ)) == NULL) {
+	எனில் ((k->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == வெற்று ||
+	    (k->mldsa_ed25519_sk = malloc(MLDSA44_ED25519_SK_SZ)) == வெற்று) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_ALLOC_FAIL;
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	}
-	if (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
+	எனில் (crypto_sign_mldsa44_ed25519_keygen(k->mldsa_ed25519_pk,
 	    k->mldsa_ed25519_sk) != 0) {
 		ssh_mldsa44_ed25519_cleanup(k);
-		return SSH_ERR_CRYPTO_ERROR;
+		திரும்பு SSH_ERR_CRYPTO_ERROR;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-ssh_mldsa44_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+நிலையான முழு
+ssh_mldsa44_ed25519_copy_public(மாறிலி கட்டமைப்பு sshkey *from, கட்டமைப்பு sshkey *to)
 {
-	if (from->mldsa_ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((to->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் (from->mldsa_ed25519_pk == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் ((to->mldsa_ed25519_pk = malloc(MLDSA44_ED25519_PK_SZ)) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	memcpy(to->mldsa_ed25519_pk, from->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ);
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-ssh_mldsa44_ed25519_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin,
+நிலையான முழு
+ssh_mldsa44_ed25519_sign(கட்டமைப்பு sshkey *சாவி,
+    u_char **sigp, size_t *lenp, மாறிலி u_char *data, size_t datalen,
+    மாறிலி எழுத்து *alg, மாறிலி எழுத்து *sk_provider, மாறிலி எழுத்து *sk_pin,
     u_int compat)
 {
 	u_char sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	கட்டமைப்பு sshbuf *b = வெற்று;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	எனில் (lenp != வெற்று)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	எனில் (sigp != வெற்று)
+		*sigp = வெற்று;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	எனில் (சாவி == வெற்று ||
+	    sshkey_type_plain(சாவி->type) != சாவி_MLDSA44_ED25519 ||
+	    சாவி->mldsa_ed25519_sk == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 
-	if (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, NULL, 0,
-	    key->mldsa_ed25519_sk) != 0) {
+	எனில் (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, வெற்று, 0,
+	    சாவி->mldsa_ed25519_sk) != 0) {
 		r = SSH_ERR_CRYPTO_ERROR;
-		goto out;
+		செல் out;
 	}
 
-	if ((b = sshbuf_new()) == NULL) {
+	எனில் ((b = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
-	    (r = sshbuf_put_string(b, sig, sizeof(sig))) != 0)
-		goto out;
+	எனில் ((r = sshbuf_put_cstring(b, SSH_MLDSA44_ED25519_ALG_NAME)) != 0 ||
+	    (r = sshbuf_put_string(b, sig, அளவு(sig))) != 0)
+		செல் out;
 
-	if (sigp != NULL) {
-		if ((*sigp = malloc(sshbuf_len(b))) == NULL) {
+	எனில் (sigp != வெற்று) {
+		எனில் ((*sigp = malloc(sshbuf_len(b))) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			செல் out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), sshbuf_len(b));
 	}
-	if (lenp != NULL)
+	எனில் (lenp != வெற்று)
 		*lenp = sshbuf_len(b);
 	r = 0;
  out:
 	sshbuf_free(b);
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+	explicit_bzero(sig, அளவு(sig));
+	திரும்பு r;
 }
 
-static int
-ssh_mldsa44_ed25519_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen, const u_char *data, size_t dlen,
-    const char *alg, u_int compat, struct sshkey_sig_details **detailsp)
+நிலையான முழு
+ssh_mldsa44_ed25519_verify(மாறிலி கட்டமைப்பு sshkey *சாவி,
+    மாறிலி u_char *sig, size_t siglen, மாறிலி u_char *data, size_t dlen,
+    மாறிலி எழுத்து *alg, u_int compat, கட்டமைப்பு sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	கட்டமைப்பு sshbuf *b = வெற்று;
+	எழுத்து *ktype = வெற்று;
+	மாறிலி u_char *sigblob;
 	size_t len;
-	int r;
+	முழு r;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	எனில் (சாவி == வெற்று ||
+	    sshkey_type_plain(சாவி->type) != சாவி_MLDSA44_ED25519 ||
+	    சாவி->mldsa_ed25519_pk == வெற்று ||
+	    sig == வெற்று || siglen == 0)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	எனில் ((b = sshbuf_from(sig, siglen)) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_get_cstring(b, &ktype, வெற்று)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
-		goto out;
-	if (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		செல் out;
+	எனில் (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
+		r = SSH_ERR_சாவி_TYPE_MISMATCH;
+		செல் out;
 	}
-	if (sshbuf_len(b) != 0) {
+	எனில் (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		செல் out;
 	}
-	if (len != MLDSA44_ED25519_SIG_SZ) {
+	எனில் (len != MLDSA44_ED25519_SIG_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 
-	if (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, NULL, 0,
-	    key->mldsa_ed25519_pk) != 0) {
+	எனில் (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, வெற்று, 0,
+	    சாவி->mldsa_ed25519_pk) != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		செல் out;
 	}
 
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(ktype);
-	return r;
+	விடுவி(ktype);
+	திரும்பு r;
 }
 
-const struct sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+மாறிலி கட்டமைப்பு sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
+	/* .size = */		வெற்று,
+	/* .alloc = */		வெற்று,
 	/* .cleanup = */	ssh_mldsa44_ed25519_cleanup,
 	/* .equal = */		ssh_mldsa44_ed25519_equal,
 	/* .ssh_serialize_public = */ ssh_mldsa44_ed25519_serialize_public,
@@ -462,11 +462,11 @@ const struct sshkey_impl_funcs sshkey_mldsa44_ed25519_funcs = {
 	/* .verify = */		ssh_mldsa44_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
+மாறிலி கட்டமைப்பு sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519",
 	/* .shortname = */	"MLDSA44-ED25519",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519,
+	/* .sigalg = */		வெற்று,
+	/* .type = */		சாவி_MLDSA44_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -474,11 +474,11 @@ const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .funcs = */		&sshkey_mldsa44_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
+மாறிலி கட்டமைப்பு sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519-cert",
 	/* .shortname = */	"MLDSA44-ED25519-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519_CERT,
+	/* .sigalg = */		வெற்று,
+	/* .type = */		சாவி_MLDSA44_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

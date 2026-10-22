@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+முழு mkstemp(எழுத்து *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+முழு
+_ssh_mkstemp(எழுத்து *template)
 {
 	mode_t mask;
-	int ret;
+	முழு ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	(வெறுமை)umask(mask);
+	திரும்பு ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#எனில் !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define இலக்கம்_CHARS	(அளவு(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+நிலையான முழு
+mktemp_internal(எழுத்து *path, முழு slen, முழு mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
+	எழுத்து *start, *cp, *ep;
+	மாறிலி எழுத்து *tempchars = TEMPCHARS;
+	unsigned முழு r, tries;
+	கட்டமைப்பு stat sb;
 	size_t len;
-	int fd;
+	முழு fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	எனில் (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		திரும்பு(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	க்கு (start = ep; start > path && start[-1] == 'X'; start--) {
+		எனில் (tries < INT_MAX / இலக்கம்_CHARS)
+			tries *= இலக்கம்_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	செய் {
+		க்கு (cp = start; cp != ep; cp++) {
+			r = arc4random_uniform(இலக்கம்_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
+		தேர்வு (mode) {
+		நிலை MKTEMP_NAME:
+			எனில் (lstat(path, &sb) != 0)
+				திரும்பு(errno == ENOENT ? 0 : -1);
+			நிறுத்து;
+		நிலை MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+			எனில் (fd != -1 || errno != EEXIST)
+				திரும்பு(fd);
+			நிறுத்து;
+		நிலை MKTEMP_DIR:
+			எனில் (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				திரும்பு(0);
+			எனில் (errno != EEXIST)
+				திரும்பு(-1);
+			நிறுத்து;
 		}
-	} while (--tries);
+	} போது (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	திரும்பு(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#எனில் 0
+எழுத்து *_mktemp(எழுத்து *);
 
-char *
-_mktemp(char *path)
+எழுத்து *
+_mktemp(எழுத்து *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	எனில் (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		திரும்பு(வெற்று);
+	திரும்பு(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+எழுத்து *
+mktemp(எழுத்து *path)
 {
-	return(_mktemp(path));
+	திரும்பு(_mktemp(path));
 }
 #endif
 
-int
-mkstemp(char *path)
+முழு
+mkstemp(எழுத்து *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	திரும்பு(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+முழு
+mkstemps(எழுத்து *path, முழு slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	திரும்பு(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+எழுத்து *
+mkdtemp(எழுத்து *path)
 {
-	int error;
+	முழு error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	திரும்பு(error ? வெற்று : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

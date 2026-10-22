@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <errno.h>
 
-static void
-usage(void)
+நிலையான வெறுமை
+usage(வெறுமை)
 {
 	fprintf(stderr, "check-setuid [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+முழு
+முதன்மை(முழு argc, எழுத்து **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	மாறிலி எழுத்து *path = ".";
+	கட்டமைப்பு statvfs sb;
 
-	if (argc > 2)
+	எனில் (argc > 2)
 		usage();
-	else if (argc == 2)
+	இல்லையெனில் எனில் (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	எனில் (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		எனில் (errno == ENOSYS)
+			திரும்பு 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	திரும்பு (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

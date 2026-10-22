@@ -37,41 +37,41 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
+#அந்தர்பாவ <openssl/evp.h>
 #endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#அந்தர்பாவ "cipher-chachapoly.h"
+#அந்தர்பாவ "cipher-aesctr.h"
 
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+கட்டமைப்பு sshcipher;
+கட்டமைப்பு sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+மாறிலி கட்டமைப்பு sshcipher *cipher_by_name(மாறிலி எழுத்து *);
+மாறிலி எழுத்து *cipher_warning_message(மாறிலி கட்டமைப்பு sshcipher_ctx *);
+முழு	 ciphers_valid(மாறிலி எழுத்து *);
+எழுத்து	*cipher_alg_list(எழுத்து, முழு);
+மாறிலி எழுத்து *compression_alg_list(முழு);
+முழு	 cipher_init(கட்டமைப்பு sshcipher_ctx **, மாறிலி கட்டமைப்பு sshcipher *,
+    மாறிலி u_char *, u_int, மாறிலி u_char *, u_int, முழு);
+முழு	 cipher_crypt(கட்டமைப்பு sshcipher_ctx *, u_int, u_char *, மாறிலி u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+முழு	 cipher_get_length(கட்டமைப்பு sshcipher_ctx *, u_int *, u_int,
+    மாறிலி u_char *, u_int);
+வெறுமை	 cipher_free(கட்டமைப்பு sshcipher_ctx *);
+u_int	 cipher_blocksize(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_keylen(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_seclen(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_authlen(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_ivlen(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_is_cbc(மாறிலி கட்டமைப்பு sshcipher *);
+u_int	 cipher_is_internal(மாறிலி கட்டமைப்பு sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(கட்டமைப்பு sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+முழு	 cipher_get_keyiv(கட்டமைப்பு sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

@@ -87,56 +87,56 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/fnmatch.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 #ifndef HAVE_FNMATCH
 
-#include <fnmatch.h>
-#include <string.h>
-#include <ctype.h>
+#அந்தர்பாவ <fnmatch.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <ctype.h>
 
-#include "charclass.h"
+#அந்தர்பாவ "charclass.h"
 
 #define	RANGE_MATCH	1
 #define	RANGE_NOMATCH	0
 #define	RANGE_ERROR	(-1)
 
-static int
-classmatch(const char *pattern, char test, int foldcase, const char **ep)
+நிலையான முழு
+classmatch(மாறிலி எழுத்து *pattern, எழுத்து test, முழு foldcase, மாறிலி எழுத்து **ep)
 {
-	const char * const mismatch = pattern;
-	const char *colon;
-	struct cclass *cc;
-	int rval = RANGE_NOMATCH;
+	மாறிலி எழுத்து * மாறிலி mismatch = pattern;
+	மாறிலி எழுத்து *colon;
+	கட்டமைப்பு cclass *cc;
+	முழு rval = RANGE_NOMATCH;
 	size_t len;
 
-	if (pattern[0] != '[' || pattern[1] != ':') {
+	எனில் (pattern[0] != '[' || pattern[1] != ':') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		திரும்பு RANGE_ERROR;
 	}
 	pattern += 2;
 
-	if ((colon = strchr(pattern, ':')) == NULL || colon[1] != ']') {
+	எனில் ((colon = strchr(pattern, ':')) == வெற்று || colon[1] != ']') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		திரும்பு RANGE_ERROR;
 	}
 	*ep = colon + 2;
 	len = (size_t)(colon - pattern);
 
-	if (foldcase && strncmp(pattern, "upper:]", 7) == 0)
+	எனில் (foldcase && strncmp(pattern, "upper:]", 7) == 0)
 		pattern = "lower:]";
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
-			if (cc->isctype((unsigned char)test))
+	க்கு (cc = cclasses; cc->name != வெற்று; cc++) {
+		எனில் (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
+			எனில் (cc->isctype((unsigned எழுத்து)test))
 				rval = RANGE_MATCH;
-			break;
+			நிறுத்து;
 		}
 	}
-	if (cc->name == NULL) {
+	எனில் (cc->name == வெற்று) {
 		/* invalid character class, treat as normal text */
 		*ep = mismatch;
 		rval = RANGE_ERROR;
 	}
-	return rval;
+	திரும்பு rval;
 }
 
 /* Most MBCS/collation/case issues handled here.  Wildcard '*' is not handled.
@@ -146,69 +146,69 @@ classmatch(const char *pattern, char test, int foldcase, const char **ep)
  * Both pattern and string are **char to support pointer increment of arbitrary
  * multibyte characters for the given locale, in a later iteration of this code
  */
-static int fnmatch_ch(const char **pattern, const char **string, int flags)
+நிலையான முழு fnmatch_ch(மாறிலி எழுத்து **pattern, மாறிலி எழுத்து **string, முழு flags)
 {
-	const char * const mismatch = *pattern;
-	const int nocase = !!(flags & FNM_CASEFOLD);
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	int result = FNM_NOMATCH;
-	const char *startch;
-	int negate;
+	மாறிலி எழுத்து * மாறிலி mismatch = *pattern;
+	மாறிலி முழு nocase = !!(flags & FNM_CASEFOLD);
+	மாறிலி முழு escape = !(flags & FNM_NOESCAPE);
+	மாறிலி முழு slash = !!(flags & FNM_PATHNAME);
+	முழு result = FNM_NOMATCH;
+	மாறிலி எழுத்து *startch;
+	முழு negate;
 
-	if (**pattern == '[') {
+	எனில் (**pattern == '[') {
 		++*pattern;
 
 		/* Handle negation, either leading ! or ^ operators */
 		negate = (**pattern == '!') || (**pattern == '^');
-		if (negate)
+		எனில் (negate)
 			++*pattern;
 
 		/* ']' is an ordinary char at the start of the range pattern */
-		if (**pattern == ']')
-			goto leadingclosebrace;
+		எனில் (**pattern == ']')
+			செல் leadingclosebrace;
 
-		while (**pattern) {
-			if (**pattern == ']') {
+		போது (**pattern) {
+			எனில் (**pattern == ']') {
 				++*pattern;
 				/* XXX: Fix for MBCS character width */
 				++*string;
-				return (result ^ negate);
+				திரும்பு (result ^ negate);
 			}
 
-			if (escape && (**pattern == '\\')) {
+			எனில் (escape && (**pattern == '\\')) {
 				++*pattern;
 
 				/* Patterns must terminate with ']', not EOS */
-				if (!**pattern)
-					break;
+				எனில் (!**pattern)
+					நிறுத்து;
 			}
 
 			/* Patterns must terminate with ']' not '/' */
-			if (slash && (**pattern == '/'))
-				break;
+			எனில் (slash && (**pattern == '/'))
+				நிறுத்து;
 
 			/* Match character classes. */
-			switch (classmatch(*pattern, **string, nocase, pattern)) {
-			case RANGE_MATCH:
+			தேர்வு (classmatch(*pattern, **string, nocase, pattern)) {
+			நிலை RANGE_MATCH:
 				result = 0;
-				continue;
-			case RANGE_NOMATCH:
+				தொடர்;
+			நிலை RANGE_NOMATCH:
 				/* Valid character class but no match. */
-				continue;
-			default:
+				தொடர்;
+			இயல்பு:
 				/* Not a valid character class. */
-				break;
+				நிறுத்து;
 			}
-			if (!**pattern)
-				break;
+			எனில் (!**pattern)
+				நிறுத்து;
 
 leadingclosebrace:
 			/* Look at only well-formed range patterns;
 			 * "x-]" is not allowed unless escaped ("x-\]")
 			 * XXX: Fix for locale/MBCS character width
 			 */
-			if (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
+			எனில் (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
 				startch = *pattern;
 				*pattern += (escape && ((*pattern)[2] == '\\')) ? 3 : 2;
 
@@ -218,33 +218,33 @@ leadingclosebrace:
 				 * FNM_PATHNAME mode pattern fall out to to the
 				 * rewind and test '[' literal code path.
 				 */
-				if (!**pattern || (slash && (**pattern == '/')))
-					break;
+				எனில் (!**pattern || (slash && (**pattern == '/')))
+					நிறுத்து;
 
 				/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-				if ((**string >= *startch) && (**string <= **pattern))
+				எனில் ((**string >= *startch) && (**string <= **pattern))
 					result = 0;
-				else if (nocase &&
-				    (isupper((unsigned char)**string) ||
-				     isupper((unsigned char)*startch) ||
-				     isupper((unsigned char)**pattern)) &&
-				    (tolower((unsigned char)**string) >=
-				     tolower((unsigned char)*startch)) &&
-				    (tolower((unsigned char)**string) <=
-				     tolower((unsigned char)**pattern)))
+				இல்லையெனில் எனில் (nocase &&
+				    (isupper((unsigned எழுத்து)**string) ||
+				     isupper((unsigned எழுத்து)*startch) ||
+				     isupper((unsigned எழுத்து)**pattern)) &&
+				    (tolower((unsigned எழுத்து)**string) >=
+				     tolower((unsigned எழுத்து)*startch)) &&
+				    (tolower((unsigned எழுத்து)**string) <=
+				     tolower((unsigned எழுத்து)**pattern)))
 					result = 0;
 
 				++*pattern;
-				continue;
+				தொடர்;
 			}
 
 			/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-			if ((**string == **pattern))
+			எனில் ((**string == **pattern))
 				result = 0;
-			else if (nocase && (isupper((unsigned char)**string) ||
-			    isupper((unsigned char)**pattern)) &&
-			    (tolower((unsigned char)**string) ==
-			    tolower((unsigned char)**pattern)))
+			இல்லையெனில் எனில் (nocase && (isupper((unsigned எழுத்து)**string) ||
+			    isupper((unsigned எழுத்து)**pattern)) &&
+			    (tolower((unsigned எழுத்து)**string) ==
+			    tolower((unsigned எழுத்து)**pattern)))
 				result = 0;
 
 			++*pattern;
@@ -255,63 +255,63 @@ leadingclosebrace:
 		 */
 		*pattern = mismatch;
 		result = FNM_NOMATCH;
-	} else if (**pattern == '?') {
+	} இல்லையெனில் எனில் (**pattern == '?') {
 		/* Optimize '?' match before unescaping **pattern */
-		if (!**string || (slash && (**string == '/')))
-			return FNM_NOMATCH;
+		எனில் (!**string || (slash && (**string == '/')))
+			திரும்பு FNM_NOMATCH;
 		result = 0;
-		goto fnmatch_ch_success;
-	} else if (escape && (**pattern == '\\') && (*pattern)[1]) {
+		செல் fnmatch_ch_success;
+	} இல்லையெனில் எனில் (escape && (**pattern == '\\') && (*pattern)[1]) {
 		++*pattern;
 	}
 
 	/* XXX: handle locale/MBCS comparison, advance by the MBCS char width */
-	if (**string == **pattern)
+	எனில் (**string == **pattern)
 		result = 0;
-	else if (nocase && (isupper((unsigned char)**string) ||
-	    isupper((unsigned char)**pattern)) &&
-	    (tolower((unsigned char)**string) ==
-	    tolower((unsigned char)**pattern)))
+	இல்லையெனில் எனில் (nocase && (isupper((unsigned எழுத்து)**string) ||
+	    isupper((unsigned எழுத்து)**pattern)) &&
+	    (tolower((unsigned எழுத்து)**string) ==
+	    tolower((unsigned எழுத்து)**pattern)))
 		result = 0;
 
 	/* Refuse to advance over trailing slash or NULs */
-	if (**string == '\0' || **pattern == '\0' ||
+	எனில் (**string == '\0' || **pattern == '\0' ||
 	    (slash && ((**string == '/') || (**pattern == '/'))))
-		return result;
+		திரும்பு result;
 
 fnmatch_ch_success:
 	++*pattern;
 	++*string;
-	return result;
+	திரும்பு result;
 }
 
 
-int fnmatch(const char *pattern, const char *string, int flags)
+முழு fnmatch(மாறிலி எழுத்து *pattern, மாறிலி எழுத்து *string, முழு flags)
 {
-	static const char dummystring[2] = {' ', 0};
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	const int leading_dir = !!(flags & FNM_LEADING_DIR);
-	const char *dummyptr, *matchptr, *strendseg;
-	int wild;
+	நிலையான மாறிலி எழுத்து dummystring[2] = {' ', 0};
+	மாறிலி முழு escape = !(flags & FNM_NOESCAPE);
+	மாறிலி முழு slash = !!(flags & FNM_PATHNAME);
+	மாறிலி முழு leading_dir = !!(flags & FNM_LEADING_DIR);
+	மாறிலி எழுத்து *dummyptr, *matchptr, *strendseg;
+	முழு wild;
 	/* For '*' wild processing only; suppress 'used before initialization'
 	 * warnings with dummy initialization values;
 	 */
-	const char *strstartseg = NULL;
-	const char *mismatch = NULL;
-	int matchlen = 0;
+	மாறிலி எழுத்து *strstartseg = வெற்று;
+	மாறிலி எழுத்து *mismatch = வெற்று;
+	முழு matchlen = 0;
 
-	if (*pattern == '*')
-		goto firstsegment;
+	எனில் (*pattern == '*')
+		செல் firstsegment;
 
-	while (*pattern && *string) {
+	போது (*pattern && *string) {
 		/*
 		 * Pre-decode "\/" which has no special significance, and
 		 * match balanced slashes, starting a new segment pattern.
 		 */
-		if (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
+		எனில் (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
 			++pattern;
-		if (slash && (*pattern == '/') && (*string == '/')) {
+		எனில் (slash && (*pattern == '/') && (*string == '/')) {
 			++pattern;
 			++string;
 		}
@@ -321,13 +321,13 @@ firstsegment:
 		 * At the beginning of each segment, validate leading period
 		 * behavior.
 		 */
-		if ((flags & FNM_PERIOD) && (*string == '.')) {
-		    if (*pattern == '.')
+		எனில் ((flags & FNM_PERIOD) && (*string == '.')) {
+		    எனில் (*pattern == '.')
 			    ++pattern;
-		    else if (escape && (*pattern == '\\') && (pattern[1] == '.'))
+		    இல்லையெனில் எனில் (escape && (*pattern == '\\') && (pattern[1] == '.'))
 			    pattern += 2;
-		    else
-			    return FNM_NOMATCH;
+		    இல்லையெனில்
+			    திரும்பு FNM_NOMATCH;
 		    ++string;
 		}
 
@@ -335,11 +335,11 @@ firstsegment:
 		 * Determine the end of string segment.  Presumes '/'
 		 * character is unique, not composite in any MBCS encoding
 		 */
-		if (slash) {
+		எனில் (slash) {
 			strendseg = strchr(string, '/');
-			if (!strendseg)
+			எனில் (!strendseg)
 				strendseg = strchr(string, '\0');
-		} else {
+		} இல்லையெனில் {
 			strendseg = strchr(string, '\0');
 		}
 
@@ -347,32 +347,32 @@ firstsegment:
 		 * Allow pattern '*' to be consumed even with no remaining
 		 * string to match.
 		 */
-		while (*pattern) {
-			if ((string > strendseg) ||
+		போது (*pattern) {
+			எனில் ((string > strendseg) ||
 			    ((string == strendseg) && (*pattern != '*')))
-				break;
+				நிறுத்து;
 
-			if (slash && ((*pattern == '/') ||
+			எனில் (slash && ((*pattern == '/') ||
 			    (escape && (*pattern == '\\') && (pattern[1] == '/'))))
-				break;
+				நிறுத்து;
 
 			/*
 			 * Reduce groups of '*' and '?' to n '?' matches
 			 * followed by one '*' test for simplicity.
 			 */
-			for (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
-				if (*pattern == '*') {
+			க்கு (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
+				எனில் (*pattern == '*') {
 					wild = 1;
-				} else if (string < strendseg) {  /* && (*pattern == '?') */
+				} இல்லையெனில் எனில் (string < strendseg) {  /* && (*pattern == '?') */
 					/* XXX: Advance 1 char for MBCS locale */
 					++string;
 				}
-				else {  /* (string >= strendseg) && (*pattern == '?') */
-					return FNM_NOMATCH;
+				இல்லையெனில் {  /* (string >= strendseg) && (*pattern == '?') */
+					திரும்பு FNM_NOMATCH;
 				}
 			}
 
-			if (wild) {
+			எனில் (wild) {
 				strstartseg = string;
 				mismatch = pattern;
 
@@ -380,8 +380,8 @@ firstsegment:
 				 * Count fixed (non '*') char matches remaining
 				 * in pattern * excluding '/' (or "\/") and '*'.
 				 */
-				for (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
-					if ((*matchptr == '\0') ||
+				க்கு (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
+					எனில் ((*matchptr == '\0') ||
 					    (slash && ((*matchptr == '/') ||
 					    (escape && (*matchptr == '\\') &&
 					    (matchptr[1] == '/'))))) {
@@ -391,29 +391,29 @@ firstsegment:
 						 * wildcard loop.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						எனில் (string + matchlen > strendseg)
+							திரும்பு FNM_NOMATCH;
 
 						string = strendseg - matchlen;
 						wild = 0;
-						break;
+						நிறுத்து;
 					}
 
-					if (*matchptr == '*') {
+					எனில் (*matchptr == '*') {
 						/*
 						 * Ensure at least this many
 						 * trailing string chars remain
 						 * for the first comparison.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						எனில் (string + matchlen > strendseg)
+							திரும்பு FNM_NOMATCH;
 
 						/*
 						 * Begin first wild comparison
 						 * at the current position.
 						 */
-						break;
+						நிறுத்து;
 					}
 
 					/*
@@ -423,37 +423,37 @@ firstsegment:
 					 * "[range]" escape.
 					 */
 					/* XXX: Adjust for MBCS */
-					if (escape && (*matchptr == '\\') &&
+					எனில் (escape && (*matchptr == '\\') &&
 					    matchptr[1]) {
 						matchptr += 2;
-					} else if (*matchptr == '[') {
+					} இல்லையெனில் எனில் (*matchptr == '[') {
 						dummyptr = dummystring;
 						fnmatch_ch(&matchptr, &dummyptr,
 						    flags);
-					} else {
+					} இல்லையெனில் {
 						++matchptr;
 					}
 				}
 			}
 
 			/* Incrementally match string against the pattern. */
-			while (*pattern && (string < strendseg)) {
+			போது (*pattern && (string < strendseg)) {
 				/* Success; begin a new wild pattern search. */
-				if (*pattern == '*')
-					break;
+				எனில் (*pattern == '*')
+					நிறுத்து;
 
-				if (slash && ((*string == '/') ||
+				எனில் (slash && ((*string == '/') ||
 				    (*pattern == '/') || (escape &&
 				    (*pattern == '\\') && (pattern[1] == '/'))))
-					break;
+					நிறுத்து;
 
 				/*
 				 * Compare ch's (the pattern is advanced over
 				 * "\/" to the '/', but slashes will mismatch,
 				 * and are not consumed).
 				 */
-				if (!fnmatch_ch(&pattern, &string, flags))
-					continue;
+				எனில் (!fnmatch_ch(&pattern, &string, flags))
+					தொடர்;
 
 				/*
 				 * Failed to match, loop against next char
@@ -461,35 +461,35 @@ firstsegment:
 				 * string chars remain to match the fixed
 				 * pattern.
 				 */
-				if (wild) {
+				எனில் (wild) {
 					/* XXX: Advance 1 char for MBCS locale */
 					string = ++strstartseg;
-					if (string + matchlen > strendseg)
-						return FNM_NOMATCH;
+					எனில் (string + matchlen > strendseg)
+						திரும்பு FNM_NOMATCH;
 
 					pattern = mismatch;
-					continue;
-				} else
-					return FNM_NOMATCH;
+					தொடர்;
+				} இல்லையெனில்
+					திரும்பு FNM_NOMATCH;
 			}
 		}
 
-		if (*string && !((slash || leading_dir) && (*string == '/')))
-			return FNM_NOMATCH;
+		எனில் (*string && !((slash || leading_dir) && (*string == '/')))
+			திரும்பு FNM_NOMATCH;
 
-		if (*pattern && !(slash && ((*pattern == '/') ||
+		எனில் (*pattern && !(slash && ((*pattern == '/') ||
 		    (escape && (*pattern == '\\') && (pattern[1] == '/')))))
-			return FNM_NOMATCH;
+			திரும்பு FNM_NOMATCH;
 
-		if (leading_dir && !*pattern && *string == '/')
-			return 0;
+		எனில் (leading_dir && !*pattern && *string == '/')
+			திரும்பு 0;
 	}
 
 	/* Where both pattern and string are at EOS, declare success.  */
-	if (!*string && !*pattern)
-		return 0;
+	எனில் (!*string && !*pattern)
+		திரும்பு 0;
 
 	/* Pattern didn't match to the end of string. */
-	return FNM_NOMATCH;
+	திரும்பு FNM_NOMATCH;
 }
 #endif /* HAVE_FNMATCH */

@@ -40,89 +40,89 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/utsname.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/wait.h>
+#அந்தர்பாவ <sys/utsname.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <locale.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <paths.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <locale.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/err.h>
+#அந்தர்பாவ <openssl/evp.h>
+#அந்தர்பாவ <openssl/err.h>
 #endif
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "compat.h"
-#include "cipher.h"
-#include "packet.h"
-#include "sshbuf.h"
-#include "channels.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "clientloop.h"
-#include "log.h"
-#include "misc.h"
-#include "readconf.h"
-#include "sshconnect.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "version.h"
-#include "ssherr.h"
-#include "utf8.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "ssh2.h"
+#அந்தர்பாவ "compat.h"
+#அந்தர்பாவ "cipher.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "channels.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "authfd.h"
+#அந்தர்பாவ "authfile.h"
+#அந்தர்பாவ "pathnames.h"
+#அந்தர்பாவ "clientloop.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "readconf.h"
+#அந்தர்பாவ "sshconnect.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "mac.h"
+#அந்தர்பாவ "match.h"
+#அந்தர்பாவ "version.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "utf8.h"
 
 #ifdef ENABLE_PKCS11
-#include "ssh-pkcs11.h"
+#அந்தர்பாவ "ssh-pkcs11.h"
 #endif
 
-extern char *__progname;
+வெளி எழுத்து *__progname;
 
 /* Saves a copy of argv for setproctitle emulation */
 #ifndef HAVE_SETPROCTITLE
-static char **saved_av;
+நிலையான எழுத்து **saved_av;
 #endif
 
 /* Flag indicating whether debug mode is on.  May be set on the command line. */
-int debug_flag = 0;
+முழு debug_flag = 0;
 
 /* Flag indicating whether a tty should be requested */
-int tty_flag = 0;
+முழு tty_flag = 0;
 
 /*
  * Flag indicating that the current process should be backgrounded and
  * a new mux-client launched in the foreground for ControlPersist.
  */
-static int need_controlpersist_detach = 0;
+நிலையான முழு need_controlpersist_detach = 0;
 
 /* Copies of flags for ControlPersist foreground mux-client */
-static int ostdin_null_flag, osession_type, otty_flag, orequest_tty;
-static int ofork_after_authentication;
+நிலையான முழு ostdin_null_flag, osession_type, otty_flag, orequest_tty;
+நிலையான முழு ofork_after_authentication;
 
 /*
  * General data structure for command line options and options configurable
@@ -131,41 +131,41 @@ static int ofork_after_authentication;
 Options options;
 
 /* optional user configfile */
-char *config = NULL;
+எழுத்து *config = வெற்று;
 
 /*
  * Name of the host we are connecting to.  This is the name given on the
  * command line, or the Hostname specified for the user-supplied name in a
  * configuration file.
  */
-char *host;
+எழுத்து *host;
 
 /*
  * A config can specify a path to forward, overriding SSH_AUTH_SOCK. If this is
  * not NULL, forward the socket at this path instead.
  */
-char *forward_agent_sock_path = NULL;
+எழுத்து *forward_agent_sock_path = வெற்று;
 
 /* socket address the host resolves to */
-struct sockaddr_storage hostaddr;
+கட்டமைப்பு sockaddr_storage hostaddr;
 
 /* Private host keys. */
 Sensitive sensitive_data;
 
 /* command to be executed */
-struct sshbuf *command;
+கட்டமைப்பு sshbuf *command;
 
 /* # of replies received for global requests */
-static int forward_confirms_pending = -1;
+நிலையான முழு forward_confirms_pending = -1;
 
 /* mux.c */
-extern int muxserver_sock;
-extern u_int muxclient_command;
+வெளி முழு muxserver_sock;
+வெளி u_int muxclient_command;
 
 /* Prints a help message to the user.  This function never returns. */
 
-static void
-usage(void)
+நிலையான வெறுமை
+usage(வெறுமை)
 {
 	fprintf(stderr,
 "usage: ssh [-46AaCfGgKkMNnqsTtVvXxYyZ] [-B bind_interface] [-b bind_address]\n"
@@ -180,20 +180,20 @@ usage(void)
 	exit(255);
 }
 
-static int ssh_session2(struct ssh *, const struct ssh_conn_info *);
-static void load_public_identity_files(const struct ssh_conn_info *);
-static void main_sigchld_handler(int);
+நிலையான முழு ssh_session2(கட்டமைப்பு ssh *, மாறிலி கட்டமைப்பு ssh_conn_info *);
+நிலையான வெறுமை load_public_identity_files(மாறிலி கட்டமைப்பு ssh_conn_info *);
+நிலையான வெறுமை main_sigchld_handler(முழு);
 
 /* ~/ expand a list of paths. NB. assumes path[n] is heap-allocated. */
-static void
-tilde_expand_paths(char **paths, u_int num_paths)
+நிலையான வெறுமை
+tilde_expand_paths(எழுத்து **paths, u_int இலக்கம்_paths)
 {
 	u_int i;
-	char *cp;
+	எழுத்து *cp;
 
-	for (i = 0; i < num_paths; i++) {
+	க்கு (i = 0; i < இலக்கம்_paths; i++) {
 		cp = tilde_expand_filename(paths[i], getuid());
-		free(paths[i]);
+		விடுவி(paths[i]);
 		paths[i] = cp;
 	}
 }
@@ -203,13 +203,13 @@ tilde_expand_paths(char **paths, u_int num_paths)
  * in the client that support percent expansion.
  * Caller must free returned string.
  */
-static char *
-default_client_percent_expand(const char *str,
-    const struct ssh_conn_info *cinfo)
+நிலையான எழுத்து *
+default_client_percent_expand(மாறிலி எழுத்து *str,
+    மாறிலி கட்டமைப்பு ssh_conn_info *cinfo)
 {
-	return percent_expand(str,
+	திரும்பு percent_expand(str,
 	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-	    (char *)NULL);
+	    (எழுத்து *)வெற்று);
 }
 
 /*
@@ -217,18 +217,18 @@ default_client_percent_expand(const char *str,
  * AND perform environment variable substitution.
  * Caller must free returned string.
  */
-static char *
-default_client_percent_dollar_expand(const char *str,
-    const struct ssh_conn_info *cinfo)
+நிலையான எழுத்து *
+default_client_percent_dollar_expand(மாறிலி எழுத்து *str,
+    மாறிலி கட்டமைப்பு ssh_conn_info *cinfo)
 {
-	char *ret;
+	எழுத்து *ret;
 
 	ret = percent_dollar_expand(str,
 	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-	    (char *)NULL);
-	if (ret == NULL)
+	    (எழுத்து *)வெற்று);
+	எனில் (ret == வெற்று)
 		fatal("invalid environment variable expansion");
-	return ret;
+	திரும்பு ret;
 }
 
 /*
@@ -237,81 +237,81 @@ default_client_percent_dollar_expand(const char *str,
  * Returns NULL on failure.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_host(const char *name, int port, int logerr, char *cname, size_t clen)
+நிலையான கட்டமைப்பு addrinfo *
+resolve_host(மாறிலி எழுத்து *name, முழு port, முழு logerr, எழுத்து *cname, size_t clen)
 {
-	char strport[NI_MAXSERV];
-	const char *errstr = NULL;
-	struct addrinfo hints, *res;
-	int gaierr;
+	எழுத்து strport[NI_MAXSERV];
+	மாறிலி எழுத்து *errstr = வெற்று;
+	கட்டமைப்பு addrinfo hints, *res;
+	முழு gaierr;
 	LogLevel loglevel = SYSLOG_LEVEL_DEBUG1;
 
-	if (port <= 0)
+	எனில் (port <= 0)
 		port = default_ssh_port();
-	if (cname != NULL)
+	எனில் (cname != வெற்று)
 		*cname = '\0';
 	debug3_f("lookup %s:%d", name, port);
 
-	snprintf(strport, sizeof strport, "%d", port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, அளவு strport, "%d", port);
+	memset(&hints, 0, அளவு(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
-	if (cname != NULL)
+	எனில் (cname != வெற்று)
 		hints.ai_flags = AI_CANONNAME;
-	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
-		if (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
+	எனில் ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+		எனில் (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
 			loglevel = SYSLOG_LEVEL_ERROR;
 		do_log2(loglevel, "%s: Could not resolve hostname %.100s: %s",
 		    __progname, name, ssh_gai_strerror(gaierr));
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	if (cname != NULL && res->ai_canonname != NULL) {
-		if (!valid_domain(res->ai_canonname, 0, &errstr)) {
+	எனில் (cname != வெற்று && res->ai_canonname != வெற்று) {
+		எனில் (!valid_domain(res->ai_canonname, 0, &errstr)) {
 			error("ignoring bad CNAME \"%s\" for host \"%s\": %s",
 			    res->ai_canonname, name, errstr);
-		} else if (strlcpy(cname, res->ai_canonname, clen) >= clen) {
+		} இல்லையெனில் எனில் (strlcpy(cname, res->ai_canonname, clen) >= clen) {
 			error_f("host \"%s\" cname \"%s\" too long (max %lu)",
 			    name,  res->ai_canonname, (u_long)clen);
-			if (clen > 0)
+			எனில் (clen > 0)
 				*cname = '\0';
 		}
 	}
-	return res;
+	திரும்பு res;
 }
 
 /* Returns non-zero if name can only be an address and not a hostname */
-static int
-is_addr_fast(const char *name)
+நிலையான முழு
+is_addr_fast(மாறிலி எழுத்து *name)
 {
-	return (strchr(name, '%') != NULL || strchr(name, ':') != NULL ||
+	திரும்பு (strchr(name, '%') != வெற்று || strchr(name, ':') != வெற்று ||
 	    strspn(name, "0123456789.") == strlen(name));
 }
 
 /* Returns non-zero if name represents a valid, single address */
-static int
-is_addr(const char *name)
+நிலையான முழு
+is_addr(மாறிலி எழுத்து *name)
 {
-	char strport[NI_MAXSERV];
-	struct addrinfo hints, *res;
+	எழுத்து strport[NI_MAXSERV];
+	கட்டமைப்பு addrinfo hints, *res;
 
-	if (is_addr_fast(name))
-		return 1;
+	எனில் (is_addr_fast(name))
+		திரும்பு 1;
 
-	snprintf(strport, sizeof strport, "%u", default_ssh_port());
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, அளவு strport, "%u", default_ssh_port());
+	memset(&hints, 0, அளவு(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
-	if (getaddrinfo(name, strport, &hints, &res) != 0)
-		return 0;
-	if (res == NULL || res->ai_next != NULL) {
+	எனில் (getaddrinfo(name, strport, &hints, &res) != 0)
+		திரும்பு 0;
+	எனில் (res == வெற்று || res->ai_next != வெற்று) {
 		freeaddrinfo(res);
-		return 0;
+		திரும்பு 0;
 	}
 	freeaddrinfo(res);
-	return 1;
+	திரும்பு 1;
 }
 
 /*
@@ -320,50 +320,50 @@ is_addr(const char *name)
  * Returns NULL on failure.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_addr(const char *name, int port, char *caddr, size_t clen)
+நிலையான கட்டமைப்பு addrinfo *
+resolve_addr(மாறிலி எழுத்து *name, முழு port, எழுத்து *caddr, size_t clen)
 {
-	char addr[NI_MAXHOST], strport[NI_MAXSERV];
-	struct addrinfo hints, *res;
-	int gaierr;
+	எழுத்து addr[NI_MAXHOST], strport[NI_MAXSERV];
+	கட்டமைப்பு addrinfo hints, *res;
+	முழு gaierr;
 
-	if (port <= 0)
+	எனில் (port <= 0)
 		port = default_ssh_port();
-	snprintf(strport, sizeof strport, "%u", port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, அளவு strport, "%u", port);
+	memset(&hints, 0, அளவு(hints));
 	hints.ai_family = options.address_family == -1 ?
 	    AF_UNSPEC : options.address_family;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
-	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+	எனில் ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
 		debug2_f("could not resolve name %.100s as address: %s",
 		    name, ssh_gai_strerror(gaierr));
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	if (res == NULL) {
+	எனில் (res == வெற்று) {
 		debug_f("getaddrinfo %.100s returned no addresses", name);
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	if (res->ai_next != NULL) {
+	எனில் (res->ai_next != வெற்று) {
 		debug_f("getaddrinfo %.100s returned multiple addresses", name);
-		goto fail;
+		செல் fail;
 	}
-	if ((gaierr = getnameinfo(res->ai_addr, res->ai_addrlen,
-	    addr, sizeof(addr), NULL, 0, NI_NUMERICHOST)) != 0) {
+	எனில் ((gaierr = getnameinfo(res->ai_addr, res->ai_addrlen,
+	    addr, அளவு(addr), வெற்று, 0, NI_NUMERICHOST)) != 0) {
 		debug_f("Could not format address for name %.100s: %s",
 		    name, ssh_gai_strerror(gaierr));
-		goto fail;
+		செல் fail;
 	}
-	if (strlcpy(caddr, addr, clen) >= clen) {
+	எனில் (strlcpy(caddr, addr, clen) >= clen) {
 		error_f("host \"%s\" addr \"%s\" too long (max %lu)",
 		    name,  addr, (u_long)clen);
-		if (clen > 0)
+		எனில் (clen > 0)
 			*caddr = '\0';
  fail:
 		freeaddrinfo(res);
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	return res;
+	திரும்பு res;
 }
 
 /*
@@ -371,38 +371,38 @@ resolve_addr(const char *name, int port, char *caddr, size_t clen)
  * and perform the replacement if it is.
  * NB. this function must operate with a options having undefined members.
  */
-static int
-check_follow_cname(int direct, char **namep, const char *cname)
+நிலையான முழு
+check_follow_cname(முழு direct, எழுத்து **namep, மாறிலி எழுத்து *cname)
 {
-	int i;
-	struct allowed_cname *rule;
+	முழு i;
+	கட்டமைப்பு allowed_cname *rule;
 
-	if (*cname == '\0' || !config_has_permitted_cnames(&options) ||
+	எனில் (*cname == '\0' || !config_has_permitted_cnames(&options) ||
 	    strcmp(*namep, cname) == 0)
-		return 0;
-	if (options.canonicalize_hostname == SSH_CANONICALISE_NO)
-		return 0;
+		திரும்பு 0;
+	எனில் (options.canonicalize_hostname == SSH_CANONICALISE_NO)
+		திரும்பு 0;
 	/*
 	 * Don't attempt to canonicalize names that will be interpreted by
 	 * a proxy or jump host unless the user specifically requests so.
 	 */
-	if (!direct &&
+	எனில் (!direct &&
 	    options.canonicalize_hostname != SSH_CANONICALISE_ALWAYS)
-		return 0;
+		திரும்பு 0;
 	debug3_f("check \"%s\" CNAME \"%s\"", *namep, cname);
-	for (i = 0; i < options.num_permitted_cnames; i++) {
+	க்கு (i = 0; i < options.இலக்கம்_permitted_cnames; i++) {
 		rule = options.permitted_cnames + i;
-		if (match_pattern_list(*namep, rule->source_list, 1) != 1 ||
+		எனில் (match_pattern_list(*namep, rule->source_list, 1) != 1 ||
 		    match_pattern_list(cname, rule->target_list, 1) != 1)
-			continue;
+			தொடர்;
 		verbose("Canonicalized DNS aliased hostname "
 		    "\"%s\" => \"%s\"", *namep, cname);
-		free(*namep);
+		விடுவி(*namep);
 		*namep = xstrdup(cname);
 		lowercase(*namep);
-		return 1;
+		திரும்பு 1;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /*
@@ -411,27 +411,27 @@ check_follow_cname(int direct, char **namep, const char *cname)
  * if no name was found after canonicalization.
  * NB. this function must operate with a options having undefined members.
  */
-static struct addrinfo *
-resolve_canonicalize(char **hostp, int port)
+நிலையான கட்டமைப்பு addrinfo *
+resolve_canonicalize(எழுத்து **hostp, முழு port)
 {
-	int i, direct, ndots;
-	char *cp, *fullhost, newname[NI_MAXHOST];
-	struct addrinfo *addrs;
+	முழு i, direct, ndots;
+	எழுத்து *cp, *fullhost, newname[NI_MAXHOST];
+	கட்டமைப்பு addrinfo *addrs;
 
 	/*
 	 * Attempt to canonicalise addresses, regardless of
 	 * whether hostname canonicalisation was requested
 	 */
-	if ((addrs = resolve_addr(*hostp, port,
-	    newname, sizeof(newname))) != NULL) {
+	எனில் ((addrs = resolve_addr(*hostp, port,
+	    newname, அளவு(newname))) != வெற்று) {
 		debug2_f("hostname %.100s is address", *hostp);
-		if (strcasecmp(*hostp, newname) != 0) {
+		எனில் (strcasecmp(*hostp, newname) != 0) {
 			debug2_f("canonicalised address \"%s\" => \"%s\"",
 			    *hostp, newname);
-			free(*hostp);
+			விடுவி(*hostp);
 			*hostp = xstrdup(newname);
 		}
-		return addrs;
+		திரும்பு addrs;
 	}
 
 	/*
@@ -439,13 +439,13 @@ resolve_canonicalize(char **hostp, int port)
 	 * be an address with an invalid interface scope. Skip further
 	 * attempts at canonicalisation.
 	 */
-	if (is_addr_fast(*hostp)) {
+	எனில் (is_addr_fast(*hostp)) {
 		debug_f("hostname %.100s is an unrecognised address", *hostp);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	if (options.canonicalize_hostname == SSH_CANONICALISE_NO)
-		return NULL;
+	எனில் (options.canonicalize_hostname == SSH_CANONICALISE_NO)
+		திரும்பு வெற்று;
 
 	/*
 	 * Don't attempt to canonicalize names that will be interpreted by
@@ -453,106 +453,106 @@ resolve_canonicalize(char **hostp, int port)
 	 */
 	direct = option_clear_or_none(options.proxy_command) &&
 	    option_clear_or_none(options.jump_host);
-	if (!direct &&
+	எனில் (!direct &&
 	    options.canonicalize_hostname != SSH_CANONICALISE_ALWAYS)
-		return NULL;
+		திரும்பு வெற்று;
 
 	/* If domain name is anchored, then resolve it now */
-	if ((*hostp)[strlen(*hostp) - 1] == '.') {
+	எனில் ((*hostp)[strlen(*hostp) - 1] == '.') {
 		debug3_f("name is fully qualified");
 		fullhost = xstrdup(*hostp);
-		if ((addrs = resolve_host(fullhost, port, 0,
-		    newname, sizeof(newname))) != NULL)
-			goto found;
-		free(fullhost);
-		goto notfound;
+		எனில் ((addrs = resolve_host(fullhost, port, 0,
+		    newname, அளவு(newname))) != வெற்று)
+			செல் found;
+		விடுவி(fullhost);
+		செல் notfound;
 	}
 
 	/* Don't apply canonicalization to sufficiently-qualified hostnames */
 	ndots = 0;
-	for (cp = *hostp; *cp != '\0'; cp++) {
-		if (*cp == '.')
+	க்கு (cp = *hostp; *cp != '\0'; cp++) {
+		எனில் (*cp == '.')
 			ndots++;
 	}
-	if (ndots > options.canonicalize_max_dots) {
+	எனில் (ndots > options.canonicalize_max_dots) {
 		debug3_f("not canonicalizing hostname \"%s\" (max dots %d)",
 		    *hostp, options.canonicalize_max_dots);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 	/* Attempt each supplied suffix */
-	for (i = 0; i < options.num_canonical_domains; i++) {
-		if (strcasecmp(options.canonical_domains[i], "none") == 0)
-			break;
+	க்கு (i = 0; i < options.இலக்கம்_canonical_domains; i++) {
+		எனில் (strcasecmp(options.canonical_domains[i], "none") == 0)
+			நிறுத்து;
 		xasprintf(&fullhost, "%s.%s.", *hostp,
 		    options.canonical_domains[i]);
 		debug3_f("attempting \"%s\" => \"%s\"", *hostp, fullhost);
-		if ((addrs = resolve_host(fullhost, port, 0,
-		    newname, sizeof(newname))) == NULL) {
-			free(fullhost);
-			continue;
+		எனில் ((addrs = resolve_host(fullhost, port, 0,
+		    newname, அளவு(newname))) == வெற்று) {
+			விடுவி(fullhost);
+			தொடர்;
 		}
  found:
 		/* Remove trailing '.' */
 		fullhost[strlen(fullhost) - 1] = '\0';
 		/* Follow CNAME if requested */
-		if (!check_follow_cname(direct, &fullhost, newname)) {
+		எனில் (!check_follow_cname(direct, &fullhost, newname)) {
 			debug("Canonicalized hostname \"%s\" => \"%s\"",
 			    *hostp, fullhost);
 		}
-		free(*hostp);
+		விடுவி(*hostp);
 		*hostp = fullhost;
-		return addrs;
+		திரும்பு addrs;
 	}
  notfound:
-	if (!options.canonicalize_fallback_local)
+	எனில் (!options.canonicalize_fallback_local)
 		fatal("%s: Could not resolve host \"%s\"", __progname, *hostp);
 	debug2_f("host %s not found in any suffix", *hostp);
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
  * Check the result of hostkey loading, ignoring some errors and either
  * discarding the key or fatal()ing for others.
  */
-static void
-check_load(int r, struct sshkey **k, const char *path, const char *message)
+நிலையான வெறுமை
+check_load(முழு r, கட்டமைப்பு sshkey **k, மாறிலி எழுத்து *path, மாறிலி எழுத்து *message)
 {
-	char *fp;
+	எழுத்து *fp;
 
-	switch (r) {
-	case 0:
-		if (k == NULL || *k == NULL)
-			return;
+	தேர்வு (r) {
+	நிலை 0:
+		எனில் (k == வெற்று || *k == வெற்று)
+			திரும்பு;
 		/* Check RSA keys size and discard if undersized */
-		if ((r = sshkey_check_rsa_length(*k,
+		எனில் ((r = sshkey_check_rsa_length(*k,
 		    options.required_rsa_size)) != 0) {
 			error_r(r, "load %s \"%s\"", message, path);
-			free(*k);
-			*k = NULL;
-			break;
+			விடுவி(*k);
+			*k = வெற்று;
+			நிறுத்து;
 		}
-		if ((fp = sshkey_fingerprint(*k,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+		எனில் ((fp = sshkey_fingerprint(*k,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == வெற்று) {
 			fatal_f("failed to fingerprint %s %s key from %s",
 			    sshkey_type(*k), message, path);
 		}
 		debug("loaded %s from %s: %s %s", message, path,
 		    sshkey_type(*k), fp);
-		free(fp);
-		break;
-	case SSH_ERR_INTERNAL_ERROR:
-	case SSH_ERR_ALLOC_FAIL:
+		விடுவி(fp);
+		நிறுத்து;
+	நிலை SSH_ERR_INTERNAL_ERROR:
+	நிலை SSH_ERR_ALLOC_FAIL:
 		fatal_r(r, "load %s \"%s\"", message, path);
-	case SSH_ERR_SYSTEM_ERROR:
+	நிலை SSH_ERR_SYSTEM_ERROR:
 		/* Ignore missing files */
-		if (errno == ENOENT)
-			break;
+		எனில் (errno == ENOENT)
+			நிறுத்து;
 		/* FALLTHROUGH */
-	default:
+	இயல்பு:
 		error_r(r, "load %s \"%s\"", message, path);
-		break;
+		நிறுத்து;
 	}
-	if (k != NULL && *k == NULL)
+	எனில் (k != வெற்று && *k == வெற்று)
 		debug("no %s loaded from %s", message, path);
 }
 
@@ -560,55 +560,55 @@ check_load(int r, struct sshkey **k, const char *path, const char *message)
  * Read per-user configuration file.  Ignore the system wide config
  * file if the user specifies a config file on the command line.
  */
-static void
-process_config_files(const char *host_name, struct passwd *pw,
-    int final_pass, int *want_final_pass)
+நிலையான வெறுமை
+process_config_files(மாறிலி எழுத்து *host_name, கட்டமைப்பு passwd *pw,
+    முழு final_pass, முழு *want_final_pass)
 {
-	char *cmd, buf[PATH_MAX];
-	int r;
+	எழுத்து *cmd, buf[PATH_MAX];
+	முழு r;
 
-	if ((cmd = sshbuf_dup_string(command)) == NULL)
+	எனில் ((cmd = sshbuf_dup_string(command)) == வெற்று)
 		fatal_f("sshbuf_dup_string failed");
-	if (config != NULL) {
-		if (strcasecmp(config, "none") != 0 &&
+	எனில் (config != வெற்று) {
+		எனில் (strcasecmp(config, "none") != 0 &&
 		    !read_config_file(config, pw, host, host_name, cmd,
 		    &options,
 		    SSHCONF_USERCONF | (final_pass ? SSHCONF_FINAL : 0),
 		    want_final_pass))
 			fatal("Can't open user config file %.100s: "
 			    "%.100s", config, strerror(errno));
-	} else {
-		r = snprintf(buf, sizeof buf, "%s/%s", pw->pw_dir,
+	} இல்லையெனில் {
+		r = snprintf(buf, அளவு buf, "%s/%s", pw->pw_dir,
 		    _PATH_SSH_USER_CONFFILE);
-		if (r > 0 && (size_t)r < sizeof(buf))
-			(void)read_config_file(buf, pw, host, host_name, cmd,
+		எனில் (r > 0 && (size_t)r < அளவு(buf))
+			(வெறுமை)read_config_file(buf, pw, host, host_name, cmd,
 			    &options, SSHCONF_CHECKPERM | SSHCONF_USERCONF |
 			    (final_pass ? SSHCONF_FINAL : 0), want_final_pass);
 
 		/* Read systemwide configuration file after user config. */
-		(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw,
+		(வெறுமை)read_config_file(_PATH_HOST_CONFIG_FILE, pw,
 		    host, host_name, cmd, &options,
 		    final_pass ? SSHCONF_FINAL : 0, want_final_pass);
 	}
-	free(cmd);
+	விடுவி(cmd);
 }
 
 /* Rewrite the port number in an addrinfo list of addresses */
-static void
-set_addrinfo_port(struct addrinfo *addrs, int port)
+நிலையான வெறுமை
+set_addrinfo_port(கட்டமைப்பு addrinfo *addrs, முழு port)
 {
-	struct addrinfo *addr;
+	கட்டமைப்பு addrinfo *addr;
 
-	for (addr = addrs; addr != NULL; addr = addr->ai_next) {
-		switch (addr->ai_family) {
-		case AF_INET:
-			((struct sockaddr_in *)addr->ai_addr)->
+	க்கு (addr = addrs; addr != வெற்று; addr = addr->ai_next) {
+		தேர்வு (addr->ai_family) {
+		நிலை AF_INET:
+			((கட்டமைப்பு sockaddr_in *)addr->ai_addr)->
 			    sin_port = htons(port);
-			break;
-		case AF_INET6:
-			((struct sockaddr_in6 *)addr->ai_addr)->
+			நிறுத்து;
+		நிலை AF_INET6:
+			((கட்டமைப்பு sockaddr_in6 *)addr->ai_addr)->
 			    sin6_port = htons(port);
-			break;
+			நிறுத்து;
 		}
 	}
 }
@@ -616,25 +616,25 @@ set_addrinfo_port(struct addrinfo *addrs, int port)
 /*
  * Main program for the ssh client.
  */
-int
-main(int ac, char **av)
+முழு
+முதன்மை(முழு ac, எழுத்து **av)
 {
-	struct ssh *ssh = NULL;
-	int i, r, opt, exit_status, use_syslog, direct, timeout_ms;
-	int was_addr, config_test = 0, dump_pubkeys = 0, opt_terminated = 0, want_final_pass = 0;
-	int user_on_commandline = 0, user_was_default = 0, user_expanded = 0;
-	char *p, *cp, *line, *argv0, *logfile, *args;
-	char cname[NI_MAXHOST], thishost[NI_MAXHOST];
-	struct stat st;
-	struct passwd *pw;
-	extern int optind, optreset;
-	extern char *optarg;
-	struct Forward fwd;
-	struct addrinfo *addrs = NULL;
+	கட்டமைப்பு ssh *ssh = வெற்று;
+	முழு i, r, opt, exit_status, use_syslog, direct, timeout_ms;
+	முழு was_addr, config_test = 0, dump_pubkeys = 0, opt_terminated = 0, want_final_pass = 0;
+	முழு user_on_commandline = 0, user_was_default = 0, user_expanded = 0;
+	எழுத்து *p, *cp, *வரி, *argv0, *logfile, *args;
+	எழுத்து cname[NI_MAXHOST], thishost[NI_MAXHOST];
+	கட்டமைப்பு stat st;
+	கட்டமைப்பு passwd *pw;
+	வெளி முழு optind, optreset;
+	வெளி எழுத்து *optarg;
+	கட்டமைப்பு Forward fwd;
+	கட்டமைப்பு addrinfo *addrs = வெற்று;
 	size_t n, len;
 	u_int j;
-	struct utsname utsname;
-	struct ssh_conn_info *cinfo = NULL;
+	கட்டமைப்பு utsname utsname;
+	கட்டமைப்பு ssh_conn_info *cinfo = வெற்று;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -650,10 +650,10 @@ main(int ac, char **av)
 #ifndef HAVE_SETPROCTITLE
 	/* Prepare for later setproctitle emulation */
 	/* Save argv so it isn't clobbered by setproctitle() emulation */
-	saved_av = xcalloc(ac + 1, sizeof(*saved_av));
-	for (i = 0; i < ac; i++)
+	saved_av = xcalloc(ac + 1, அளவு(*saved_av));
+	க்கு (i = 0; i < ac; i++)
 		saved_av[i] = xstrdup(av[i]);
-	saved_av[i] = NULL;
+	saved_av[i] = வெற்று;
 	compat_init_setproctitle(ac, av);
 	av = saved_av;
 #endif
@@ -662,7 +662,7 @@ main(int ac, char **av)
 
 	/* Get user data. */
 	pw = getpwuid(getuid());
-	if (!pw) {
+	எனில் (!pw) {
 		logit("No user exists for uid %lu", (u_long)getuid());
 		exit(255);
 	}
@@ -688,118 +688,118 @@ main(int ac, char **av)
 	/*
 	 * Prepare main ssh transport/connection structures
 	 */
-	if ((ssh = ssh_alloc_session_state()) == NULL)
+	எனில் ((ssh = ssh_alloc_session_state()) == வெற்று)
 		fatal("Couldn't allocate session state");
 	channel_init_channels(ssh);
 
 	/* Parse command-line arguments. */
 	args = argv_assemble(ac, av); /* logged later */
-	host = NULL;
+	host = வெற்று;
 	use_syslog = 0;
-	logfile = NULL;
+	logfile = வெற்று;
 	argv0 = av[0];
 
  again:
 	/* remaining: HUdhjruz */
-	while ((opt = getopt(ac, av, "1246ACGKMNTVXYZafgknqstvxy"
+	போது ((opt = getopt(ac, av, "1246ACGKMNTVXYZafgknqstvxy"
 	    "B:D:E:F:I:J:L:O:P:Q:R:S:W:b:c:e:i:l:m:o:p:w:")) != -1) {
-		switch (opt) {
-		case '1':
+		தேர்வு (opt) {
+		நிலை '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			நிறுத்து;
+		நிலை '2':
 			/* Ignored */
-			break;
-		case '4':
+			நிறுத்து;
+		நிலை '4':
 			options.address_family = AF_INET;
-			break;
-		case '6':
+			நிறுத்து;
+		நிலை '6':
 			options.address_family = AF_INET6;
-			break;
-		case 'n':
+			நிறுத்து;
+		நிலை 'n':
 			options.stdin_null = 1;
-			break;
-		case 'f':
+			நிறுத்து;
+		நிலை 'f':
 			options.fork_after_authentication = 1;
 			options.stdin_null = 1;
-			break;
-		case 'x':
+			நிறுத்து;
+		நிலை 'x':
 			options.forward_x11 = 0;
-			break;
-		case 'X':
+			நிறுத்து;
+		நிலை 'X':
 			options.forward_x11 = 1;
-			break;
-		case 'y':
+			நிறுத்து;
+		நிலை 'y':
 			use_syslog = 1;
-			break;
-		case 'E':
+			நிறுத்து;
+		நிலை 'E':
 			logfile = optarg;
-			break;
-		case 'G':
+			நிறுத்து;
+		நிலை 'G':
 			config_test = 1;
-			break;
-		case 'Y':
+			நிறுத்து;
+		நிலை 'Y':
 			options.forward_x11 = 1;
 			options.forward_x11_trusted = 1;
-			break;
-		case 'Z':
+			நிறுத்து;
+		நிலை 'Z':
 			dump_pubkeys = 1;
-			break;
-		case 'g':
+			நிறுத்து;
+		நிலை 'g':
 			options.fwd_opts.gateway_ports = 1;
-			break;
-		case 'O':
-			if (options.stdio_forward_host != NULL)
+			நிறுத்து;
+		நிலை 'O':
+			எனில் (options.stdio_forward_host != வெற்று)
 				fatal("Cannot specify multiplexing "
 				    "command with -W");
-			else if (muxclient_command != 0)
+			இல்லையெனில் எனில் (muxclient_command != 0)
 				fatal("Multiplexing command already specified");
-			if (strcmp(optarg, "check") == 0)
+			எனில் (strcmp(optarg, "check") == 0)
 				muxclient_command = SSHMUX_COMMAND_ALIVE_CHECK;
-			else if (strcmp(optarg, "conninfo") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "conninfo") == 0)
 				muxclient_command = SSHMUX_COMMAND_CONNINFO;
-			else if (strcmp(optarg, "channels") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "channels") == 0)
 				muxclient_command = SSHMUX_COMMAND_CHANINFO;
-			else if (strcmp(optarg, "forward") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "forward") == 0)
 				muxclient_command = SSHMUX_COMMAND_FORWARD;
-			else if (strcmp(optarg, "exit") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "exit") == 0)
 				muxclient_command = SSHMUX_COMMAND_TERMINATE;
-			else if (strcmp(optarg, "stop") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "stop") == 0)
 				muxclient_command = SSHMUX_COMMAND_STOP;
-			else if (strcmp(optarg, "cancel") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "cancel") == 0)
 				muxclient_command = SSHMUX_COMMAND_CANCEL_FWD;
-			else if (strcmp(optarg, "proxy") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "proxy") == 0)
 				muxclient_command = SSHMUX_COMMAND_PROXY;
-			else
+			இல்லையெனில்
 				fatal("Invalid multiplex command.");
-			break;
-		case 'P':
-			if (options.tag == NULL)
+			நிறுத்து;
+		நிலை 'P':
+			எனில் (options.tag == வெற்று)
 				options.tag = xstrdup(optarg);
-			break;
-		case 'Q':
-			cp = NULL;
-			if (strcmp(optarg, "cipher") == 0 ||
+			நிறுத்து;
+		நிலை 'Q':
+			cp = வெற்று;
+			எனில் (strcmp(optarg, "cipher") == 0 ||
 			    strcasecmp(optarg, "Ciphers") == 0)
 				cp = cipher_alg_list('\n', 0);
-			else if (strcmp(optarg, "cipher-auth") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "cipher-auth") == 0)
 				cp = cipher_alg_list('\n', 1);
-			else if (strcmp(optarg, "mac") == 0 ||
+			இல்லையெனில் எனில் (strcmp(optarg, "mac") == 0 ||
 			    strcasecmp(optarg, "MACs") == 0)
 				cp = mac_alg_list('\n');
-			else if (strcmp(optarg, "kex") == 0 ||
+			இல்லையெனில் எனில் (strcmp(optarg, "kex") == 0 ||
 			    strcasecmp(optarg, "KexAlgorithms") == 0)
 				cp = kex_alg_list('\n');
-			else if (strcmp(optarg, "key") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "key") == 0)
 				cp = sshkey_alg_list(0, 0, 0, '\n');
-			else if (strcmp(optarg, "key-cert") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "key-cert") == 0)
 				cp = sshkey_alg_list(1, 0, 0, '\n');
-			else if (strcmp(optarg, "key-plain") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "key-plain") == 0)
 				cp = sshkey_alg_list(0, 1, 0, '\n');
-			else if (strcmp(optarg, "key-ca-sign") == 0 ||
+			இல்லையெனில் எனில் (strcmp(optarg, "key-ca-sign") == 0 ||
 			    strcasecmp(optarg, "CASignatureAlgorithms") == 0)
 				cp = sshkey_alg_list(0, 1, 1, '\n');
-			else if (strcmp(optarg, "key-sig") == 0 ||
+			இல்லையெனில் எனில் (strcmp(optarg, "key-sig") == 0 ||
 			    strcasecmp(optarg, "PubkeyAcceptedKeyTypes") == 0 || /* deprecated name */
 			    strcasecmp(optarg, "PubkeyAcceptedAlgorithms") == 0 ||
 			    strcasecmp(optarg, "HostKeyAlgorithms") == 0 ||
@@ -807,115 +807,115 @@ main(int ac, char **av)
 			    strcasecmp(optarg, "HostbasedAcceptedKeyTypes") == 0 || /* deprecated name */
 			    strcasecmp(optarg, "HostbasedAcceptedAlgorithms") == 0)
 				cp = sshkey_alg_list(0, 0, 1, '\n');
-			else if (strcmp(optarg, "sig") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "sig") == 0)
 				cp = sshkey_alg_list(0, 1, 1, '\n');
-			else if (strcmp(optarg, "protocol-version") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "protocol-version") == 0)
 				cp = xstrdup("2");
-			else if (strcmp(optarg, "compression") == 0) {
+			இல்லையெனில் எனில் (strcmp(optarg, "compression") == 0) {
 				cp = xstrdup(compression_alg_list(0));
 				len = strlen(cp);
-				for (n = 0; n < len; n++)
-					if (cp[n] == ',')
+				க்கு (n = 0; n < len; n++)
+					எனில் (cp[n] == ',')
 						cp[n] = '\n';
-			} else if (strcmp(optarg, "help") == 0) {
+			} இல்லையெனில் எனில் (strcmp(optarg, "help") == 0) {
 				cp = xstrdup(
 				    "cipher\ncipher-auth\ncompression\nkex\n"
 				    "key\nkey-cert\nkey-plain\nkey-sig\nmac\n"
 				    "protocol-version\nsig");
 			}
-			if (cp == NULL)
+			எனில் (cp == வெற்று)
 				fatal("Unsupported query \"%s\"", optarg);
 			printf("%s\n", cp);
-			free(cp);
+			விடுவி(cp);
 			exit(0);
-			break;
-		case 'a':
+			நிறுத்து;
+		நிலை 'a':
 			options.forward_agent = 0;
-			break;
-		case 'A':
+			நிறுத்து;
+		நிலை 'A':
 			options.forward_agent = 1;
-			break;
-		case 'k':
+			நிறுத்து;
+		நிலை 'k':
 			options.gss_deleg_creds = 0;
-			break;
-		case 'K':
+			நிறுத்து;
+		நிலை 'K':
 			options.gss_authentication = 1;
 			options.gss_deleg_creds = 1;
-			break;
-		case 'i':
+			நிறுத்து;
+		நிலை 'i':
 			p = tilde_expand_filename(optarg, getuid());
-			if (stat(p, &st) == -1)
+			எனில் (stat(p, &st) == -1)
 				fprintf(stderr, "Warning: Identity file %s "
 				    "not accessible: %s.\n", p,
 				    strerror(errno));
-			else
-				add_identity_file(&options, NULL, p, 1);
-			free(p);
-			break;
-		case 'I':
+			இல்லையெனில்
+				add_identity_file(&options, வெற்று, p, 1);
+			விடுவி(p);
+			நிறுத்து;
+		நிலை 'I':
 #ifdef ENABLE_PKCS11
-			free(options.pkcs11_provider);
+			விடுவி(options.pkcs11_provider);
 			options.pkcs11_provider = xstrdup(optarg);
-#else
+#இல்லையெனில்
 			fprintf(stderr, "no support for PKCS#11.\n");
 #endif
-			break;
-		case 'J':
-			if (options.jump_host != NULL) {
+			நிறுத்து;
+		நிலை 'J':
+			எனில் (options.jump_host != வெற்று) {
 				fatal("Only a single -J option is permitted "
 				    "(use commas to separate multiple "
 				    "jump hops)");
 			}
-			if (options.proxy_command != NULL)
+			எனில் (options.proxy_command != வெற்று)
 				fatal("Cannot specify -J with ProxyCommand");
-			if (parse_jump(optarg, &options, 1, 1) == -1)
+			எனில் (parse_jump(optarg, &options, 1, 1) == -1)
 
 				fatal("Invalid -J argument");
-			break;
-		case 't':
-			if (options.request_tty == REQUEST_TTY_YES)
+			நிறுத்து;
+		நிலை 't':
+			எனில் (options.request_tty == REQUEST_TTY_YES)
 				options.request_tty = REQUEST_TTY_FORCE;
-			else
+			இல்லையெனில்
 				options.request_tty = REQUEST_TTY_YES;
-			break;
-		case 'v':
-			if (debug_flag == 0) {
+			நிறுத்து;
+		நிலை 'v':
+			எனில் (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else {
-				if (options.log_level < SYSLOG_LEVEL_DEBUG3) {
+			} இல்லையெனில் {
+				எனில் (options.log_level < SYSLOG_LEVEL_DEBUG3) {
 					debug_flag++;
 					options.log_level++;
 				}
 			}
-			break;
-		case 'V':
+			நிறுத்து;
+		நிலை 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_RELEASE, SSH_OPENSSL_VERSION);
 			exit(0);
-			break;
-		case 'w':
-			if (options.tun_open == -1)
+			நிறுத்து;
+		நிலை 'w':
+			எனில் (options.tun_open == -1)
 				options.tun_open = SSH_TUNMODE_DEFAULT;
 			options.tun_local = a2tun(optarg, &options.tun_remote);
-			if (options.tun_local == SSH_TUNID_ERR) {
+			எனில் (options.tun_local == SSH_TUNID_ERR) {
 				fprintf(stderr,
 				    "Bad tun device '%s'\n", optarg);
 				exit(255);
 			}
-			break;
-		case 'W':
-			if (options.stdio_forward_host != NULL)
+			நிறுத்து;
+		நிலை 'W':
+			எனில் (options.stdio_forward_host != வெற்று)
 				fatal("stdio forward already specified");
-			if (muxclient_command != 0)
+			எனில் (muxclient_command != 0)
 				fatal("Cannot specify stdio forward with -O");
-			if (parse_forward(&fwd, optarg, 1, 0)) {
+			எனில் (parse_forward(&fwd, optarg, 1, 0)) {
 				options.stdio_forward_host =
 				    fwd.listen_port == PORT_STREAMLOCAL ?
 				    fwd.listen_path : fwd.listen_host;
 				options.stdio_forward_port = fwd.listen_port;
-				free(fwd.connect_host);
-			} else {
+				விடுவி(fwd.connect_host);
+			} இல்லையெனில் {
 				fprintf(stderr,
 				    "Bad stdio forwarding specification '%s'\n",
 				    optarg);
@@ -923,216 +923,216 @@ main(int ac, char **av)
 			}
 			options.request_tty = REQUEST_TTY_NO;
 			options.session_type = SESSION_TYPE_NONE;
-			break;
-		case 'q':
+			நிறுத்து;
+		நிலை 'q':
 			options.log_level = SYSLOG_LEVEL_QUIET;
-			break;
-		case 'e':
-			if (strlen(optarg) == 2 && optarg[0] == '^' &&
+			நிறுத்து;
+		நிலை 'e':
+			எனில் (strlen(optarg) == 2 && optarg[0] == '^' &&
 			    (u_char) optarg[1] >= 64 &&
 			    (u_char) optarg[1] < 128)
 				options.escape_char = (u_char) optarg[1] & 31;
-			else if (strlen(optarg) == 1)
+			இல்லையெனில் எனில் (strlen(optarg) == 1)
 				options.escape_char = (u_char) optarg[0];
-			else if (strcmp(optarg, "none") == 0)
+			இல்லையெனில் எனில் (strcmp(optarg, "none") == 0)
 				options.escape_char = SSH_ESCAPECHAR_NONE;
-			else {
+			இல்லையெனில் {
 				fprintf(stderr, "Bad escape character '%s'.\n",
 				    optarg);
 				exit(255);
 			}
-			break;
-		case 'c':
-			if (!ciphers_valid(*optarg == '+' || *optarg == '^' ?
+			நிறுத்து;
+		நிலை 'c':
+			எனில் (!ciphers_valid(*optarg == '+' || *optarg == '^' ?
 			    optarg + 1 : optarg)) {
 				fprintf(stderr, "Unknown cipher type '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			free(options.ciphers);
+			விடுவி(options.ciphers);
 			options.ciphers = xstrdup(optarg);
-			break;
-		case 'm':
-			if (mac_valid(optarg)) {
-				free(options.macs);
+			நிறுத்து;
+		நிலை 'm':
+			எனில் (mac_valid(optarg)) {
+				விடுவி(options.macs);
 				options.macs = xstrdup(optarg);
-			} else {
+			} இல்லையெனில் {
 				fprintf(stderr, "Unknown mac type '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			break;
-		case 'M':
-			if (options.control_master == SSHCTL_MASTER_YES)
+			நிறுத்து;
+		நிலை 'M':
+			எனில் (options.control_master == SSHCTL_MASTER_YES)
 				options.control_master = SSHCTL_MASTER_ASK;
-			else
+			இல்லையெனில்
 				options.control_master = SSHCTL_MASTER_YES;
-			break;
-		case 'p':
-			if (options.port == -1) {
+			நிறுத்து;
+		நிலை 'p':
+			எனில் (options.port == -1) {
 				options.port = a2port(optarg);
-				if (options.port <= 0) {
+				எனில் (options.port <= 0) {
 					fprintf(stderr, "Bad port '%s'\n",
 					    optarg);
 					exit(255);
 				}
 			}
-			break;
-		case 'l':
-			if (options.user == NULL) {
+			நிறுத்து;
+		நிலை 'l':
+			எனில் (options.user == வெற்று) {
 				options.user = xstrdup(optarg);
 				user_on_commandline = 1;
 			}
-			break;
+			நிறுத்து;
 
-		case 'L':
-			if (parse_forward(&fwd, optarg, 0, 0))
+		நிலை 'L':
+			எனில் (parse_forward(&fwd, optarg, 0, 0))
 				add_local_forward(&options, &fwd);
-			else {
+			இல்லையெனில் {
 				fprintf(stderr,
 				    "Bad local forwarding specification '%s'\n",
 				    optarg);
 				exit(255);
 			}
-			break;
+			நிறுத்து;
 
-		case 'R':
-			if (parse_forward(&fwd, optarg, 0, 1) ||
+		நிலை 'R':
+			எனில் (parse_forward(&fwd, optarg, 0, 1) ||
 			    parse_forward(&fwd, optarg, 1, 1)) {
 				add_remote_forward(&options, &fwd);
-			} else {
+			} இல்லையெனில் {
 				fprintf(stderr,
 				    "Bad remote forwarding specification "
 				    "'%s'\n", optarg);
 				exit(255);
 			}
-			break;
+			நிறுத்து;
 
-		case 'D':
-			if (parse_forward(&fwd, optarg, 1, 0)) {
+		நிலை 'D':
+			எனில் (parse_forward(&fwd, optarg, 1, 0)) {
 				add_local_forward(&options, &fwd);
-			} else {
+			} இல்லையெனில் {
 				fprintf(stderr,
 				    "Bad dynamic forwarding specification "
 				    "'%s'\n", optarg);
 				exit(255);
 			}
-			break;
+			நிறுத்து;
 
-		case 'C':
+		நிலை 'C':
 #ifdef WITH_ZLIB
 			options.compression = 1;
-#else
+#இல்லையெனில்
 			error("Compression not supported, disabling.");
 #endif
-			break;
-		case 'N':
-			if (options.session_type != -1 &&
+			நிறுத்து;
+		நிலை 'N':
+			எனில் (options.session_type != -1 &&
 			    options.session_type != SESSION_TYPE_NONE)
 				fatal("Cannot specify -N with -s/SessionType");
 			options.session_type = SESSION_TYPE_NONE;
 			options.request_tty = REQUEST_TTY_NO;
-			break;
-		case 'T':
+			நிறுத்து;
+		நிலை 'T':
 			options.request_tty = REQUEST_TTY_NO;
-			break;
-		case 'o':
-			line = xstrdup(optarg);
-			if (process_config_line(&options, pw,
-			    host ? host : "", host ? host : "", "", line,
-			    "command-line", 0, NULL, SSHCONF_USERCONF) != 0)
+			நிறுத்து;
+		நிலை 'o':
+			வரி = xstrdup(optarg);
+			எனில் (process_config_வரி(&options, pw,
+			    host ? host : "", host ? host : "", "", வரி,
+			    "command-line", 0, வெற்று, SSHCONF_USERCONF) != 0)
 				exit(255);
-			free(line);
-			break;
-		case 's':
-			if (options.session_type != -1 &&
+			விடுவி(வரி);
+			நிறுத்து;
+		நிலை 's':
+			எனில் (options.session_type != -1 &&
 			    options.session_type != SESSION_TYPE_SUBSYSTEM)
 				fatal("Cannot specify -s with -N/SessionType");
 			options.session_type = SESSION_TYPE_SUBSYSTEM;
-			break;
-		case 'S':
-			free(options.control_path);
+			நிறுத்து;
+		நிலை 'S':
+			விடுவி(options.control_path);
 			options.control_path = xstrdup(optarg);
-			break;
-		case 'b':
+			நிறுத்து;
+		நிலை 'b':
 			options.bind_address = optarg;
-			break;
-		case 'B':
+			நிறுத்து;
+		நிலை 'B':
 			options.bind_interface = optarg;
-			break;
-		case 'F':
+			நிறுத்து;
+		நிலை 'F':
 			config = optarg;
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			usage();
 		}
 	}
 
-	if (optind > 1 && strcmp(av[optind - 1], "--") == 0)
+	எனில் (optind > 1 && strcmp(av[optind - 1], "--") == 0)
 		opt_terminated = 1;
 
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 && !host) {
-		int tport;
-		char *tuser;
-		switch (parse_ssh_uri(*av, &tuser, &host, &tport)) {
-		case -1:
+	எனில் (ac > 0 && !host) {
+		முழு tport;
+		எழுத்து *tuser;
+		தேர்வு (parse_ssh_uri(*av, &tuser, &host, &tport)) {
+		நிலை -1:
 			usage();
-			break;
-		case 0:
-			if (options.user == NULL) {
+			நிறுத்து;
+		நிலை 0:
+			எனில் (options.user == வெற்று) {
 				options.user = tuser;
-				tuser = NULL;
+				tuser = வெற்று;
 				user_on_commandline = 1;
 			}
-			free(tuser);
-			if (options.port == -1 && tport != -1)
+			விடுவி(tuser);
+			எனில் (options.port == -1 && tport != -1)
 				options.port = tport;
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			p = xstrdup(*av);
 			cp = strrchr(p, '@');
-			if (cp != NULL) {
-				if (cp == p)
+			எனில் (cp != வெற்று) {
+				எனில் (cp == p)
 					usage();
-				if (options.user == NULL) {
+				எனில் (options.user == வெற்று) {
 					options.user = p;
-					p = NULL;
+					p = வெற்று;
 					user_on_commandline = 1;
 				}
 				*cp++ = '\0';
 				host = xstrdup(cp);
-				free(p);
-			} else
+				விடுவி(p);
+			} இல்லையெனில்
 				host = p;
-			break;
+			நிறுத்து;
 		}
-		if (ac > 1 && !opt_terminated) {
+		எனில் (ac > 1 && !opt_terminated) {
 			optind = optreset = 1;
-			goto again;
+			செல் again;
 		}
 		ac--, av++;
 	}
 
 	/* Check that we got a host name. */
-	if (!host)
+	எனில் (!host)
 		usage();
 
 	/*
 	 * Validate commandline-specified values that end up in %tokens
 	 * before they are used in config parsing.
 	 */
-	if (options.user != NULL && !ssh_valid_ruser(options.user))
+	எனில் (options.user != வெற்று && !ssh_valid_ruser(options.user))
 		fatal("remote username contains invalid characters");
-	if (!ssh_valid_hostname(host))
+	எனில் (!ssh_valid_hostname(host))
 		fatal("hostname contains invalid characters");
 
 	options.host_arg = xstrdup(host);
 
 	/* Initialize the command to execute on remote host. */
-	if ((command = sshbuf_new()) == NULL)
+	எனில் ((command = sshbuf_new()) == வெற்று)
 		fatal("sshbuf_new failed");
 
 	/*
@@ -1140,17 +1140,17 @@ main(int ac, char **av)
 	 * is no limit on the length of the command, except by the maximum
 	 * packet size.  Also sets the tty flag if there is no command.
 	 */
-	if (!ac) {
+	எனில் (!ac) {
 		/* No command specified - execute shell on a tty. */
-		if (options.session_type == SESSION_TYPE_SUBSYSTEM) {
+		எனில் (options.session_type == SESSION_TYPE_SUBSYSTEM) {
 			fprintf(stderr,
 			    "You must specify a subsystem to invoke.\n");
 			usage();
 		}
-	} else {
+	} இல்லையெனில் {
 		/* A command has been specified.  Store it into the buffer. */
-		for (i = 0; i < ac; i++) {
-			if ((r = sshbuf_putf(command, "%s%s",
+		க்கு (i = 0; i < ac; i++) {
+			எனில் ((r = sshbuf_putf(command, "%s%s",
 			    i ? " " : "", av[i])) != 0)
 				fatal_fr(r, "buffer error");
 		}
@@ -1162,9 +1162,9 @@ main(int ac, char **av)
 	 * Initialize "log" output.  Since we are the client all output
 	 * goes to stderr unless otherwise specified by -y or -E.
 	 */
-	if (use_syslog && logfile != NULL)
+	எனில் (use_syslog && logfile != வெற்று)
 		fatal("Can't specify both -y and -E");
-	if (logfile != NULL)
+	எனில் (logfile != வெற்று)
 		log_redirect_stderr_to(logfile);
 	log_init(argv0,
 	    options.log_level == SYSLOG_LEVEL_NOT_SET ?
@@ -1174,43 +1174,43 @@ main(int ac, char **av)
 	    !use_syslog);
 
 	debug("%s, %s", SSH_RELEASE, SSH_OPENSSL_VERSION);
-	if (uname(&utsname) != 0) {
-		memset(&utsname, 0, sizeof(utsname));
-		strlcpy(utsname.sysname, "UNKNOWN", sizeof(utsname.sysname));
+	எனில் (uname(&utsname) != 0) {
+		memset(&utsname, 0, அளவு(utsname));
+		strlcpy(utsname.sysname, "UNKNOWN", அளவு(utsname.sysname));
 	}
 	debug3("Running on %s %s %s %s", utsname.sysname, utsname.release,
 	    utsname.version, utsname.machine);
 	debug3("Started with: %s", args);
-	free(args);
+	விடுவி(args);
 
 	/* Parse the configuration files */
 	process_config_files(options.host_arg, pw, 0, &want_final_pass);
-	if (want_final_pass)
+	எனில் (want_final_pass)
 		debug("configuration requests final Match pass");
 
 	/* Hostname canonicalisation needs a few options filled. */
 	fill_default_options_for_canonicalization(&options);
 
 	/* If the user has replaced the hostname then take it into use now */
-	if (options.hostname != NULL) {
+	எனில் (options.hostname != வெற்று) {
 		/* NB. Please keep in sync with readconf.c:match_cfg_line() */
 		cp = percent_expand(options.hostname,
-		    "h", host, (char *)NULL);
-		free(host);
+		    "h", host, (எழுத்து *)வெற்று);
+		விடுவி(host);
 		host = cp;
-		free(options.hostname);
+		விடுவி(options.hostname);
 		options.hostname = xstrdup(host);
 	}
 
 	/* Don't lowercase addresses, they will be explicitly canonicalised */
-	if ((was_addr = is_addr(host)) == 0)
+	எனில் ((was_addr = is_addr(host)) == 0)
 		lowercase(host);
 
 	/*
 	 * Try to canonicalize if requested by configuration or the
 	 * hostname is an address.
 	 */
-	if (options.canonicalize_hostname != SSH_CANONICALISE_NO || was_addr)
+	எனில் (options.canonicalize_hostname != SSH_CANONICALISE_NO || was_addr)
 		addrs = resolve_canonicalize(&host, options.port);
 
 	/*
@@ -1228,14 +1228,14 @@ main(int ac, char **av)
 	 */
 	direct = option_clear_or_none(options.proxy_command) &&
 	    option_clear_or_none(options.jump_host);
-	if (addrs == NULL && config_has_permitted_cnames(&options) && (direct ||
+	எனில் (addrs == வெற்று && config_has_permitted_cnames(&options) && (direct ||
 	    options.canonicalize_hostname == SSH_CANONICALISE_ALWAYS)) {
-		if ((addrs = resolve_host(host, options.port,
-		    direct, cname, sizeof(cname))) == NULL) {
+		எனில் ((addrs = resolve_host(host, options.port,
+		    direct, cname, அளவு(cname))) == வெற்று) {
 			/* Don't fatal proxied host names not in the DNS */
-			if (direct)
+			எனில் (direct)
 				cleanup_exit(255); /* logged in resolve_host */
-		} else
+		} இல்லையெனில்
 			check_follow_cname(direct, &host, cname);
 	}
 
@@ -1243,31 +1243,31 @@ main(int ac, char **av)
 	 * If canonicalisation is enabled then re-parse the configuration
 	 * files as new stanzas may match.
 	 */
-	if (options.canonicalize_hostname != 0 && !want_final_pass) {
+	எனில் (options.canonicalize_hostname != 0 && !want_final_pass) {
 		debug("hostname canonicalisation enabled, "
 		    "will re-parse configuration");
 		want_final_pass = 1;
 	}
 
-	if (want_final_pass) {
+	எனில் (want_final_pass) {
 		debug("re-parsing configuration");
-		free(options.hostname);
+		விடுவி(options.hostname);
 		options.hostname = xstrdup(host);
-		process_config_files(options.host_arg, pw, 1, NULL);
+		process_config_files(options.host_arg, pw, 1, வெற்று);
 		/*
 		 * Address resolution happens early with canonicalisation
 		 * enabled and the port number may have changed since, so
 		 * reset it in address list
 		 */
-		if (addrs != NULL && options.port > 0)
+		எனில் (addrs != வெற்று && options.port > 0)
 			set_addrinfo_port(addrs, options.port);
 	}
 
 	/* Fill configuration defaults. */
-	if (fill_default_options(&options) != 0)
+	எனில் (fill_default_options(&options) != 0)
 		cleanup_exit(255);
 
-	if (options.user == NULL) {
+	எனில் (options.user == வெற்று) {
 		user_was_default = 1;
 		options.user = xstrdup(pw->pw_name);
 	}
@@ -1275,18 +1275,18 @@ main(int ac, char **av)
 	/*
 	 * If ProxyJump option specified, then construct a ProxyCommand now.
 	 */
-	if (options.jump_host != NULL) {
-		char port_s[8];
-		const char *jumpuser = options.jump_user, *sshbin = argv0;
-		int port = options.port, jumpport = options.jump_port;
+	எனில் (options.jump_host != வெற்று) {
+		எழுத்து port_s[8];
+		மாறிலி எழுத்து *jumpuser = options.jump_user, *sshbin = argv0;
+		முழு port = options.port, jumpport = options.jump_port;
 
-		if (port <= 0)
+		எனில் (port <= 0)
 			port = default_ssh_port();
-		if (jumpport <= 0)
+		எனில் (jumpport <= 0)
 			jumpport = default_ssh_port();
-		if (jumpuser == NULL)
+		எனில் (jumpuser == வெற்று)
 			jumpuser = options.user;
-		if (strcmp(options.jump_host, host) == 0 && port == jumpport &&
+		எனில் (strcmp(options.jump_host, host) == 0 && port == jumpport &&
 		    strcmp(options.user, jumpuser) == 0)
 			fatal("jumphost loop via %s", options.jump_host);
 
@@ -1294,31 +1294,31 @@ main(int ac, char **av)
 		 * Try to use SSH indicated by argv[0], but fall back to
 		 * "ssh" if it appears unavailable.
 		 */
-		if (strchr(argv0, '/') != NULL && access(argv0, X_OK) != 0)
+		எனில் (strchr(argv0, '/') != வெற்று && access(argv0, X_OK) != 0)
 			sshbin = "ssh";
 
 		/* Consistency check */
-		if (options.proxy_command != NULL &&
+		எனில் (options.proxy_command != வெற்று &&
 		    strcasecmp(options.proxy_command, "none") != 0)
 			fatal("inconsistent options: ProxyCommand+ProxyJump");
 		/* Never use FD passing for ProxyJump */
 		options.proxy_use_fdpass = 0;
-		snprintf(port_s, sizeof(port_s), "%d", options.jump_port);
+		snprintf(port_s, அளவு(port_s), "%d", options.jump_port);
 		xasprintf(&options.proxy_command,
 		    "%s%s%s%s%s%s%s%s%s%s%.*s -W '[%%h]:%%p' %s",
 		    sshbin,
 		    /* Optional "-l user" argument if jump_user set */
-		    options.jump_user == NULL ? "" : " -l ",
-		    options.jump_user == NULL ? "" : options.jump_user,
+		    options.jump_user == வெற்று ? "" : " -l ",
+		    options.jump_user == வெற்று ? "" : options.jump_user,
 		    /* Optional "-p port" argument if jump_port set */
 		    options.jump_port <= 0 ? "" : " -p ",
 		    options.jump_port <= 0 ? "" : port_s,
 		    /* Optional additional jump hosts ",..." */
-		    options.jump_extra == NULL ? "" : " -J ",
-		    options.jump_extra == NULL ? "" : options.jump_extra,
+		    options.jump_extra == வெற்று ? "" : " -J ",
+		    options.jump_extra == வெற்று ? "" : options.jump_extra,
 		    /* Optional "-F" argument if -F specified */
-		    config == NULL ? "" : " -F ",
-		    config == NULL ? "" : config,
+		    config == வெற்று ? "" : " -F ",
+		    config == வெற்று ? "" : config,
 		    /* Optional "-v" arguments if -v set */
 		    debug_flag ? " -" : "",
 		    debug_flag, "vvv",
@@ -1328,81 +1328,81 @@ main(int ac, char **av)
 		    options.proxy_command);
 	}
 
-	if (options.port == 0)
+	எனில் (options.port == 0)
 		options.port = default_ssh_port();
 	channel_set_af(ssh, options.address_family);
 	ssh_packet_set_qos(ssh, options.ip_qos_interactive,
 	    options.ip_qos_bulk);
 
 	/* Tidy and check options */
-	if (options.host_key_alias != NULL)
-		lowercase(options.host_key_alias);
-	if (options.proxy_command != NULL &&
+	எனில் (options.host_சாவி_alias != வெற்று)
+		lowercase(options.host_சாவி_alias);
+	எனில் (options.proxy_command != வெற்று &&
 	    strcmp(options.proxy_command, "-") == 0 &&
 	    options.proxy_use_fdpass)
 		fatal("ProxyCommand=- and ProxyUseFDPass are incompatible");
-	if (options.update_hostkeys == SSH_UPDATE_HOSTKEYS_ASK) {
-		if (options.control_persist && options.control_path != NULL) {
+	எனில் (options.update_hostkeys == SSH_UPDATE_HOSTKEYS_ASK) {
+		எனில் (options.control_persist && options.control_path != வெற்று) {
 			debug("UpdateHostKeys=ask is incompatible with "
 			    "ControlPersist; disabling");
 			options.update_hostkeys = 0;
-		} else if (sshbuf_len(command) != 0 ||
-		    options.remote_command != NULL ||
+		} இல்லையெனில் எனில் (sshbuf_len(command) != 0 ||
+		    options.remote_command != வெற்று ||
 		    options.request_tty == REQUEST_TTY_NO) {
 			debug("UpdateHostKeys=ask is incompatible with "
 			    "remote command execution; disabling");
 			options.update_hostkeys = 0;
-		} else if (options.log_level < SYSLOG_LEVEL_INFO) {
+		} இல்லையெனில் எனில் (options.log_level < SYSLOG_LEVEL_INFO) {
 			/* no point logging anything; user won't see it */
 			options.update_hostkeys = 0;
 		}
 	}
-	if (options.connection_attempts <= 0)
+	எனில் (options.connection_attempts <= 0)
 		fatal("Invalid number of ConnectionAttempts");
 
-	if (sshbuf_len(command) != 0 && options.remote_command != NULL)
+	எனில் (sshbuf_len(command) != 0 && options.remote_command != வெற்று)
 		fatal("Cannot execute command-line and remote command.");
 
 	/* Cannot fork to background if no command. */
-	if (options.fork_after_authentication && sshbuf_len(command) == 0 &&
-	    options.remote_command == NULL &&
+	எனில் (options.fork_after_authentication && sshbuf_len(command) == 0 &&
+	    options.remote_command == வெற்று &&
 	    options.session_type != SESSION_TYPE_NONE)
 		fatal("Cannot fork into background without a command "
 		    "to execute.");
 
 	/* reinit */
 	log_init(argv0, options.log_level, options.log_facility, !use_syslog);
-	for (j = 0; j < options.num_log_verbose; j++) {
-		if (strcasecmp(options.log_verbose[j], "none") == 0)
-			break;
+	க்கு (j = 0; j < options.இலக்கம்_log_verbose; j++) {
+		எனில் (strcasecmp(options.log_verbose[j], "none") == 0)
+			நிறுத்து;
 		log_verbose_add(options.log_verbose[j]);
 	}
 
-	if (options.request_tty == REQUEST_TTY_YES ||
+	எனில் (options.request_tty == REQUEST_TTY_YES ||
 	    options.request_tty == REQUEST_TTY_FORCE)
 		tty_flag = 1;
 
 	/* Allocate a tty by default if no command specified. */
-	if (sshbuf_len(command) == 0 && options.remote_command == NULL)
+	எனில் (sshbuf_len(command) == 0 && options.remote_command == வெற்று)
 		tty_flag = options.request_tty != REQUEST_TTY_NO;
 
 	/* Force no tty */
-	if (options.request_tty == REQUEST_TTY_NO ||
+	எனில் (options.request_tty == REQUEST_TTY_NO ||
 	    (muxclient_command && muxclient_command != SSHMUX_COMMAND_PROXY) ||
 	    options.session_type == SESSION_TYPE_NONE)
 		tty_flag = 0;
 	/* Do not allocate a tty if stdin is not a tty. */
-	if ((!isatty(fileno(stdin)) || options.stdin_null) &&
+	எனில் ((!isatty(fileno(stdin)) || options.stdin_null) &&
 	    options.request_tty != REQUEST_TTY_FORCE) {
-		if (tty_flag)
+		எனில் (tty_flag)
 			logit("Pseudo-terminal will not be allocated because "
 			    "stdin is not a terminal.");
 		tty_flag = 0;
 	}
 
 	/* Set up strings used to percent_expand() arguments */
-	cinfo = xcalloc(1, sizeof(*cinfo));
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	cinfo = xcalloc(1, அளவு(*cinfo));
+	எனில் (gethostname(thishost, அளவு(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	cinfo->thishost = xstrdup(thishost);
 	thishost[strcspn(thishost, ".")] = '\0';
@@ -1410,13 +1410,13 @@ main(int ac, char **av)
 	xasprintf(&cinfo->portstr, "%d", options.port);
 	xasprintf(&cinfo->uidstr, "%llu",
 	    (unsigned long long)pw->pw_uid);
-	cinfo->keyalias = xstrdup(options.host_key_alias ?
-	    options.host_key_alias : options.host_arg);
+	cinfo->keyalias = xstrdup(options.host_சாவி_alias ?
+	    options.host_சாவி_alias : options.host_arg);
 	cinfo->host_arg = xstrdup(options.host_arg);
 	cinfo->remhost = xstrdup(host);
 	cinfo->homedir = xstrdup(pw->pw_dir);
 	cinfo->locuser = xstrdup(pw->pw_name);
-	cinfo->jmphost = xstrdup(options.jump_host == NULL ?
+	cinfo->jmphost = xstrdup(options.jump_host == வெற்று ?
 	    "" : options.jump_host);
 
 	/*
@@ -1424,13 +1424,13 @@ main(int ac, char **av)
 	 * to expand it. It cannot contain %r (itself) or %C since User is
 	 * a component of the hash.
 	 */
-	if (!user_on_commandline && !user_was_default) {
-		if ((p = percent_dollar_expand(options.user,
+	எனில் (!user_on_commandline && !user_was_default) {
+		எனில் ((p = percent_dollar_expand(options.user,
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(cinfo),
-		    (char *)NULL)) == NULL)
+		    (எழுத்து *)வெற்று)) == வெற்று)
 			fatal("invalid environment variable expansion");
 		user_expanded = strcmp(p, options.user) != 0;
-		free(options.user);
+		விடுவி(options.user);
 		options.user = p;
 	}
 
@@ -1440,7 +1440,7 @@ main(int ac, char **av)
 	 * Conversely, usernames from getpwnam(3) or specified as literals
 	 * via configuration (i.e. not expanded) are not subject to validation.
 	 */
-	if ((user_on_commandline || user_expanded) &&
+	எனில் ((user_on_commandline || user_expanded) &&
 	    !ssh_valid_ruser(options.user))
 		fatal("remote username contains invalid characters");
 
@@ -1454,191 +1454,191 @@ main(int ac, char **av)
 	 * after port-forwarding is set up, so it may pick up any local
 	 * tunnel interface name allocated.
 	 */
-	if (options.remote_command != NULL) {
+	எனில் (options.remote_command != வெற்று) {
 		debug3("expanding RemoteCommand: %s", options.remote_command);
 		cp = options.remote_command;
 		options.remote_command = default_client_percent_expand(cp,
 		    cinfo);
 		debug3("expanded RemoteCommand: %s", options.remote_command);
-		free(cp);
-		if ((r = sshbuf_put(command, options.remote_command,
+		விடுவி(cp);
+		எனில் ((r = sshbuf_put(command, options.remote_command,
 		    strlen(options.remote_command))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	if (options.control_path != NULL) {
+	எனில் (options.control_path != வெற்று) {
 		cp = tilde_expand_filename(options.control_path, getuid());
-		free(options.control_path);
+		விடுவி(options.control_path);
 		options.control_path = default_client_percent_dollar_expand(cp,
 		    cinfo);
-		free(cp);
+		விடுவி(cp);
 	}
 
-	if (options.identity_agent != NULL) {
+	எனில் (options.identity_agent != வெற்று) {
 		p = tilde_expand_filename(options.identity_agent, getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.identity_agent);
+		விடுவி(p);
+		விடுவி(options.identity_agent);
 		options.identity_agent = cp;
 	}
 
-	for (j = 0; j < options.num_revoked_host_keys; j++) {
-		p = tilde_expand_filename(options.revoked_host_keys[j],
+	க்கு (j = 0; j < options.இலக்கம்_revoked_host_சாவிகள்; j++) {
+		p = tilde_expand_filename(options.revoked_host_சாவிகள்[j],
 		    getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.revoked_host_keys[j]);
-		options.revoked_host_keys[j] = cp;
+		விடுவி(p);
+		விடுவி(options.revoked_host_சாவிகள்[j]);
+		options.revoked_host_சாவிகள்[j] = cp;
 	}
 
-	if (options.forward_agent_sock_path != NULL) {
+	எனில் (options.forward_agent_sock_path != வெற்று) {
 		p = tilde_expand_filename(options.forward_agent_sock_path,
 		    getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
-		free(p);
-		free(options.forward_agent_sock_path);
+		விடுவி(p);
+		விடுவி(options.forward_agent_sock_path);
 		options.forward_agent_sock_path = cp;
-		if (stat(options.forward_agent_sock_path, &st) != 0) {
+		எனில் (stat(options.forward_agent_sock_path, &st) != 0) {
 			error("Cannot forward agent socket path \"%s\": %s",
 			    options.forward_agent_sock_path, strerror(errno));
-			if (options.exit_on_forward_failure)
+			எனில் (options.exit_on_forward_failure)
 				cleanup_exit(255);
 		}
 	}
 
-	if (options.version_addendum != NULL) {
+	எனில் (options.version_addendum != வெற்று) {
 		cp = default_client_percent_dollar_expand(
 		    options.version_addendum, cinfo);
-		free(options.version_addendum);
+		விடுவி(options.version_addendum);
 		options.version_addendum = cp;
 	}
 
-	if (options.num_system_hostfiles > 0 &&
+	எனில் (options.இலக்கம்_system_hostfiles > 0 &&
 	    strcasecmp(options.system_hostfiles[0], "none") == 0) {
-		if (options.num_system_hostfiles > 1)
+		எனில் (options.இலக்கம்_system_hostfiles > 1)
 			fatal("Invalid GlobalKnownHostsFiles: \"none\" "
 			    "appears with other entries");
-		free(options.system_hostfiles[0]);
-		options.system_hostfiles[0] = NULL;
-		options.num_system_hostfiles = 0;
+		விடுவி(options.system_hostfiles[0]);
+		options.system_hostfiles[0] = வெற்று;
+		options.இலக்கம்_system_hostfiles = 0;
 	}
 
-	if (options.num_user_hostfiles > 0 &&
+	எனில் (options.இலக்கம்_user_hostfiles > 0 &&
 	    strcasecmp(options.user_hostfiles[0], "none") == 0) {
-		if (options.num_user_hostfiles > 1)
+		எனில் (options.இலக்கம்_user_hostfiles > 1)
 			fatal("Invalid UserKnownHostsFiles: \"none\" "
 			    "appears with other entries");
-		free(options.user_hostfiles[0]);
-		options.user_hostfiles[0] = NULL;
-		options.num_user_hostfiles = 0;
+		விடுவி(options.user_hostfiles[0]);
+		options.user_hostfiles[0] = வெற்று;
+		options.இலக்கம்_user_hostfiles = 0;
 	}
-	for (j = 0; j < options.num_user_hostfiles; j++) {
-		if (options.user_hostfiles[j] == NULL)
-			continue;
+	க்கு (j = 0; j < options.இலக்கம்_user_hostfiles; j++) {
+		எனில் (options.user_hostfiles[j] == வெற்று)
+			தொடர்;
 		cp = tilde_expand_filename(options.user_hostfiles[j], getuid());
 		p = default_client_percent_dollar_expand(cp, cinfo);
-		if (strcmp(options.user_hostfiles[j], p) != 0)
+		எனில் (strcmp(options.user_hostfiles[j], p) != 0)
 			debug3("expanded UserKnownHostsFile '%s' -> "
 			    "'%s'", options.user_hostfiles[j], p);
-		free(options.user_hostfiles[j]);
-		free(cp);
+		விடுவி(options.user_hostfiles[j]);
+		விடுவி(cp);
 		options.user_hostfiles[j] = p;
 	}
 
-	for (j = 0; j < options.num_setenv; j++) {
-		char *name = options.setenv[j], *value;
+	க்கு (j = 0; j < options.இலக்கம்_setenv; j++) {
+		எழுத்து *name = options.setenv[j], *மதிப்பு;
 
-		if (name == NULL)
-			continue;
+		எனில் (name == வெற்று)
+			தொடர்;
 		/* Expand only the value portion, not the variable name. */
-		if ((value = strchr(name, '=')) == NULL) {
+		எனில் ((மதிப்பு = strchr(name, '=')) == வெற்று) {
 			/* shouldn't happen; vars are checked in readconf.c */
 			fatal("Invalid config SetEnv: %s", name);
 		}
-		*value++ = '\0';
-		cp = default_client_percent_dollar_expand(value, cinfo);
+		*மதிப்பு++ = '\0';
+		cp = default_client_percent_dollar_expand(மதிப்பு, cinfo);
 		xasprintf(&p, "%s=%s", name, cp);
-		if (strcmp(value, p) != 0) {
+		எனில் (strcmp(மதிப்பு, p) != 0) {
 			debug3("expanded SetEnv '%s' '%s' -> '%s'",
-			    name, value, cp);
+			    name, மதிப்பு, cp);
 		}
-		free(options.setenv[j]);
-		free(cp);
+		விடுவி(options.setenv[j]);
+		விடுவி(cp);
 		options.setenv[j] = p;
 	}
 
-	for (i = 0; i < options.num_local_forwards; i++) {
-		if (options.local_forwards[i].listen_path != NULL) {
+	க்கு (i = 0; i < options.இலக்கம்_local_forwards; i++) {
+		எனில் (options.local_forwards[i].listen_path != வெற்று) {
 			cp = options.local_forwards[i].listen_path;
 			p = options.local_forwards[i].listen_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			எனில் (strcmp(cp, p) != 0)
 				debug3("expanded LocalForward listen path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			விடுவி(cp);
 		}
-		if (options.local_forwards[i].connect_path != NULL) {
+		எனில் (options.local_forwards[i].connect_path != வெற்று) {
 			cp = options.local_forwards[i].connect_path;
 			p = options.local_forwards[i].connect_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			எனில் (strcmp(cp, p) != 0)
 				debug3("expanded LocalForward connect path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			விடுவி(cp);
 		}
 	}
 
-	for (i = 0; i < options.num_remote_forwards; i++) {
-		if (options.remote_forwards[i].listen_path != NULL) {
+	க்கு (i = 0; i < options.இலக்கம்_remote_forwards; i++) {
+		எனில் (options.remote_forwards[i].listen_path != வெற்று) {
 			cp = options.remote_forwards[i].listen_path;
 			p = options.remote_forwards[i].listen_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			எனில் (strcmp(cp, p) != 0)
 				debug3("expanded RemoteForward listen path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			விடுவி(cp);
 		}
-		if (options.remote_forwards[i].connect_path != NULL) {
+		எனில் (options.remote_forwards[i].connect_path != வெற்று) {
 			cp = options.remote_forwards[i].connect_path;
 			p = options.remote_forwards[i].connect_path =
 			    default_client_percent_expand(cp, cinfo);
-			if (strcmp(cp, p) != 0)
+			எனில் (strcmp(cp, p) != 0)
 				debug3("expanded RemoteForward connect path "
 				    "'%s' -> '%s'", cp, p);
-			free(cp);
+			விடுவி(cp);
 		}
 	}
 
-	if (config_test) {
+	எனில் (config_test) {
 		dump_client_config(&options, host);
 		exit(0);
 	}
 
 	/* Expand SecurityKeyProvider if it refers to an environment variable */
-	if (options.sk_provider != NULL && *options.sk_provider == '$' &&
+	எனில் (options.sk_provider != வெற்று && *options.sk_provider == '$' &&
 	    strlen(options.sk_provider) > 1) {
-		if ((cp = getenv(options.sk_provider + 1)) == NULL) {
+		எனில் ((cp = getenv(options.sk_provider + 1)) == வெற்று) {
 			debug("Authenticator provider %s did not resolve; "
 			    "disabling", options.sk_provider);
-			free(options.sk_provider);
-			options.sk_provider = NULL;
-		} else {
+			விடுவி(options.sk_provider);
+			options.sk_provider = வெற்று;
+		} இல்லையெனில் {
 			debug2("resolved SecurityKeyProvider %s => %s",
 			    options.sk_provider, cp);
-			free(options.sk_provider);
+			விடுவி(options.sk_provider);
 			options.sk_provider = xstrdup(cp);
 		}
 	}
 
-	if (muxclient_command != 0 && options.control_path == NULL)
+	எனில் (muxclient_command != 0 && options.control_path == வெற்று)
 		fatal("No ControlPath specified for \"-O\" command");
-	if (options.control_path != NULL) {
-		int sock;
-		if ((sock = muxclient(options.control_path)) >= 0) {
-			if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
+	எனில் (options.control_path != வெற்று) {
+		முழு sock;
+		எனில் ((sock = muxclient(options.control_path)) >= 0) {
+			எனில் (ssh_packet_set_connection(ssh, sock, sock) == வெற்று)
 				fatal("ssh_packet_set_connection failed");
 			ssh_packet_set_mux(ssh);
-			goto skip_connect;
+			செல் skip_connect;
 		}
 	}
 
@@ -1646,30 +1646,30 @@ main(int ac, char **av)
 	load_public_identity_files(cinfo);
 
 	/* optionally set the SSH_AUTHSOCKET_ENV_NAME variable */
-	if (options.identity_agent &&
+	எனில் (options.identity_agent &&
 	    strcmp(options.identity_agent, SSH_AUTHSOCKET_ENV_NAME) != 0) {
-		if (strcmp(options.identity_agent, "none") == 0) {
+		எனில் (strcmp(options.identity_agent, "none") == 0) {
 			unsetenv(SSH_AUTHSOCKET_ENV_NAME);
-		} else {
+		} இல்லையெனில் {
 			cp = options.identity_agent;
 			/* legacy (limited) format */
-			if (cp[0] == '$' && cp[1] != '{') {
-				if (!valid_env_name(cp + 1)) {
+			எனில் (cp[0] == '$' && cp[1] != '{') {
+				எனில் (!valid_env_name(cp + 1)) {
 					fatal("Invalid IdentityAgent "
 					    "environment variable name %s", cp);
 				}
-				if ((p = getenv(cp + 1)) == NULL)
+				எனில் ((p = getenv(cp + 1)) == வெற்று)
 					unsetenv(SSH_AUTHSOCKET_ENV_NAME);
-				else
+				இல்லையெனில்
 					setenv(SSH_AUTHSOCKET_ENV_NAME, p, 1);
-			} else {
+			} இல்லையெனில் {
 				/* identity_agent specifies a path directly */
 				setenv(SSH_AUTHSOCKET_ENV_NAME, cp, 1);
 			}
 		}
 	}
 
-	if (dump_pubkeys) {
+	எனில் (dump_pubkeys) {
 		pubkey_dump(ssh);
 		exit(0);
 	}
@@ -1678,47 +1678,47 @@ main(int ac, char **av)
 	 * If hostname canonicalisation was not enabled, then we may not
 	 * have yet resolved the hostname. Do so now.
 	 */
-	if (addrs == NULL && options.proxy_command == NULL) {
+	எனில் (addrs == வெற்று && options.proxy_command == வெற்று) {
 		debug2("resolving \"%s\" port %d", host, options.port);
-		if ((addrs = resolve_host(host, options.port, 1,
-		    cname, sizeof(cname))) == NULL)
+		எனில் ((addrs = resolve_host(host, options.port, 1,
+		    cname, அளவு(cname))) == வெற்று)
 			cleanup_exit(255); /* resolve_host logs the error */
 	}
 
-	if (options.connection_timeout >= INT_MAX/1000)
+	எனில் (options.connection_timeout >= INT_MAX/1000)
 		timeout_ms = INT_MAX;
-	else
+	இல்லையெனில்
 		timeout_ms = options.connection_timeout * 1000;
 
 	/* Apply channels timeouts, if set */
 	channel_clear_timeouts(ssh);
-	for (j = 0; j < options.num_channel_timeouts; j++) {
-		double timeout;
+	க்கு (j = 0; j < options.இலக்கம்_channel_timeouts; j++) {
+		இரட்டை timeout;
 
 		debug3("applying channel timeout %s",
 		    options.channel_timeouts[j]);
-		if (parse_pattern_interval(options.channel_timeouts[j],
+		எனில் (parse_pattern_interval(options.channel_timeouts[j],
 		    &cp, &timeout) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[j]);
 		}
 		channel_add_timeout(ssh, cp, timeout);
-		free(cp);
+		விடுவி(cp);
 	}
 	channel_set_tcp_keepalives(ssh,
 	    options.tcp_keep_alive == SSH_KEEPALIVES_ALL);
 
 	/* Open a connection to the remote host. */
-	if (ssh_connect(ssh, host, options.host_arg, addrs, &hostaddr,
+	எனில் (ssh_connect(ssh, host, options.host_arg, addrs, &hostaddr,
 	    options.port, options.connection_attempts,
 	    &timeout_ms, options.tcp_keep_alive) != 0)
 		exit(255);
 
 
 	ssh_packet_set_timeout(ssh, options.server_alive_interval,
-	    options.server_alive_count_max);
+	    options.server_alive_மொத்தம்_max);
 
-	if (timeout_ms > 0)
+	எனில் (timeout_ms > 0)
 		debug3("timeout: %d ms remain after connect", timeout_ms);
 
 	/*
@@ -1727,71 +1727,71 @@ main(int ac, char **av)
 	 * helper to sign challenges.
 	 */
 	sensitive_data.nkeys = 0;
-	sensitive_data.keys = NULL;
-	if (options.hostbased_authentication) {
-		int loaded = 0;
+	sensitive_data.சாவிகள் = வெற்று;
+	எனில் (options.hostbased_authentication) {
+		முழு loaded = 0;
 
 		sensitive_data.nkeys = 10;
-		sensitive_data.keys = xcalloc(sensitive_data.nkeys,
-		    sizeof(*sensitive_data.keys));
+		sensitive_data.சாவிகள் = xcalloc(sensitive_data.nkeys,
+		    அளவு(*sensitive_data.சாவிகள்));
 
 		/* XXX check errors? */
-#define L_PUBKEY(p,o) do { \
-	if ((o) >= sensitive_data.nkeys) \
+#define L_PUBKEY(p,o) செய் { \
+	எனில் ((o) >= sensitive_data.nkeys) \
 		fatal_f("pubkey out of array bounds"); \
-	check_load(sshkey_load_public(p, &(sensitive_data.keys[o]), NULL), \
-	    &(sensitive_data.keys[o]), p, "hostbased pubkey"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_public(p, &(sensitive_data.சாவிகள்[o]), வெற்று), \
+	    &(sensitive_data.சாவிகள்[o]), p, "hostbased pubkey"); \
+	எனில் (sensitive_data.சாவிகள்[o] != வெற்று) { \
 		debug2("hostbased pubkey \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
-} while (0)
-#define L_CERT(p,o) do { \
-	if ((o) >= sensitive_data.nkeys) \
+} போது (0)
+#define L_CERT(p,o) செய் { \
+	எனில் ((o) >= sensitive_data.nkeys) \
 		fatal_f("cert out of array bounds"); \
-	check_load(sshkey_load_cert(p, &(sensitive_data.keys[o])), \
-	    &(sensitive_data.keys[o]), p, "hostbased cert"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_cert(p, &(sensitive_data.சாவிகள்[o])), \
+	    &(sensitive_data.சாவிகள்[o]), p, "hostbased cert"); \
+	எனில் (sensitive_data.சாவிகள்[o] != வெற்று) { \
 		debug2("hostbased cert \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
-} while (0)
+} போது (0)
 
-		if (options.hostbased_authentication == 1) {
-			L_CERT(_PATH_HOST_ECDSA_KEY_FILE, 0);
-			L_CERT(_PATH_HOST_ED25519_KEY_FILE, 1);
-			L_CERT(_PATH_HOST_RSA_KEY_FILE, 2);
-			L_CERT(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 3);
-			L_PUBKEY(_PATH_HOST_ECDSA_KEY_FILE, 4);
-			L_PUBKEY(_PATH_HOST_ED25519_KEY_FILE, 5);
-			L_PUBKEY(_PATH_HOST_RSA_KEY_FILE, 6);
-			L_PUBKEY(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 7);
-			if (loaded == 0)
+		எனில் (options.hostbased_authentication == 1) {
+			L_CERT(PATH_HOST_ECDSA_சாவி_FILE, 0);
+			L_CERT(PATH_HOST_ED25519_சாவி_FILE, 1);
+			L_CERT(PATH_HOST_RSA_சாவி_FILE, 2);
+			L_CERT(PATH_HOST_MLDSA44_ED25519_சாவி_FILE, 3);
+			L_PUBKEY(PATH_HOST_ECDSA_சாவி_FILE, 4);
+			L_PUBKEY(PATH_HOST_ED25519_சாவி_FILE, 5);
+			L_PUBKEY(PATH_HOST_RSA_சாவி_FILE, 6);
+			L_PUBKEY(PATH_HOST_MLDSA44_ED25519_சாவி_FILE, 7);
+			எனில் (loaded == 0)
 				debug("HostbasedAuthentication enabled but no "
 				   "local public host keys could be loaded.");
 		}
 	}
 
-	if (options.forward_agent && options.forward_agent_sock_path != NULL) {
+	எனில் (options.forward_agent && options.forward_agent_sock_path != வெற்று) {
 		cp = options.forward_agent_sock_path;
-		if (cp[0] == '$') {
-			if (!valid_env_name(cp + 1)) {
+		எனில் (cp[0] == '$') {
+			எனில் (!valid_env_name(cp + 1)) {
 				fatal("Invalid ForwardAgent environment variable name %s", cp);
 			}
-			if ((p = getenv(cp + 1)) != NULL)
+			எனில் ((p = getenv(cp + 1)) != வெற்று)
 				forward_agent_sock_path = xstrdup(p);
-			else
+			இல்லையெனில்
 				options.forward_agent = 0;
-			free(cp);
-		} else {
+			விடுவி(cp);
+		} இல்லையெனில் {
 			forward_agent_sock_path = cp;
 		}
 	}
 
 	/* Expand ~ in known host file names. */
 	tilde_expand_paths(options.system_hostfiles,
-	    options.num_system_hostfiles);
-	tilde_expand_paths(options.user_hostfiles, options.num_user_hostfiles);
+	    options.இலக்கம்_system_hostfiles);
+	tilde_expand_paths(options.user_hostfiles, options.இலக்கம்_user_hostfiles);
 
 	ssh_signal(SIGCHLD, main_sigchld_handler);
 
@@ -1800,36 +1800,36 @@ main(int ac, char **av)
 	    pw, timeout_ms, cinfo);
 
 	/* We no longer need the private host keys.  Clear them now. */
-	if (sensitive_data.nkeys != 0) {
-		for (i = 0; i < sensitive_data.nkeys; i++) {
-			if (sensitive_data.keys[i] != NULL) {
+	எனில் (sensitive_data.nkeys != 0) {
+		க்கு (i = 0; i < sensitive_data.nkeys; i++) {
+			எனில் (sensitive_data.சாவிகள்[i] != வெற்று) {
 				/* Destroys contents safely */
 				debug3("clear hostkey %d", i);
-				sshkey_free(sensitive_data.keys[i]);
-				sensitive_data.keys[i] = NULL;
+				sshkey_free(sensitive_data.சாவிகள்[i]);
+				sensitive_data.சாவிகள்[i] = வெற்று;
 			}
 		}
-		free(sensitive_data.keys);
+		விடுவி(sensitive_data.சாவிகள்);
 	}
-	for (i = 0; i < options.num_identity_files; i++) {
-		free(options.identity_files[i]);
-		options.identity_files[i] = NULL;
-		if (options.identity_keys[i]) {
-			sshkey_free(options.identity_keys[i]);
-			options.identity_keys[i] = NULL;
+	க்கு (i = 0; i < options.இலக்கம்_identity_files; i++) {
+		விடுவி(options.identity_files[i]);
+		options.identity_files[i] = வெற்று;
+		எனில் (options.identity_சாவிகள்[i]) {
+			sshkey_free(options.identity_சாவிகள்[i]);
+			options.identity_சாவிகள்[i] = வெற்று;
 		}
 	}
-	for (i = 0; i < options.num_certificate_files; i++) {
-		free(options.certificate_files[i]);
-		options.certificate_files[i] = NULL;
+	க்கு (i = 0; i < options.இலக்கம்_certificate_files; i++) {
+		விடுவி(options.certificate_files[i]);
+		options.certificate_files[i] = வெற்று;
 	}
 
 #ifdef ENABLE_PKCS11
-	(void)pkcs11_del_provider(options.pkcs11_provider);
+	(வெறுமை)pkcs11_del_provider(options.pkcs11_provider);
 #endif
 
  skip_connect:
-	if (addrs != NULL)
+	எனில் (addrs != வெற்று)
 		freeaddrinfo(addrs);
 	exit_status = ssh_session2(ssh, cinfo);
 	ssh_conn_info_free(cinfo);
@@ -1837,17 +1837,17 @@ main(int ac, char **av)
 	ssh_packet_free(ssh);
 	pwfree(pw);
 
-	if (options.control_path != NULL && muxserver_sock != -1)
+	எனில் (options.control_path != வெற்று && muxserver_sock != -1)
 		unlink(options.control_path);
 
 	/* Kill ProxyCommand if it is running. */
 	ssh_kill_proxy_command();
 
-	return exit_status;
+	திரும்பு exit_status;
 }
 
-static void
-control_persist_detach(void)
+நிலையான வெறுமை
+control_persist_detach(வெறுமை)
 {
 	pid_t pid;
 
@@ -1857,13 +1857,13 @@ control_persist_detach(void)
 	 * master (current process) into the background, and make the
 	 * foreground process a client of the backgrounded master.
 	 */
-	switch ((pid = fork())) {
-	case -1:
+	தேர்வு ((pid = fork())) {
+	நிலை -1:
 		fatal_f("fork: %s", strerror(errno));
-	case 0:
+	நிலை 0:
 		/* Child: master process continues mainloop */
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		/*
 		 * Parent: set up mux client to connect to backgrounded
 		 * master.
@@ -1877,85 +1877,85 @@ control_persist_detach(void)
 		close(muxserver_sock);
 		muxserver_sock = -1;
 		options.control_master = SSHCTL_MASTER_NO;
-		(void)muxclient(options.control_path);
+		(வெறுமை)muxclient(options.control_path);
 		/* muxclient() doesn't return on success. */
 		fatal("Failed to connect to new control master");
 	}
-	if (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
+	எனில் (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
 		error_f("stdfd_devnull failed");
 	daemon(1, 1);
 	setproctitle("%s [mux]", options.control_path);
 }
 
 /* Do fork() after authentication. Used by "ssh -f" */
-static void
-fork_postauth(void)
+நிலையான வெறுமை
+fork_postauth(வெறுமை)
 {
-	if (need_controlpersist_detach)
+	எனில் (need_controlpersist_detach)
 		control_persist_detach();
 	debug("forking to background");
 	options.fork_after_authentication = 0;
-	if (daemon(1, 1) == -1)
+	எனில் (daemon(1, 1) == -1)
 		fatal("daemon() failed: %.200s", strerror(errno));
-	if (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
+	எனில் (stdfd_devnull(1, 1, !(log_is_on_stderr() && debug_flag)) == -1)
 		error_f("stdfd_devnull failed");
 }
 
-static void
-forwarding_success(void)
+நிலையான வெறுமை
+forwarding_success(வெறுமை)
 {
-	if (forward_confirms_pending == -1)
-		return;
-	if (--forward_confirms_pending == 0) {
+	எனில் (forward_confirms_pending == -1)
+		திரும்பு;
+	எனில் (--forward_confirms_pending == 0) {
 		debug_f("all expected forwarding replies received");
-		if (options.fork_after_authentication)
+		எனில் (options.fork_after_authentication)
 			fork_postauth();
-	} else {
+	} இல்லையெனில் {
 		debug2_f("%d expected forwarding replies remaining",
 		    forward_confirms_pending);
 	}
 }
 
-struct rfwd_confirm_ctx {
-	int fid;
+கட்டமைப்பு rfwd_confirm_ctx {
+	முழு fid;
 };
 
 /* Callback for remote forward global requests */
-static void
-ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
+நிலையான வெறுமை
+ssh_confirm_remote_forward(கட்டமைப்பு ssh *ssh, முழு type, uint32_t seq, வெறுமை *ctxt)
 {
-	struct rfwd_confirm_ctx *rctx = (struct rfwd_confirm_ctx *)ctxt;
-	struct Forward *rfwd;
+	கட்டமைப்பு rfwd_confirm_ctx *rctx = (கட்டமைப்பு rfwd_confirm_ctx *)ctxt;
+	கட்டமைப்பு Forward *rfwd;
 	u_int port;
-	int r;
+	முழு r;
 
-	if (rctx->fid < 0 || rctx->fid >= options.num_remote_forwards)
+	எனில் (rctx->fid < 0 || rctx->fid >= options.இலக்கம்_remote_forwards)
 		fatal_f("invalid forwarding ID %d", rctx->fid);
 	rfwd = &options.remote_forwards[rctx->fid];
-	freezero(rctx, sizeof(*rctx));
+	freezero(rctx, அளவு(*rctx));
 
 	/* XXX verbose() on failure? */
 	debug("remote forward %s for: listen %s%s%d, connect %s:%d",
-	    type == SSH2_MSG_REQUEST_SUCCESS ? "success" : "failure",
+	    type == SSH2_செய்தி_REQUEST_SUCCESS ? "success" : "failure",
 	    rfwd->listen_path ? rfwd->listen_path :
 	    rfwd->listen_host ? rfwd->listen_host : "",
 	    (rfwd->listen_path || rfwd->listen_host) ? ":" : "",
 	    rfwd->listen_port, rfwd->connect_path ? rfwd->connect_path :
 	    rfwd->connect_host, rfwd->connect_port);
-	if (rfwd->listen_path == NULL && rfwd->listen_port == 0) {
-		if (type == SSH2_MSG_REQUEST_SUCCESS) {
-			if ((r = sshpkt_get_u32(ssh, &port)) != 0)
+	எனில் (rfwd->listen_path == வெற்று && rfwd->listen_port == 0) {
+		எனில் (type == SSH2_செய்தி_REQUEST_SUCCESS) {
+			எனில் ((r = sshpkt_get_u32(ssh, &port)) != 0)
 				fatal_fr(r, "parse packet");
-			if (port > 65535) {
+			எனில் (port > 65535) {
 				error("Invalid allocated port %u for remote "
 				    "forward to %s:%d", port,
 				    rfwd->connect_host, rfwd->connect_port);
 				/* Ensure failure processing runs below */
-				type = SSH2_MSG_REQUEST_FAILURE;
+				type = SSH2_செய்தி_REQUEST_FAILURE;
 				channel_update_permission(ssh,
 				    rfwd->handle, -1);
-			} else {
-				rfwd->allocated_port = (int)port;
+			} இல்லையெனில் {
+				rfwd->allocated_port = (முழு)port;
 				logit("Allocated port %u for remote "
 				    "forward to %s:%d",
 				    rfwd->allocated_port, rfwd->connect_path ?
@@ -1964,24 +1964,24 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 				channel_update_permission(ssh,
 				    rfwd->handle, rfwd->allocated_port);
 			}
-		} else {
+		} இல்லையெனில் {
 			channel_update_permission(ssh, rfwd->handle, -1);
 		}
 	}
 
-	if (type == SSH2_MSG_REQUEST_FAILURE) {
-		if (options.exit_on_forward_failure) {
-			if (rfwd->listen_path != NULL)
+	எனில் (type == SSH2_செய்தி_REQUEST_FAILURE) {
+		எனில் (options.exit_on_forward_failure) {
+			எனில் (rfwd->listen_path != வெற்று)
 				fatal("Error: remote port forwarding failed "
 				    "for listen path %s", rfwd->listen_path);
-			else
+			இல்லையெனில்
 				fatal("Error: remote port forwarding failed "
 				    "for listen port %d", rfwd->listen_port);
-		} else {
-			if (rfwd->listen_path != NULL)
+		} இல்லையெனில் {
+			எனில் (rfwd->listen_path != வெற்று)
 				logit("Warning: remote port forwarding failed "
 				    "for listen path %s", rfwd->listen_path);
-			else
+			இல்லையெனில்
 				logit("Warning: remote port forwarding failed "
 				    "for listen port %d", rfwd->listen_port);
 		}
@@ -1989,26 +1989,26 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 	forwarding_success();
 }
 
-static void
-client_cleanup_stdio_fwd(struct ssh *ssh, int id, int force, void *arg)
+நிலையான வெறுமை
+client_cleanup_stdio_fwd(கட்டமைப்பு ssh *ssh, முழு id, முழு force, வெறுமை *arg)
 {
 	debug("stdio forwarding: done");
 	cleanup_exit(0);
 }
 
-static void
-ssh_stdio_confirm(struct ssh *ssh, int id, int success, void *arg)
+நிலையான வெறுமை
+ssh_stdio_confirm(கட்டமைப்பு ssh *ssh, முழு id, முழு success, வெறுமை *arg)
 {
-	if (!success)
+	எனில் (!success)
 		fatal("stdio forwarding failed");
 }
 
-static void
-ssh_tun_confirm(struct ssh *ssh, int id, int success, void *arg)
+நிலையான வெறுமை
+ssh_tun_confirm(கட்டமைப்பு ssh *ssh, முழு id, முழு success, வெறுமை *arg)
 {
-	if (!success) {
+	எனில் (!success) {
 		error("Tunnel forwarding failed");
-		if (options.exit_on_forward_failure)
+		எனில் (options.exit_on_forward_failure)
 			cleanup_exit(255);
 	}
 
@@ -2016,174 +2016,174 @@ ssh_tun_confirm(struct ssh *ssh, int id, int success, void *arg)
 	forwarding_success();
 }
 
-static void
-ssh_init_stdio_forwarding(struct ssh *ssh)
+நிலையான வெறுமை
+ssh_init_stdio_forwarding(கட்டமைப்பு ssh *ssh)
 {
 	Channel *c;
-	int in, out;
+	முழு in, out;
 
-	if (options.stdio_forward_host == NULL)
-		return;
+	எனில் (options.stdio_forward_host == வெற்று)
+		திரும்பு;
 
 	debug3_f("%s:%d", options.stdio_forward_host,
 	    options.stdio_forward_port);
 
-	if ((in = dup(STDIN_FILENO)) == -1 ||
+	எனில் ((in = dup(STDIN_FILENO)) == -1 ||
 	    (out = dup(STDOUT_FILENO)) == -1)
 		fatal_f("dup() in/out failed");
-	if ((c = channel_connect_stdio_fwd(ssh, options.stdio_forward_host,
+	எனில் ((c = channel_connect_stdio_fwd(ssh, options.stdio_forward_host,
 	    options.stdio_forward_port, in, out,
-	    CHANNEL_NONBLOCK_STDIO)) == NULL)
+	    CHANNEL_NONBLOCK_STDIO)) == வெற்று)
 		fatal_f("channel_connect_stdio_fwd failed");
 	channel_register_cleanup(ssh, c->self, client_cleanup_stdio_fwd, 0);
-	channel_register_open_confirm(ssh, c->self, ssh_stdio_confirm, NULL);
+	channel_register_open_confirm(ssh, c->self, ssh_stdio_confirm, வெற்று);
 }
 
-static void
-ssh_init_forward_permissions(struct ssh *ssh, const char *what, char **opens,
-    u_int num_opens)
+நிலையான வெறுமை
+ssh_init_forward_permissions(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *what, எழுத்து **opens,
+    u_int இலக்கம்_opens)
 {
 	u_int i;
-	int port;
-	char *addr, *arg, *oarg;
-	int where = FORWARD_LOCAL;
+	முழு port;
+	எழுத்து *addr, *arg, *oarg;
+	முழு where = FORWARD_LOCAL;
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	எனில் (இலக்கம்_opens == 0)
+		திரும்பு; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	எனில் (இலக்கம்_opens == 1 && strcmp(opens[0], "any") == 0)
+		திரும்பு;
+	எனில் (இலக்கம்_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		திரும்பு;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	க்கு (i = 0; i < இலக்கம்_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		addr = hpdelim(&arg);
-		if (addr == NULL)
+		எனில் (addr == வெற்று)
 			fatal_f("missing host in %s", what);
 		addr = cleanhostname(addr);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		எனில் (arg == வெற்று || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
 		    where, addr, port);
-		free(oarg);
+		விடுவி(oarg);
 	}
 }
 
-static void
-ssh_init_forwarding(struct ssh *ssh, char **ifname)
+நிலையான வெறுமை
+ssh_init_forwarding(கட்டமைப்பு ssh *ssh, எழுத்து **ifname)
 {
-	int success = 0;
-	int i;
+	முழு success = 0;
+	முழு i;
 
 	ssh_init_forward_permissions(ssh, "permitremoteopen",
 	    options.permitted_remote_opens,
-	    options.num_permitted_remote_opens);
+	    options.இலக்கம்_permitted_remote_opens);
 
-	if (options.exit_on_forward_failure)
+	எனில் (options.exit_on_forward_failure)
 		forward_confirms_pending = 0; /* track pending requests */
 	/* Initiate local TCP/IP port forwardings. */
-	for (i = 0; i < options.num_local_forwards; i++) {
+	க்கு (i = 0; i < options.இலக்கம்_local_forwards; i++) {
 		debug("Local connections to %.200s:%d forwarded to remote "
 		    "address %.200s:%d",
-		    (options.local_forwards[i].listen_path != NULL) ?
+		    (options.local_forwards[i].listen_path != வெற்று) ?
 		    options.local_forwards[i].listen_path :
-		    (options.local_forwards[i].listen_host == NULL) ?
+		    (options.local_forwards[i].listen_host == வெற்று) ?
 		    (options.fwd_opts.gateway_ports ? "*" : "LOCALHOST") :
 		    options.local_forwards[i].listen_host,
 		    options.local_forwards[i].listen_port,
-		    (options.local_forwards[i].connect_path != NULL) ?
+		    (options.local_forwards[i].connect_path != வெற்று) ?
 		    options.local_forwards[i].connect_path :
 		    options.local_forwards[i].connect_host,
 		    options.local_forwards[i].connect_port);
 		success += channel_setup_local_fwd_listener(ssh,
 		    &options.local_forwards[i], &options.fwd_opts);
 	}
-	if (i > 0 && success != i && options.exit_on_forward_failure)
+	எனில் (i > 0 && success != i && options.exit_on_forward_failure)
 		fatal("Could not request local forwarding.");
-	if (i > 0 && success == 0)
+	எனில் (i > 0 && success == 0)
 		error("Could not request local forwarding.");
 
 	/* Initiate remote TCP/IP port forwardings. */
-	for (i = 0; i < options.num_remote_forwards; i++) {
-		struct rfwd_confirm_ctx *rctx;
+	க்கு (i = 0; i < options.இலக்கம்_remote_forwards; i++) {
+		கட்டமைப்பு rfwd_confirm_ctx *rctx;
 
 		debug("Remote connections from %.200s:%d forwarded to "
 		    "local address %.200s:%d",
-		    (options.remote_forwards[i].listen_path != NULL) ?
+		    (options.remote_forwards[i].listen_path != வெற்று) ?
 		    options.remote_forwards[i].listen_path :
-		    (options.remote_forwards[i].listen_host == NULL) ?
+		    (options.remote_forwards[i].listen_host == வெற்று) ?
 		    "LOCALHOST" : options.remote_forwards[i].listen_host,
 		    options.remote_forwards[i].listen_port,
-		    (options.remote_forwards[i].connect_path != NULL) ?
+		    (options.remote_forwards[i].connect_path != வெற்று) ?
 		    options.remote_forwards[i].connect_path :
 		    options.remote_forwards[i].connect_host,
 		    options.remote_forwards[i].connect_port);
-		if ((options.remote_forwards[i].handle =
+		எனில் ((options.remote_forwards[i].handle =
 		    channel_request_remote_forwarding(ssh,
 		    &options.remote_forwards[i])) >= 0) {
-			rctx = xcalloc(1, sizeof(*rctx));
+			rctx = xcalloc(1, அளவு(*rctx));
 			rctx->fid = i;
 			client_register_global_confirm(
 			    ssh_confirm_remote_forward, rctx);
 			forward_confirms_pending++;
-		} else if (options.exit_on_forward_failure)
+		} இல்லையெனில் எனில் (options.exit_on_forward_failure)
 			fatal("Could not request remote forwarding.");
-		else
+		இல்லையெனில்
 			logit("Warning: Could not request remote forwarding.");
 	}
 
 	/* Initiate tunnel forwarding. */
-	if (options.tun_open != SSH_TUNMODE_NO) {
-		if ((*ifname = client_request_tun_fwd(ssh,
+	எனில் (options.tun_open != SSH_TUNMODE_NO) {
+		எனில் ((*ifname = client_request_tun_fwd(ssh,
 		    options.tun_open, options.tun_local,
-		    options.tun_remote, ssh_tun_confirm, NULL)) != NULL)
+		    options.tun_remote, ssh_tun_confirm, வெற்று)) != வெற்று)
 			forward_confirms_pending++;
-		else if (options.exit_on_forward_failure)
+		இல்லையெனில் எனில் (options.exit_on_forward_failure)
 			fatal("Could not request tunnel forwarding.");
-		else
+		இல்லையெனில்
 			error("Could not request tunnel forwarding.");
 	}
-	if (forward_confirms_pending > 0) {
+	எனில் (forward_confirms_pending > 0) {
 		debug_f("expecting replies for %d forwards",
 		    forward_confirms_pending);
 	}
 }
 
-static void
-check_agent_present(void)
+நிலையான வெறுமை
+check_agent_present(வெறுமை)
 {
-	int r;
+	முழு r;
 
-	if (options.forward_agent) {
+	எனில் (options.forward_agent) {
 		/* Clear agent forwarding if we don't have an agent. */
-		if ((r = ssh_get_authentication_socket(NULL)) != 0) {
+		எனில் ((r = ssh_get_authentication_socket(வெற்று)) != 0) {
 			options.forward_agent = 0;
-			if (r != SSH_ERR_AGENT_NOT_PRESENT)
+			எனில் (r != SSH_ERR_AGENT_NOT_PRESENT)
 				debug_r(r, "ssh_get_authentication_socket");
 		}
 	}
 }
 
-static void
-ssh_session2_setup(struct ssh *ssh, int id, int success, void *arg)
+நிலையான வெறுமை
+ssh_session2_setup(கட்டமைப்பு ssh *ssh, முழு id, முழு success, வெறுமை *arg)
 {
-	extern char **environ;
-	const char *display, *term;
-	char *proto = NULL, *data = NULL;
+	வெளி எழுத்து **environ;
+	மாறிலி எழுத்து *display, *term;
+	எழுத்து *proto = வெற்று, *data = வெற்று;
 
-	if (!success)
-		return; /* No need for error message, channels code sends one */
+	எனில் (!success)
+		திரும்பு; /* No need for error message, channels code sends one */
 
 	display = getenv("DISPLAY");
-	if (display == NULL && options.forward_x11)
+	எனில் (display == வெற்று && options.forward_x11)
 		debug("X11 forwarding requested but DISPLAY not set");
-	if (options.forward_x11 && client_x11_get_proto(ssh, display,
+	எனில் (options.forward_x11 && client_x11_get_proto(ssh, display,
 	    options.xauth_location, options.forward_x11_trusted,
 	    options.forward_x11_timeout, &proto, &data) == 0) {
 		/* Request forwarding with authentication spoofing. */
@@ -2196,38 +2196,38 @@ ssh_session2_setup(struct ssh *ssh, int id, int success, void *arg)
 	}
 
 	check_agent_present();
-	if (options.forward_agent)
+	எனில் (options.forward_agent)
 		client_channel_request_agent_forwarding(ssh, id);
 
-	if ((term = lookup_env_in_list("TERM", options.setenv,
-	    options.num_setenv)) == NULL || *term == '\0')
+	எனில் ((term = lookup_env_in_list("TERM", options.setenv,
+	    options.இலக்கம்_setenv)) == வெற்று || *term == '\0')
 		term = getenv("TERM");
 	client_session2_setup(ssh, id, tty_flag,
 	    options.session_type == SESSION_TYPE_SUBSYSTEM, term,
-	    NULL, fileno(stdin), command, environ);
+	    வெற்று, fileno(stdin), command, environ);
 }
 
 /* open new channel for a session */
-static int
-ssh_session2_open(struct ssh *ssh)
+நிலையான முழு
+ssh_session2_open(கட்டமைப்பு ssh *ssh)
 {
 	Channel *c;
-	int window, packetmax, in, out, err;
+	முழு window, packetmax, in, out, err;
 
-	if (options.stdin_null) {
+	எனில் (options.stdin_null) {
 		in = open(_PATH_DEVNULL, O_RDONLY);
-	} else {
+	} இல்லையெனில் {
 		in = dup(STDIN_FILENO);
 	}
 	out = dup(STDOUT_FILENO);
 	err = dup(STDERR_FILENO);
 
-	if (in == -1 || out == -1 || err == -1)
+	எனில் (in == -1 || out == -1 || err == -1)
 		fatal("dup() in/out/err failed");
 
 	window = CHAN_SES_WINDOW_DEFAULT;
 	packetmax = CHAN_SES_PACKET_DEFAULT;
-	if (tty_flag) {
+	எனில் (tty_flag) {
 		window >>= 1;
 		packetmax >>= 1;
 	}
@@ -2235,43 +2235,43 @@ ssh_session2_open(struct ssh *ssh)
 	    "session", SSH_CHANNEL_OPENING, in, out, err,
 	    window, packetmax, CHAN_EXTENDED_WRITE,
 	    "client-session", CHANNEL_NONBLOCK_STDIO);
-	if (tty_flag)
+	எனில் (tty_flag)
 		channel_set_tty(ssh, c);
 	debug3_f("channel_new: %d%s", c->self, tty_flag ? " (tty)" : "");
 
 	channel_send_open(ssh, c->self);
-	if (options.session_type != SESSION_TYPE_NONE)
+	எனில் (options.session_type != SESSION_TYPE_NONE)
 		channel_register_open_confirm(ssh, c->self,
-		    ssh_session2_setup, NULL);
+		    ssh_session2_setup, வெற்று);
 
-	return c->self;
+	திரும்பு c->self;
 }
 
-static int
-ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
+நிலையான முழு
+ssh_session2(கட்டமைப்பு ssh *ssh, மாறிலி கட்டமைப்பு ssh_conn_info *cinfo)
 {
-	int r, id = -1;
-	char *cp, *tun_fwd_ifname = NULL;
+	முழு r, id = -1;
+	எழுத்து *cp, *tun_fwd_ifname = வெற்று;
 
 	/* XXX should be pre-session */
-	if (!options.control_persist)
+	எனில் (!options.control_persist)
 		ssh_init_stdio_forwarding(ssh);
 
 	ssh_init_forwarding(ssh, &tun_fwd_ifname);
 
-	if (options.local_command != NULL) {
+	எனில் (options.local_command != வெற்று) {
 		debug3("expanding LocalCommand: %s", options.local_command);
 		cp = options.local_command;
 		options.local_command = percent_expand(cp,
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
-		    "T", tun_fwd_ifname == NULL ? "NONE" : tun_fwd_ifname,
-		    (char *)NULL);
+		    "T", tun_fwd_ifname == வெற்று ? "NONE" : tun_fwd_ifname,
+		    (எழுத்து *)வெற்று);
 		debug3("expanded LocalCommand: %s", options.local_command);
-		free(cp);
+		விடுவி(cp);
 	}
 
 	/* Start listening for multiplex clients */
-	if (!ssh_packet_get_mux(ssh))
+	எனில் (!ssh_packet_get_mux(ssh))
 		muxserver_listen(ssh);
 
 	/*
@@ -2283,7 +2283,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * after the connection is fully established (in particular,
 	 * async rfwd replies have been received for ExitOnForwardFailure).
 	 */
-	if (options.control_persist && muxserver_sock != -1) {
+	எனில் (options.control_persist && muxserver_sock != -1) {
 		ostdin_null_flag = options.stdin_null;
 		osession_type = options.session_type;
 		orequest_tty = options.request_tty;
@@ -2292,8 +2292,8 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 		options.stdin_null = 1;
 		options.session_type = SESSION_TYPE_NONE;
 		tty_flag = 0;
-		if ((osession_type != SESSION_TYPE_NONE ||
-		    options.stdio_forward_host != NULL))
+		எனில் ((osession_type != SESSION_TYPE_NONE ||
+		    options.stdio_forward_host != வெற்று))
 			need_controlpersist_detach = 1;
 		options.fork_after_authentication = 1;
 	}
@@ -2301,17 +2301,17 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * ControlPersist mux listen socket setup failed, attempt the
 	 * stdio forward setup that we skipped earlier.
 	 */
-	if (options.control_persist && muxserver_sock == -1)
+	எனில் (options.control_persist && muxserver_sock == -1)
 		ssh_init_stdio_forwarding(ssh);
 
-	if (options.session_type != SESSION_TYPE_NONE)
+	எனில் (options.session_type != SESSION_TYPE_NONE)
 		id = ssh_session2_open(ssh);
 
 	/* If we don't expect to open a new session, then disallow it */
-	if (options.control_master == SSHCTL_MASTER_NO &&
+	எனில் (options.control_master == SSHCTL_MASTER_NO &&
 	    (ssh->compat & SSH_NEW_OPENSSH)) {
 		debug("Requesting no-more-sessions@openssh.com");
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+		எனில் ((r = sshpkt_start(ssh, SSH2_செய்தி_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    "no-more-sessions@openssh.com")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
@@ -2320,7 +2320,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	}
 
 	/* Execute a local command */
-	if (options.local_command != NULL &&
+	எனில் (options.local_command != வெற்று &&
 	    options.permit_local_command)
 		ssh_local_cmd(options.local_command);
 
@@ -2330,180 +2330,180 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 * NB. this can only happen after LocalCommand has completed,
 	 * as it may want to write to stdout.
 	 */
-	if (!need_controlpersist_detach && stdfd_devnull(0, 1, 0) == -1)
+	எனில் (!need_controlpersist_detach && stdfd_devnull(0, 1, 0) == -1)
 		error_f("stdfd_devnull failed");
 
 	/*
 	 * If requested and we are not interested in replies to remote
 	 * forwarding requests, then let ssh continue in the background.
 	 */
-	if (options.fork_after_authentication) {
-		if (options.exit_on_forward_failure &&
-		    options.num_remote_forwards > 0) {
+	எனில் (options.fork_after_authentication) {
+		எனில் (options.exit_on_forward_failure &&
+		    options.இலக்கம்_remote_forwards > 0) {
 			debug("deferring postauth fork until remote forward "
 			    "confirmation received");
-		} else
+		} இல்லையெனில்
 			fork_postauth();
 	}
 
-	return client_loop(ssh, tty_flag, tty_flag ?
+	திரும்பு client_loop(ssh, tty_flag, tty_flag ?
 	    options.escape_char : SSH_ESCAPECHAR_NONE, id);
 }
 
 /* Loads all IdentityFile and CertificateFile keys */
-static void
-load_public_identity_files(const struct ssh_conn_info *cinfo)
+நிலையான வெறுமை
+load_public_identity_files(மாறிலி கட்டமைப்பு ssh_conn_info *cinfo)
 {
-	char *filename, *cp;
-	struct sshkey *public;
-	int i;
+	எழுத்து *filename, *cp;
+	கட்டமைப்பு sshkey *பொது;
+	முழு i;
 	u_int n_ids, n_certs;
-	char *identity_files[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
-	int identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	char *certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
-	int certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	எழுத்து *identity_files[SSH_MAX_IDENTITY_FILES];
+	கட்டமைப்பு sshkey *identity_சாவிகள்[SSH_MAX_IDENTITY_FILES];
+	முழு identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	எழுத்து *certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	கட்டமைப்பு sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	முழு certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
-	char **comments = NULL;
-	int nkeys;
+	கட்டமைப்பு sshkey **சாவிகள் = வெற்று;
+	எழுத்து **comments = வெற்று;
+	முழு nkeys;
 #endif /* PKCS11 */
 
 	n_ids = n_certs = 0;
-	memset(identity_files, 0, sizeof(identity_files));
-	memset(identity_keys, 0, sizeof(identity_keys));
+	memset(identity_files, 0, அளவு(identity_files));
+	memset(identity_சாவிகள், 0, அளவு(identity_சாவிகள்));
 	memset(identity_file_userprovided, 0,
-	    sizeof(identity_file_userprovided));
-	memset(certificate_files, 0, sizeof(certificate_files));
-	memset(certificates, 0, sizeof(certificates));
+	    அளவு(identity_file_userprovided));
+	memset(certificate_files, 0, அளவு(certificate_files));
+	memset(certificates, 0, அளவு(certificates));
 	memset(certificate_file_userprovided, 0,
-	    sizeof(certificate_file_userprovided));
+	    அளவு(certificate_file_userprovided));
 
 #ifdef ENABLE_PKCS11
-	if (options.pkcs11_provider != NULL &&
-	    options.num_identity_files < SSH_MAX_IDENTITY_FILES &&
+	எனில் (options.pkcs11_provider != வெற்று &&
+	    options.இலக்கம்_identity_files < SSH_MAX_IDENTITY_FILES &&
 	    (pkcs11_init(!options.batch_mode) == 0) &&
-	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, NULL,
-	    &keys, &comments)) > 0) {
-		for (i = 0; i < nkeys; i++) {
-			if (n_ids >= SSH_MAX_IDENTITY_FILES) {
-				sshkey_free(keys[i]);
-				free(comments[i]);
-				continue;
+	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, வெற்று,
+	    &சாவிகள், &comments)) > 0) {
+		க்கு (i = 0; i < nkeys; i++) {
+			எனில் (n_ids >= SSH_MAX_IDENTITY_FILES) {
+				sshkey_free(சாவிகள்[i]);
+				விடுவி(comments[i]);
+				தொடர்;
 			}
-			identity_keys[n_ids] = keys[i];
+			identity_சாவிகள்[n_ids] = சாவிகள்[i];
 			identity_files[n_ids] = comments[i]; /* transferred */
 			n_ids++;
 		}
-		free(keys);
-		free(comments);
+		விடுவி(சாவிகள்);
+		விடுவி(comments);
 	}
 #endif /* ENABLE_PKCS11 */
-	for (i = 0; i < options.num_identity_files; i++) {
-		if (n_ids >= SSH_MAX_IDENTITY_FILES ||
+	க்கு (i = 0; i < options.இலக்கம்_identity_files; i++) {
+		எனில் (n_ids >= SSH_MAX_IDENTITY_FILES ||
 		    strcasecmp(options.identity_files[i], "none") == 0) {
-			free(options.identity_files[i]);
-			options.identity_files[i] = NULL;
-			continue;
+			விடுவி(options.identity_files[i]);
+			options.identity_files[i] = வெற்று;
+			தொடர்;
 		}
 		cp = tilde_expand_filename(options.identity_files[i], getuid());
 		filename = default_client_percent_dollar_expand(cp, cinfo);
-		free(cp);
-		check_load(sshkey_load_public(filename, &public, NULL),
-		    &public, filename, "pubkey");
+		விடுவி(cp);
+		check_load(sshkey_load_public(filename, &பொது, வெற்று),
+		    &பொது, filename, "pubkey");
 		debug("identity file %s type %d", filename,
-		    public ? public->type : -1);
-		free(options.identity_files[i]);
+		    பொது ? பொது->type : -1);
+		விடுவி(options.identity_files[i]);
 		identity_files[n_ids] = filename;
-		identity_keys[n_ids] = public;
+		identity_சாவிகள்[n_ids] = பொது;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
-		if (++n_ids >= SSH_MAX_IDENTITY_FILES)
-			continue;
+		எனில் (++n_ids >= SSH_MAX_IDENTITY_FILES)
+			தொடர்;
 
 		/*
 		 * If no certificates have been explicitly listed then try
 		 * to add the default certificate variant too.
 		 */
-		if (options.num_certificate_files != 0)
-			continue;
+		எனில் (options.இலக்கம்_certificate_files != 0)
+			தொடர்;
 		xasprintf(&cp, "%s-cert", filename);
-		check_load(sshkey_load_public(cp, &public, NULL),
-		    &public, filename, "identity pubkey");
-		if (public == NULL) {
-			free(cp);
-			continue;
+		check_load(sshkey_load_public(cp, &பொது, வெற்று),
+		    &பொது, filename, "identity pubkey");
+		எனில் (பொது == வெற்று) {
+			விடுவி(cp);
+			தொடர்;
 		}
-		if (!sshkey_is_cert(public)) {
+		எனில் (!sshkey_is_cert(பொது)) {
 			debug_f("key %s type %s is not a certificate",
-			    cp, sshkey_type(public));
-			sshkey_free(public);
-			free(cp);
-			continue;
+			    cp, sshkey_type(பொது));
+			sshkey_free(பொது);
+			விடுவி(cp);
+			தொடர்;
 		}
-		free(cp);
+		விடுவி(cp);
 		/* NB. leave filename pointing to private key */
 		identity_files[n_ids] = xstrdup(filename);
-		identity_keys[n_ids] = public;
+		identity_சாவிகள்[n_ids] = பொது;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
 		n_ids++;
 	}
 
-	if (options.num_certificate_files > SSH_MAX_CERTIFICATE_FILES)
+	எனில் (options.இலக்கம்_certificate_files > SSH_MAX_CERTIFICATE_FILES)
 		fatal_f("too many certificates");
-	for (i = 0; i < options.num_certificate_files; i++) {
+	க்கு (i = 0; i < options.இலக்கம்_certificate_files; i++) {
 		cp = tilde_expand_filename(options.certificate_files[i],
 		    getuid());
 		filename = default_client_percent_dollar_expand(cp, cinfo);
-		free(cp);
+		விடுவி(cp);
 
-		check_load(sshkey_load_public(filename, &public, NULL),
-		    &public, filename, "identity cert");
-		free(options.certificate_files[i]);
-		options.certificate_files[i] = NULL;
-		if (public == NULL) {
-			free(filename);
-			continue;
+		check_load(sshkey_load_public(filename, &பொது, வெற்று),
+		    &பொது, filename, "identity cert");
+		விடுவி(options.certificate_files[i]);
+		options.certificate_files[i] = வெற்று;
+		எனில் (பொது == வெற்று) {
+			விடுவி(filename);
+			தொடர்;
 		}
-		if (!sshkey_is_cert(public)) {
+		எனில் (!sshkey_is_cert(பொது)) {
 			debug_f("key %s type %s is not a certificate",
-			    filename, sshkey_type(public));
-			sshkey_free(public);
-			free(filename);
-			continue;
+			    filename, sshkey_type(பொது));
+			sshkey_free(பொது);
+			விடுவி(filename);
+			தொடர்;
 		}
 		certificate_files[n_certs] = filename;
-		certificates[n_certs] = public;
+		certificates[n_certs] = பொது;
 		certificate_file_userprovided[n_certs] =
 		    options.certificate_file_userprovided[i];
 		++n_certs;
 	}
 
-	options.num_identity_files = n_ids;
-	memcpy(options.identity_files, identity_files, sizeof(identity_files));
-	memcpy(options.identity_keys, identity_keys, sizeof(identity_keys));
+	options.இலக்கம்_identity_files = n_ids;
+	memcpy(options.identity_files, identity_files, அளவு(identity_files));
+	memcpy(options.identity_சாவிகள், identity_சாவிகள், அளவு(identity_சாவிகள்));
 	memcpy(options.identity_file_userprovided,
-	    identity_file_userprovided, sizeof(identity_file_userprovided));
+	    identity_file_userprovided, அளவு(identity_file_userprovided));
 
-	options.num_certificate_files = n_certs;
+	options.இலக்கம்_certificate_files = n_certs;
 	memcpy(options.certificate_files,
-	    certificate_files, sizeof(certificate_files));
-	memcpy(options.certificates, certificates, sizeof(certificates));
+	    certificate_files, அளவு(certificate_files));
+	memcpy(options.certificates, certificates, அளவு(certificates));
 	memcpy(options.certificate_file_userprovided,
 	    certificate_file_userprovided,
-	    sizeof(certificate_file_userprovided));
+	    அளவு(certificate_file_userprovided));
 }
 
-static void
-main_sigchld_handler(int sig)
+நிலையான வெறுமை
+main_sigchld_handler(முழு sig)
 {
-	int save_errno = errno;
+	முழு save_errno = errno;
 	pid_t pid;
-	int status;
+	முழு status;
 
-	while ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
+	போது ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
 	    (pid == -1 && errno == EINTR))
 		;
 	errno = save_errno;

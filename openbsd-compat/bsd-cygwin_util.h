@@ -35,30 +35,30 @@
 #undef ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
+வகைவரை வெறுமை *HANDLE;
+#define INVALID_HANDLE_மதிப்பு ((HANDLE) -1)
 #define DNLEN 16
 #define UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+வெளி HANDLE cygwin_logon_user (மாறிலி கட்டமைப்பு passwd *, மாறிலி எழுத்து *);
+வெளி வெறுமை cygwin_set_impersonation_token (மாறிலி HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#அந்தர்பாவ <sys/cygwin.h>
+#அந்தர்பாவ <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+மாறிலி எழுத்து *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+முழு இருமம்_open(மாறிலி எழுத்து *, முழு , ...);
+முழு check_ntsec(மாறிலி எழுத்து *);
+எழுத்து **fetch_windows_environment(வெறுமை);
+வெறுமை free_windows_environment(எழுத்து **);
+முழு cygwin_ug_match_pattern_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
+#ifndef NO_இருமம்_OPEN
+#define open இருமம்_open
 #endif
 
 #endif /* HAVE_CYGWIN */

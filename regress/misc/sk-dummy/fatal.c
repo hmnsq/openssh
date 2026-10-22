@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "log.h"
+#அந்தர்பாவ "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+வெறுமை
+sshlogv(மாறிலி எழுத்து *file, மாறிலி எழுத்து *func, முழு வரி, முழு showfunc,
+    LogLevel level, மாறிலி எழுத்து *suffix, மாறிலி எழுத்து *fmt, va_list args)
 {
-	if (showfunc)
+	எனில் (showfunc)
 		fprintf(stderr, "%s: ", func);
 	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	எனில் (suffix != வெற்று)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+வெறுமை
+sshlog(மாறிலி எழுத்து *file, மாறிலி எழுத்து *func, முழு வரி, முழு showfunc,
+    LogLevel level, மாறிலி எழுத்து *suffix, மாறிலி எழுத்து *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, வரி, showfunc, level, suffix, fmt, args);
 	va_end(args);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+வெறுமை
+sshfatal(மாறிலி எழுத்து *file, மாறிலி எழுத்து *func, முழு வரி, முழு showfunc,
+    LogLevel level, மாறிலி எழுத்து *suffix, மாறிலி எழுத்து *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, வரி, showfunc, level, suffix, fmt, args);
 	va_end(args);
 	_exit(1);
 }

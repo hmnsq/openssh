@@ -5,9 +5,9 @@
  * Written by Ted Unangst
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <string.h>
+#அந்தர்பாவ <string.h>
 
 /*
  * explicit_bzero - don't let the compiler optimize away bzero
@@ -17,42 +17,42 @@
 
 #ifdef HAVE_EXPLICIT_MEMSET
 
-void
-explicit_bzero(void *p, size_t n)
+வெறுமை
+explicit_bzero(வெறுமை *p, size_t n)
 {
-	(void)explicit_memset(p, 0, n);
+	(வெறுமை)explicit_memset(p, 0, n);
 }
 
-#elif defined(HAVE_MEMSET_S)
+#அல்லதெனில் defined(HAVE_MEMSET_S)
 
-void
-explicit_bzero(void *p, size_t n)
+வெறுமை
+explicit_bzero(வெறுமை *p, size_t n)
 {
-	if (n == 0)
-		return;
-	(void)memset_s(p, n, 0, n);
+	எனில் (n == 0)
+		திரும்பு;
+	(வெறுமை)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#இல்லையெனில் /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
  * dead-store optimisation eliminating the call.
  */
-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+நிலையான வெறுமை (* நிலையற்ற ssh_bzero)(வெறுமை *, size_t) = bzero;
 
-void
-explicit_bzero(void *p, size_t n)
+வெறுமை
+explicit_bzero(வெறுமை *p, size_t n)
 {
-	if (n == 0)
-		return;
+	எனில் (n == 0)
+		திரும்பு;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
+#எனில் defined(__has_feature)
+# எனில் __has_feature(memory_sanitizer)
 	memset(p, 0, n);
 # endif
 #endif

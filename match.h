@@ -14,17 +14,17 @@
 #ifndef MATCH_H
 #define MATCH_H
 
-int	 match_pattern(const char *, const char *);
-int	 match_pattern_list(const char *, const char *, int);
-int	 match_usergroup_pattern_list(const char *, const char *);
-int	 match_hostname(const char *, const char *);
-int	 match_host_and_ip(const char *, const char *, const char *);
-int	 match_user(const char *, const char *, const char *, const char *);
-char	*match_list(const char *, const char *, u_int *);
-char	*match_filter_denylist(const char *, const char *);
-char	*match_filter_allowlist(const char *, const char *);
+முழு	 match_pattern(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+முழு	 match_pattern_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *, முழு);
+முழு	 match_usergroup_pattern_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+முழு	 match_hostname(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+முழு	 match_host_and_ip(மாறிலி எழுத்து *, மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+முழு	 match_user(மாறிலி எழுத்து *, மாறிலி எழுத்து *, மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+எழுத்து	*match_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *, u_int *);
+எழுத்து	*match_filter_denylist(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+எழுத்து	*match_filter_allowlist(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
 
 /* addrmatch.c */
-int	 addr_match_list(const char *, const char *);
-int	 addr_match_cidr_list(const char *, const char *);
+முழு	 addr_match_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
+முழு	 addr_match_cidr_list(மாறிலி எழுத்து *, மாறிலி எழுத்து *);
 #endif

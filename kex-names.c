@@ -23,34 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <signal.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
+#அந்தர்பாவ <openssl/crypto.h>
+#அந்தர்பாவ <openssl/evp.h>
 #endif
 
-#include "kex.h"
-#include "log.h"
-#include "match.h"
-#include "digest.h"
-#include "misc.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "match.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "misc.h"
 
-#include "ssherr.h"
+#அந்தர்பாவ "ssherr.h"
 
-struct kexalg {
-	char *name;
+கட்டமைப்பு kexalg {
+	எழுத்து *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	முழு ec_nid;
+	முழு hash_alg;
+	முழு pq_alg;
 };
-static const struct kexalg kexalgs[] = {
+நிலையான மாறிலி கட்டமைப்பு kexalg kexalgs[] = {
 #ifdef WITH_OPENSSL
 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
@@ -70,7 +70,7 @@ static const struct kexalg kexalgs[] = {
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#எனில் defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 #ifdef USE_SNTRUP761X25519
@@ -84,150 +84,150 @@ static const struct kexalg kexalgs[] = {
 	    SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif
 #endif /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
-	{ NULL, 0, -1, -1, 0 },
+	{ வெற்று, 0, -1, -1, 0 },
 };
 
-char *
-kex_alg_list(char sep)
+எழுத்து *
+kex_alg_list(எழுத்து sep)
 {
-	char *ret = NULL;
-	const struct kexalg *k;
-	char sep_str[2] = {sep, '\0'};
+	எழுத்து *ret = வெற்று;
+	மாறிலி கட்டமைப்பு kexalg *k;
+	எழுத்து sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	க்கு (k = kexalgs; k->name != வெற்று; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	திரும்பு ret;
 }
 
-static const struct kexalg *
-kex_alg_by_name(const char *name)
+நிலையான மாறிலி கட்டமைப்பு kexalg *
+kex_alg_by_name(மாறிலி எழுத்து *name)
 {
-	const struct kexalg *k;
+	மாறிலி கட்டமைப்பு kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	க்கு (k = kexalgs; k->name != வெற்று; k++) {
+		எனில் (strcmp(k->name, name) == 0)
+			திரும்பு k;
 	}
-	return NULL;
+	திரும்பு வெற்று;
 }
 
-int
-kex_name_valid(const char *name)
+முழு
+kex_name_valid(மாறிலி எழுத்து *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	திரும்பு kex_alg_by_name(name) != வெற்று;
 }
 
-int
-kex_is_pq_from_name(const char *name)
+முழு
+kex_is_pq_from_name(மாறிலி எழுத்து *name)
 {
-	const struct kexalg *k;
+	மாறிலி கட்டமைப்பு kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	எனில் ((k = kex_alg_by_name(name)) == வெற்று)
+		திரும்பு 0;
+	திரும்பு k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
-kex_type_from_name(const char *name)
+kex_type_from_name(மாறிலி எழுத்து *name)
 {
-	const struct kexalg *k;
+	மாறிலி கட்டமைப்பு kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	எனில் ((k = kex_alg_by_name(name)) == வெற்று)
+		திரும்பு 0;
+	திரும்பு k->type;
 }
 
-int
-kex_hash_from_name(const char *name)
+முழு
+kex_hash_from_name(மாறிலி எழுத்து *name)
 {
-	const struct kexalg *k;
+	மாறிலி கட்டமைப்பு kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	எனில் ((k = kex_alg_by_name(name)) == வெற்று)
+		திரும்பு -1;
+	திரும்பு k->hash_alg;
 }
 
-int
-kex_nid_from_name(const char *name)
+முழு
+kex_nid_from_name(மாறிலி எழுத்து *name)
 {
-	const struct kexalg *k;
+	மாறிலி கட்டமைப்பு kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	எனில் ((k = kex_alg_by_name(name)) == வெற்று)
+		திரும்பு -1;
+	திரும்பு k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
-kex_names_valid(const char *names)
+முழு
+kex_names_valid(மாறிலி எழுத்து *names)
 {
-	char *s, *cp, *p;
+	எழுத்து *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	எனில் (names == வெற்று || strcmp(names, "") == 0)
+		திரும்பு 0;
+	எனில் ((s = cp = strdup(names)) == வெற்று)
+		திரும்பு 0;
+	க்கு ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		எனில் (kex_alg_by_name(p) == வெற்று) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
-			free(s);
-			return 0;
+			விடுவி(s);
+			திரும்பு 0;
 		}
 	}
 	debug3("kex names ok: [%s]", names);
-	free(s);
-	return 1;
+	விடுவி(s);
+	திரும்பு 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
-kex_has_any_alg(const char *proposal, const char *algs)
+முழு
+kex_has_any_alg(மாறிலி எழுத்து *proposal, மாறிலி எழுத்து *algs)
 {
-	char *cp;
+	எழுத்து *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
-	free(cp);
-	return 1;
+	எனில் ((cp = match_list(proposal, algs, வெற்று)) == வெற்று)
+		திரும்பு 0;
+	விடுவி(cp);
+	திரும்பு 1;
 }
 
 /*
  * Concatenate algorithm names, avoiding duplicates in the process.
  * Caller must free returned string.
  */
-char *
-kex_names_cat(const char *a, const char *b)
+எழுத்து *
+kex_names_cat(மாறிலி எழுத்து *a, மாறிலி எழுத்து *b)
 {
-	char *ret = NULL, *tmp = NULL, *cp, *p;
+	எழுத்து *ret = வெற்று, *tmp = வெற்று, *cp, *p;
 	size_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
+	எனில் (a == வெற்று || *a == '\0')
+		திரும்பு strdup(b);
+	எனில் (b == வெற்று || *b == '\0')
+		திரும்பு strdup(a);
+	எனில் (strlen(b) > 1024*1024)
+		திரும்பு வெற்று;
 	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
-	    (ret = calloc(1, len)) == NULL) {
-		free(tmp);
-		return NULL;
+	எனில் ((tmp = cp = strdup(b)) == வெற்று ||
+	    (ret = calloc(1, len)) == வெற்று) {
+		விடுவி(tmp);
+		திரும்பு வெற்று;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
-			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+	க்கு ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		எனில் (kex_has_any_alg(ret, p))
+			தொடர்; /* Algorithm already present */
+		எனில் (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
-			free(tmp);
-			free(ret);
-			return NULL; /* Shouldn't happen */
+			விடுவி(tmp);
+			விடுவி(ret);
+			திரும்பு வெற்று; /* Shouldn't happen */
 		}
 	}
-	free(tmp);
-	return ret;
+	விடுவி(tmp);
+	திரும்பு ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
-kex_assemble_names(char **listp, const char *def, const char *all)
+முழு
+kex_assemble_names(எழுத்து **listp, மாறிலி எழுத்து *def, மாறிலி எழுத்து *all)
 {
-	char *cp, *tmp, *patterns;
-	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	எழுத்து *cp, *tmp, *patterns;
+	எழுத்து *list = வெற்று, *ret = வெற்று, *matching = வெற்று, *opatterns = வெற்று;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	எனில் (listp == வெற்று || def == வெற்று || all == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	எனில் (*listp == வெற்று || **listp == '\0') {
+		எனில் ((*listp = strdup(def)) == வெற்று)
+			திரும்பு SSH_ERR_ALLOC_FAIL;
+		திரும்பு 0;
 	}
 
 	list = *listp;
-	*listp = NULL;
-	if (*list == '+') {
+	*listp = வெற்று;
+	எனில் (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		எனில் ((tmp = kex_names_cat(def, list + 1)) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			செல் fail;
 		}
-		free(list);
+		விடுவி(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} இல்லையெனில் எனில் (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		எனில் ((*listp = match_filter_denylist(def, list + 1)) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			செல் fail;
 		}
-		free(list);
+		விடுவி(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		திரும்பு 0;
+	} இல்லையெனில் எனில் (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		எனில் ((tmp = kex_names_cat(list + 1, def)) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			செல் fail;
 		}
-		free(list);
+		விடுவி(list);
 		list = tmp;
-	} else {
+	} இல்லையெனில் {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -289,46 +289,46 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * the patterns are applied above. For the +list and explicit list
 	 * cases we need to do it now.
 	 */
-	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	ret = வெற்று;
+	எனில் ((patterns = opatterns = strdup(list)) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		செல் fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	போது ((cp = strsep(&patterns, ",")) != வெற்று) {
+		எனில் (*cp == '!') {
 			/* negated matches are not supported here */
 			r = SSH_ERR_INVALID_ARGUMENT;
-			goto fail;
+			செல் fail;
 		}
-		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		விடுவி(matching);
+		எனில் ((matching = match_filter_allowlist(all, cp)) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			செல் fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		எனில் ((tmp = kex_names_cat(ret, matching)) == வெற்று) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			செல் fail;
 		}
-		free(ret);
+		விடுவி(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	எனில் (ret == வெற்று || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto fail;
+		செல் fail;
 	}
 
 	/* success */
 	*listp = ret;
-	ret = NULL;
+	ret = வெற்று;
 	r = 0;
 
  fail:
-	free(matching);
-	free(opatterns);
-	free(list);
-	free(ret);
-	return r;
+	விடுவி(matching);
+	விடுவி(opatterns);
+	விடுவி(list);
+	விடுவி(ret);
+	திரும்பு r;
 }

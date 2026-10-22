@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#அந்தர்பாவ "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
+#எனில் defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+வெறுமை *
 rpl_malloc(size_t size)
 {
-	if (size == 0)
+	எனில் (size == 0)
 		size = 1;
-	return malloc(size);
+	திரும்பு malloc(size);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
+#எனில் defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+வெறுமை *
 rpl_calloc(size_t nmemb, size_t size)
 {
-	if (nmemb == 0)
+	எனில் (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
+	எனில் (size == 0)
 		size = 1;
-	return calloc(nmemb, size);
+	திரும்பு calloc(nmemb, size);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#எனில் defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+வெறுமை *
+rpl_realloc(வெறுமை *ptr, size_t size)
 {
-	if (size == 0)
+	எனில் (size == 0)
 		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	எனில் (ptr == 0)
+		திரும்பு malloc(size);
+	திரும்பு realloc(ptr, size);
 }
 #endif

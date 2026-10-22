@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <grp.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+எழுத்து *
+user_from_uid(uid_t uid, முழு nouser)
 {
-	static struct ncache {
+	நிலையான கட்டமைப்பு ncache {
 		uid_t	uid;
-		char	*name;
+		எழுத்து	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	நிலையான முழு pwopen;
+	நிலையான எழுத்து nbuf[15];		/* 32 bits == 10 digits */
+	கட்டமைப்பு passwd *pw;
+	கட்டமைப்பு ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	எனில் (cp->uid != uid || cp->name == வெற்று) {
+		எனில் (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		எனில் ((pw = getpwuid(uid)) == வெற்று) {
+			எனில் (nouser)
+				திரும்பு (வெற்று);
+			(வெறுமை)snprintf(nbuf, அளவு(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		எனில் (cp->name != வெற்று)
+			விடுவி(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	திரும்பு (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+எழுத்து *
+group_from_gid(gid_t gid, முழு nogroup)
 {
-	static struct ncache {
+	நிலையான கட்டமைப்பு ncache {
 		gid_t	gid;
-		char	*name;
+		எழுத்து	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	நிலையான முழு gropen;
+	நிலையான எழுத்து nbuf[15];		/* 32 bits == 10 digits */
+	கட்டமைப்பு group *gr;
+	கட்டமைப்பு ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	எனில் (cp->gid != gid || cp->name == வெற்று) {
+		எனில் (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		எனில் ((gr = getgrgid(gid)) == வெற்று) {
+			எனில் (nogroup)
+				திரும்பு (வெற்று);
+			(வெறுமை)snprintf(nbuf, அளவு(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		எனில் (cp->name != வெற்று)
+			விடுவி(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	திரும்பு (cp->name);
 }
 #endif

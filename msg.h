@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SSH_MSG_H
-#define SSH_MSG_H
+#ifndef SSH_செய்தி_H
+#define SSH_செய்தி_H
 
-struct sshbuf;
-int	 ssh_msg_send(int, u_char, struct sshbuf *);
-int	 ssh_msg_recv(int, struct sshbuf *);
+கட்டமைப்பு sshbuf;
+முழு	 ssh_செய்தி_send(முழு, u_char, கட்டமைப்பு sshbuf *);
+முழு	 ssh_செய்தி_recv(முழு, கட்டமைப்பு sshbuf *);
 
 #endif

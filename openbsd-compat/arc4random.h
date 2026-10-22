@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#அந்தர்பாவ <sys/mman.h>
 #endif
 
-#include <signal.h>
+#அந்தர்பாவ <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+நிலையான உள்வரி வெறுமை
+_getentropy_fail(வெறுமை)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+நிலையான நிலையற்ற sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+நிலையான உள்வரி வெறுமை
+_rs_forkhandler(வெறுமை)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+நிலையான உள்வரி வெறுமை
+_rs_forkdetect(வெறுமை)
 {
-	static pid_t _rs_pid = 0;
+	நிலையான pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	எனில் (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		எனில் (rs)
+			memset(rs, 0, அளவு(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+நிலையான உள்வரி முழு
+_rs_allocate(கட்டமைப்பு _rs **rsp, கட்டமைப்பு _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#எனில் defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	எனில் ((*rsp = mmap(வெற்று, அளவு(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		திரும்பு (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	எனில் ((*rsxp = mmap(வெற்று, அளவு(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, அளவு(**rsp));
+		*rsp = வெற்று;
+		திரும்பு (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#இல்லையெனில்
+	எனில் ((*rsp = calloc(1, அளவு(**rsp))) == வெற்று)
+		திரும்பு (-1);
+	எனில் ((*rsxp = calloc(1, அளவு(**rsxp))) == வெற்று) {
+		விடுவி(*rsp);
+		*rsp = வெற்று;
+		திரும்பு (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	திரும்பு (0);
 }

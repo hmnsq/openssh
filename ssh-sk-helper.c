@@ -25,252 +25,252 @@
  * protocol changes.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <errno.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "msg.h"
-#include "uidswap.h"
-#include "ssherr.h"
-#include "ssh-sk.h"
-#include "ssh-pkcs11.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "authfd.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "msg.h"
+#அந்தர்பாவ "uidswap.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "ssh-sk.h"
+#அந்தர்பாவ "ssh-pkcs11.h"
 
 #ifdef ENABLE_SK
-extern char *__progname;
+வெளி எழுத்து *__progname;
 
-static struct sshbuf *reply_error(int r, char *fmt, ...)
+நிலையான கட்டமைப்பு sshbuf *reply_error(முழு r, எழுத்து *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)));
 
-static struct sshbuf *
-reply_error(int r, char *fmt, ...)
+நிலையான கட்டமைப்பு sshbuf *
+reply_error(முழு r, எழுத்து *fmt, ...)
 {
-	char *msg;
+	எழுத்து *செய்தி;
 	va_list ap;
-	struct sshbuf *resp;
+	கட்டமைப்பு sshbuf *resp;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&செய்தி, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", __progname, msg);
-	free(msg);
+	debug("%s: %s", __progname, செய்தி);
+	விடுவி(செய்தி);
 
-	if (r >= 0)
+	எனில் (r >= 0)
 		fatal_f("invalid error code %d", r);
 
-	if ((resp = sshbuf_new()) == NULL)
+	எனில் ((resp = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
+	எனில் (sshbuf_put_u32(resp, SSH_SK_HELPER_ERROR) != 0 ||
 	    sshbuf_put_u32(resp, (u_int)-r) != 0)
 		fatal("%s: buffer error", __progname);
-	return resp;
+	திரும்பு resp;
 }
 
 /* If the specified string is zero length, then free it and replace with NULL */
-static void
-null_empty(char **s)
+நிலையான வெறுமை
+null_empty(எழுத்து **s)
 {
-	if (s == NULL || *s == NULL || **s != '\0')
-		return;
+	எனில் (s == வெற்று || *s == வெற்று || **s != '\0')
+		திரும்பு;
 
-	free(*s);
-	*s = NULL;
+	விடுவி(*s);
+	*s = வெற்று;
 }
 
 /* stubs */
-int
-pkcs11_sign(struct sshkey *key,
+முழு
+pkcs11_sign(கட்டமைப்பு sshkey *சாவி,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider,
-    const char *sk_pin, u_int compat)
+    மாறிலி u_char *data, size_t datalen,
+    மாறிலி எழுத்து *alg, மாறிலி எழுத்து *sk_provider,
+    மாறிலி எழுத்து *sk_pin, u_int compat)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	திரும்பு SSH_ERR_INTERNAL_ERROR;
 }
 
-void
-pkcs11_key_free(struct sshkey *key)
+வெறுமை
+pkcs11_சாவி_free(கட்டமைப்பு sshkey *சாவி)
 {
 }
 
-static struct sshbuf *
-process_sign(struct sshbuf *req)
+நிலையான கட்டமைப்பு sshbuf *
+process_sign(கட்டமைப்பு sshbuf *req)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
+	கட்டமைப்பு sshbuf *resp, *kbuf;
+	கட்டமைப்பு sshkey *சாவி = வெற்று;
 	uint32_t compat;
-	const u_char *message;
-	u_char *sig = NULL;
+	மாறிலி u_char *message;
+	u_char *sig = வெற்று;
 	size_t msglen, siglen = 0;
-	char *provider = NULL, *pin = NULL;
+	எழுத்து *provider = வெற்று, *pin = வெற்று;
 
-	if ((r = sshbuf_froms(req, &kbuf)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
+	எனில் ((r = sshbuf_froms(req, &kbuf)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, வெற்று)) != 0 ||
 	    (r = sshbuf_get_string_direct(req, &message, &msglen)) != 0 ||
-	    (r = sshbuf_get_cstring(req, NULL, NULL)) != 0 || /* alg */
+	    (r = sshbuf_get_cstring(req, வெற்று, வெற்று)) != 0 || /* alg */
 	    (r = sshbuf_get_u32(req, &compat)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0)
+	    (r = sshbuf_get_cstring(req, &pin, வெற்று)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	எனில் (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	எனில் ((r = sshkey_private_deserialize(kbuf, &சாவி)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	எனில் (!sshkey_is_sk(சாவி)) {
 		fatal("%s: Unsupported key type %s",
-		    __progname, sshkey_ssh_name(key));
+		    __progname, sshkey_ssh_name(சாவி));
 	}
 
 	debug_f("ready to sign with key %s, provider %s: "
-	    "msg len %zu, compat 0x%lx", sshkey_type(key),
+	    "msg len %zu, compat 0x%lx", sshkey_type(சாவி),
 	    provider, msglen, (u_long)compat);
 
 	null_empty(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
+	எனில் ((r = sshsk_sign(provider, சாவி, &sig, &siglen,
 	    message, msglen, compat, pin)) != 0) {
 		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
-		goto out;
+		செல் out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	எனில் ((resp = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_SIGN)) != 0 ||
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
  out:
-	sshkey_free(key);
+	sshkey_free(சாவி);
 	sshbuf_free(kbuf);
-	free(provider);
-	if (sig != NULL)
+	விடுவி(provider);
+	எனில் (sig != வெற்று)
 		freezero(sig, siglen);
-	if (pin != NULL)
+	எனில் (pin != வெற்று)
 		freezero(pin, strlen(pin));
-	return resp;
+	திரும்பு resp;
 }
 
-static struct sshbuf *
-process_enroll(struct sshbuf *req)
+நிலையான கட்டமைப்பு sshbuf *
+process_enroll(கட்டமைப்பு sshbuf *req)
 {
-	int r;
+	முழு r;
 	u_int type;
-	char *provider, *application, *pin, *device, *userid;
+	எழுத்து *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
-	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	கட்டமைப்பு sshbuf *challenge, *attest, *kbuf, *resp;
+	கட்டமைப்பு sshkey *சாவி;
 
-	if ((attest = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL)
+	எனில் ((attest = sshbuf_new()) == வெற்று ||
+	    (kbuf = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_u32(req, &type)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &application, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &userid, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_u32(req, &type)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &provider, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &application, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &userid, வெற்று)) != 0 ||
 	    (r = sshbuf_get_u8(req, &flags)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, வெற்று)) != 0 ||
 	    (r = sshbuf_froms(req, &challenge)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	எனில் (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if (type > INT_MAX)
+	எனில் (type > INT_MAX)
 		fatal("%s: bad type %u", __progname, type);
-	if (sshbuf_len(challenge) == 0) {
+	எனில் (sshbuf_len(challenge) == 0) {
 		sshbuf_free(challenge);
-		challenge = NULL;
+		challenge = வெற்று;
 	}
 	null_empty(&device);
 	null_empty(&userid);
 	null_empty(&pin);
 
-	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
-	    flags, pin, challenge, &key, attest)) != 0) {
+	எனில் ((r = sshsk_enroll((முழு)type, provider, device, application, userid,
+	    flags, pin, challenge, &சாவி, attest)) != 0) {
 		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
-		goto out;
+		செல் out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	எனில் ((resp = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	எனில் ((r = sshkey_private_serialize(சாவி, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, attest)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
  out:
-	sshkey_free(key);
+	sshkey_free(சாவி);
 	sshbuf_free(kbuf);
 	sshbuf_free(attest);
 	sshbuf_free(challenge);
-	free(provider);
-	free(application);
-	if (pin != NULL)
+	விடுவி(provider);
+	விடுவி(application);
+	எனில் (pin != வெற்று)
 		freezero(pin, strlen(pin));
 
-	return resp;
+	திரும்பு resp;
 }
 
-static struct sshbuf *
-process_load_resident(struct sshbuf *req)
+நிலையான கட்டமைப்பு sshbuf *
+process_load_resident(கட்டமைப்பு sshbuf *req)
 {
-	int r;
-	char *provider, *pin, *device;
-	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
+	முழு r;
+	எழுத்து *provider, *pin, *device;
+	கட்டமைப்பு sshbuf *kbuf, *resp;
+	கட்டமைப்பு sshsk_resident_சாவி **srks = வெற்று;
 	size_t nsrks = 0, i;
 	u_int flags;
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	எனில் ((kbuf = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_get_cstring(req, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &device, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(req, &pin, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_cstring(req, &provider, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &device, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(req, &pin, வெற்று)) != 0 ||
 	    (r = sshbuf_get_u32(req, &flags)) != 0)
 		fatal_r(r, "%s: parse", __progname);
-	if (sshbuf_len(req) != 0)
+	எனில் (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
 	null_empty(&device);
 	null_empty(&pin);
 
-	if ((r = sshsk_load_resident(provider, device, pin, flags,
+	எனில் ((r = sshsk_load_resident(provider, device, pin, flags,
 	    &srks, &nsrks)) != 0) {
 		resp = reply_error(r, "sshsk_load_resident failed: %s",
 		    ssh_err(r));
-		goto out;
+		செல் out;
 	}
 
-	if ((resp = sshbuf_new()) == NULL)
+	எனில் ((resp = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
 
-	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	எனில் ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
 		fatal_r(r, "%s: compose", __progname);
 
-	for (i = 0; i < nsrks; i++) {
+	க்கு (i = 0; i < nsrks; i++) {
 		debug_f("key %zu %s %s uidlen %zu", i,
-		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
+		    sshkey_type(srks[i]->சாவி), srks[i]->சாவி->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		எனில் ((r = sshkey_private_serialize(srks[i]->சாவி, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
-		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
+		எனில் ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
 		    (r = sshbuf_put_string(resp, srks[i]->user_id,
 		    srks[i]->user_id_len)) != 0)
@@ -278,38 +278,38 @@ process_load_resident(struct sshbuf *req)
 	}
 
  out:
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_சாவிகள்(srks, nsrks);
 	sshbuf_free(kbuf);
-	free(provider);
-	free(device);
-	if (pin != NULL)
+	விடுவி(provider);
+	விடுவி(device);
+	எனில் (pin != வெற்று)
 		freezero(pin, strlen(pin));
-	return resp;
+	திரும்பு resp;
 }
 
-int
-main(int argc, char **argv)
+முழு
+முதன்மை(முழு argc, எழுத்து **argv)
 {
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	struct sshbuf *req, *resp;
-	int in, out, ch, r, vflag = 0;
+	கட்டமைப்பு sshbuf *req, *resp;
+	முழு in, out, ch, r, vflag = 0;
 	u_int rtype, ll = 0;
 	uint8_t version, log_stderr = 0;
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	போது ((ch = getopt(argc, argv, "v")) != -1) {
+		தேர்வு (ch) {
+		நிலை 'v':
 			vflag = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			எனில் (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			இல்லையெனில் எனில் (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
 			exit(1);
 		}
@@ -321,63 +321,63 @@ main(int argc, char **argv)
 	 * providers not to fiddle with stdin/out.
 	 */
 	closefrom(STDERR_FILENO + 1);
-	if ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
+	எனில் ((in = dup(STDIN_FILENO)) == -1 || (out = dup(STDOUT_FILENO)) == -1)
 		fatal("%s: dup: %s", __progname, strerror(errno));
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	sanitise_stdfd(); /* resets to /dev/null */
 
-	if ((req = sshbuf_new()) == NULL)
+	எனில் ((req = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	எனில் (ssh_செய்தி_recv(in, req) < 0)
 		fatal("ssh_msg_recv failed");
 	close(in);
 	debug_f("received message len %zu", sshbuf_len(req));
 
-	if ((r = sshbuf_get_u8(req, &version)) != 0)
+	எனில் ((r = sshbuf_get_u8(req, &version)) != 0)
 		fatal_r(r, "%s: parse version", __progname);
-	if (version != SSH_SK_HELPER_VERSION) {
+	எனில் (version != SSH_SK_HELPER_VERSION) {
 		fatal("unsupported version: received %d, expected %d",
 		    version, SSH_SK_HELPER_VERSION);
 	}
 
-	if ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
+	எனில் ((r = sshbuf_get_u32(req, &rtype)) != 0 ||
 	    (r = sshbuf_get_u8(req, &log_stderr)) != 0 ||
 	    (r = sshbuf_get_u32(req, &ll)) != 0)
 		fatal_r(r, "%s: parse", __progname);
 
-	if (!vflag && log_level_name((LogLevel)ll) != NULL)
+	எனில் (!vflag && log_level_name((LogLevel)ll) != வெற்று)
 		log_init(__progname, (LogLevel)ll, log_facility, log_stderr);
 
-	switch (rtype) {
-	case SSH_SK_HELPER_SIGN:
+	தேர்வு (rtype) {
+	நிலை SSH_SK_HELPER_SIGN:
 		resp = process_sign(req);
-		break;
-	case SSH_SK_HELPER_ENROLL:
+		நிறுத்து;
+	நிலை SSH_SK_HELPER_ENROLL:
 		resp = process_enroll(req);
-		break;
-	case SSH_SK_HELPER_LOAD_RESIDENT:
+		நிறுத்து;
+	நிலை SSH_SK_HELPER_LOAD_RESIDENT:
 		resp = process_load_resident(req);
-		break;
-	default:
+		நிறுத்து;
+	இயல்பு:
 		fatal("%s: unsupported request type %u", __progname, rtype);
 	}
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	எனில் (ssh_செய்தி_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
 	close(out);
 
-	return (0);
+	திரும்பு (0);
 }
-#else /* ENABLE_SK */
+#இல்லையெனில் /* ENABLE_SK */
 
-int
-main(int argc, char **argv)
+முழு
+முதன்மை(முழு argc, எழுத்து **argv)
 {
 	fprintf(stderr, "ssh-sk-helper: disabled at compile time\n");
-	return -1;
+	திரும்பு -1;
 }
 #endif /* ENABLE_SK */

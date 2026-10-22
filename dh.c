@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <limits.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#அந்தர்பாவ <openssl/bn.h>
+#அந்தர்பாவ <openssl/dh.h>
 
-#include "dh.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#அந்தர்பாவ "dh.h"
+#அந்தர்பாவ "pathnames.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "ssherr.h"
 
-static const char *moduli_filename;
+நிலையான மாறிலி எழுத்து *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+வெறுமை dh_set_moduli_file(மாறிலி எழுத்து *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+நிலையான மாறிலி எழுத்து * get_moduli_filename(வெறுமை)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	திரும்பு moduli_filename ? moduli_filename : _PATH_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+நிலையான முழு
+parse_பகாஎண்(முழு linenum, எழுத்து *வரி, கட்டமைப்பு dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
+	எழுத்து *cp, *arg;
+	எழுத்து *strsize, *gen, *பகாஎண்;
+	மாறிலி எழுத்து *errstr = வெற்று;
 	long long n;
 
-	dhg->p = dhg->g = NULL;
-	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	dhg->p = dhg->g = வெற்று;
+	cp = வரி;
+	எனில் ((arg = strdelim(&cp)) == வெற்று)
+		திரும்பு 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	எனில் (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	எனில் (!arg || !*arg || *arg == '#')
+		திரும்பு 0;
 
 	/* time */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	எனில் (cp == வெற்று || *arg == '\0')
+		செல் truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	எனில் (cp == வெற்று || *arg == '\0')
+		செல் truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
+	எனில் (errstr != வெற்று || n != MODULI_TYPE_SAFE) {
 		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
-		goto fail;
+		செல் fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	எனில் (cp == வெற்று || *arg == '\0')
+		செல் truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
+	எனில் (errstr != வெற்று ||
 	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
-		goto fail;
+		செல் fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	எனில் (cp == வெற்று || *arg == '\0')
+		செல் truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	எனில் (errstr != வெற்று || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
-		goto fail;
+		செல் fail;
 	}
 	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	எனில் (cp == வெற்று || *strsize == '\0' ||
+	    (dhg->size = (முழு)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
-		goto fail;
+		செல் fail;
 	}
 	/* The whole group is one bit larger */
 	dhg->size++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
-		goto truncated;
-	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	எனில் (cp == வெற்று || *gen == '\0')
+		செல் truncated;
+	பகாஎண் = strsep(&cp, " "); /*பகாஎண்*/
+	எனில் (cp != வெற்று || *பகாஎண் == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
-		goto fail;
+		செல் fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
-	    (dhg->p = BN_new()) == NULL) {
+	எனில் ((dhg->g = BN_new()) == வெற்று ||
+	    (dhg->p = BN_new()) == வெற்று) {
 		error("parse_prime: BN_new failed");
-		goto fail;
+		செல் fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	எனில் (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
-		goto fail;
+		செல் fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	எனில் (BN_hex2bn(&dhg->p, பகாஎண்) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
-		goto fail;
+		செல் fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	எனில் (BN_இலக்கம்_bits(dhg->p) != dhg->size) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
-		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
-		goto fail;
+		    linenum, BN_இலக்கம்_bits(dhg->p), dhg->size - 1);
+		செல் fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	எனில் (BN_cmp(dhg->g, BN_மதிப்பு_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
-		goto fail;
+		செல் fail;
 	}
-	return 1;
+	திரும்பு 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
-	dhg->g = dhg->p = NULL;
-	return 0;
+	dhg->g = dhg->p = வெற்று;
+	திரும்பு 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+choose_dh(முழு min, முழு wantbits, முழு max)
 {
 	FILE *f;
-	char *line = NULL;
+	எழுத்து *வரி = வெற்று;
 	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	முழு best, bestcount, which, linenum;
+	கட்டமைப்பு dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	எனில் ((f = fopen(get_moduli_filename(), "r")) == வெற்று) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		திரும்பு (dh_new_group_fallback(max));
 	}
 
 	linenum = 0;
 	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	போது (getline(&வரி, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
+		எனில் (!parse_பகாஎண்(linenum, வரி, &dhg))
+			தொடர்;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
-			continue;
+		எனில் (dhg.size > max || dhg.size < min)
+			தொடர்;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
+		எனில் ((dhg.size > wantbits && dhg.size < best) ||
 		    (dhg.size > best && best < wantbits)) {
 			best = dhg.size;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		எனில் (dhg.size == best)
 			bestcount++;
 	}
-	free(line);
-	line = NULL;
+	விடுவி(வரி);
+	வரி = வெற்று;
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	எனில் (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		திரும்பு வெற்று;
 	}
 	which = arc4random_uniform(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	போது (getline(&வரி, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
-		if ((dhg.size > max || dhg.size < min) ||
+		எனில் (!parse_பகாஎண்(linenum, வரி, &dhg))
+			தொடர்;
+		எனில் ((dhg.size > max || dhg.size < min) ||
 		    dhg.size != best ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
-			continue;
+			தொடர்;
 		}
-		break;
+		நிறுத்து;
 	}
-	free(line);
-	line = NULL;
+	விடுவி(வரி);
+	வரி = வெற்று;
 	fclose(f);
-	if (bestcount != which + 1) {
+	எனில் (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		திரும்பு (dh_new_group_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	திரும்பு (dh_new_group(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
-dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
+முழு
+dh_pub_is_valid(மாறிலி DH *dh, மாறிலி BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	முழு i;
+	முழு n = BN_இலக்கம்_bits(dh_pub);
+	முழு bits_set = 0;
 	BIGNUM *tmp;
-	const BIGNUM *dh_p;
+	மாறிலி BIGNUM *dh_p;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, வெற்று, வெற்று);
 
-	if (BN_is_negative(dh_pub)) {
+	எனில் (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		திரும்பு 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	எனில் (BN_cmp(dh_pub, BN_மதிப்பு_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		திரும்பு 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	எனில் ((tmp = BN_new()) == வெற்று) {
 		error_f("BN_new failed");
-		return 0;
+		திரும்பு 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	எனில் (!BN_sub(tmp, dh_p, BN_மதிப்பு_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		திரும்பு 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
+	க்கு (i = 0; i <= n; i++)
+		எனில் (BN_is_bit_set(dh_pub, i))
 			bits_set++;
-	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
+	debug2("bits set: %d/%d", bits_set, BN_இலக்கம்_bits(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	எனில் (bits_set < 4) {
 		logit("invalid public DH value (%d/%d)",
-		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		    bits_set, BN_இலக்கம்_bits(dh_p));
+		திரும்பு 0;
 	}
-	return 1;
+	திரும்பு 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+முழு
+dh_gen_சாவி(DH *dh, முழு need)
 {
-	int pbits;
-	const BIGNUM *dh_p, *pub_key;
+	முழு pbits;
+	மாறிலி BIGNUM *dh_p, *pub_சாவி;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, வெற்று, வெற்று);
 
-	if (need < 0 || dh_p == NULL ||
-	    (pbits = BN_num_bits(dh_p)) <= 0 ||
+	எனில் (need < 0 || dh_p == வெற்று ||
+	    (pbits = BN_இலக்கம்_bits(dh_p)) <= 0 ||
 	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	எனில் (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	எனில் (DH_generate_சாவி(dh) == 0)
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
+	DH_get0_சாவி(dh, &pub_சாவி, வெற்று);
+	எனில் (!dh_pub_is_valid(dh, pub_சாவி))
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	திரும்பு 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_group_asc(மாறிலி எழுத்து *gen, மாறிலி எழுத்து *modulus)
 {
 	DH *dh;
-	BIGNUM *dh_p = NULL, *dh_g = NULL;
+	BIGNUM *dh_p = வெற்று, *dh_g = வெற்று;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	எனில் ((dh = DH_new()) == வெற்று)
+		திரும்பு வெற்று;
+	எனில் (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
-		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
-		goto fail;
-	return dh;
+		செல் fail;
+	எனில் (!DH_set0_pqg(dh, dh_p, வெற்று, dh_g))
+		செல் fail;
+	திரும்பு dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	திரும்பு வெற்று;
 }
 
 /*
@@ -338,21 +338,21 @@ dh_new_group(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	எனில் ((dh = DH_new()) == வெற்று)
+		திரும்பு வெற்று;
+	எனில் (!DH_set0_pqg(dh, modulus, வெற்று, gen)) {
 		DH_free(dh);
-		return NULL;
+		திரும்பு வெற்று;
 	}
 
-	return dh;
+	திரும்பு dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
-dh_new_group1(void)
+dh_new_group1(வெறுமை)
 {
-	static char *gen = "2", *group1 =
+	நிலையான எழுத்து *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	திரும்பு (dh_new_group_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
-dh_new_group14(void)
+dh_new_group14(வெறுமை)
 {
-	static char *gen = "2", *group14 =
+	நிலையான எழுத்து *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	திரும்பு (dh_new_group_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
-dh_new_group16(void)
+dh_new_group16(வெறுமை)
 {
-	static char *gen = "2", *group16 =
+	நிலையான எழுத்து *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	திரும்பு (dh_new_group_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
-dh_new_group18(void)
+dh_new_group18(வெறுமை)
 {
-	static char *gen = "2", *group18 =
+	நிலையான எழுத்து *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	திரும்பு (dh_new_group_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_group_fallback(முழு max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	எனில் (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		திரும்பு dh_new_group14();
+	} இல்லையெனில் எனில் (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		திரும்பு dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	திரும்பு dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(முழு bits)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	எனில் (bits <= 112)
+		திரும்பு 2048;
+	எனில் (bits <= 128)
+		திரும்பு 3072;
+	எனில் (bits <= 192)
+		திரும்பு 7680;
+	திரும்பு 8192;
 }
 
 #endif /* WITH_OPENSSL */

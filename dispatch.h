@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+எண்ணிக்கை {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+கட்டமைப்பு ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+வகைவரை முழு dispatch_fn(முழு, uint32_t, கட்டமைப்பு ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+முழு	dispatch_protocol_error(முழு, uint32_t, கட்டமைப்பு ssh *);
+முழு	dispatch_protocol_ignore(முழு, uint32_t, கட்டமைப்பு ssh *);
+வெறுமை	ssh_dispatch_init(கட்டமைப்பு ssh *, dispatch_fn *);
+வெறுமை	ssh_dispatch_set(கட்டமைப்பு ssh *, முழு, dispatch_fn *);
+வெறுமை	ssh_dispatch_range(கட்டமைப்பு ssh *, u_int, u_int, dispatch_fn *);
+முழு	ssh_dispatch_run(கட்டமைப்பு ssh *, முழு, நிலையற்ற sig_atomic_t *);
+வெறுமை	ssh_dispatch_run_fatal(கட்டமைப்பு ssh *, முழு, நிலையற்ற sig_atomic_t *);
 
 #endif

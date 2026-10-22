@@ -21,8 +21,8 @@
 #ifndef SERVERLOOP_H
 #define SERVERLOOP_H
 
-struct ssh;
+கட்டமைப்பு ssh;
 
-void    server_loop2(struct ssh *, Authctxt *);
+வெறுமை    server_loop2(கட்டமைப்பு ssh *, Authctxt *);
 
 #endif

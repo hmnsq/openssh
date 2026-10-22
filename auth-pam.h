@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 #ifdef USE_PAM
 
-struct ssh;
+கட்டமைப்பு ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+வெறுமை start_pam(கட்டமைப்பு ssh *);
+வெறுமை finish_pam(வெறுமை);
+u_int do_pam_account(வெறுமை);
+வெறுமை do_pam_session(கட்டமைப்பு ssh *);
+வெறுமை do_pam_setcred(வெறுமை);
+முழு do_pam_putenv(எழுத்து *, எழுத்து *);
+எழுத்து ** fetch_pam_environment(வெறுமை);
+எழுத்து ** fetch_pam_child_environment(வெறுமை);
+வெறுமை free_pam_environment(எழுத்து **);
+வெறுமை sshpam_thread_cleanup(வெறுமை);
+வெறுமை sshpam_cleanup(வெறுமை);
+முழு sshpam_auth_passwd(Authctxt *, மாறிலி எழுத்து *);
+முழு sshpam_get_maxtries_reached(வெறுமை);
+வெறுமை sshpam_set_maxtries_reached(முழு);
+முழு is_pam_session_open(வெறுமை);
+முழு sshpam_priv_kbdint_authdone(வெறுமை *ctxtp);
 
 #endif /* USE_PAM */

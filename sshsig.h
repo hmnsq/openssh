@@ -18,14 +18,14 @@
 #ifndef SSHSIG_H
 #define SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+கட்டமைப்பு sshbuf;
+கட்டமைப்பு sshkey;
+கட்டமைப்பு sshsigopt;
+கட்டமைப்பு sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
+வகைவரை முழு sshsig_signer(கட்டமைப்பு sshkey *, u_char **, size_t *,
+    மாறிலி u_char *, size_t, மாறிலி எழுத்து *, மாறிலி எழுத்து *, மாறிலி எழுத்து *,
+    u_int, வெறுமை *);
 
 /* Buffer-oriented API */
 
@@ -34,19 +34,19 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx);
+முழு sshsig_signb(கட்டமைப்பு sshkey *சாவி, மாறிலி எழுத்து *hashalg,
+    மாறிலி எழுத்து *sk_provider, மாறிலி எழுத்து *sk_pin, மாறிலி கட்டமைப்பு sshbuf *message,
+    மாறிலி எழுத்து *sig_namespace, கட்டமைப்பு sshbuf **out,
+    sshsig_signer *signer, வெறுமை *signer_ctx);
 
 /*
  * Verifies that a detached signature is valid and optionally returns key
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+முழு sshsig_verifyb(கட்டமைப்பு sshbuf *signature,
+    மாறிலி கட்டமைப்பு sshbuf *message, மாறிலி எழுத்து *sig_namespace,
+    கட்டமைப்பு sshkey **sign_keyp, கட்டமைப்பு sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+முழு sshsig_sign_fd(கட்டமைப்பு sshkey *சாவி, மாறிலி எழுத்து *hashalg,
+    மாறிலி எழுத்து *sk_provider, மாறிலி எழுத்து *sk_pin,
+    முழு fd, மாறிலி எழுத்து *sig_namespace,
+    கட்டமைப்பு sshbuf **out, sshsig_signer *signer, வெறுமை *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+முழு sshsig_verify_fd(கட்டமைப்பு sshbuf *signature, முழு fd,
+    மாறிலி எழுத்து *sig_namespace, கட்டமைப்பு sshkey **sign_keyp,
+    கட்டமைப்பு sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+முழு sshsig_armor(மாறிலி கட்டமைப்பு sshbuf *blob, கட்டமைப்பு sshbuf **out);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+முழு sshsig_dearmor(கட்டமைப்பு sshbuf *sig, கட்டமைப்பு sshbuf **out);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+முழு sshsig_check_allowed_சாவிகள்(மாறிலி எழுத்து *path, மாறிலி கட்டமைப்பு sshkey *sign_சாவி,
+    மாறிலி எழுத்து *principal, மாறிலி எழுத்து *ns, uint64_t verify_time);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+கட்டமைப்பு sshsigopt *sshsigopt_parse(மாறிலி எழுத்து *opts,
+    மாறிலி எழுத்து *path, u_long linenum, மாறிலி எழுத்து **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+வெறுமை sshsigopt_free(கட்டமைப்பு sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+முழு sshsig_get_pubkey(கட்டமைப்பு sshbuf *signature, கட்டமைப்பு sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+முழு sshsig_find_principals(மாறிலி எழுத்து *path, மாறிலி கட்டமைப்பு sshkey *sign_சாவி,
+    uint64_t verify_time, எழுத்து **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+முழு sshsig_match_principals(மாறிலி எழுத்து *path,
+	மாறிலி எழுத்து *principal, எழுத்து ***principalsp, size_t *nprincipalsp);
 
 #endif /* SSHSIG_H */

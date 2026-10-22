@@ -10,115 +10,115 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/queue.h>
+#அந்தர்பாவ <sys/stat.h>
 #ifdef __OpenBSD__
-#include <sys/sysctl.h>
+#அந்தர்பாவ <sys/sysctl.h>
 #endif
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <netinet/ip.h>
 #ifdef HAVE_NET_ROUTE_H
-#include <net/route.h>
+#அந்தர்பாவ <net/route.h>
 #endif
 
-#include <ctype.h>
-#include <glob.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <util.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <glob.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <util.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "pathnames.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "channels.h"
-#include "groupaccess.h"
-#include "canohost.h"
-#include "packet.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "servconf.h"
+#அந்தர்பாவ "pathnames.h"
+#அந்தர்பாவ "cipher.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "mac.h"
+#அந்தர்பாவ "match.h"
+#அந்தர்பாவ "channels.h"
+#அந்தர்பாவ "groupaccess.h"
+#அந்தர்பாவ "canohost.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "myproposal.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "version.h"
 
 #define SSHD_CONFIG_BLOB_VERSION	1
 
-#if !defined(SSHD_PAM_SERVICE)
+#எனில் !defined(SSHD_PAM_SERVICE)
 # define SSHD_PAM_SERVICE		"sshd"
 #endif
 
-static void add_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void add_one_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void parse_server_config_depth(ServerOptions *options,
-    const char *filename, struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth);
+நிலையான வெறுமை add_listen_addr(ServerOptions *, மாறிலி எழுத்து *,
+    மாறிலி எழுத்து *, முழு);
+நிலையான வெறுமை add_one_listen_addr(ServerOptions *, மாறிலி எழுத்து *,
+    மாறிலி எழுத்து *, முழு);
+நிலையான வெறுமை parse_server_config_depth(ServerOptions *options,
+    மாறிலி எழுத்து *filename, கட்டமைப்பு sshbuf *conf, கட்டமைப்பு include_list *includes,
+    கட்டமைப்பு connection_info *connectinfo, முழு flags, முழு *activep, முழு depth);
 
-extern struct sshbuf *cfg;
+வெளி கட்டமைப்பு sshbuf *cfg;
 
 /* Initializes the server options to their default values. */
 
-void
+வெறுமை
 initialize_server_options(ServerOptions *options)
 {
-	memset(options, 0, sizeof(*options));
+	memset(options, 0, அளவு(*options));
 #define SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
-#define SSHCONF_STRING(var, conf, flags, cp)		options->var = NULL;
+#define SSHCONF_STRING(var, conf, flags, cp)		options->var = வெற்று;
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	options->nvar = 0; \
-	options->var = NULL;
+	options->var = வெற்று;
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	init_##funcsuffix(options)
 #define SSHCONF_NONCONF(funcsuffix) \
 	init_##funcsuffix(options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = NULL;
+#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = வெற்று;
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	/* Using macros for these is a bit overkill but forces consistency */
 #define init_hostkeyfile(options) \
-	options->host_key_files = 0; \
-	options->num_host_key_files = 0; \
-	options->host_key_file_userprovided = NULL;
+	options->host_சாவி_files = 0; \
+	options->இலக்கம்_host_சாவி_files = 0; \
+	options->host_சாவி_file_userprovided = வெற்று;
 #define init_ipqos(options) \
 	options->ip_qos_interactive = -1; \
 	options->ip_qos_bulk = -1;
 #define init_listenaddress(options) \
-	options->queued_listen_addrs = NULL; \
-	options->num_queued_listens = 0; \
-	options->listen_addrs = NULL; \
-	options->num_listen_addrs = 0;
+	options->queued_listen_addrs = வெற்று; \
+	options->இலக்கம்_queued_listens = 0; \
+	options->listen_addrs = வெற்று; \
+	options->இலக்கம்_listen_addrs = 0;
 #define init_logfacility(options) \
 	options->log_facility = SYSLOG_FACILITY_NOT_SET;
 #define init_loglevel(options) \
 	options->log_level = SYSLOG_LEVEL_NOT_SET;
 #define init_port(options) \
-	options->num_ports = 0; \
+	options->இலக்கம்_ports = 0; \
 	options->ports_from_cmdline = 0;
 #define init_gatewayports(options) \
 	options->fwd_opts.gateway_ports = -1;
@@ -132,12 +132,12 @@ initialize_server_options(ServerOptions *options)
 	options->max_startups = -1;
 #define init_permituserenv(options) \
 	options->permit_user_env = -1; \
-	options->permit_user_env_allowlist = NULL;
+	options->permit_user_env_allowlist = வெற்று;
 #define init_persourcenetblocksize(options) \
 	options->per_source_masklen_ipv4 = -1; \
 	options->per_source_masklen_ipv6 = -1;
 #define init_persourcepenalties(options) \
-	options->per_source_penalty_exempt = NULL; \
+	options->per_source_penalty_exempt = வெற்று; \
 	options->per_source_penalty.enabled = -1; \
 	options->per_source_penalty.max_sources4 = -1; \
 	options->per_source_penalty.max_sources6 = -1; \
@@ -155,10 +155,10 @@ initialize_server_options(ServerOptions *options)
 	options->rekey_limit = -1; \
 	options->rekey_interval = -1;
 #define init_subsystem(options) \
-	options->num_subsystems = 0; \
-	options->subsystem_name = NULL; \
-	options->subsystem_command = NULL; \
-	options->subsystem_args = NULL;
+	options->இலக்கம்_subsystems = 0; \
+	options->subsystem_name = வெற்று; \
+	options->subsystem_command = வெற்று; \
+	options->subsystem_args = வெற்று;
 #define init_pubkey_auth_options(options) \
 	options->pubkey_auth_options = -1; \
 	options->max_pubkey_ok = -1;
@@ -196,100 +196,100 @@ initialize_server_options(ServerOptions *options)
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-static int
-option_clear_or_none(const char *o)
+நிலையான முழு
+option_clear_or_none(மாறிலி எழுத்து *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	திரும்பு o == வெற்று || strcasecmp(o, "none") == 0;
 }
 
-static void
+நிலையான வெறுமை
 assemble_algorithms(ServerOptions *o)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int r;
+	எழுத்து *all_cipher, *all_mac, *all_kex, *all_சாவி, *all_sig;
+	எழுத்து *def_cipher, *def_mac, *def_kex, *def_சாவி, *def_sig;
+	முழு r;
 
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_சாவி = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
 	def_cipher = match_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
 	def_mac = match_filter_allowlist(KEX_SERVER_MAC, all_mac);
 	def_kex = match_filter_allowlist(KEX_SERVER_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
+	def_சாவி = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_சாவி);
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
+	செய் { \
+		எனில் ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
 			fatal_fr(r, "%s", #what); \
-	} while (0)
+	} போது (0)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostkeyalgorithms, def_key, all_key);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostkeyalgorithms, def_சாவி, all_சாவி);
+	ASSEMBLE(hostbased_accepted_algos, def_சாவி, all_சாவி);
+	ASSEMBLE(pubkey_accepted_algos, def_சாவி, all_சாவி);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
 #undef ASSEMBLE
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
+	விடுவி(all_cipher);
+	விடுவி(all_mac);
+	விடுவி(all_kex);
+	விடுவி(all_சாவி);
+	விடுவி(all_sig);
+	விடுவி(def_cipher);
+	விடுவி(def_mac);
+	விடுவி(def_kex);
+	விடுவி(def_சாவி);
+	விடுவி(def_sig);
 }
 
-void
-servconf_add_hostkey(const char *file, const int line,
-    ServerOptions *options, const char *path, int userprovided)
+வெறுமை
+servconf_add_hostkey(மாறிலி எழுத்து *file, மாறிலி முழு வரி,
+    ServerOptions *options, மாறிலி எழுத்து *path, முழு userprovided)
 {
-	char *apath = derelativise_path(path);
+	எழுத்து *apath = derelativise_path(path);
 
-	opt_array_append2(file, line, "HostKey",
-	    &options->host_key_files, &options->host_key_file_userprovided,
-	    &options->num_host_key_files, apath, userprovided);
-	free(apath);
+	opt_array_append2(file, வரி, "HostKey",
+	    &options->host_சாவி_files, &options->host_சாவி_file_userprovided,
+	    &options->இலக்கம்_host_சாவி_files, apath, userprovided);
+	விடுவி(apath);
 }
 
-void
-servconf_add_hostcert(const char *file, const int line,
-    ServerOptions *options, const char *path)
+வெறுமை
+servconf_add_hostcert(மாறிலி எழுத்து *file, மாறிலி முழு வரி,
+    ServerOptions *options, மாறிலி எழுத்து *path)
 {
-	char *apath = derelativise_path(path);
+	எழுத்து *apath = derelativise_path(path);
 
-	opt_array_append(file, line, "HostCertificate",
-	    &options->host_cert_files, &options->num_host_cert_files, apath);
-	free(apath);
+	opt_array_append(file, வரி, "HostCertificate",
+	    &options->host_cert_files, &options->இலக்கம்_host_cert_files, apath);
+	விடுவி(apath);
 }
 
-void
+வெறுமை
 fill_default_server_options(ServerOptions *options)
 {
 	u_int i;
 
 	/* Portable-specific overrides */
 #ifdef SKIP_PRIVDROP
-	if (options->allow_streamlocal_forwarding != -1 &&
+	எனில் (options->allow_streamlocal_forwarding != -1 &&
 	    options->allow_streamlocal_forwarding != FORWARD_DENY)
 		logit("StreamlocalForwarding is not supported on this system");
 	options->allow_streamlocal_forwarding = 0;
-	if (options->fwd_opts.gateway_ports != -1 &&
+	எனில் (options->fwd_opts.gateway_ports != -1 &&
 	    options->fwd_opts.gateway_ports != 0)
 		logit("GatewayPorts is not supported on this system");
 	options->fwd_opts.gateway_ports = 0;
 #endif
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if (options->var == -1) \
+	எனில் (options->var == -1) \
 		options->var = def;
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if (options->var == -1) \
+	எனில் (options->var == -1) \
 		options->var = def;
 #define SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
@@ -298,10 +298,10 @@ fill_default_server_options(ServerOptions *options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
+	செய் { \
+		விடுவி(options->var); \
+		options->var = வெற்று; \
+	} போது (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	/* XXX maybe use macros here too to force consistency? */
@@ -320,156 +320,156 @@ fill_default_server_options(ServerOptions *options)
 #undef SSHCONF_ALIAS
 
 #ifdef USE_PAM
-	if (options->pam_service_name == NULL)
+	எனில் (options->pam_service_name == வெற்று)
 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
 #endif
 
-	if (options->num_host_key_files == 0) {
+	எனில் (options->இலக்கம்_host_சாவி_files == 0) {
 		/* fill default hostkeys */
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_RSA_KEY_FILE, 0);
+		    PATH_HOST_RSA_சாவி_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ECDSA_KEY_FILE, 0);
+		    PATH_HOST_ECDSA_சாவி_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ED25519_KEY_FILE, 0);
+		    PATH_HOST_ED25519_சாவி_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_MLDSA44_ED25519_KEY_FILE, 0);
+		    PATH_HOST_MLDSA44_ED25519_சாவி_FILE, 0);
 	}
 	/* No certificates by default */
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->listen_addrs == NULL)
-		add_listen_addr(options, NULL, NULL, 0);
-	if (options->pid_file == NULL)
+	எனில் (options->இலக்கம்_ports == 0)
+		options->ports[options->இலக்கம்_ports++] = SSH_DEFAULT_PORT;
+	எனில் (options->listen_addrs == வெற்று)
+		add_listen_addr(options, வெற்று, வெற்று, 0);
+	எனில் (options->pid_file == வெற்று)
 		options->pid_file = xstrdup(_PATH_SSH_DAEMON_PID_FILE);
-	if (options->moduli_file == NULL)
+	எனில் (options->moduli_file == வெற்று)
 		options->moduli_file = xstrdup(_PATH_DH_MODULI);
-	if (options->xauth_location == NULL)
+	எனில் (options->xauth_location == வெற்று)
 		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	எனில் (options->log_facility == SYSLOG_FACILITY_NOT_SET)
 		options->log_facility = SYSLOG_FACILITY_AUTH;
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	எனில் (options->log_level == SYSLOG_LEVEL_NOT_SET)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->permit_user_env == -1) {
+	எனில் (options->permit_user_env == -1) {
 		options->permit_user_env = 0;
-		options->permit_user_env_allowlist = NULL;
+		options->permit_user_env_allowlist = வெற்று;
 	}
-	if (options->rekey_limit == -1)
+	எனில் (options->rekey_limit == -1)
 		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	எனில் (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->fwd_opts.gateway_ports == -1)
+	எனில் (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->max_startups == -1)
+	எனில் (options->max_startups == -1)
 		options->max_startups = 100;
-	if (options->max_startups_rate == -1)
+	எனில் (options->max_startups_rate == -1)
 		options->max_startups_rate = 30;		/* 30% */
-	if (options->max_startups_begin == -1)
+	எனில் (options->max_startups_begin == -1)
 		options->max_startups_begin = 10;
-	if (options->per_source_masklen_ipv4 == -1)
+	எனில் (options->per_source_masklen_ipv4 == -1)
 		options->per_source_masklen_ipv4 = 32;
-	if (options->per_source_masklen_ipv6 == -1)
+	எனில் (options->per_source_masklen_ipv6 == -1)
 		options->per_source_masklen_ipv6 = 128;
-	if (options->per_source_penalty.enabled == -1)
+	எனில் (options->per_source_penalty.enabled == -1)
 		options->per_source_penalty.enabled = 1;
-	if (options->per_source_penalty.max_sources4 == -1)
+	எனில் (options->per_source_penalty.max_sources4 == -1)
 		options->per_source_penalty.max_sources4 = 65536;
-	if (options->per_source_penalty.max_sources6 == -1)
+	எனில் (options->per_source_penalty.max_sources6 == -1)
 		options->per_source_penalty.max_sources6 = 65536;
-	if (options->per_source_penalty.overflow_mode == -1)
+	எனில் (options->per_source_penalty.overflow_mode == -1)
 		options->per_source_penalty.overflow_mode = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-	if (options->per_source_penalty.overflow_mode6 == -1)
+	எனில் (options->per_source_penalty.overflow_mode6 == -1)
 		options->per_source_penalty.overflow_mode6 = options->per_source_penalty.overflow_mode;
-	if (options->per_source_penalty.penalty_crash < 0.0)
+	எனில் (options->per_source_penalty.penalty_crash < 0.0)
 		options->per_source_penalty.penalty_crash = 90.0;
-	if (options->per_source_penalty.penalty_grace < 0.0)
+	எனில் (options->per_source_penalty.penalty_grace < 0.0)
 		options->per_source_penalty.penalty_grace = 10.0;
-	if (options->per_source_penalty.penalty_authfail < 0.0)
+	எனில் (options->per_source_penalty.penalty_authfail < 0.0)
 		options->per_source_penalty.penalty_authfail = 5.0;
-	if (options->per_source_penalty.penalty_invaliduser < 0.0)
+	எனில் (options->per_source_penalty.penalty_invaliduser < 0.0)
 		options->per_source_penalty.penalty_invaliduser = 5.0;
-	if (options->per_source_penalty.penalty_noauth < 0.0)
+	எனில் (options->per_source_penalty.penalty_noauth < 0.0)
 		options->per_source_penalty.penalty_noauth = 1.0;
-	if (options->per_source_penalty.penalty_refuseconnection < 0.0)
+	எனில் (options->per_source_penalty.penalty_refuseconnection < 0.0)
 		options->per_source_penalty.penalty_refuseconnection = 10.0;
-	if (options->per_source_penalty.penalty_min < 0.0)
+	எனில் (options->per_source_penalty.penalty_min < 0.0)
 		options->per_source_penalty.penalty_min = 15.0;
-	if (options->per_source_penalty.penalty_max < 0.0)
+	எனில் (options->per_source_penalty.penalty_max < 0.0)
 		options->per_source_penalty.penalty_max = 600.0;
-	if (options->num_authkeys_files == 0) {
+	எனில் (options->இலக்கம்_authkeys_files == 0) {
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS);
+		    &options->authorized_சாவிகள்_files,
+		    &options->இலக்கம்_authkeys_files,
+		    PATH_SSH_USER_PERMITTED_சாவிகள்);
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
+		    &options->authorized_சாவிகள்_files,
+		    &options->இலக்கம்_authkeys_files,
 		    _PATH_SSH_USER_PERMITTED_KEYS2);
 	}
-	if (options->ip_qos_interactive == -1)
+	எனில் (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	எனில் (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->version_addendum == NULL)
+	எனில் (options->version_addendum == வெற்று)
 		options->version_addendum = xstrdup("");
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+	எனில் (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	எனில் (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->sk_provider == NULL)
+	எனில் (options->sk_provider == வெற்று)
 		options->sk_provider = xstrdup("internal");
-	if (options->sshd_session_path == NULL)
+	எனில் (options->sshd_session_path == வெற்று)
 		options->sshd_session_path = xstrdup(_PATH_SSHD_SESSION);
-	if (options->sshd_auth_path == NULL)
+	எனில் (options->sshd_auth_path == வெற்று)
 		options->sshd_auth_path = xstrdup(_PATH_SSHD_AUTH);
-	if (options->pubkey_auth_options == -1) {
+	எனில் (options->pubkey_auth_options == -1) {
 		options->pubkey_auth_options = 0;
 		options->max_pubkey_ok = DEFAULT_AUTH_FAIL_MAX;
 	}
-	if (options->agent_socket_path == NULL)
+	எனில் (options->agent_socket_path == வெற்று)
 		options->agent_socket_path = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
 
 	assemble_algorithms(options);
 
 #define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+	செய் { \
+		எனில் (option_clear_or_none(v)) { \
+			விடுவி(v); \
+			v = வெற்று; \
 		} \
-	} while(0)
+	} போது(0)
 #define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	செய் { \
+		எனில் (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			விடுவி(options->v[0]); \
+			விடுவி(options->v); \
+			options->v = வெற்று; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} போது (0)
 	CLEAR_ON_NONE(options->pid_file);
 	CLEAR_ON_NONE(options->xauth_location);
 	CLEAR_ON_NONE(options->banner);
-	CLEAR_ON_NONE(options->trusted_user_ca_keys);
+	CLEAR_ON_NONE(options->trusted_user_ca_சாவிகள்);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->authorized_principals_file);
 	CLEAR_ON_NONE(options->adm_forced_command);
 	CLEAR_ON_NONE(options->chroot_directory);
 	CLEAR_ON_NONE(options->routing_domain);
-	CLEAR_ON_NONE(options->host_key_agent);
+	CLEAR_ON_NONE(options->host_சாவி_agent);
 	CLEAR_ON_NONE(options->per_source_penalty_exempt);
 	CLEAR_ON_NONE(options->agent_socket_path);
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		CLEAR_ON_NONE(options->host_key_files[i]);
-	for (i = 0; i < options->num_host_cert_files; i++)
+	க்கு (i = 0; i < options->இலக்கம்_host_சாவி_files; i++)
+		CLEAR_ON_NONE(options->host_சாவி_files[i]);
+	க்கு (i = 0; i < options->இலக்கம்_host_cert_files; i++)
 		CLEAR_ON_NONE(options->host_cert_files[i]);
 
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(auth_methods, num_auth_methods, "any");
-	CLEAR_ON_NONE_ARRAY(revoked_keys_files, num_revoked_keys_files, "none");
-	CLEAR_ON_NONE_ARRAY(authorized_keys_files, num_authkeys_files, "none");
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, இலக்கம்_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(auth_methods, இலக்கம்_auth_methods, "any");
+	CLEAR_ON_NONE_ARRAY(revoked_சாவிகள்_files, இலக்கம்_revoked_சாவிகள்_files, "none");
+	CLEAR_ON_NONE_ARRAY(authorized_சாவிகள்_files, இலக்கம்_authkeys_files, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
 }
@@ -487,7 +487,7 @@ fill_default_server_options(ServerOptions *options)
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 /* Keyword tokens. */
-typedef enum {
+வகைவரை எண்ணிக்கை {
 	sBadOption,		/* == unknown option */
 	SSHD_CONFIG_ENTRIES
 	sMatch, sInclude,
@@ -530,15 +530,15 @@ typedef enum {
 	{ #old, s##conf, flags },
 
 /* Textual representation of the tokens. */
-static struct {
-	const char *name;
+நிலையான கட்டமைப்பு {
+	மாறிலி எழுத்து *name;
 	ServerOpCodes opcode;
 	u_int flags;
 } keywords[] = {
 	SSHD_CONFIG_ENTRIES
 	{ "match", sMatch, SSHCFG_ALL },
 	{ "include", sInclude, SSHCFG_ALL },
-	{ NULL, sBadOption, 0 }
+	{ வெற்று, sBadOption, 0 }
 };
 #undef SSHCONF_INT
 #undef SSHCONF_INTFLAG
@@ -553,28 +553,28 @@ static struct {
 #undef SSHCONF_UNSUPPORTED_STRING
 #undef SSHCONF_ALIAS
 
-static struct {
-	int val;
-	char *text;
+நிலையான கட்டமைப்பு {
+	முழு val;
+	எழுத்து *text;
 } tunmode_desc[] = {
 	{ SSH_TUNMODE_NO, "no" },
 	{ SSH_TUNMODE_POINTOPOINT, "point-to-point" },
 	{ SSH_TUNMODE_ETHERNET, "ethernet" },
 	{ SSH_TUNMODE_YES, "yes" },
-	{ -1, NULL }
+	{ -1, வெற்று }
 };
 
 /* Returns an opcode name from its number */
 
-static const char *
+நிலையான மாறிலி எழுத்து *
 lookup_opcode_name(ServerOpCodes code)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	க்கு (i = 0; keywords[i].name != வெற்று; i++)
+		எனில் (keywords[i].opcode == code)
+			திரும்பு(keywords[i].name);
+	திரும்பு "UNKNOWN";
 }
 
 
@@ -582,135 +582,135 @@ lookup_opcode_name(ServerOpCodes code)
  * Returns the number of the token pointed to by cp or sBadOption.
  */
 
-static ServerOpCodes
-parse_token(const char *cp, const char *filename,
-	    int linenum, u_int *flags)
+நிலையான ServerOpCodes
+parse_token(மாறிலி எழுத்து *cp, மாறிலி எழுத்து *filename,
+	    முழு linenum, u_int *flags)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcasecmp(cp, keywords[i].name) == 0) {
+	க்கு (i = 0; keywords[i].name; i++)
+		எனில் (strcasecmp(cp, keywords[i].name) == 0) {
 			*flags = keywords[i].flags;
-			return keywords[i].opcode;
+			திரும்பு keywords[i].opcode;
 		}
 
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return sBadOption;
+	திரும்பு sBadOption;
 }
 
-char *
-derelativise_path(const char *path)
+எழுத்து *
+derelativise_path(மாறிலி எழுத்து *path)
 {
-	char *expanded, *ret, cwd[PATH_MAX];
+	எழுத்து *expanded, *ret, cwd[PATH_MAX];
 
-	if (strcasecmp(path, "none") == 0)
-		return xstrdup("none");
+	எனில் (strcasecmp(path, "none") == 0)
+		திரும்பு xstrdup("none");
 	expanded = tilde_expand_filename(path, getuid());
-	if (path_absolute(expanded))
-		return expanded;
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	எனில் (path_absolute(expanded))
+		திரும்பு expanded;
+	எனில் (getcwd(cwd, அளவு(cwd)) == வெற்று)
 		fatal_f("getcwd: %s", strerror(errno));
 	xasprintf(&ret, "%s/%s", cwd, expanded);
-	free(expanded);
-	return ret;
+	விடுவி(expanded);
+	திரும்பு ret;
 }
 
-static void
-add_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+நிலையான வெறுமை
+add_listen_addr(ServerOptions *options, மாறிலி எழுத்து *addr,
+    மாறிலி எழுத்து *rdomain, முழு port)
 {
 	u_int i;
 
-	if (port > 0)
+	எனில் (port > 0)
 		add_one_listen_addr(options, addr, rdomain, port);
-	else {
-		for (i = 0; i < options->num_ports; i++) {
+	இல்லையெனில் {
+		க்கு (i = 0; i < options->இலக்கம்_ports; i++) {
 			add_one_listen_addr(options, addr, rdomain,
 			    options->ports[i]);
 		}
 	}
 }
 
-static void
-add_one_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+நிலையான வெறுமை
+add_one_listen_addr(ServerOptions *options, மாறிலி எழுத்து *addr,
+    மாறிலி எழுத்து *rdomain, முழு port)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr;
+	கட்டமைப்பு addrinfo hints, *ai, *aitop;
+	எழுத்து strport[NI_MAXSERV];
+	முழு gaierr;
 	u_int i;
 
 	/* Find listen_addrs entry for this rdomain */
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		if (rdomain == NULL && options->listen_addrs[i].rdomain == NULL)
-			break;
-		if (rdomain == NULL || options->listen_addrs[i].rdomain == NULL)
-			continue;
-		if (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
-			break;
+	க்கு (i = 0; i < options->இலக்கம்_listen_addrs; i++) {
+		எனில் (rdomain == வெற்று && options->listen_addrs[i].rdomain == வெற்று)
+			நிறுத்து;
+		எனில் (rdomain == வெற்று || options->listen_addrs[i].rdomain == வெற்று)
+			தொடர்;
+		எனில் (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
+			நிறுத்து;
 	}
-	if (i >= options->num_listen_addrs) {
+	எனில் (i >= options->இலக்கம்_listen_addrs) {
 		/* No entry for this rdomain; allocate one */
-		if (i >= INT_MAX)
+		எனில் (i >= INT_MAX)
 			fatal_f("too many listen addresses");
 		options->listen_addrs = xrecallocarray(options->listen_addrs,
-		    options->num_listen_addrs, options->num_listen_addrs + 1,
-		    sizeof(*options->listen_addrs));
-		i = options->num_listen_addrs++;
-		if (rdomain != NULL)
+		    options->இலக்கம்_listen_addrs, options->இலக்கம்_listen_addrs + 1,
+		    அளவு(*options->listen_addrs));
+		i = options->இலக்கம்_listen_addrs++;
+		எனில் (rdomain != வெற்று)
 			options->listen_addrs[i].rdomain = xstrdup(rdomain);
 	}
 	/* options->listen_addrs[i] points to the addresses for this rdomain */
 
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, அளவு(hints));
 	hints.ai_family = options->address_family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = (addr == NULL) ? AI_PASSIVE : 0;
-	snprintf(strport, sizeof strport, "%d", port);
-	if ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
+	hints.ai_flags = (addr == வெற்று) ? AI_PASSIVE : 0;
+	snprintf(strport, அளவு strport, "%d", port);
+	எனில் ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
 		fatal("bad addr or host: %s (%s)",
 		    addr ? addr : "<NULL>",
 		    ssh_gai_strerror(gaierr));
-	for (ai = aitop; ai->ai_next; ai = ai->ai_next)
+	க்கு (ai = aitop; ai->ai_next; ai = ai->ai_next)
 		;
 	ai->ai_next = options->listen_addrs[i].addrs;
 	options->listen_addrs[i].addrs = aitop;
 }
 
 /* Returns nonzero if the routing domain name is valid */
-static int
-valid_rdomain(const char *name)
+நிலையான முழு
+valid_rdomain(மாறிலி எழுத்து *name)
 {
-#if defined(HAVE_SYS_VALID_RDOMAIN)
-	return sys_valid_rdomain(name);
-#elif defined(__OpenBSD__)
-	const char *errstr;
-	long long num;
-	struct rt_tableinfo info;
-	int mib[6];
-	size_t miblen = sizeof(mib);
+#எனில் defined(HAVE_SYS_VALID_RDOMAIN)
+	திரும்பு sys_valid_rdomain(name);
+#அல்லதெனில் defined(__OpenBSD__)
+	மாறிலி எழுத்து *errstr;
+	long long இலக்கம்;
+	கட்டமைப்பு rt_tableinfo info;
+	முழு mib[6];
+	size_t miblen = அளவு(mib);
 
-	if (name == NULL)
-		return 1;
+	எனில் (name == வெற்று)
+		திரும்பு 1;
 
-	num = strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL)
-		return 0;
+	இலக்கம் = strtonum(name, 0, 255, &errstr);
+	எனில் (errstr != வெற்று)
+		திரும்பு 0;
 
 	/* Check whether the table actually exists */
-	memset(mib, 0, sizeof(mib));
+	memset(mib, 0, அளவு(mib));
 	mib[0] = CTL_NET;
 	mib[1] = PF_ROUTE;
 	mib[4] = NET_RT_TABLE;
-	mib[5] = (int)num;
-	if (sysctl(mib, 6, &info, &miblen, NULL, 0) == -1)
-		return 0;
+	mib[5] = (முழு)இலக்கம்;
+	எனில் (sysctl(mib, 6, &info, &miblen, வெற்று, 0) == -1)
+		திரும்பு 0;
 
-	return 1;
-#else /* defined(__OpenBSD__) */
+	திரும்பு 1;
+#இல்லையெனில் /* defined(__OpenBSD__) */
 	error("Routing domains are not supported on this platform");
-	return 0;
+	திரும்பு 0;
 #endif
 }
 
@@ -718,45 +718,45 @@ valid_rdomain(const char *name)
  * Queue a ListenAddress to be processed once we have all of the Ports
  * and AddressFamily options.
  */
-static void
-queue_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+நிலையான வெறுமை
+queue_listen_addr(ServerOptions *options, மாறிலி எழுத்து *addr,
+    மாறிலி எழுத்து *rdomain, முழு port)
 {
-	struct queued_listenaddr *qla;
+	கட்டமைப்பு queued_listenaddr *qla;
 
 	options->queued_listen_addrs = xrecallocarray(
 	    options->queued_listen_addrs,
-	    options->num_queued_listens, options->num_queued_listens + 1,
-	    sizeof(*options->queued_listen_addrs));
-	qla = &options->queued_listen_addrs[options->num_queued_listens++];
+	    options->இலக்கம்_queued_listens, options->இலக்கம்_queued_listens + 1,
+	    அளவு(*options->queued_listen_addrs));
+	qla = &options->queued_listen_addrs[options->இலக்கம்_queued_listens++];
 	qla->addr = xstrdup(addr);
 	qla->port = port;
-	qla->rdomain = rdomain == NULL ? NULL : xstrdup(rdomain);
+	qla->rdomain = rdomain == வெற்று ? வெற்று : xstrdup(rdomain);
 }
 
 /*
  * Process queued (text) ListenAddress entries.
  */
-static void
+நிலையான வெறுமை
 process_queued_listen_addrs(ServerOptions *options)
 {
 	u_int i;
-	struct queued_listenaddr *qla;
+	கட்டமைப்பு queued_listenaddr *qla;
 
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->address_family == -1)
+	எனில் (options->இலக்கம்_ports == 0)
+		options->ports[options->இலக்கம்_ports++] = SSH_DEFAULT_PORT;
+	எனில் (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
 
-	for (i = 0; i < options->num_queued_listens; i++) {
+	க்கு (i = 0; i < options->இலக்கம்_queued_listens; i++) {
 		qla = &options->queued_listen_addrs[i];
 		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
-		free(qla->addr);
-		free(qla->rdomain);
+		விடுவி(qla->addr);
+		விடுவி(qla->rdomain);
 	}
-	free(options->queued_listen_addrs);
-	options->queued_listen_addrs = NULL;
-	options->num_queued_listens = 0;
+	விடுவி(options->queued_listen_addrs);
+	options->queued_listen_addrs = வெற்று;
+	options->இலக்கம்_queued_listens = 0;
 }
 
 /*
@@ -792,36 +792,36 @@ process_queued_listen_addrs(ServerOptions *options)
  *		PermittedChannelRequests session,forwarded-tcpip
  */
 
-static int
-match_cfg_line_group(const char *grps, int line, const char *user)
+நிலையான முழு
+match_cfg_வரி_group(மாறிலி எழுத்து *grps, முழு வரி, மாறிலி எழுத்து *user)
 {
-	int result = 0;
-	struct passwd *pw;
+	முழு result = 0;
+	கட்டமைப்பு passwd *pw;
 
-	if (user == NULL)
-		goto out;
+	எனில் (user == வெற்று)
+		செல் out;
 
-	if ((pw = getpwnam(user)) == NULL) {
+	எனில் ((pw = getpwnam(user)) == வெற்று) {
 		debug("Can't match group at line %d because user %.100s does "
-		    "not exist", line, user);
-	} else if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		    "not exist", வரி, user);
+	} இல்லையெனில் எனில் (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 		debug("Can't Match group because user %.100s not in any group "
-		    "at line %d", user, line);
-	} else if (ga_match_pattern_list(grps) != 1) {
+		    "at line %d", user, வரி);
+	} இல்லையெனில் எனில் (ga_match_pattern_list(grps) != 1) {
 		debug("user %.100s does not match group list %.100s at line %d",
-		    user, grps, line);
-	} else {
+		    user, grps, வரி);
+	} இல்லையெனில் {
 		debug("user %.100s matched group list %.100s at line %d", user,
-		    grps, line);
+		    grps, வரி);
 		result = 1;
 	}
 out:
 	ga_free();
-	return result;
+	திரும்பு result;
 }
 
-static void
-match_test_missing_fatal(const char *criteria, const char *attrib)
+நிலையான வெறுமை
+match_test_missing_fatal(மாறிலி எழுத்து *criteria, மாறிலி எழுத்து *attrib)
 {
 	fatal("'Match %s' in configuration but '%s' not in connection "
 	    "test specification.", criteria, attrib);
@@ -832,1221 +832,1221 @@ match_test_missing_fatal(const char *criteria, const char *attrib)
  * to check every attribute and set the result to zero if any attribute does
  * not match.
  */
-static int
-match_cfg_line(const char *full_line, int *acp, char ***avp,
-    int line, struct connection_info *ci)
+நிலையான முழு
+match_cfg_வரி(மாறிலி எழுத்து *full_வரி, முழு *acp, எழுத்து ***avp,
+    முழு வரி, கட்டமைப்பு connection_info *ci)
 {
-	int result = 1, attributes = 0, port;
-	char *arg, *attrib = NULL, *oattrib;
+	முழு result = 1, attributes = 0, port;
+	எழுத்து *arg, *attrib = வெற்று, *oattrib;
 
-	if (ci == NULL) {
+	எனில் (ci == வெற்று) {
 		debug3("checking syntax for 'Match %s' on line %d",
-		    full_line, line);
-	} else {
+		    full_வரி, வரி);
+	} இல்லையெனில் {
 		debug3("checking match for '%s' user %s%s host %s addr %s "
-		    "laddr %s lport %d rdomain %s on line %d", full_line,
+		    "laddr %s lport %d rdomain %s on line %d", full_வரி,
 		    ci->user ? ci->user : "(null)",
 		    ci->user_invalid ? " (invalid)" : "",
 		    ci->host ? ci->host : "(null)",
 		    ci->address ? ci->address : "(null)",
 		    ci->laddress ? ci->laddress : "(null)", ci->lport,
-		    ci->rdomain ? ci->rdomain : "(null)", line);
+		    ci->rdomain ? ci->rdomain : "(null)", வரி);
 	}
 
-	while ((oattrib = argv_next(acp, avp)) != NULL) {
+	போது ((oattrib = argv_next(acp, avp)) != வெற்று) {
 		/* Terminate on comment */
-		if (*oattrib == '#') {
+		எனில் (*oattrib == '#') {
 			argv_consume(acp); /* mark all arguments consumed */
-			break;
+			நிறுத்து;
 		}
 		attrib = xstrdup(oattrib);
-		arg = NULL;
+		arg = வெற்று;
 		attributes++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		எனில் (strcasecmp(attrib, "all") == 0) {
+			எனில் (attributes > 1 ||
+			    ((arg = argv_next(acp, avp)) != வெற்று &&
 			    *arg != '\0' && *arg != '#')) {
 				error("'all' cannot be combined with other "
 				    "Match attributes");
 				result = -1;
-				goto out;
+				செல் out;
 			}
-			if (arg != NULL && *arg == '#')
+			எனில் (arg != வெற்று && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
 			result = 1;
-			goto out;
+			செல் out;
 		}
 		/* Criterion "invalid-user" also has no argument */
-		if (strcasecmp(attrib, "invalid-user") == 0) {
-			if (ci == NULL) {
+		எனில் (strcasecmp(attrib, "invalid-user") == 0) {
+			எனில் (ci == வெற்று) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->user_invalid == 0)
+			எனில் (ci->user_invalid == 0)
 				result = 0;
-			else
-				debug("matched invalid-user at line %d", line);
-			goto next;
+			இல்லையெனில்
+				debug("matched invalid-user at line %d", வரி);
+			செல் next;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "group=", 1) != NULL ||
-		    strprefix(attrib, "host=", 1) != NULL ||
-		    strprefix(attrib, "address=", 1) != NULL ||
-		    strprefix(attrib, "localaddress=", 1) != NULL ||
-		    strprefix(attrib, "localport=", 1) != NULL ||
-		    strprefix(attrib, "rdomain=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL) {
+		எனில் (strprefix(attrib, "user=", 1) != வெற்று ||
+		    strprefix(attrib, "group=", 1) != வெற்று ||
+		    strprefix(attrib, "host=", 1) != வெற்று ||
+		    strprefix(attrib, "address=", 1) != வெற்று ||
+		    strprefix(attrib, "localaddress=", 1) != வெற்று ||
+		    strprefix(attrib, "localport=", 1) != வெற்று ||
+		    strprefix(attrib, "rdomain=", 1) != வெற்று ||
+		    strprefix(attrib, "version=", 1) != வெற்று) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else {
+		} இல்லையெனில் {
 			arg = argv_next(acp, avp);
 		}
 
 		/* All other criteria require an argument */
-		if (arg == NULL || *arg == '\0' || *arg == '#') {
+		எனில் (arg == வெற்று || *arg == '\0' || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
 			result = -1;
-			goto out;
+			செல் out;
 		}
-		if (strcasecmp(attrib, "user") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
+		எனில் (strcasecmp(attrib, "user") == 0) {
+			எனில் (ci == வெற்று || (ci->test && ci->user == வெற்று)) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->user == NULL)
+			எனில் (ci->user == வெற்று)
 				match_test_missing_fatal("User", "user");
-			if (match_usergroup_pattern_list(ci->user, arg) != 1)
+			எனில் (match_usergroup_pattern_list(ci->user, arg) != 1)
 				result = 0;
-			else
+			இல்லையெனில்
 				debug("user %.100s matched 'User %.100s' at "
-				    "line %d", ci->user, arg, line);
-		} else if (strcasecmp(attrib, "group") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
+				    "line %d", ci->user, arg, வரி);
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "group") == 0) {
+			எனில் (ci == வெற்று || (ci->test && ci->user == வெற்று)) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->user == NULL)
+			எனில் (ci->user == வெற்று)
 				match_test_missing_fatal("Group", "user");
-			switch (match_cfg_line_group(arg, line, ci->user)) {
-			case -1:
+			தேர்வு (match_cfg_வரி_group(arg, வரி, ci->user)) {
+			நிலை -1:
 				result = -1;
-				goto out;
-			case 0:
+				செல் out;
+			நிலை 0:
 				result = 0;
 			}
-		} else if (strcasecmp(attrib, "host") == 0) {
-			if (ci == NULL || (ci->test && ci->host == NULL)) {
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "host") == 0) {
+			எனில் (ci == வெற்று || (ci->test && ci->host == வெற்று)) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->host == NULL)
+			எனில் (ci->host == வெற்று)
 				match_test_missing_fatal("Host", "host");
-			if (match_hostname(ci->host, arg) != 1)
+			எனில் (match_hostname(ci->host, arg) != 1)
 				result = 0;
-			else
+			இல்லையெனில்
 				debug("connection from %.100s matched 'Host "
-				    "%.100s' at line %d", ci->host, arg, line);
-		} else if (strcasecmp(attrib, "address") == 0) {
-			if (ci == NULL || (ci->test && ci->address == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+				    "%.100s' at line %d", ci->host, arg, வரி);
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "address") == 0) {
+			எனில் (ci == வெற்று || (ci->test && ci->address == வெற்று)) {
+				எனில் (addr_match_list(வெற்று, arg) != 0)
 					fatal("Invalid Match address argument "
-					    "'%s' at line %d", arg, line);
+					    "'%s' at line %d", arg, வரி);
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->address == NULL)
+			எனில் (ci->address == வெற்று)
 				match_test_missing_fatal("Address", "addr");
-			switch (addr_match_list(ci->address, arg)) {
-			case 1:
+			தேர்வு (addr_match_list(ci->address, arg)) {
+			நிலை 1:
 				debug("connection from %.100s matched 'Address "
-				    "%.100s' at line %d", ci->address, arg, line);
-				break;
-			case 0:
-			case -1:
+				    "%.100s' at line %d", ci->address, arg, வரி);
+				நிறுத்து;
+			நிலை 0:
+			நிலை -1:
 				result = 0;
-				break;
-			case -2:
+				நிறுத்து;
+			நிலை -2:
 				result = -1;
-				goto out;
+				செல் out;
 			}
-		} else if (strcasecmp(attrib, "localaddress") == 0){
-			if (ci == NULL || (ci->test && ci->laddress == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "localaddress") == 0){
+			எனில் (ci == வெற்று || (ci->test && ci->laddress == வெற்று)) {
+				எனில் (addr_match_list(வெற்று, arg) != 0)
 					fatal("Invalid Match localaddress "
 					    "argument '%s' at line %d", arg,
-					    line);
+					    வரி);
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->laddress == NULL)
+			எனில் (ci->laddress == வெற்று)
 				match_test_missing_fatal("LocalAddress",
 				    "laddr");
-			switch (addr_match_list(ci->laddress, arg)) {
-			case 1:
+			தேர்வு (addr_match_list(ci->laddress, arg)) {
+			நிலை 1:
 				debug("connection from %.100s matched "
 				    "'LocalAddress %.100s' at line %d",
-				    ci->laddress, arg, line);
-				break;
-			case 0:
-			case -1:
+				    ci->laddress, arg, வரி);
+				நிறுத்து;
+			நிலை 0:
+			நிலை -1:
 				result = 0;
-				break;
-			case -2:
+				நிறுத்து;
+			நிலை -2:
 				result = -1;
-				goto out;
+				செல் out;
 			}
-		} else if (strcasecmp(attrib, "localport") == 0) {
-			if ((port = a2port(arg)) == -1) {
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "localport") == 0) {
+			எனில் ((port = a2port(arg)) == -1) {
 				error("Invalid LocalPort '%s' on Match line",
 				    arg);
 				result = -1;
-				goto out;
+				செல் out;
 			}
-			if (ci == NULL || (ci->test && ci->lport == -1)) {
+			எனில் (ci == வெற்று || (ci->test && ci->lport == -1)) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->lport == 0)
+			எனில் (ci->lport == 0)
 				match_test_missing_fatal("LocalPort", "lport");
 			/* TODO support port lists */
-			if (port == ci->lport)
+			எனில் (port == ci->lport)
 				debug("connection from %.100s matched "
 				    "'LocalPort %d' at line %d",
-				    ci->laddress, port, line);
-			else
+				    ci->laddress, port, வரி);
+			இல்லையெனில்
 				result = 0;
-		} else if (strcasecmp(attrib, "rdomain") == 0) {
-			if (ci == NULL || (ci->test && ci->rdomain == NULL)) {
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "rdomain") == 0) {
+			எனில் (ci == வெற்று || (ci->test && ci->rdomain == வெற்று)) {
 				result = 0;
-				goto next;
+				செல் next;
 			}
-			if (ci->rdomain == NULL)
+			எனில் (ci->rdomain == வெற்று)
 				match_test_missing_fatal("RDomain", "rdomain");
-			if (match_pattern_list(ci->rdomain, arg, 0) != 1)
+			எனில் (match_pattern_list(ci->rdomain, arg, 0) != 1)
 				result = 0;
-			else
+			இல்லையெனில்
 				debug("connection RDomain %.100s matched "
 				    "'RDomain %.100s' at line %d",
-				    ci->rdomain, arg, line);
-		} else if (strcasecmp(attrib, "version") == 0) {
-			if (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
+				    ci->rdomain, arg, வரி);
+		} இல்லையெனில் எனில் (strcasecmp(attrib, "version") == 0) {
+			எனில் (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
 				result = 0;
-			else
+			இல்லையெனில்
 				debug("version %.100s matched "
 				    "'version %.100s' at line %d",
-				    SSH_RELEASE, arg, line);
-		} else {
+				    SSH_RELEASE, arg, வரி);
+		} இல்லையெனில் {
 			error("Unsupported Match attribute %s", oattrib);
 			result = -1;
-			goto out;
+			செல் out;
 		}
  next:
-		free(attrib);
-		attrib = NULL;
+		விடுவி(attrib);
+		attrib = வெற்று;
 	}
-	if (attributes == 0) {
+	எனில் (attributes == 0) {
 		error("One or more attributes required for Match");
-		return -1;
+		திரும்பு -1;
 	}
  out:
-	if (ci != NULL && result != -1)
-		debug3("match %sfound on line %d", result ? "" : "not ", line);
-	free(attrib);
-	return result;
+	எனில் (ci != வெற்று && result != -1)
+		debug3("match %sfound on line %d", result ? "" : "not ", வரி);
+	விடுவி(attrib);
+	திரும்பு result;
 }
 
 #define WHITESPACE " \t\r\n"
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+கட்டமைப்பு multistate {
+	எழுத்து *சாவி;
+	முழு மதிப்பு;
 };
-static const struct multistate multistate_flag[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_flag[] = {
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_ignore_rhosts[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_ignore_rhosts[] = {
 	{ "yes",			IGNORE_RHOSTS_YES },
 	{ "no",				IGNORE_RHOSTS_NO },
 	{ "shosts-only",		IGNORE_RHOSTS_SHOSTS },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_permitrootlogin[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_permitrootlogin[] = {
 	{ "prohibit-password",		PERMIT_NO_PASSWD },
 	{ "without-password",		PERMIT_NO_PASSWD },
 	{ "forced-commands-only",	PERMIT_FORCED_ONLY },
 	{ "yes",			PERMIT_YES },
 	{ "no",				PERMIT_NO },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_compression[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_compression[] = {
 #ifdef WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 	{ "delayed",			COMP_DELAYED },
 #endif
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_gatewayports[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_gatewayports[] = {
 	{ "clientspecified",		2 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_tcpfwd[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_tcpfwd[] = {
 	{ "yes",			FORWARD_ALLOW },
 	{ "all",			FORWARD_ALLOW },
 	{ "no",				FORWARD_DENY },
 	{ "remote",			FORWARD_REMOTE },
 	{ "local",			FORWARD_LOCAL },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
-static const struct multistate multistate_warnweakcrypto[] = {
+நிலையான மாறிலி கட்டமைப்பு multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ வெற்று, -1 }
 };
 
-static int
-process_server_config_line_depth(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, int *inc_flags, int depth,
-    struct include_list *includes)
+நிலையான முழு
+process_server_config_வரி_depth(ServerOptions *options, எழுத்து *வரி,
+    மாறிலி எழுத்து *filename, முழு linenum, முழு *activep,
+    கட்டமைப்பு connection_info *connectinfo, முழு *inc_flags, முழு depth,
+    கட்டமைப்பு include_list *includes)
 {
-	char *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
-	int cmdline = 0, *intptr, value, value2, value3, n, port, oactive, r;
-	double dvalue, *doubleptr = NULL;
-	int ca_only = 0, found = 0;
+	எழுத்து *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
+	முழு cmdline = 0, *intptr, மதிப்பு, value2, value3, n, port, oactive, r;
+	இரட்டை dvalue, *doubleptr = வெற்று;
+	முழு ca_only = 0, found = 0;
 	SyslogFacility *log_facility_ptr;
 	LogLevel *log_level_ptr;
 	ServerOpCodes opcode;
 	u_int i, *uintptr, flags = 0;
 	size_t len;
 	long long val64;
-	const struct multistate *multistate_ptr;
-	const char *errstr;
-	struct include_item *item;
+	மாறிலி கட்டமைப்பு multistate *multistate_ptr;
+	மாறிலி எழுத்து *errstr;
+	கட்டமைப்பு include_item *item;
 	glob_t gbuf;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	எழுத்து **oav = வெற்று, **av;
+	முழு oac = 0, ac;
+	முழு ret = -1;
+	எழுத்து **strs = வெற்று; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	எனில் ((len = strlen(வரி)) == 0)
+		திரும்பு 0;
+	க்கு (len--; len > 0; len--) {
+		எனில் (strchr(WHITESPACE "\f", வரி[len]) == வெற்று)
+			நிறுத்து;
+		வரி[len] = '\0';
 	}
 
-	str = line;
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	str = வரி;
+	எனில் ((keyword = strdelim(&str)) == வெற்று)
+		திரும்பு 0;
 	/* Ignore leading whitespace */
-	if (*keyword == '\0')
+	எனில் (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (!keyword || !*keyword || *keyword == '#')
-		return 0;
-	if (str == NULL || *str == '\0') {
+	எனில் (!keyword || !*keyword || *keyword == '#')
+		திரும்பு 0;
+	எனில் (str == வெற்று || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		திரும்பு -1;
 	}
-	intptr = NULL;
-	charptr = NULL;
+	intptr = வெற்று;
+	charptr = வெற்று;
 	opcode = parse_token(keyword, filename, linenum, &flags);
 
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	எனில் (argv_split(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		திரும்பு -1;
 	}
 	ac = oac;
 	av = oav;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	எனில் (activep == வெற்று) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
-	if (*activep && opcode != sMatch && opcode != sInclude)
+	எனில் (*activep && opcode != sMatch && opcode != sInclude)
 		debug3("%s:%d setting %s %s", filename, linenum, keyword, str);
-	if (*activep == 0 && !(flags & SSHCFG_MATCH)) {
-		if (connectinfo == NULL) {
+	எனில் (*activep == 0 && !(flags & SSHCFG_MATCH)) {
+		எனில் (connectinfo == வெற்று) {
 			fatal("%s line %d: Directive '%s' is not allowed "
 			    "within a Match block", filename, linenum, keyword);
-		} else { /* this is a directive we have already processed */
+		} இல்லையெனில் { /* this is a directive we have already processed */
 			ret = 0;
-			goto out;
+			செல் out;
 		}
 	}
 
-	switch (opcode) {
+	தேர்வு (opcode) {
 	/* Portable-specific options */
 #ifdef USE_PAM
-	case sUsePAM:
+	நிலை sUsePAM:
 		intptr = &options->use_pam;
-		goto parse_flag;
-	case sPAMServiceName:
+		செல் parse_flag;
+	நிலை sPAMServiceName:
 		charptr = &options->pam_service_name;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		எனில் (!arg || *arg == '\0') {
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
 		}
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 #endif
 
 	/* Standard Options */
-	case sBadOption:
-		goto out;
-	case sPort:
+	நிலை sBadOption:
+		செல் out;
+	நிலை sPort:
 		/* ignore ports from configfile if cmdline specifies ports */
-		if (options->ports_from_cmdline) {
+		எனில் (options->ports_from_cmdline) {
 			argv_consume(&ac);
-			break;
+			நிறுத்து;
 		}
-		if (options->num_ports >= MAX_PORTS)
+		எனில் (options->இலக்கம்_ports >= MAX_PORTS)
 			fatal("%s line %d: too many ports.",
 			    filename, linenum);
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing port number.",
 			    filename, linenum);
-		options->ports[options->num_ports++] = a2port(arg);
-		if (options->ports[options->num_ports-1] <= 0)
+		options->ports[options->இலக்கம்_ports++] = a2port(arg);
+		எனில் (options->ports[options->இலக்கம்_ports-1] <= 0)
 			fatal("%s line %d: Badly formatted port number.",
 			    filename, linenum);
-		break;
+		நிறுத்து;
 
-	case sLoginGraceTime:
+	நிலை sLoginGraceTime:
 		intptr = &options->login_grace_time;
  parse_time:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing time value.",
 			    filename, linenum);
-		if ((value = convtime(arg)) == -1)
+		எனில் ((மதிப்பு = convtime(arg)) == -1)
 			fatal("%s line %d: invalid time value.",
 			    filename, linenum);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		எனில் (*activep && *intptr == -1)
+			*intptr = மதிப்பு;
+		நிறுத்து;
 
-	case sListenAddress:
+	நிலை sListenAddress:
 		arg = argv_next(&ac, &av);
-		if (arg == NULL || *arg == '\0')
+		எனில் (arg == வெற்று || *arg == '\0')
 			fatal("%s line %d: missing address",
 			    filename, linenum);
 		/* check for bare IPv6 address: no "[]" and 2 or more ":" */
-		if (strchr(arg, '[') == NULL && (p = strchr(arg, ':')) != NULL
-		    && strchr(p+1, ':') != NULL) {
+		எனில் (strchr(arg, '[') == வெற்று && (p = strchr(arg, ':')) != வெற்று
+		    && strchr(p+1, ':') != வெற்று) {
 			port = 0;
 			p = arg;
-		} else {
-			arg2 = NULL;
+		} இல்லையெனில் {
+			arg2 = வெற்று;
 			p = hpdelim(&arg);
-			if (p == NULL)
+			எனில் (p == வெற்று)
 				fatal("%s line %d: bad address:port usage",
 				    filename, linenum);
 			p = cleanhostname(p);
-			if (arg == NULL)
+			எனில் (arg == வெற்று)
 				port = 0;
-			else if ((port = a2port(arg)) <= 0)
+			இல்லையெனில் எனில் ((port = a2port(arg)) <= 0)
 				fatal("%s line %d: bad port number",
 				    filename, linenum);
 		}
 		/* Optional routing table */
-		arg2 = NULL;
-		if ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "rdomain") != 0 ||
-			    (arg2 = argv_next(&ac, &av)) == NULL)
+		arg2 = வெற்று;
+		எனில் ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (strcmp(arg, "rdomain") != 0 ||
+			    (arg2 = argv_next(&ac, &av)) == வெற்று)
 				fatal("%s line %d: bad ListenAddress syntax",
 				    filename, linenum);
-			if (!valid_rdomain(arg2))
+			எனில் (!valid_rdomain(arg2))
 				fatal("%s line %d: bad routing domain",
 				    filename, linenum);
 		}
 		queue_listen_addr(options, p, arg2, port);
 
-		break;
+		நிறுத்து;
 
-	case sAddressFamily:
+	நிலை sAddressFamily:
 		intptr = &options->address_family;
 		multistate_ptr = multistate_addressfamily;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		value = -1;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		மதிப்பு = -1;
+		க்கு (i = 0; multistate_ptr[i].சாவி != வெற்று; i++) {
+			எனில் (strcasecmp(arg, multistate_ptr[i].சாவி) == 0) {
+				மதிப்பு = multistate_ptr[i].மதிப்பு;
+				நிறுத்து;
 			}
 		}
-		if (value == -1)
+		எனில் (மதிப்பு == -1)
 			fatal("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		எனில் (*activep && *intptr == -1)
+			*intptr = மதிப்பு;
+		நிறுத்து;
 
-	case sHostKey:
+	நிலை s_Host_சாவி:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep) {
+		எனில் (*activep) {
 			servconf_add_hostkey(filename, linenum,
 			    options, arg, 1);
 		}
-		break;
+		நிறுத்து;
 
-	case sHostKeyAgent:
-		charptr = &options->host_key_agent;
+	நிலை s_Host_சாவி_Agent:
+		charptr = &options->host_சாவி_agent;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing socket name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = !strcmp(arg, SSH_AUTHSOCKET_ENV_NAME) ?
 			    xstrdup(arg) : derelativise_path(arg);
-		break;
+		நிறுத்து;
 
-	case sHostCertificate:
+	நிலை sHostCertificate:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep)
+		எனில் (*activep)
 			servconf_add_hostcert(filename, linenum, options, arg);
-		break;
+		நிறுத்து;
 
-	case sPidFile:
+	நிலை sPidFile:
 		charptr = &options->pid_file;
  parse_filename:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL) {
+		எனில் (*activep && *charptr == வெற்று) {
 			*charptr = derelativise_path(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			எனில் (intptr != வெற்று)
 				*intptr = *intptr + 1;
 		}
-		break;
+		நிறுத்து;
 
-	case sModuliFile:
+	நிலை sModuliFile:
 		charptr = &options->moduli_file;
-		goto parse_filename;
+		செல் parse_filename;
 
-	case sPermitRootLogin:
-		intptr = &options->permit_root_login;
+	நிலை s_Permit_வேர்_Login:
+		intptr = &options->permit_வேர்_login;
 		multistate_ptr = multistate_permitrootlogin;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sIgnoreRhosts:
+	நிலை sIgnoreRhosts:
 		intptr = &options->ignore_rhosts;
 		multistate_ptr = multistate_ignore_rhosts;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sIgnoreUserKnownHosts:
+	நிலை sIgnoreUserKnownHosts:
 		intptr = &options->ignore_user_known_hosts;
  parse_flag:
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sHostbasedAuthentication:
+	நிலை sHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sHostbasedUsesNameFromPacketOnly:
+	நிலை sHostbasedUsesNameFromPacketOnly:
 		intptr = &options->hostbased_uses_name_from_packet_only;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sHostbasedAcceptedAlgorithms:
+	நிலை sHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
  parse_pubkey_algos:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: Missing argument.",
 			    filename, linenum);
-		if (*arg != '-' &&
+		எனில் (*arg != '-' &&
 		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only))
 			fatal("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sHostKeyAlgorithms:
+	நிலை s_Host_சாவி_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		செல் parse_pubkey_algos;
 
-	case sCASignatureAlgorithms:
+	நிலை sCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		செல் parse_pubkey_algos;
 
-	case sPubkeyAuthentication:
+	நிலை sPubkeyAuthentication:
 		intptr = &options->pubkey_authentication;
 		ca_only = 0;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sPubkeyAcceptedAlgorithms:
+	நிலை sPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		செல் parse_pubkey_algos;
 
-	case sPubkeyAuthOptions:
+	நிலை sPubkeyAuthOptions:
 		intptr = &options->pubkey_auth_options;
-		value = 0;
+		மதிப்பு = 0;
 		value2 = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcasecmp(arg, "none") == 0)
-				continue;
-			if (strcasecmp(arg, "touch-required") == 0)
-				value |= PUBKEYAUTH_TOUCH_REQUIRED;
-			else if (strcasecmp(arg, "verify-required") == 0)
-				value |= PUBKEYAUTH_VERIFY_REQUIRED;
-			else if (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (strcasecmp(arg, "none") == 0)
+				தொடர்;
+			எனில் (strcasecmp(arg, "touch-required") == 0)
+				மதிப்பு |= PUBKEYAUTH_TOUCH_REQUIRED;
+			இல்லையெனில் எனில் (strcasecmp(arg, "verify-required") == 0)
+				மதிப்பு |= PUBKEYAUTH_VERIFY_REQUIRED;
+			இல்லையெனில் எனில் (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
 				value2 = strtonum(arg + 10, 0, 255, &errstr);
-				if (errstr != NULL) {
+				எனில் (errstr != வெற்று) {
 					error("%s line %d: bad %s max-pk-ok "
 					    "value: %s", filename, linenum,
 					keyword, errstr);
-					goto out;
+					செல் out;
 				}
-			} else {
+			} இல்லையெனில் {
 				error("%s line %d: unsupported %s option %s",
 				    filename, linenum, keyword, arg);
-				goto out;
+				செல் out;
 			}
 		}
-		if (*activep && options->pubkey_auth_options == -1) {
-			options->pubkey_auth_options = value;
+		எனில் (*activep && options->pubkey_auth_options == -1) {
+			options->pubkey_auth_options = மதிப்பு;
 			options->max_pubkey_ok = value2;
 		}
-		break;
+		நிறுத்து;
 
 #ifdef KRB5
-	case sKerberosAuthentication:
+	நிலை sKerberosAuthentication:
 		intptr = &options->kerberos_authentication;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sKerberosOrLocalPasswd:
+	நிலை sKerberosOrLocalPasswd:
 		intptr = &options->kerberos_or_local_passwd;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sKerberosTicketCleanup:
+	நிலை sKerberosTicketCleanup:
 		intptr = &options->kerberos_ticket_cleanup;
-		goto parse_flag;
+		செல் parse_flag;
 #ifdef USE_AFS
-	case sKerberosGetAFSToken:
+	நிலை sKerberosGetAFSToken:
 		intptr = &options->kerberos_get_afs_token;
-		goto parse_flag;
+		செல் parse_flag;
 #endif /* USE_AFS */
 #endif /* KRB5 */
 
 #ifdef GSSAPI
-	case sGSSAPIAuthentication:
+	நிலை sGSSAPIAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sGSSAPICleanupCredentials:
+	நிலை sGSSAPICleanupCredentials:
 		intptr = &options->gss_cleanup_creds;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sGSSAPIDelegateCredentials:
+	நிலை sGSSAPIDelegateCredentials:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sGSSAPIStrictAcceptorCheck:
+	நிலை sGSSAPIStrictAcceptorCheck:
 		intptr = &options->gss_strict_acceptor;
-		goto parse_flag;
+		செல் parse_flag;
 #endif /* GSSAPI */
 
-	case sPasswordAuthentication:
+	நிலை sPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sKbdInteractiveAuthentication:
+	நிலை sKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sPrintMotd:
+	நிலை sPrintMotd:
 		intptr = &options->print_motd;
-		goto parse_flag;
+		செல் parse_flag;
 
 #ifndef DISABLE_LASTLOG
-	case sPrintLastLog:
+	நிலை sPrintLastLog:
 		intptr = &options->print_lastlog;
-		goto parse_flag;
+		செல் parse_flag;
 #endif
 
-	case sX11Forwarding:
+	நிலை sX11Forwarding:
 		intptr = &options->x11_forwarding;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sX11DisplayOffset:
+	நிலை sX11DisplayOffset:
 		intptr = &options->x11_display_offset;
  parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL)
+		எனில் ((errstr = atoi_err(arg, &மதிப்பு)) != வெற்று)
 			fatal("%s line %d: %s integer value %s.",
 			    filename, linenum, keyword, errstr);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		எனில் (*activep && *intptr == -1)
+			*intptr = மதிப்பு;
+		நிறுத்து;
 
-	case sX11UseLocalhost:
+	நிலை sX11UseLocalhost:
 		intptr = &options->x11_use_localhost;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sXAuthLocation:
+	நிலை sXAuthLocation:
 		charptr = &options->xauth_location;
-		goto parse_filename;
+		செல் parse_filename;
 
-	case sPermitTTY:
+	நிலை sPermitTTY:
 		intptr = &options->permit_tty;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sPermitUserRC:
+	நிலை sPermitUserRC:
 		intptr = &options->permit_user_rc;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sStrictModes:
+	நிலை sStrictModes:
 		intptr = &options->strict_modes;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sTCPKeepAlive:
+	நிலை sTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sPermitEmptyPasswords:
+	நிலை sPermitEmptyPasswords:
 		intptr = &options->permit_empty_passwd;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sPermitUserEnvironment:
+	நிலை sPermitUserEnvironment:
 		intptr = &options->permit_user_env;
 		charptr = &options->permit_user_env_allowlist;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = 0;
-		p = NULL;
-		if (strcmp(arg, "yes") == 0)
-			value = 1;
-		else if (strcmp(arg, "no") == 0)
-			value = 0;
-		else {
+		மதிப்பு = 0;
+		p = வெற்று;
+		எனில் (strcmp(arg, "yes") == 0)
+			மதிப்பு = 1;
+		இல்லையெனில் எனில் (strcmp(arg, "no") == 0)
+			மதிப்பு = 0;
+		இல்லையெனில் {
 			/* Pattern-list specified */
-			value = 1;
+			மதிப்பு = 1;
 			p = xstrdup(arg);
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		எனில் (*activep && *intptr == -1) {
+			*intptr = மதிப்பு;
 			*charptr = p;
-			p = NULL;
+			p = வெற்று;
 		}
-		free(p);
-		break;
+		விடுவி(p);
+		நிறுத்து;
 
-	case sCompression:
+	நிலை sCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sRekeyLimit:
+	நிலை sRekeyLimit:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "default") == 0) {
+		எனில் (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1)
+		} இல்லையெனில் {
+			எனில் (scan_scaled(arg, &val64) == -1)
 				fatal("%.200s line %d: Bad %s number '%s': %s",
 				    filename, linenum, keyword,
 				    arg, strerror(errno));
-			if (val64 != 0 && val64 < 16)
+			எனில் (val64 != 0 && val64 < 16)
 				fatal("%.200s line %d: %s too small",
 				    filename, linenum, keyword);
 		}
-		if (*activep && options->rekey_limit == -1)
+		எனில் (*activep && options->rekey_limit == -1)
 			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		எனில் (ac != 0) { /* optional rekey interval present */
+			எனில் (strcmp(av[0], "none") == 0) {
+				(வெறுமை)argv_next(&ac, &av);	/* discard */
+				நிறுத்து;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			செல் parse_time;
 		}
-		break;
+		நிறுத்து;
 
-	case sGatewayPorts:
+	நிலை sGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
 		multistate_ptr = multistate_gatewayports;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sUseDNS:
+	நிலை sUseDNS:
 		intptr = &options->use_dns;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sSyslogFacility:
+	நிலை sSyslogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET)
+		மதிப்பு = log_facility_எண்(arg);
+		எனில் (மதிப்பு == SYSLOG_FACILITY_NOT_SET)
 			fatal("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		எனில் (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) மதிப்பு;
+		நிறுத்து;
 
-	case sLogLevel:
+	நிலை sLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET)
+		மதிப்பு = log_level_எண்(arg);
+		எனில் (மதிப்பு == SYSLOG_LEVEL_NOT_SET)
 			fatal("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *log_level_ptr == -1)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		எனில் (*activep && *log_level_ptr == -1)
+			*log_level_ptr = (LogLevel) மதிப்பு;
+		நிறுத்து;
 
-	case sLogVerbose:
-		found = options->num_log_verbose == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+	நிலை sLogVerbose:
+		found = options->இலக்கம்_log_verbose == 0;
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				செல் out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			எனில் (strcasecmp(arg, "none") == 0) {
+				எனில் (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					செல் out;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			options->log_verbose = strs;
-			options->num_log_verbose = nstrs;
-			strs = NULL; /* transferred */
+			options->இலக்கம்_log_verbose = nstrs;
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sAllowTcpForwarding:
+	நிலை sAllowTcpForwarding:
 		intptr = &options->allow_tcp_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sAllowStreamLocalForwarding:
+	நிலை sAllowStreamLocalForwarding:
 		intptr = &options->allow_streamlocal_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sAllowAgentForwarding:
+	நிலை sAllowAgentForwarding:
 		intptr = &options->allow_agent_forwarding;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sAgentSocketPath:
+	நிலை sAgentSocketPath:
 		charptr = &options->agent_socket_path;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing path.", filename, linenum);
-		if (strncmp(arg, "shared:", 7) == 0) {
+		எனில் (strncmp(arg, "shared:", 7) == 0) {
 			/* Shared paths must be absolute */
-			if (arg[7] != '/') {
+			எனில் (arg[7] != '/') {
 				fatal("%s line %d: invalid shared path.",
 				    filename, linenum);
 			}
-		} else if (strncmp(arg, "user:", 5) == 0) {
+		} இல்லையெனில் எனில் (strncmp(arg, "user:", 5) == 0) {
 			/* User paths must not be empty */
-			if (arg[5] == '\0') {
+			எனில் (arg[5] == '\0') {
 				fatal("%s line %d: invalid user path.",
 				    filename, linenum);
 			}
-		} else if (strcmp(arg, "none") != 0)
+		} இல்லையெனில் எனில் (strcmp(arg, "none") != 0)
 			fatal("%s line %d: invalid path.", filename, linenum);
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sDisableForwarding:
+	நிலை sDisableForwarding:
 		intptr = &options->disable_forwarding;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sAllowUsers:
+	நிலை sAllowUsers:
 		chararrayptr = &options->allow_users;
-		uintptr = &options->num_allow_users;
+		uintptr = &options->இலக்கம்_allow_users;
  parse_allowdenyusers:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' ||
-			    match_user(NULL, NULL, NULL, arg) == -1)
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0' ||
+			    match_user(வெற்று, வெற்று, வெற்று, arg) == -1)
 				fatal("%s line %d: invalid %s pattern: \"%s\"",
 				    filename, linenum, keyword, arg);
 			found = 1;
-			if (!*activep)
-				continue;
+			எனில் (!*activep)
+				தொடர்;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		எனில் (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		நிறுத்து;
 
-	case sDenyUsers:
+	நிலை sDenyUsers:
 		chararrayptr = &options->deny_users;
-		uintptr = &options->num_deny_users;
-		goto parse_allowdenyusers;
+		uintptr = &options->இலக்கம்_deny_users;
+		செல் parse_allowdenyusers;
 
-	case sAllowGroups:
+	நிலை sAllowGroups:
 		chararrayptr = &options->allow_groups;
-		uintptr = &options->num_allow_groups;
+		uintptr = &options->இலக்கம்_allow_groups;
 		/* XXX appends to list; doesn't respect first-match-wins */
  parse_allowdenygroups:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0')
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0')
 				fatal("%s line %d: empty %s pattern",
 				    filename, linenum, keyword);
 			found = 1;
-			if (!*activep)
-				continue;
+			எனில் (!*activep)
+				தொடர்;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		எனில் (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		நிறுத்து;
 
-	case sDenyGroups:
+	நிலை sDenyGroups:
 		chararrayptr = &options->deny_groups;
-		uintptr = &options->num_deny_groups;
-		goto parse_allowdenygroups;
+		uintptr = &options->இலக்கம்_deny_groups;
+		செல் parse_allowdenygroups;
 
-	case sCiphers:
+	நிலை sCiphers:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		எனில் (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->ciphers == NULL)
+		எனில் (options->ciphers == வெற்று)
 			options->ciphers = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sMacs:
+	நிலை sMacs:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		எனில் (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 mac spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->macs == NULL)
+		எனில் (options->macs == வெற்று)
 			options->macs = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sKexAlgorithms:
+	நிலை sKexAlgorithms:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		எனில் (*arg != '-' &&
 		    !kex_names_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->kex_algorithms == NULL)
+		எனில் (options->kex_algorithms == வெற்று)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sSubsystem:
-		if ((arg = argv_next(&ac, &av)) == NULL || *arg == '\0' ||
-		   ((arg2 = argv_next(&ac, &av)) == NULL || *arg2 == '\0'))
+	நிலை sSubsystem:
+		எனில் ((arg = argv_next(&ac, &av)) == வெற்று || *arg == '\0' ||
+		   ((arg2 = argv_next(&ac, &av)) == வெற்று || *arg2 == '\0'))
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (!*activep) {
+		எனில் (!*activep) {
 			argv_consume(&ac);
-			break;
+			நிறுத்து;
 		}
 		found = 0;
-		for (i = 0; i < options->num_subsystems; i++) {
-			if (strcmp(arg, options->subsystem_name[i]) == 0) {
+		க்கு (i = 0; i < options->இலக்கம்_subsystems; i++) {
+			எனில் (strcmp(arg, options->subsystem_name[i]) == 0) {
 				found = 1;
-				break;
+				நிறுத்து;
 			}
 		}
-		if (found) {
+		எனில் (found) {
 			debug("%s line %d: Subsystem '%s' already defined.",
 			    filename, linenum, arg);
 			argv_consume(&ac);
-			break;
+			நிறுத்து;
 		}
 		options->subsystem_name = xrecallocarray(
-		    options->subsystem_name, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_name));
+		    options->subsystem_name, options->இலக்கம்_subsystems,
+		    options->இலக்கம்_subsystems + 1,
+		    அளவு(*options->subsystem_name));
 		options->subsystem_command = xrecallocarray(
-		    options->subsystem_command, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_command));
+		    options->subsystem_command, options->இலக்கம்_subsystems,
+		    options->இலக்கம்_subsystems + 1,
+		    அளவு(*options->subsystem_command));
 		options->subsystem_args = xrecallocarray(
-		    options->subsystem_args, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_args));
-		options->subsystem_name[options->num_subsystems] = xstrdup(arg);
-		options->subsystem_command[options->num_subsystems] =
+		    options->subsystem_args, options->இலக்கம்_subsystems,
+		    options->இலக்கம்_subsystems + 1,
+		    அளவு(*options->subsystem_args));
+		options->subsystem_name[options->இலக்கம்_subsystems] = xstrdup(arg);
+		options->subsystem_command[options->இலக்கம்_subsystems] =
 		    xstrdup(arg2);
 		/* Collect arguments (separate to executable) */
 		arg = argv_assemble(1, &arg2); /* quote command correctly */
 		arg2 = argv_assemble(ac, av); /* rest of command */
-		xasprintf(&options->subsystem_args[options->num_subsystems],
+		xasprintf(&options->subsystem_args[options->இலக்கம்_subsystems],
 		    "%s%s%s", arg, *arg2 == '\0' ? "" : " ", arg2);
-		free(arg2);
-		free(arg);
+		விடுவி(arg2);
+		விடுவி(arg);
 		argv_consume(&ac);
-		options->num_subsystems++;
-		break;
+		options->இலக்கம்_subsystems++;
+		நிறுத்து;
 
-	case sMaxStartups:
+	நிலை sMaxStartups:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* begin:rate:max */
-		if ((n = sscanf(arg, "%d:%d:%d",
-		    &value, &value2, &value3)) == 3) {
-			if (value > value3 || value2 > 100 || value2 < 1)
+		எனில் ((n = sscanf(arg, "%d:%d:%d",
+		    &மதிப்பு, &value2, &value3)) == 3) {
+			எனில் (மதிப்பு > value3 || value2 > 100 || value2 < 1)
 				fatal("%s line %d: Invalid %s spec.",
 				    filename, linenum, keyword);
-		} else if (n == 1) {
-			value3 = value;
+		} இல்லையெனில் எனில் (n == 1) {
+			value3 = மதிப்பு;
 			value2 = -1;
-		} else {
+		} இல்லையெனில் {
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		}
-		if (value <= 0 || value3 <= 0)
+		எனில் (மதிப்பு <= 0 || value3 <= 0)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->max_startups == -1) {
-			options->max_startups_begin = value;
+		எனில் (*activep && options->max_startups == -1) {
+			options->max_startups_begin = மதிப்பு;
 			options->max_startups_rate = value2;
 			options->max_startups = value3;
 		}
-		break;
+		நிறுத்து;
 
-	case sPerSourceNetBlockSize:
+	நிலை sPerSourceNetBlockSize:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		switch (n = sscanf(arg, "%d:%d", &value, &value2)) {
-		case 2:
-			if (value2 < 0 || value2 > 128)
+		தேர்வு (n = sscanf(arg, "%d:%d", &மதிப்பு, &value2)) {
+		நிலை 2:
+			எனில் (value2 < 0 || value2 > 128)
 				n = -1;
 			/* FALLTHROUGH */
-		case 1:
-			if (value < 0 || value > 32)
+		நிலை 1:
+			எனில் (மதிப்பு < 0 || மதிப்பு > 32)
 				n = -1;
 		}
-		if (n != 1 && n != 2)
+		எனில் (n != 1 && n != 2)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->per_source_masklen_ipv4 == -1) {
-			options->per_source_masklen_ipv4 = value;
-			if (n == 2)
+		எனில் (*activep && options->per_source_masklen_ipv4 == -1) {
+			options->per_source_masklen_ipv4 = மதிப்பு;
+			எனில் (n == 2)
 				options->per_source_masklen_ipv6 = value2;
 		}
-		break;
+		நிறுத்து;
 
-	case sPerSourceMaxStartups:
+	நிலை sPerSourceMaxStartups:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "none") == 0) { /* no limit */
-			value = INT_MAX;
-		} else {
-			if ((errstr = atoi_err(arg, &value)) != NULL)
+		எனில் (strcmp(arg, "none") == 0) { /* no limit */
+			மதிப்பு = INT_MAX;
+		} இல்லையெனில் {
+			எனில் ((errstr = atoi_err(arg, &மதிப்பு)) != வெற்று)
 				fatal("%s line %d: %s integer value %s.",
 				    filename, linenum, keyword, errstr);
 		}
-		if (*activep && options->per_source_max_startups == -1)
-			options->per_source_max_startups = value;
-		break;
+		எனில் (*activep && options->per_source_max_startups == -1)
+			options->per_source_max_startups = மதிப்பு;
+		நிறுத்து;
 
-	case sPerSourcePenaltyExemptList:
+	நிலை sPerSourcePenaltyExemptList:
 		charptr = &options->per_source_penalty_exempt;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		if (addr_match_list(NULL, arg) != 0) {
+		எனில் (addr_match_list(வெற்று, arg) != 0) {
 			fatal("%s line %d: keyword %s "
 			    "invalid address argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sPerSourcePenalties:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			const char *q = NULL;
+	நிலை sPerSourcePenalties:
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			மாறிலி எழுத்து *q = வெற்று;
 
 			found = 1;
-			intptr = NULL;
-			doubleptr = NULL;
-			value = -1;
+			intptr = வெற்று;
+			doubleptr = வெற்று;
+			மதிப்பு = -1;
 			value2 = 0;
 			/* Allow no/yes only in first position */
-			if (strcasecmp(arg, "no") == 0 ||
+			எனில் (strcasecmp(arg, "no") == 0 ||
 			    (value2 = (strcasecmp(arg, "yes") == 0))) {
-				if (ac > 0) {
+				எனில் (ac > 0) {
 					fatal("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 				}
-				if (*activep &&
+				எனில் (*activep &&
 				    options->per_source_penalty.enabled == -1)
 					options->per_source_penalty.enabled = value2;
-				continue;
-			} else if ((q = strprefix(arg, "crash:", 0)) != NULL) {
+				தொடர்;
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "crash:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_crash;
-			} else if ((q = strprefix(arg, "authfail:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "authfail:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_authfail;
-			} else if ((q = strprefix(arg, "invaliduser:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "invaliduser:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_invaliduser;
-			} else if ((q = strprefix(arg, "noauth:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "noauth:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_noauth;
-			} else if ((q = strprefix(arg, "grace-exceeded:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "grace-exceeded:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_grace;
-			} else if ((q = strprefix(arg, "refuseconnection:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "refuseconnection:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_refuseconnection;
-			} else if ((q = strprefix(arg, "max:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "max:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_max;
-			} else if ((q = strprefix(arg, "min:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "min:", 0)) != வெற்று) {
 				doubleptr = &options->per_source_penalty.penalty_min;
-			} else if ((q = strprefix(arg, "max-sources4:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "max-sources4:", 0)) != வெற்று) {
 				intptr = &options->per_source_penalty.max_sources4;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				எனில் ((errstr = atoi_err(q, &மதிப்பு)) != வெற்று)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if ((q = strprefix(arg, "max-sources6:", 0)) != NULL) {
+			} இல்லையெனில் எனில் ((q = strprefix(arg, "max-sources6:", 0)) != வெற்று) {
 				intptr = &options->per_source_penalty.max_sources6;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				எனில் ((errstr = atoi_err(q, &மதிப்பு)) != வெற்று)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if (strcmp(arg, "overflow:deny-all") == 0) {
+			} இல்லையெனில் எனில் (strcmp(arg, "overflow:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow:permissive") == 0) {
+				மதிப்பு = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+			} இல்லையெனில் எனில் (strcmp(arg, "overflow:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else if (strcmp(arg, "overflow6:deny-all") == 0) {
+				மதிப்பு = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+			} இல்லையெனில் எனில் (strcmp(arg, "overflow6:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow6:permissive") == 0) {
+				மதிப்பு = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+			} இல்லையெனில் எனில் (strcmp(arg, "overflow6:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else {
+				மதிப்பு = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+			} இல்லையெனில் {
 				fatal("%s line %d: unsupported %s keyword %s",
 				    filename, linenum, keyword, arg);
 			}
 
-			if (doubleptr != NULL) {
-				if ((dvalue = convtime_double(q)) < 0) {
+			எனில் (doubleptr != வெற்று) {
+				எனில் ((dvalue = convtime_double(q)) < 0) {
 					fatal("%s line %d: invalid %s time value.",
 					    filename, linenum, keyword);
 				}
-				if (*activep && *doubleptr < 0.0) {
+				எனில் (*activep && *doubleptr < 0.0) {
 					*doubleptr = dvalue;
 					options->per_source_penalty.enabled = 1;
 				}
-			} else if (intptr != NULL) {
-				if (*activep && *intptr == -1) {
-					*intptr = value;
+			} இல்லையெனில் எனில் (intptr != வெற்று) {
+				எனில் (*activep && *intptr == -1) {
+					*intptr = மதிப்பு;
 					options->per_source_penalty.enabled = 1;
 				}
-			} else {
+			} இல்லையெனில் {
 				fatal_f("%s line %d: internal error",
 				    filename, linenum);
 			}
 		}
-		if (!found) {
+		எனில் (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		நிறுத்து;
 
-	case sMaxAuthTries:
+	நிலை sMaxAuthTries:
 		intptr = &options->max_authtries;
-		goto parse_int;
+		செல் parse_int;
 
-	case sMaxSessions:
+	நிலை sMaxSessions:
 		intptr = &options->max_sessions;
-		goto parse_int;
+		செல் parse_int;
 
-	case sBanner:
+	நிலை sBanner:
 		charptr = &options->banner;
-		goto parse_filename;
+		செல் parse_filename;
 
 	/*
 	 * These options can contain %X options expanded at
@@ -2054,146 +2054,146 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	 *
 	 * AuthorizedKeysFile	/etc/ssh_keys/%u
 	 */
-	case sAuthorizedKeysFile:
-		uintptr = &options->num_authkeys_files;
-		chararrayptr = &options->authorized_keys_files;
+	நிலை s_Authorized_சாவிகள்_File:
+		uintptr = &options->இலக்கம்_authkeys_files;
+		chararrayptr = &options->authorized_சாவிகள்_files;
  parse_filenames:
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				செல் out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			எனில் (strcasecmp(arg, "none") == 0) {
+				எனில் (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					செல் out;
 				}
 			}
 			arg2 = tilde_expand_filename(arg, getuid());
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			விடுவி(arg2);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sAuthorizedPrincipalsFile:
+	நிலை sAuthorizedPrincipalsFile:
 		charptr = &options->authorized_principals_file;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		எனில் (*activep && *charptr == வெற்று) {
 			*charptr = tilde_expand_filename(arg, getuid());
 			/* increase optional counter */
-			if (intptr != NULL)
+			எனில் (intptr != வெற்று)
 				*intptr = *intptr + 1;
 		}
-		break;
+		நிறுத்து;
 
-	case sClientAliveInterval:
+	நிலை sClientAliveInterval:
 		intptr = &options->client_alive_interval;
-		goto parse_time;
+		செல் parse_time;
 
-	case sClientAliveCountMax:
-		intptr = &options->client_alive_count_max;
-		goto parse_int;
+	நிலை s_Client_Alive_மொத்தம்_Max:
+		intptr = &options->client_alive_மொத்தம்_max;
+		செல் parse_int;
 
-	case sAcceptEnv:
+	நிலை sAcceptEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL)
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0' || strchr(arg, '=') != வெற்று)
 				fatal("%s line %d: Invalid environment name.",
 				    filename, linenum);
 			found = 1;
-			if (!*activep)
-				continue;
+			எனில் (!*activep)
+				தொடர்;
 			opt_array_append(filename, linenum, keyword,
-			    &options->accept_env, &options->num_accept_env,
+			    &options->accept_env, &options->இலக்கம்_accept_env,
 			    arg);
 		}
-		if (!found) {
+		எனில் (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		நிறுத்து;
 
-	case sSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') == NULL)
+	நிலை sSetEnv:
+		found = options->இலக்கம்_setenv == 0;
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg == '\0' || strchr(arg, '=') == வெற்று)
 				fatal("%s line %d: Invalid environment.",
 				    filename, linenum);
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			எனில் (lookup_setenv_in_list(arg, strs, nstrs) != வெற்று) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				தொடர்;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->இலக்கம்_setenv = nstrs;
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sPermitTunnel:
+	நிலை sPermitTunnel:
 		intptr = &options->permit_tun;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = -1;
-		for (i = 0; tunmode_desc[i].val != -1; i++)
-			if (strcmp(tunmode_desc[i].text, arg) == 0) {
-				value = tunmode_desc[i].val;
-				break;
+		மதிப்பு = -1;
+		க்கு (i = 0; tunmode_desc[i].val != -1; i++)
+			எனில் (strcmp(tunmode_desc[i].text, arg) == 0) {
+				மதிப்பு = tunmode_desc[i].val;
+				நிறுத்து;
 			}
-		if (value == -1)
+		எனில் (மதிப்பு == -1)
 			fatal("%s line %d: bad %s argument %s",
 			    filename, linenum, keyword, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		எனில் (*activep && *intptr == -1)
+			*intptr = மதிப்பு;
+		நிறுத்து;
 
-	case sInclude:
-		if (cmdline) {
+	நிலை sInclude:
+		எனில் (cmdline) {
 			fatal("Include directive not supported as a "
 			    "command-line option");
 		}
-		value = 0;
-		while ((arg2 = argv_next(&ac, &av)) != NULL) {
-			if (*arg2 == '\0') {
+		மதிப்பு = 0;
+		போது ((arg2 = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (*arg2 == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				செல் out;
 			}
-			value++;
+			மதிப்பு++;
 			found = 0;
-			if (*arg2 != '/' && *arg2 != '~') {
+			எனில் (*arg2 != '/' && *arg2 != '~') {
 				xasprintf(&arg, "%s/%s", SSHDIR, arg2);
-			} else
+			} இல்லையெனில்
 				arg = xstrdup(arg2);
 
 			/*
@@ -2204,9 +2204,9 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 			/* consult cache of include files */
 			TAILQ_FOREACH(item, includes, entry) {
-				if (strcmp(item->selector, arg) != 0)
-					continue;
-				if (item->filename != NULL) {
+				எனில் (strcmp(item->selector, arg) != 0)
+					தொடர்;
+				எனில் (item->filename != வெற்று) {
 					parse_server_config_depth(options,
 					    item->filename, item->contents,
 					    includes, connectinfo,
@@ -2218,16 +2218,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				found = 1;
 				*activep = oactive;
 			}
-			if (found != 0) {
-				free(arg);
-				continue;
+			எனில் (found != 0) {
+				விடுவி(arg);
+				தொடர்;
 			}
 
 			/* requested glob was not in cache */
 			debug2("%s line %d: new include %s",
 			    filename, linenum, arg);
-			if ((r = glob(arg, 0, NULL, &gbuf)) != 0) {
-				if (r != GLOB_NOMATCH) {
+			எனில் ((r = glob(arg, 0, வெற்று, &gbuf)) != 0) {
+				எனில் (r != GLOB_NOMATCH) {
 					fatal("%s line %d: include \"%s\" glob "
 					    "failed", filename, linenum, arg);
 				}
@@ -2237,20 +2237,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				 */
 				debug2("%s line %d: no match for %s",
 				    filename, linenum, arg);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, அளவு(*item));
 				item->selector = xstrdup(arg);
 				TAILQ_INSERT_TAIL(includes,
 				    item, entry);
 			}
-			if (gbuf.gl_pathc > INT_MAX)
+			எனில் (gbuf.gl_pathc > INT_MAX)
 				fatal_f("too many glob results");
-			for (n = 0; n < (int)gbuf.gl_pathc; n++) {
+			க்கு (n = 0; n < (முழு)gbuf.gl_pathc; n++) {
 				debug2("%s line %d: including %s",
 				    filename, linenum, gbuf.gl_pathv[n]);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, அளவு(*item));
 				item->selector = xstrdup(arg);
 				item->filename = xstrdup(gbuf.gl_pathv[n]);
-				if ((item->contents = sshbuf_new()) == NULL)
+				எனில் ((item->contents = sshbuf_new()) == வெற்று)
 					fatal_f("sshbuf_new failed");
 				load_server_config(item->filename,
 				    item->contents);
@@ -2265,456 +2265,456 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				TAILQ_INSERT_TAIL(includes, item, entry);
 			}
 			globfree(&gbuf);
-			free(arg);
+			விடுவி(arg);
 		}
-		if (value == 0) {
+		எனில் (மதிப்பு == 0) {
 			fatal("%s line %d: %s missing filename argument",
 			    filename, linenum, keyword);
 		}
-		break;
+		நிறுத்து;
 
-	case sMatch:
-		if (cmdline)
+	நிலை sMatch:
+		எனில் (cmdline)
 			fatal("Match directive not supported as a command-line "
 			    "option");
-		value = match_cfg_line(str, &ac, &av, linenum,
-		    (*inc_flags & SSHCFG_NEVERMATCH ? NULL : connectinfo));
-		if (value < 0)
+		மதிப்பு = match_cfg_வரி(str, &ac, &av, linenum,
+		    (*inc_flags & SSHCFG_NEVERMATCH ? வெற்று : connectinfo));
+		எனில் (மதிப்பு < 0)
 			fatal("%s line %d: Bad Match condition", filename,
 			    linenum);
-		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : value;
+		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : மதிப்பு;
 		/*
 		 * The MATCH_ONLY flag is applicable only until the first
 		 * match block.
 		 */
 		*inc_flags &= ~SSHCFG_MATCH_ONLY;
-		break;
+		நிறுத்து;
 
-	case sPermitListen:
-	case sPermitOpen:
-		if (opcode == sPermitListen) {
-			uintptr = &options->num_permitted_listens;
+	நிலை sPermitListen:
+	நிலை sPermitOpen:
+		எனில் (opcode == sPermitListen) {
+			uintptr = &options->இலக்கம்_permitted_listens;
 			chararrayptr = &options->permitted_listens;
-		} else {
-			uintptr = &options->num_permitted_opens;
+		} இல்லையெனில் {
+			uintptr = &options->இலக்கம்_permitted_opens;
 			chararrayptr = &options->permitted_opens;
 		}
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0 ||
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (strcmp(arg, "any") == 0 ||
 			    strcmp(arg, "none") == 0) {
-				if (nstrs != 0) {
+				எனில் (nstrs != 0) {
 					fatal("%s line %d: %s must appear "
 					    "alone on a %s line.",
 					    filename, linenum, arg, keyword);
 				}
 				opt_array_append(filename, linenum, keyword,
 				    &strs, &nstrs, arg);
-				continue;
+				தொடர்;
 			}
 
-			if (opcode == sPermitListen &&
-			    strchr(arg, ':') == NULL) {
+			எனில் (opcode == sPermitListen &&
+			    strchr(arg, ':') == வெற்று) {
 				/*
 				 * Allow bare port number for PermitListen
 				 * to indicate a wildcard listen host.
 				 */
 				xasprintf(&arg2, "*:%s", arg);
-			} else {
+			} இல்லையெனில் {
 				arg2 = xstrdup(arg);
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				எனில் (p == வெற்று) {
 					fatal("%s line %d: %s missing host",
 					    filename, linenum, keyword);
 				}
 				p = cleanhostname(p);
 			}
-			if (arg == NULL ||
+			எனில் (arg == வெற்று ||
 			    ((port = permitopen_port(arg)) < 0)) {
 				fatal("%s line %d: %s bad port number",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			விடுவி(arg2);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sForceCommand:
-		if (str == NULL || *str == '\0')
+	நிலை sForceCommand:
+		எனில் (str == வெற்று || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (*activep && options->adm_forced_command == NULL)
+		எனில் (*activep && options->adm_forced_command == வெற்று)
 			options->adm_forced_command = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		நிறுத்து;
 
-	case sChrootDirectory:
+	நிலை sChrootDirectory:
 		charptr = &options->chroot_directory;
 
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sTrustedUserCAKeys:
-		charptr = &options->trusted_user_ca_keys;
-		goto parse_filename;
+	நிலை sTrustedUserCAKeys:
+		charptr = &options->trusted_user_ca_சாவிகள்;
+		செல் parse_filename;
 
-	case sRevokedKeys:
-		uintptr = &options->num_revoked_keys_files;
-		chararrayptr = &options->revoked_keys_files;
-		goto parse_filenames;
+	நிலை s_Revoked_சாவிகள்:
+		uintptr = &options->இலக்கம்_revoked_சாவிகள்_files;
+		chararrayptr = &options->revoked_சாவிகள்_files;
+		செல் parse_filenames;
 
-	case sSecurityKeyProvider:
+	நிலை s_Security_சாவி_Provider:
 		charptr = &options->sk_provider;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		எனில் (*activep && *charptr == வெற்று) {
 			*charptr = strcasecmp(arg, "internal") == 0 ?
 			    xstrdup(arg) : derelativise_path(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			எனில் (intptr != வெற்று)
 				*intptr = *intptr + 1;
 		}
-		break;
+		நிறுத்து;
 
-	case sIPQoS:
+	நிலை sIPQoS:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = parse_ipqos(arg)) == -1)
+		எனில் ((மதிப்பு = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value == INT_MIN) {
+		எனில் (மதிப்பு == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			மதிப்பு = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1)
+		எனில் (arg == வெற்று)
+			value2 = மதிப்பு;
+		இல்லையெனில் எனில் ((value2 = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value2 == INT_MIN) {
+		எனில் (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value2 = INT_MAX;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		எனில் (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = மதிப்பு;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		நிறுத்து;
 
-	case sVersionAddendum:
-		if (str == NULL || *str == '\0')
+	நிலை sVersionAddendum:
+		எனில் (str == வெற்று || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		எனில் (strchr(str + len, '\r') != வெற்று) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		எனில் ((arg = strchr(வரி, '#')) != வெற்று) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(வரி);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
+		எனில் (*activep && options->version_addendum == வெற்று) {
+			எனில் (strcasecmp(str + len, "none") == 0)
 				options->version_addendum = xstrdup("");
-			else
+			இல்லையெனில்
 				options->version_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		நிறுத்து;
 
-	case sAuthorizedKeysCommand:
-		charptr = &options->authorized_keys_command;
+	நிலை s_Authorized_சாவிகள்_Command:
+		charptr = &options->authorized_சாவிகள்_command;
  parse_command:
 		len = strspn(str, WHITESPACE);
-		if (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
+		எனில் (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
 			fatal("%.200s line %d: %s must be an absolute path",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		நிறுத்து;
 
-	case sAuthorizedKeysCommandUser:
-		charptr = &options->authorized_keys_command_user;
+	நிலை s_Authorized_சாவிகள்_Command_User:
+		charptr = &options->authorized_சாவிகள்_command_user;
  parse_localuser:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		எனில் (!arg || *arg == '\0') {
 			fatal("%s line %d: missing %s argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sAuthorizedPrincipalsCommand:
+	நிலை sAuthorizedPrincipalsCommand:
 		charptr = &options->authorized_principals_command;
-		goto parse_command;
+		செல் parse_command;
 
-	case sAuthorizedPrincipalsCommandUser:
+	நிலை sAuthorizedPrincipalsCommandUser:
 		charptr = &options->authorized_principals_command_user;
-		goto parse_localuser;
+		செல் parse_localuser;
 
-	case sAuthenticationMethods:
-		found = options->num_auth_methods == 0;
-		value = 0; /* seen "any" pseudo-method */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0) {
-				if (nstrs > 0) {
+	நிலை sAuthenticationMethods:
+		found = options->இலக்கம்_auth_methods == 0;
+		மதிப்பு = 0; /* seen "any" pseudo-method */
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
+			எனில் (strcmp(arg, "any") == 0) {
+				எனில் (nstrs > 0) {
 					fatal("%s line %d: \"any\" must "
 					    "appear alone in %s",
 					    filename, linenum, keyword);
 				}
-				value = 1;
-			} else if (value) {
+				மதிப்பு = 1;
+			} இல்லையெனில் எனில் (மதிப்பு) {
 				fatal("%s line %d: \"any\" must appear "
 				    "alone in %s", filename, linenum, keyword);
-			} else if (auth2_methods_valid(arg, 0) != 0) {
+			} இல்லையெனில் எனில் (auth2_methods_valid(arg, 0) != 0) {
 				fatal("%s line %d: invalid %s method list.",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			options->auth_methods = strs;
-			options->num_auth_methods = nstrs;
-			strs = NULL; /* transferred */
+			options->இலக்கம்_auth_methods = nstrs;
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sStreamLocalBindMask:
+	நிலை sStreamLocalBindMask:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* Parse mode in octal format */
-		value = strtol(arg, &p, 8);
-		if (arg == p || value < 0 || value > 0777)
+		மதிப்பு = strtol(arg, &p, 8);
+		எனில் (arg == p || மதிப்பு < 0 || மதிப்பு > 0777)
 			fatal("%s line %d: Invalid %s.",
 			    filename, linenum, keyword);
-		if (*activep &&
+		எனில் (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+			options->fwd_opts.streamlocal_bind_mask = (mode_t)மதிப்பு;
+		நிறுத்து;
 
-	case sStreamLocalBindUnlink:
+	நிலை sStreamLocalBindUnlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sFingerprintHash:
+	நிலை sFingerprintHash:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = ssh_digest_alg_by_name(arg)) == -1)
+		எனில் ((மதிப்பு = ssh_digest_alg_by_name(arg)) == -1)
 			fatal("%.200s line %d: Invalid %s algorithm \"%s\".",
 			    filename, linenum, keyword, arg);
-		if (*activep)
-			options->fingerprint_hash = value;
-		break;
+		எனில் (*activep)
+			options->fingerprint_hash = மதிப்பு;
+		நிறுத்து;
 
-	case sExposeAuthInfo:
+	நிலை sExposeAuthInfo:
 		intptr = &options->expose_userauth_info;
-		goto parse_flag;
+		செல் parse_flag;
 
-	case sRDomain:
-#if !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+	நிலை sRDomain:
+#எனில் !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
 		fatal("%s line %d: setting RDomain not supported on this "
 		    "platform.", filename, linenum);
 #endif
 		charptr = &options->routing_domain;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		எனில் (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
+		எனில் (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
 		    !valid_rdomain(arg))
 			fatal("%s line %d: invalid routing domain",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		எனில் (*activep && *charptr == வெற்று)
 			*charptr = xstrdup(arg);
-		break;
+		நிறுத்து;
 
-	case sRequiredRSASize:
+	நிலை sRequiredRSASize:
 		intptr = &options->required_rsa_size;
-		goto parse_int;
+		செல் parse_int;
 
-	case sChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	நிலை sChannelTimeout:
+		found = options->இலக்கம்_channel_timeouts == 0;
+		போது ((arg = argv_next(&ac, &av)) != வெற்று) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			எனில் (strcasecmp(arg, "none") == 0) {
+				எனில் (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					செல் out;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} இல்லையெனில் எனில் (parse_pattern_interval(arg,
+			    வெற்று, வெற்று) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		எனில் (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		எனில் (found && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->இலக்கம்_channel_timeouts = nstrs;
+			strs = வெற்று; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		நிறுத்து;
 
-	case sUnusedConnectionTimeout:
+	நிலை sUnusedConnectionTimeout:
 		intptr = &options->unused_connection_timeout;
 		/* peek at first arg for "none" so we can reuse parse_time */
-		if (av[0] != NULL && strcasecmp(av[0], "none") == 0) {
-			(void)argv_next(&ac, &av); /* consume arg */
-			if (*activep)
+		எனில் (av[0] != வெற்று && strcasecmp(av[0], "none") == 0) {
+			(வெறுமை)argv_next(&ac, &av); /* consume arg */
+			எனில் (*activep)
 				*intptr = 0;
-			break;
+			நிறுத்து;
 		}
-		goto parse_time;
+		செல் parse_time;
 
-	case sSshdSessionPath:
+	நிலை sSshdSessionPath:
 		charptr = &options->sshd_session_path;
-		goto parse_filename;
+		செல் parse_filename;
 
-	case sSshdAuthPath:
+	நிலை sSshdAuthPath:
 		charptr = &options->sshd_auth_path;
-		goto parse_filename;
+		செல் parse_filename;
 
-	case sRefuseConnection:
+	நிலை sRefuseConnection:
 		intptr = &options->refuse_connection;
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sWarnWeakCrypto:
+	நிலை sWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		செல் parse_multistate;
 
-	case sDeprecated:
-	case sIgnore:
-	case sUnsupported:
+	நிலை sDeprecated:
+	நிலை sIgnore:
+	நிலை sUnsupported:
 		do_log2(opcode == sIgnore ?
 		    SYSLOG_LEVEL_DEBUG2 : SYSLOG_LEVEL_INFO,
 		    "%s line %d: %s option %s", filename, linenum,
 		    opcode == sUnsupported ? "Unsupported" : "Deprecated",
 		    keyword);
 		argv_consume(&ac);
-		break;
+		நிறுத்து;
 
-	default:
+	இயல்பு:
 		fatal("%s line %d: Missing handler for opcode %s (%d)",
 		    filename, linenum, keyword, opcode);
 	}
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	எனில் (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		செல் out;
 	}
 
 	/* success */
 	ret = 0;
  out:
-	opt_array_free2(strs, NULL, nstrs);
+	opt_array_free2(strs, வெற்று, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	திரும்பு ret;
 }
 
-int
-process_server_config_line(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, struct include_list *includes)
+முழு
+process_server_config_வரி(ServerOptions *options, எழுத்து *வரி,
+    மாறிலி எழுத்து *filename, முழு linenum, முழு *activep,
+    கட்டமைப்பு connection_info *connectinfo, கட்டமைப்பு include_list *includes)
 {
-	int inc_flags = 0;
+	முழு inc_flags = 0;
 
-	return process_server_config_line_depth(options, line, filename,
+	திரும்பு process_server_config_வரி_depth(options, வரி, filename,
 	    linenum, activep, connectinfo, &inc_flags, 0, includes);
 }
 
 
 /* Reads the server configuration file. */
 
-void
-load_server_config(const char *filename, struct sshbuf *conf)
+வெறுமை
+load_server_config(மாறிலி எழுத்து *filename, கட்டமைப்பு sshbuf *conf)
 {
-	struct stat st;
-	char *line = NULL, *cp;
+	கட்டமைப்பு stat st;
+	எழுத்து *வரி = வெற்று, *cp;
 	size_t linesize = 0;
 	FILE *f;
-	int r;
+	முழு r;
 
 	debug2_f("filename %s", filename);
-	if ((f = fopen(filename, "r")) == NULL) {
+	எனில் ((f = fopen(filename, "r")) == வெற்று) {
 		perror(filename);
 		exit(1);
 	}
 	sshbuf_reset(conf);
 	/* grow buffer, so realloc is avoided for large config files */
-	if (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
+	எனில் (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
 	    (r = sshbuf_allocate(conf, st.st_size)) != 0)
 		fatal_fr(r, "allocate");
-	while (getline(&line, &linesize, f) != -1) {
+	போது (getline(&வரி, &linesize, f) != -1) {
 		/*
 		 * Strip whitespace
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages
 		 */
-		cp = line + strspn(line, " \t\r");
-		if ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
+		cp = வரி + strspn(வரி, " \t\r");
+		எனில் ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
 			fatal_fr(r, "sshbuf_put");
 	}
-	free(line);
-	if ((r = sshbuf_put_u8(conf, 0)) != 0)
+	விடுவி(வரி);
+	எனில் ((r = sshbuf_put_u8(conf, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
 	fclose(f);
 	debug2_f("done config len = %zu", sshbuf_len(conf));
 }
 
-void
+வெறுமை
 parse_server_match_config(ServerOptions *options,
-   struct include_list *includes, struct connection_info *connectinfo)
+   கட்டமைப்பு include_list *includes, கட்டமைப்பு connection_info *connectinfo)
 {
 	ServerOptions mo;
 
@@ -2725,354 +2725,354 @@ parse_server_match_config(ServerOptions *options,
 	free_server_options(&mo);
 }
 
-int
-parse_server_match_testspec(struct connection_info *ci, char *spec)
+முழு
+parse_server_match_testspec(கட்டமைப்பு connection_info *ci, எழுத்து *spec)
 {
-	char *p;
-	const char *val;
+	எழுத்து *p;
+	மாறிலி எழுத்து *val;
 
-	while ((p = strsep(&spec, ",")) && *p != '\0') {
-		if ((val = strprefix(p, "addr=", 0)) != NULL) {
+	போது ((p = strsep(&spec, ",")) && *p != '\0') {
+		எனில் ((val = strprefix(p, "addr=", 0)) != வெற்று) {
 			ci->address = xstrdup(val);
-		} else if ((val = strprefix(p, "host=", 0)) != NULL) {
+		} இல்லையெனில் எனில் ((val = strprefix(p, "host=", 0)) != வெற்று) {
 			ci->host = xstrdup(val);
-		} else if ((val = strprefix(p, "user=", 0)) != NULL) {
+		} இல்லையெனில் எனில் ((val = strprefix(p, "user=", 0)) != வெற்று) {
 			ci->user = xstrdup(val);
-		} else if ((val = strprefix(p, "laddr=", 0)) != NULL) {
+		} இல்லையெனில் எனில் ((val = strprefix(p, "laddr=", 0)) != வெற்று) {
 			ci->laddress = xstrdup(val);
-		} else if ((val = strprefix(p, "rdomain=", 0)) != NULL) {
+		} இல்லையெனில் எனில் ((val = strprefix(p, "rdomain=", 0)) != வெற்று) {
 			ci->rdomain = xstrdup(val);
-		} else if ((val = strprefix(p, "lport=", 0)) != NULL) {
+		} இல்லையெனில் எனில் ((val = strprefix(p, "lport=", 0)) != வெற்று) {
 			ci->lport = a2port(val);
-			if (ci->lport == -1) {
+			எனில் (ci->lport == -1) {
 				fprintf(stderr, "Invalid port '%s' in test mode"
 				    " specification %s\n", p+6, p);
-				return -1;
+				திரும்பு -1;
 			}
-		} else if (strcmp(p, "invalid-user") == 0) {
+		} இல்லையெனில் எனில் (strcmp(p, "invalid-user") == 0) {
 			ci->user_invalid = 1;
-		} else {
+		} இல்லையெனில் {
 			fprintf(stderr, "Invalid test mode specification %s\n",
 			    p);
-			return -1;
+			திரும்பு -1;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-void
+வெறுமை
 servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
 {
 	u_int i, j, found;
 
-	for (i = 0; i < src->num_subsystems; i++) {
+	க்கு (i = 0; i < src->இலக்கம்_subsystems; i++) {
 		found = 0;
-		for (j = 0; j < dst->num_subsystems; j++) {
-			if (strcmp(src->subsystem_name[i],
+		க்கு (j = 0; j < dst->இலக்கம்_subsystems; j++) {
+			எனில் (strcmp(src->subsystem_name[i],
 			    dst->subsystem_name[j]) == 0) {
 				found = 1;
-				break;
+				நிறுத்து;
 			}
 		}
-		if (found) {
+		எனில் (found) {
 			debug_f("override \"%s\"", dst->subsystem_name[j]);
-			free(dst->subsystem_command[j]);
-			free(dst->subsystem_args[j]);
+			விடுவி(dst->subsystem_command[j]);
+			விடுவி(dst->subsystem_args[j]);
 			dst->subsystem_command[j] =
 			    xstrdup(src->subsystem_command[i]);
 			dst->subsystem_args[j] =
 			    xstrdup(src->subsystem_args[i]);
-			continue;
+			தொடர்;
 		}
 		debug_f("add \"%s\"", src->subsystem_name[i]);
 		dst->subsystem_name = xrecallocarray(
-		    dst->subsystem_name, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_name));
+		    dst->subsystem_name, dst->இலக்கம்_subsystems,
+		    dst->இலக்கம்_subsystems + 1, அளவு(*dst->subsystem_name));
 		dst->subsystem_command = xrecallocarray(
-		    dst->subsystem_command, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_command));
+		    dst->subsystem_command, dst->இலக்கம்_subsystems,
+		    dst->இலக்கம்_subsystems + 1, அளவு(*dst->subsystem_command));
 		dst->subsystem_args = xrecallocarray(
-		    dst->subsystem_args, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_args));
-		j = dst->num_subsystems++;
+		    dst->subsystem_args, dst->இலக்கம்_subsystems,
+		    dst->இலக்கம்_subsystems + 1, அளவு(*dst->subsystem_args));
+		j = dst->இலக்கம்_subsystems++;
 		dst->subsystem_name[j] = xstrdup(src->subsystem_name[i]);
 		dst->subsystem_command[j] = xstrdup(src->subsystem_command[i]);
 		dst->subsystem_args[j] = xstrdup(src->subsystem_args[i]);
 	}
 }
 
-static int
-serialise_s32(struct sshbuf *buf, int v)
+நிலையான முழு
+serialise_s32(கட்டமைப்பு sshbuf *buf, முழு v)
 {
 	uint32_t uv;
-	int r;
+	முழு r;
 
 	uv = v < 0 ? (uint32_t)(-(v + 1)) + 1 : (uint32_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	எனில் ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u32(buf, uv)) != 0)
-		return r;
-	return 0;
+		திரும்பு r;
+	திரும்பு 0;
 }
 
-static int
-serialise_s64(struct sshbuf *buf, int64_t v)
+நிலையான முழு
+serialise_s64(கட்டமைப்பு sshbuf *buf, int64_t v)
 {
 	uint64_t uv;
-	int r;
+	முழு r;
 
 	uv = v < 0 ? (uint64_t)(-(v + 1)) + 1 : (uint64_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	எனில் ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u64(buf, uv)) != 0)
-		return r;
-	return 0;
+		திரும்பு r;
+	திரும்பு 0;
 }
 
-static int
-serialise_mode(struct sshbuf *buf, mode_t v)
+நிலையான முழு
+serialise_mode(கட்டமைப்பு sshbuf *buf, mode_t v)
 {
 	u_int uv;
 
-	if (v == (mode_t)-1)
-		return serialise_s32(buf, -1);
+	எனில் (v == (mode_t)-1)
+		திரும்பு serialise_s32(buf, -1);
 	uv = (u_int)v;
-	if ((mode_t)uv != v || uv > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	return serialise_s32(buf, (int)uv);
+	எனில் ((mode_t)uv != v || uv > 0777)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	திரும்பு serialise_s32(buf, (முழு)uv);
 }
 
-static int
-serialise_double(struct sshbuf *buf, double v)
+நிலையான முழு
+serialise_double(கட்டமைப்பு sshbuf *buf, இரட்டை v)
 {
 	/*
 	 * XXX this is no good for a wire encoding.
 	 * It's fine for passing configurations via RPC, but it would
 	 * be nicer to have an exact binary encoding here.
 	 */
-	return sshbuf_put(buf, &v, sizeof(v));
+	திரும்பு sshbuf_put(buf, &v, அளவு(v));
 }
 
-static int
-serialise_nullable_string(struct sshbuf *buf, const char *s)
+நிலையான முழு
+serialise_nullable_string(கட்டமைப்பு sshbuf *buf, மாறிலி எழுத்து *s)
 {
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_put_u8(buf, s != NULL)) != 0)
-		return r;
-	if (s == NULL)
-		return 0;
-	return sshbuf_put_cstring(buf, s);
+	எனில் ((r = sshbuf_put_u8(buf, s != வெற்று)) != 0)
+		திரும்பு r;
+	எனில் (s == வெற்று)
+		திரும்பு 0;
+	திரும்பு sshbuf_put_cstring(buf, s);
 }
 
-static int
-serialise_nullable_string_array(struct sshbuf *buf, char **a, u_int n)
+நிலையான முழு
+serialise_nullable_string_array(கட்டமைப்பு sshbuf *buf, எழுத்து **a, u_int n)
 {
-	int r;
+	முழு r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, n)) != 0)
-		return r;
-	for (i = 0; i < n; i++) {
-		if ((r = serialise_nullable_string(buf, a[i])) != 0)
-			return r;
+	எனில் ((r = sshbuf_put_u32(buf, n)) != 0)
+		திரும்பு r;
+	க்கு (i = 0; i < n; i++) {
+		எனில் ((r = serialise_nullable_string(buf, a[i])) != 0)
+			திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_hostkeyfile(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_hostkeyfile(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_host_key_files)) != 0) {
+	எனில் ((r = sshbuf_put_u32(buf, options->இலக்கம்_host_சாவி_files)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		திரும்பு r;
 	}
-	for (i = 0; i < options->num_host_key_files; i++) {
-		if ((r = serialise_s32(buf,
-		    options->host_key_file_userprovided[i])) != 0 ||
+	க்கு (i = 0; i < options->இலக்கம்_host_சாவி_files; i++) {
+		எனில் ((r = serialise_s32(buf,
+		    options->host_சாவி_file_userprovided[i])) != 0 ||
 		    (r = serialise_nullable_string(buf,
-		    options->host_key_files[i])) != 0) {
+		    options->host_சாவி_files[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_ipqos(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_ipqos(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
+	எனில் ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
 	    (r = serialise_s32(buf, options->ip_qos_bulk)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_listenaddress(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_listenaddress(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i;
 
 	/* Note: only serialises queued listen addresses */
-	if ((r = sshbuf_put_u32(buf, options->num_queued_listens)) != 0) {
+	எனில் ((r = sshbuf_put_u32(buf, options->இலக்கம்_queued_listens)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		திரும்பு r;
 	}
-	for (i = 0; i < options->num_queued_listens; i++) {
-		const struct queued_listenaddr *qla =
+	க்கு (i = 0; i < options->இலக்கம்_queued_listens; i++) {
+		மாறிலி கட்டமைப்பு queued_listenaddr *qla =
 		    options->queued_listen_addrs + i;
 
-		if ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
+		எனில் ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
 		    (r = serialise_s32(buf, qla->port)) != 0 ||
 		    (r = serialise_nullable_string(buf, qla->rdomain)) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_logfacility(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_logfacility(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, (int)options->log_facility)) != 0) {
+	எனில் ((r = serialise_s32(buf, (முழு)options->log_facility)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_loglevel(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_loglevel(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, (int)options->log_level)) != 0) {
+	எனில் ((r = serialise_s32(buf, (முழு)options->log_level)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_port(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_port(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_ports)) != 0) {
+	எனில் ((r = sshbuf_put_u32(buf, options->இலக்கம்_ports)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		திரும்பு r;
 	}
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = serialise_s32(buf, options->ports[i])) != 0) {
+	க்கு (i = 0; i < options->இலக்கம்_ports; i++) {
+		எனில் ((r = serialise_s32(buf, options->ports[i])) != 0) {
 			error_fr(r, "serialise port");
-			return r;
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_gatewayports(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_gatewayports(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
+	எனில் ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_streamlocalbindmask(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_streamlocalbindmask(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_mode(buf,
+	எனில் ((r = serialise_mode(buf,
 	    options->fwd_opts.streamlocal_bind_mask)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_streamlocalbindunlink(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_streamlocalbindunlink(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_put_u8(buf,
+	எனில் ((r = sshbuf_put_u8(buf,
 	    (options->fwd_opts.streamlocal_bind_unlink != 0))) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_maxstartups(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_maxstartups(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
+	எனில் ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups_rate)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_permituserenv(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_permituserenv(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
+	எனில் ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
 	    (r = serialise_nullable_string(buf,
 	    options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_persourcenetblocksize(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_persourcenetblocksize(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
+	எனில் ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
 	    (r = serialise_s32(buf, options->per_source_masklen_ipv6)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_persourcepenalties(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	const struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	மாறிலி கட்டமைப்பு per_source_penalty *psp = &options->per_source_penalty;
+	முழு r;
 
-	if ((r = serialise_s32(buf, psp->enabled)) != 0 ||
+	எனில் ((r = serialise_s32(buf, psp->enabled)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources4)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources6)) != 0 ||
 	    (r = serialise_s32(buf, psp->overflow_mode)) != 0 ||
@@ -3086,118 +3086,118 @@ serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
 	    (r = serialise_double(buf, psp->penalty_max)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_min)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_rekeylimit(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_rekeylimit(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
+	எனில் ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
 	    (r = serialise_s32(buf, options->rekey_interval)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_subsystem(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_subsystem(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_subsystems)) != 0) {
+	எனில் ((r = sshbuf_put_u32(buf, options->இலக்கம்_subsystems)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		திரும்பு r;
 	}
-	for (i = 0; i < options->num_subsystems; i++) {
-		if ((r = sshbuf_put_cstring(buf,
+	க்கு (i = 0; i < options->இலக்கம்_subsystems; i++) {
+		எனில் ((r = sshbuf_put_cstring(buf,
 		    options->subsystem_name[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_command[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_args[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_pubkey_auth_options(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_pubkey_auth_options(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
+	எனில் ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
 	    (r = serialise_s32(buf, options->max_pubkey_ok)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+serialise_timingsecret(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
+	எனில் ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 
-int
-serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
+முழு
+serialise_server_options(மாறிலி ServerOptions *options, கட்டமைப்பு sshbuf **bufp)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 
-	*bufp = NULL;
+	*bufp = வெற்று;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
+	எனில் ((buf = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
 		error_fr(r, "serialise version");
-		goto out;
+		செல் out;
 	}
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+	எனில் ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+	எனில் ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = serialise_nullable_string(buf, options->var)) != 0) { \
+	எனில் ((r = serialise_nullable_string(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = serialise_nullable_string_array(buf, options->var, \
+	எனில் ((r = serialise_nullable_string_array(buf, options->var, \
 	    options->nvar)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
+	எனில் ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		செல் out;
 #define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
+	எனில் ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		செல் out;
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
@@ -3219,398 +3219,398 @@ serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
 	/* success */
 	r = 0;
 	*bufp = buf;
-	buf = NULL; /* transferred */
+	buf = வெற்று; /* transferred */
  out:
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 
-static int
-deserialise_s32(struct sshbuf *buf, int *v)
+நிலையான முழு
+deserialise_s32(கட்டமைப்பு sshbuf *buf, முழு *v)
 {
 	uint32_t tmp;
-	int r;
+	முழு r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	எனில் ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint32_t)INT_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(int)tmp;
-	} else {
-		if (tmp > INT_MAX)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = (int)tmp;
+		திரும்பு r;
+	எனில் (was_signed > 1)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	எனில் (was_signed) {
+		எனில் (tmp > (uint32_t)INT_MAX + 1)
+			திரும்பு SSH_ERR_INVALID_FORMAT;
+		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(முழு)tmp;
+	} இல்லையெனில் {
+		எனில் (tmp > INT_MAX)
+			திரும்பு SSH_ERR_INVALID_FORMAT;
+		*v = (முழு)tmp;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_s64(struct sshbuf *buf, int64_t *v)
+நிலையான முழு
+deserialise_s64(கட்டமைப்பு sshbuf *buf, int64_t *v)
 {
 	uint64_t tmp;
-	int r;
+	முழு r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	எனில் ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u64(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint64_t)INT64_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
+		திரும்பு r;
+	எனில் (was_signed > 1)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	எனில் (was_signed) {
+		எனில் (tmp > (uint64_t)INT64_MAX + 1)
+			திரும்பு SSH_ERR_INVALID_FORMAT;
 		*v = tmp == (uint64_t)INT64_MAX + 1 ?
 		    INT64_MIN : -(int64_t)tmp;
-	} else {
-		if (tmp > INT64_MAX)
-			return SSH_ERR_INVALID_FORMAT;
+	} இல்லையெனில் {
+		எனில் (tmp > INT64_MAX)
+			திரும்பு SSH_ERR_INVALID_FORMAT;
 		*v = (int64_t)tmp;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_mode(struct sshbuf *buf, mode_t *v)
+நிலையான முழு
+deserialise_mode(கட்டமைப்பு sshbuf *buf, mode_t *v)
 {
-	int r, tmp;
+	முழு r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0)
-		return r;
-	if (tmp == -1) {
+	எனில் ((r = deserialise_s32(buf, &tmp)) != 0)
+		திரும்பு r;
+	எனில் (tmp == -1) {
 		*v = (mode_t)-1;
-		return 0;
+		திரும்பு 0;
 	}
-	if (tmp < 0 || tmp > 0777)
-		return SSH_ERR_INVALID_FORMAT;
+	எனில் (tmp < 0 || tmp > 0777)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	*v = (mode_t)tmp;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_double(struct sshbuf *buf, double *v)
+நிலையான முழு
+deserialise_double(கட்டமைப்பு sshbuf *buf, இரட்டை *v)
 {
-	return sshbuf_get(buf, v, sizeof(*v));
+	திரும்பு sshbuf_get(buf, v, அளவு(*v));
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *buf, char **sp)
+நிலையான முழு
+deserialise_nullable_string(கட்டமைப்பு sshbuf *buf, எழுத்து **sp)
 {
-	int r;
+	முழு r;
 	u_char present;
 
-	if ((r = sshbuf_get_u8(buf, &present)) != 0)
-		return r;
-	if (present == 0) {
-		*sp = NULL;
-		return 0;
+	எனில் ((r = sshbuf_get_u8(buf, &present)) != 0)
+		திரும்பு r;
+	எனில் (present == 0) {
+		*sp = வெற்று;
+		திரும்பு 0;
 	}
-	if (present != 1)
-		return SSH_ERR_INVALID_FORMAT;
-	return sshbuf_get_cstring(buf, sp, NULL);
+	எனில் (present != 1)
+		திரும்பு SSH_ERR_INVALID_FORMAT;
+	திரும்பு sshbuf_get_cstring(buf, sp, வெற்று);
 }
 
-static void
-free_string_array(char **a, u_int n)
+நிலையான வெறுமை
+free_string_array(எழுத்து **a, u_int n)
 {
 	u_int i;
 
-	if (a == NULL)
-		return;
-	for (i = 0; i < n; i++)
-		free(a[i]);
-	free(a);
+	எனில் (a == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < n; i++)
+		விடுவி(a[i]);
+	விடுவி(a);
 }
 
-static int
-deserialise_count(struct sshbuf *buf, u_int *np, const char *what)
+நிலையான முழு
+deserialise_மொத்தம்(கட்டமைப்பு sshbuf *buf, u_int *np, மாறிலி எழுத்து *what)
 {
-	int r;
+	முழு r;
 	uint32_t n;
 
-	if ((r = sshbuf_get_u32(buf, &n)) != 0) {
+	எனில் ((r = sshbuf_get_u32(buf, &n)) != 0) {
 		error_fr(r, "deserialise %s length", what);
-		return r;
+		திரும்பு r;
 	}
-	if (n > UINT_MAX) {
+	எனில் (n > UINT_MAX) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
-	if (n > sshbuf_len(buf)) {
+	எனில் (n > sshbuf_len(buf)) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
 	*np = n;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_nullable_string_array(struct sshbuf *buf, char ***arrayp,
+நிலையான முழு
+deserialise_nullable_string_array(கட்டமைப்பு sshbuf *buf, எழுத்து ***arrayp,
     u_int *np)
 {
-	char **a = NULL;
-	int r;
+	எழுத்து **a = வெற்று;
+	முழு r;
 	u_int i, n;
 
-	*arrayp = NULL;
+	*arrayp = வெற்று;
 	*np = 0;
-	if ((r = deserialise_count(buf, &n, "strings")) != 0)
-		return r;
-	if (n > 0)
-		a = xcalloc(n, sizeof(*a));
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_nullable_string(buf, a + i)) != 0) {
+	எனில் ((r = deserialise_மொத்தம்(buf, &n, "strings")) != 0)
+		திரும்பு r;
+	எனில் (n > 0)
+		a = xcalloc(n, அளவு(*a));
+	க்கு (i = 0; i < n; i++) {
+		எனில் ((r = deserialise_nullable_string(buf, a + i)) != 0) {
 			free_string_array(a, i + 1);
-			return r;
+			திரும்பு r;
 		}
 	}
 	*arrayp = a;
 	*np = n;
-	return 0;
+	திரும்பு 0;
 }
 
-static void
-free_queued_listen_addrs(struct queued_listenaddr *qla, u_int n)
+நிலையான வெறுமை
+free_queued_listen_addrs(கட்டமைப்பு queued_listenaddr *qla, u_int n)
 {
 	u_int i;
 
-	if (qla == NULL)
-		return;
-	for (i = 0; i < n; i++) {
-		free(qla[i].addr);
-		free(qla[i].rdomain);
+	எனில் (qla == வெற்று)
+		திரும்பு;
+	க்கு (i = 0; i < n; i++) {
+		விடுவி(qla[i].addr);
+		விடுவி(qla[i].rdomain);
 	}
-	free(qla);
+	விடுவி(qla);
 }
 
-static int
-deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_hostkeyfile(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r, *userprovided = NULL;
+	முழு r, *userprovided = வெற்று;
 	u_int i, n;
-	char **files = NULL;
+	எழுத்து **files = வெற்று;
 
-	if ((r = deserialise_count(buf, &n, "host key files")) != 0)
-		return r;
-	if (n > 0) {
-		userprovided = xcalloc(n, sizeof(*userprovided));
-		files = xcalloc(n, sizeof(*files));
+	எனில் ((r = deserialise_மொத்தம்(buf, &n, "host key files")) != 0)
+		திரும்பு r;
+	எனில் (n > 0) {
+		userprovided = xcalloc(n, அளவு(*userprovided));
+		files = xcalloc(n, அளவு(*files));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
+	க்கு (i = 0; i < n; i++) {
+		எனில் ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
 		    (r = deserialise_nullable_string(buf, files + i)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(files, i + 1);
-			free(userprovided);
-			return r;
+			விடுவி(userprovided);
+			திரும்பு r;
 		}
 	}
-	options->num_host_key_files = n;
-	options->host_key_file_userprovided = userprovided;
-	options->host_key_files = files;
-	return 0;
+	options->இலக்கம்_host_சாவி_files = n;
+	options->host_சாவி_file_userprovided = userprovided;
+	options->host_சாவி_files = files;
+	திரும்பு 0;
 }
 
-static int
-deserialise_ipqos(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_ipqos(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
+	எனில் ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
 	    (r = deserialise_s32(buf, &options->ip_qos_bulk)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_listenaddress(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i, n;
-	struct queued_listenaddr *qla = NULL;
+	கட்டமைப்பு queued_listenaddr *qla = வெற்று;
 
-	if ((r = deserialise_count(buf, &n, "listen addresses")) != 0)
-		return r;
-	if (n > 0)
-		qla = xcalloc(n, sizeof(*qla));
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, &qla[i].addr, NULL)) != 0 ||
+	எனில் ((r = deserialise_மொத்தம்(buf, &n, "listen addresses")) != 0)
+		திரும்பு r;
+	எனில் (n > 0)
+		qla = xcalloc(n, அளவு(*qla));
+	க்கு (i = 0; i < n; i++) {
+		எனில் ((r = sshbuf_get_cstring(buf, &qla[i].addr, வெற்று)) != 0 ||
 		    (r = deserialise_s32(buf, &qla[i].port)) != 0 ||
 		    (r = deserialise_nullable_string(buf,
 		    &qla[i].rdomain)) != 0) {
 			error_fr(r, "deserialise member");
 			free_queued_listen_addrs(qla, i + 1);
-			return r;
+			திரும்பு r;
 		}
 	}
-	options->num_queued_listens = n;
+	options->இலக்கம்_queued_listens = n;
 	options->queued_listen_addrs = qla;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_logfacility(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_logfacility(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r, tmp;
+	முழு r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	எனில் ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	if (tmp != SYSLOG_FACILITY_NOT_SET &&
-	    log_facility_name((SyslogFacility)tmp) == NULL) {
+	எனில் (tmp != SYSLOG_FACILITY_NOT_SET &&
+	    log_facility_name((SyslogFacility)tmp) == வெற்று) {
 		error_f("bad syslog facility");
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_facility = (SyslogFacility)tmp;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_loglevel(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_loglevel(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r, tmp;
+	முழு r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	எனில் ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	if (tmp != SYSLOG_LEVEL_NOT_SET &&
-	    log_level_name((LogLevel)tmp) == NULL) {
+	எனில் (tmp != SYSLOG_LEVEL_NOT_SET &&
+	    log_level_name((LogLevel)tmp) == வெற்று) {
 		error_f("bad log level");
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_level = (LogLevel)tmp;
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_port(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_port(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i, n;
 
-	if ((r = deserialise_count(buf, &n, "ports")) != 0)
-		return r;
-	if (n > MAX_PORTS) {
+	எனில் ((r = deserialise_மொத்தம்(buf, &n, "ports")) != 0)
+		திரும்பு r;
+	எனில் (n > MAX_PORTS) {
 		error_f("bad number of ports");
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
-	options->num_ports = n;
-	memset(options->ports, 0, sizeof(options->ports));
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = deserialise_s32(buf, options->ports + i)) != 0) {
+	options->இலக்கம்_ports = n;
+	memset(options->ports, 0, அளவு(options->ports));
+	க்கு (i = 0; i < options->இலக்கம்_ports; i++) {
+		எனில் ((r = deserialise_s32(buf, options->ports + i)) != 0) {
 			error_fr(r, "deserialise port");
-			return r;
+			திரும்பு r;
 		}
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_gatewayports(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_gatewayports(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
+	எனில் ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_streamlocalbindmask(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_streamlocalbindmask(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_mode(buf,
+	எனில் ((r = deserialise_mode(buf,
 	    &options->fwd_opts.streamlocal_bind_mask)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_streamlocalbindunlink(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_streamlocalbindunlink(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_char tmp;
 
-	if ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
+	எனில் ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	if (tmp > 1) {
+	எனில் (tmp > 1) {
 		error_f("bad boolean");
-		return SSH_ERR_INVALID_FORMAT;
+		திரும்பு SSH_ERR_INVALID_FORMAT;
 	}
 	options->fwd_opts.streamlocal_bind_unlink = tmp;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_maxstartups(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_maxstartups(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
+	எனில் ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups_rate)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_permituserenv(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_permituserenv(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
+	எனில் ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
 	    (r = deserialise_nullable_string(buf,
 	    &options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_persourcenetblocksize(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_persourcenetblocksize(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf,
+	எனில் ((r = deserialise_s32(buf,
 	    &options->per_source_masklen_ipv4)) != 0 ||
 	    (r = deserialise_s32(buf,
 	    &options->per_source_masklen_ipv6)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_persourcepenalties(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	கட்டமைப்பு per_source_penalty *psp = &options->per_source_penalty;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
+	எனில் ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources4)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources6)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->overflow_mode)) != 0 ||
@@ -3625,142 +3625,142 @@ deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
 	    (r = deserialise_double(buf, &psp->penalty_max)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_min)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_rekeylimit(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_rekeylimit(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
+	எனில் ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
 	    (r = deserialise_s32(buf, &options->rekey_interval)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_subsystem(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_subsystem(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 	u_int i, n;
-	char **names = NULL, **commands = NULL, **args = NULL;
+	எழுத்து **names = வெற்று, **commands = வெற்று, **args = வெற்று;
 
-	if ((r = deserialise_count(buf, &n, "subsystems")) != 0)
-		return r;
-	if (n > 0) {
-		names = xcalloc(n, sizeof(*names));
-		commands = xcalloc(n, sizeof(*names));
-		args = xcalloc(n, sizeof(*args));
+	எனில் ((r = deserialise_மொத்தம்(buf, &n, "subsystems")) != 0)
+		திரும்பு r;
+	எனில் (n > 0) {
+		names = xcalloc(n, அளவு(*names));
+		commands = xcalloc(n, அளவு(*names));
+		args = xcalloc(n, அளவு(*args));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, names + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, commands + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, args + i, NULL)) != 0) {
+	க்கு (i = 0; i < n; i++) {
+		எனில் ((r = sshbuf_get_cstring(buf, names + i, வெற்று)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, commands + i, வெற்று)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, args + i, வெற்று)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(names, i + 1);
 			free_string_array(commands, i + 1);
 			free_string_array(args, i + 1);
-			return r;
+			திரும்பு r;
 		}
 	}
-	options->num_subsystems = n;
+	options->இலக்கம்_subsystems = n;
 	options->subsystem_name = names;
 	options->subsystem_command = commands;
 	options->subsystem_args = args;
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_pubkey_auth_options(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_pubkey_auth_options(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
+	எனில் ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_pubkey_ok)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static int
-deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+நிலையான முழு
+deserialise_timingsecret(ServerOptions *options, கட்டமைப்பு sshbuf *buf)
 {
-	int r;
+	முழு r;
 
-	if ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
+	எனில் ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		திரும்பு r;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-int
-deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
+முழு
+deserialise_server_options(கட்டமைப்பு sshbuf *buf, ServerOptions *options)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	முழு r = SSH_ERR_INTERNAL_ERROR;
 	uint32_t version;
 	ServerOptions new_options;
 
 	initialize_server_options(&new_options);
-	if ((r = sshbuf_get_u32(buf, &version)) != 0) {
+	எனில் ((r = sshbuf_get_u32(buf, &version)) != 0) {
 		error_fr(r, "deserialise version");
-		goto out;
+		செல் out;
 	}
-	if (version != SSHD_CONFIG_BLOB_VERSION) {
+	எனில் (version != SSHD_CONFIG_BLOB_VERSION) {
 		error_f("unsupported config blob version %u", version);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+	எனில் ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+	எனில் ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
+	எனில் ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = deserialise_nullable_string_array(buf, &new_options.var, \
+	எனில் ((r = deserialise_nullable_string_array(buf, &new_options.var, \
 	    &new_options.nvar)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		செல் out; \
 	}
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
+	எனில் ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		செல் out;
 #define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
+	எனில் ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		செல் out;
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(new_options.var); \
-		new_options.var = NULL; \
-	} while (0);
+	செய் { \
+		விடுவி(new_options.var); \
+		new_options.var = வெற்று; \
+	} போது (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	SSHD_CONFIG_ENTRIES
 
-	if (sshbuf_len(buf) != 0) {
+	எனில் (sshbuf_len(buf) != 0) {
 		error_f("trailing data in config blob");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		செல் out;
 	}
 
 #undef SSHCONF_INT
@@ -3778,66 +3778,66 @@ deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
 	r = 0;
 	free_server_options(options);
 	*options = new_options;
-	memset(&new_options, 0, sizeof(new_options));
+	memset(&new_options, 0, அளவு(new_options));
  out:
 	free_server_options(&new_options);
-	return r;
+	திரும்பு r;
 }
 
-static void
+நிலையான வெறுமை
 free_hostkeyfile(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		free(options->host_key_files[i]);
-	free(options->host_key_files);
-	free(options->host_key_file_userprovided);
+	க்கு (i = 0; i < options->இலக்கம்_host_சாவி_files; i++)
+		விடுவி(options->host_சாவி_files[i]);
+	விடுவி(options->host_சாவி_files);
+	விடுவி(options->host_சாவி_file_userprovided);
 }
 
-static void
+நிலையான வெறுமை
 free_listenaddress(ServerOptions *options)
 {
 	u_int i;
 
 	free_queued_listen_addrs(options->queued_listen_addrs,
-	    options->num_queued_listens);
+	    options->இலக்கம்_queued_listens);
 
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		free(options->listen_addrs[i].rdomain);
-		if (options->listen_addrs[i].addrs != NULL)
+	க்கு (i = 0; i < options->இலக்கம்_listen_addrs; i++) {
+		விடுவி(options->listen_addrs[i].rdomain);
+		எனில் (options->listen_addrs[i].addrs != வெற்று)
 			freeaddrinfo(options->listen_addrs[i].addrs);
 	}
-	free(options->listen_addrs);
+	விடுவி(options->listen_addrs);
 }
 
-static void
+நிலையான வெறுமை
 free_permituserenv(ServerOptions *options)
 {
-	free(options->permit_user_env_allowlist);
+	விடுவி(options->permit_user_env_allowlist);
 }
 
-static void
+நிலையான வெறுமை
 free_subsystem(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_subsystems; i++) {
-		free(options->subsystem_name[i]);
-		free(options->subsystem_command[i]);
-		free(options->subsystem_args[i]);
+	க்கு (i = 0; i < options->இலக்கம்_subsystems; i++) {
+		விடுவி(options->subsystem_name[i]);
+		விடுவி(options->subsystem_command[i]);
+		விடுவி(options->subsystem_args[i]);
 	}
-	free(options->subsystem_name);
-	free(options->subsystem_command);
-	free(options->subsystem_args);
+	விடுவி(options->subsystem_name);
+	விடுவி(options->subsystem_command);
+	விடுவி(options->subsystem_args);
 }
 
-void
+வெறுமை
 free_server_options(ServerOptions *options)
 {
 #define SSHCONF_INT(var, conf, flags, ms, def, cp)	/* empty */
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp)	/* empty */
-#define SSHCONF_STRING(var, conf, flags, cp)		free(options->var);
+#define SSHCONF_STRING(var, conf, flags, cp)		விடுவி(options->var);
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	free_string_array(options->var, options->nvar);
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
@@ -3847,10 +3847,10 @@ free_server_options(ServerOptions *options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
+	செய் { \
+		விடுவி(options->var); \
+		options->var = வெற்று; \
+	} போது (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 #define free_ipqos(options)
@@ -3896,111 +3896,111 @@ free_server_options(ServerOptions *options)
 	initialize_server_options(options);
 }
 
-static void
-copy_server_option_int(int *dst, int src)
+நிலையான வெறுமை
+copy_server_option_int(முழு *dst, முழு src)
 {
-	if (src != -1)
+	எனில் (src != -1)
 		*dst = src;
 }
 
-static void
+நிலையான வெறுமை
 copy_server_option_int64(int64_t *dst, int64_t src)
 {
-	if (src != -1)
+	எனில் (src != -1)
 		*dst = src;
 }
 
-static void
-copy_server_option_string(char **dst, const char *src)
+நிலையான வெறுமை
+copy_server_option_string(எழுத்து **dst, மாறிலி எழுத்து *src)
 {
-	if (src != NULL && *dst != src) {
-		free(*dst);
+	எனில் (src != வெற்று && *dst != src) {
+		விடுவி(*dst);
 		*dst = xstrdup(src);
 	}
 }
 
-static void
-copy_server_option_strarray_values(char ***dst, u_int ndst,
-    char * const *src, u_int nsrc)
+நிலையான வெறுமை
+copy_server_option_strarray_மதிப்புகள்(எழுத்து ***dst, u_int ndst,
+    எழுத்து * மாறிலி *src, u_int nsrc)
 {
 	u_int i;
 
-	if (nsrc == 0)
-		return;
-	for (i = 0; i < ndst; i++)
-		free((*dst)[i]);
-	free(*dst);
-	*dst = xcalloc(nsrc, sizeof(**dst));
-	for (i = 0; i < nsrc; i++)
-		(*dst)[i] = src[i] == NULL ? NULL : xstrdup(src[i]);
+	எனில் (nsrc == 0)
+		திரும்பு;
+	க்கு (i = 0; i < ndst; i++)
+		விடுவி((*dst)[i]);
+	விடுவி(*dst);
+	*dst = xcalloc(nsrc, அளவு(**dst));
+	க்கு (i = 0; i < nsrc; i++)
+		(*dst)[i] = src[i] == வெற்று ? வெற்று : xstrdup(src[i]);
 }
 
-static void
-copy_server_option_strarray(char ***dst, u_int *ndst,
-    char * const *src, u_int nsrc)
+நிலையான வெறுமை
+copy_server_option_strarray(எழுத்து ***dst, u_int *ndst,
+    எழுத்து * மாறிலி *src, u_int nsrc)
 {
-	if (nsrc == 0)
-		return;
-	copy_server_option_strarray_values(dst, *ndst, src, nsrc);
+	எனில் (nsrc == 0)
+		திரும்பு;
+	copy_server_option_strarray_மதிப்புகள்(dst, *ndst, src, nsrc);
 	*ndst = nsrc;
 }
 
-static void
-copy_ipqos(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_ipqos(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
 	copy_server_option_int(&dst->ip_qos_interactive,
 	    src->ip_qos_interactive);
 	copy_server_option_int(&dst->ip_qos_bulk, src->ip_qos_bulk);
 }
 
-static void
-copy_gatewayports(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_gatewayports(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.gateway_ports,
 	    src->fwd_opts.gateway_ports);
 }
 
-static void
-copy_streamlocalbindunlink(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_streamlocalbindunlink(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.streamlocal_bind_unlink,
 	    src->fwd_opts.streamlocal_bind_unlink);
 }
 
-static void
-copy_loglevel(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_loglevel(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
-	if (src->log_level != -1)
+	எனில் (src->log_level != -1)
 		dst->log_level = src->log_level;
 }
 
-static void
-copy_rekeylimit(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_rekeylimit(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
 	copy_server_option_int64(&dst->rekey_limit, src->rekey_limit);
 	copy_server_option_int(&dst->rekey_interval, src->rekey_interval);
 }
 
-static void
-copy_subsystem(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_subsystem(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
-	u_int old_num_subsystems = dst->num_subsystems;
+	u_int old_இலக்கம்_subsystems = dst->இலக்கம்_subsystems;
 
-	if (src->num_subsystems == 0)
-		return;
-	copy_server_option_strarray_values(&dst->subsystem_name,
-	    old_num_subsystems, src->subsystem_name, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_command,
-	    old_num_subsystems, src->subsystem_command, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_args,
-	    old_num_subsystems, src->subsystem_args, src->num_subsystems);
-	dst->num_subsystems = src->num_subsystems;
+	எனில் (src->இலக்கம்_subsystems == 0)
+		திரும்பு;
+	copy_server_option_strarray_மதிப்புகள்(&dst->subsystem_name,
+	    old_இலக்கம்_subsystems, src->subsystem_name, src->இலக்கம்_subsystems);
+	copy_server_option_strarray_மதிப்புகள்(&dst->subsystem_command,
+	    old_இலக்கம்_subsystems, src->subsystem_command, src->இலக்கம்_subsystems);
+	copy_server_option_strarray_மதிப்புகள்(&dst->subsystem_args,
+	    old_இலக்கம்_subsystems, src->subsystem_args, src->இலக்கம்_subsystems);
+	dst->இலக்கம்_subsystems = src->இலக்கம்_subsystems;
 }
 
-static void
-copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
+நிலையான வெறுமை
+copy_pubkey_auth_options(ServerOptions *dst, மாறிலி ServerOptions *src)
 {
-	if (src->pubkey_auth_options != -1) {
+	எனில் (src->pubkey_auth_options != -1) {
 		dst->pubkey_auth_options = src->pubkey_auth_options;
 		dst->max_pubkey_ok = src->max_pubkey_ok;
 	}
@@ -4012,11 +4012,11 @@ copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
  * If the preauth flag is set, skip the post-authentication-only manual
  * string cleanup and subsystem merge below.
  */
-void
-copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+வெறுமை
+copy_set_server_options(ServerOptions *dst, ServerOptions *src, முழு preauth)
 {
-	if (dst == src)
-		return;
+	எனில் (dst == src)
+		திரும்பு;
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
@@ -4033,10 +4033,10 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(dst->var); \
-		dst->var = NULL; \
-	} while (0);
+	செய் { \
+		விடுவி(dst->var); \
+		dst->var = வெற்று; \
+	} போது (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	SSHD_CONFIG_ENTRIES
@@ -4057,7 +4057,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * copy_server_option_int - it does a signed comparison that causes
 	 * compiler warnings.
 	 */
-	if (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
+	எனில் (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
 		dst->fwd_opts.streamlocal_bind_mask =
 		    src->fwd_opts.streamlocal_bind_mask;
 	}
@@ -4071,22 +4071,22 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * rather than in the post-auth section below.
 	 */
 #define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+	செய் { \
+		எனில் (option_clear_or_none(v)) { \
+			விடுவி(v); \
+			v = வெற்று; \
 		} \
-	} while(0)
+	} போது(0)
 	CLEAR_ON_NONE(dst->authorized_principals_file);
-	CLEAR_ON_NONE(dst->trusted_user_ca_keys);
+	CLEAR_ON_NONE(dst->trusted_user_ca_சாவிகள்);
 	CLEAR_ON_NONE(dst->banner);
 
 	/*
 	 * The only things that should be below this point are string options
 	 * which are only used after authentication.
 	 */
-	if (preauth)
-		return;
+	எனில் (preauth)
+		திரும்பு;
 
 	/* These options may be "none" to clear a global setting */
 	copy_server_option_string(&dst->adm_forced_command,
@@ -4102,214 +4102,214 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 }
 
 #define SERVCONF_MAX_DEPTH	16
-static void
-parse_server_config_depth(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth)
+நிலையான வெறுமை
+parse_server_config_depth(ServerOptions *options, மாறிலி எழுத்து *filename,
+    கட்டமைப்பு sshbuf *conf, கட்டமைப்பு include_list *includes,
+    கட்டமைப்பு connection_info *connectinfo, முழு flags, முழு *activep, முழு depth)
 {
-	int linenum, bad_options = 0;
-	char *cp, *obuf, *cbuf;
+	முழு linenum, bad_options = 0;
+	எழுத்து *cp, *obuf, *cbuf;
 
-	if (depth < 0 || depth > SERVCONF_MAX_DEPTH)
+	எனில் (depth < 0 || depth > SERVCONF_MAX_DEPTH)
 		fatal("Too many recursive configuration includes");
 
 	debug2_f("config %s len %zu%s", filename, sshbuf_len(conf),
 	    (flags & SSHCFG_NEVERMATCH ? " [checking syntax only]" : ""));
 
-	if ((obuf = cbuf = sshbuf_dup_string(conf)) == NULL)
+	எனில் ((obuf = cbuf = sshbuf_dup_string(conf)) == வெற்று)
 		fatal_f("sshbuf_dup_string failed");
 	linenum = 1;
-	while ((cp = strsep(&cbuf, "\n")) != NULL) {
-		if (process_server_config_line_depth(options, cp,
+	போது ((cp = strsep(&cbuf, "\n")) != வெற்று) {
+		எனில் (process_server_config_வரி_depth(options, cp,
 		    filename, linenum++, activep, connectinfo, &flags,
 		    depth, includes) != 0)
 			bad_options++;
 	}
-	free(obuf);
-	if (bad_options > 0)
+	விடுவி(obuf);
+	எனில் (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
 }
 
-void
-parse_server_config(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int reexec)
+வெறுமை
+parse_server_config(ServerOptions *options, மாறிலி எழுத்து *filename,
+    கட்டமைப்பு sshbuf *conf, கட்டமைப்பு include_list *includes,
+    கட்டமைப்பு connection_info *connectinfo, முழு reexec)
 {
-	int active = connectinfo ? 0 : 1;
+	முழு active = connectinfo ? 0 : 1;
 	parse_server_config_depth(options, filename, conf, includes,
 	    connectinfo, (connectinfo ? SSHCFG_MATCH_ONLY : 0), &active, 0);
-	if (!reexec)
+	எனில் (!reexec)
 		process_queued_listen_addrs(options);
 }
 
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+நிலையான மாறிலி எழுத்து *
+fmt_multistate_int(முழு val, மாறிலி கட்டமைப்பு multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	க்கு (i = 0; m[i].சாவி != வெற்று; i++) {
+		எனில் (m[i].மதிப்பு == val)
+			திரும்பு m[i].சாவி;
 	}
-	return "UNKNOWN";
+	திரும்பு "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(ServerOpCodes code, int val)
+நிலையான மாறிலி எழுத்து *
+fmt_intarg(ServerOpCodes code, முழு val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case sAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case sPermitRootLogin:
-		return fmt_multistate_int(val, multistate_permitrootlogin);
-	case sGatewayPorts:
-		return fmt_multistate_int(val, multistate_gatewayports);
-	case sCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case sAllowTcpForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sAllowStreamLocalForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sIgnoreRhosts:
-		return fmt_multistate_int(val, multistate_ignore_rhosts);
-	case sTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case sWarnWeakCrypto:
-		return fmt_multistate_int(val, multistate_warnweakcrypto);
-	case sFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	எனில் (val == -1)
+		திரும்பு "unset";
+	தேர்வு (code) {
+	நிலை sAddressFamily:
+		திரும்பு fmt_multistate_int(val, multistate_addressfamily);
+	நிலை s_Permit_வேர்_Login:
+		திரும்பு fmt_multistate_int(val, multistate_permitrootlogin);
+	நிலை sGatewayPorts:
+		திரும்பு fmt_multistate_int(val, multistate_gatewayports);
+	நிலை sCompression:
+		திரும்பு fmt_multistate_int(val, multistate_compression);
+	நிலை sAllowTcpForwarding:
+		திரும்பு fmt_multistate_int(val, multistate_tcpfwd);
+	நிலை sAllowStreamLocalForwarding:
+		திரும்பு fmt_multistate_int(val, multistate_tcpfwd);
+	நிலை sIgnoreRhosts:
+		திரும்பு fmt_multistate_int(val, multistate_ignore_rhosts);
+	நிலை sTCPKeepAlive:
+		திரும்பு fmt_multistate_int(val, multistate_keepalives);
+	நிலை sWarnWeakCrypto:
+		திரும்பு fmt_multistate_int(val, multistate_warnweakcrypto);
+	நிலை sFingerprintHash:
+		திரும்பு ssh_digest_alg_name(val);
+	இயல்பு:
+		தேர்வு (val) {
+		நிலை 0:
+			திரும்பு "no";
+		நிலை 1:
+			திரும்பு "yes";
+		இயல்பு:
+			திரும்பு "UNKNOWN";
 		}
 	}
 }
 
-static void
-dump_cfg_int(ServerOpCodes code, int val)
+நிலையான வெறுமை
+dump_cfg_int(ServerOpCodes code, முழு val)
 {
-	if (code == sUnusedConnectionTimeout && val == 0) {
+	எனில் (code == sUnusedConnectionTimeout && val == 0) {
 		printf("%s none\n", lookup_opcode_name(code));
-		return;
+		திரும்பு;
 	}
 	printf("%s %d\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_oct(ServerOpCodes code, int val)
+நிலையான வெறுமை
+dump_cfg_oct(ServerOpCodes code, முழு val)
 {
 	printf("%s 0%o\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_fmtint(ServerOpCodes code, int val)
+நிலையான வெறுமை
+dump_cfg_fmtint(ServerOpCodes code, முழு val)
 {
 	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
 }
 
-static void
-dump_cfg_string(ServerOpCodes code, const char *val)
+நிலையான வெறுமை
+dump_cfg_string(ServerOpCodes code, மாறிலி எழுத்து *val)
 {
 	printf("%s %s\n", lookup_opcode_name(code),
-	    val == NULL ? "none" : val);
+	    val == வெற்று ? "none" : val);
 }
 
-static void
-dump_cfg_strarray(ServerOpCodes code, u_int count, char **vals)
+நிலையான வெறுமை
+dump_cfg_strarray(ServerOpCodes code, u_int மொத்தம், எழுத்து **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	க்கு (i = 0; i < மொத்தம்; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
-static void
-dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
+நிலையான வெறுமை
+dump_cfg_strarray_oneline(ServerOpCodes code, u_int மொத்தம், எழுத்து **vals)
 {
 	u_int i;
 
-	switch (code) {
-	case sAuthenticationMethods:
-	case sChannelTimeout:
-		break;
-	default:
-		if (count <= 0)
-			return;
-		break;
+	தேர்வு (code) {
+	நிலை sAuthenticationMethods:
+	நிலை sChannelTimeout:
+		நிறுத்து;
+	இயல்பு:
+		எனில் (மொத்தம் <= 0)
+			திரும்பு;
+		நிறுத்து;
 	}
 
 	printf("%s", lookup_opcode_name(code));
-	for (i = 0; i < count; i++)
+	க்கு (i = 0; i < மொத்தம்; i++)
 		printf(" %s",  vals[i]);
-	if (code == sAuthenticationMethods && count == 0)
+	எனில் (code == sAuthenticationMethods && மொத்தம் == 0)
 		printf(" any");
-	else if (code == sChannelTimeout && count == 0)
+	இல்லையெனில் எனில் (code == sChannelTimeout && மொத்தம் == 0)
 		printf(" none");
 	printf("\n");
 }
 
-static char *
-format_listen_addrs(struct listenaddr *la)
+நிலையான எழுத்து *
+format_listen_addrs(கட்டமைப்பு listenaddr *la)
 {
-	int r;
-	struct addrinfo *ai;
-	char addr[NI_MAXHOST], port[NI_MAXSERV];
-	char *laddr1 = xstrdup(""), *laddr2 = NULL;
+	முழு r;
+	கட்டமைப்பு addrinfo *ai;
+	எழுத்து addr[NI_MAXHOST], port[NI_MAXSERV];
+	எழுத்து *laddr1 = xstrdup(""), *laddr2 = வெற்று;
 
 	/*
 	 * ListenAddress must be after Port.  add_one_listen_addr pushes
 	 * addresses onto a stack, so to maintain ordering we need to
 	 * print these in reverse order.
 	 */
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
-		    sizeof(addr), port, sizeof(port),
+	க்கு (ai = la->addrs; ai; ai = ai->ai_next) {
+		எனில் ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
+		    அளவு(addr), port, அளவு(port),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo: %.100s", ssh_gai_strerror(r));
-			continue;
+			தொடர்;
 		}
 		laddr2 = laddr1;
-		if (ai->ai_family == AF_INET6) {
+		எனில் (ai->ai_family == AF_INET6) {
 			xasprintf(&laddr1, "ListenAddress [%s]:%s%s%s\n%s",
 			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    la->rdomain == வெற்று ? "" : " rdomain ",
+			    la->rdomain == வெற்று ? "" : la->rdomain,
 			    laddr2);
-		} else {
+		} இல்லையெனில் {
 			xasprintf(&laddr1, "ListenAddress %s:%s%s%s\n%s",
 			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    la->rdomain == வெற்று ? "" : " rdomain ",
+			    la->rdomain == வெற்று ? "" : la->rdomain,
 			    laddr2);
 		}
-		free(laddr2);
+		விடுவி(laddr2);
 	}
-	return laddr1;
+	திரும்பு laddr1;
 }
 
-void
+வெறுமை
 dump_config(ServerOptions *o)
 {
-	char *s;
+	எழுத்து *s;
 	u_int i;
 
 	/* these are usually at the top of the config */
-	for (i = 0; i < o->num_ports; i++)
+	க்கு (i = 0; i < o->இலக்கம்_ports; i++)
 		printf("Port %d\n", o->ports[i]);
 	dump_cfg_fmtint(sAddressFamily, o->address_family);
 
-	for (i = 0; i < o->num_listen_addrs; i++) {
+	க்கு (i = 0; i < o->இலக்கம்_listen_addrs; i++) {
 		s = format_listen_addrs(&o->listen_addrs[i]);
 		printf("%s", s);
-		free(s);
+		விடுவி(s);
 	}
 
 	/* integer arguments */
@@ -4322,13 +4322,13 @@ dump_config(ServerOptions *o)
 	dump_cfg_int(sMaxAuthTries, o->max_authtries);
 	dump_cfg_int(sMaxSessions, o->max_sessions);
 	dump_cfg_int(sClientAliveInterval, o->client_alive_interval);
-	dump_cfg_int(sClientAliveCountMax, o->client_alive_count_max);
+	dump_cfg_int(s_Client_Alive_மொத்தம்_Max, o->client_alive_மொத்தம்_max);
 	dump_cfg_int(sRequiredRSASize, o->required_rsa_size);
 	dump_cfg_oct(sStreamLocalBindMask, o->fwd_opts.streamlocal_bind_mask);
 	dump_cfg_int(sUnusedConnectionTimeout, o->unused_connection_timeout);
 
 	/* formatted integer arguments */
-	dump_cfg_fmtint(sPermitRootLogin, o->permit_root_login);
+	dump_cfg_fmtint(s_Permit_வேர்_Login, o->permit_வேர்_login);
 	dump_cfg_fmtint(sIgnoreRhosts, o->ignore_rhosts);
 	dump_cfg_fmtint(sIgnoreUserKnownHosts, o->ignore_user_known_hosts);
 	dump_cfg_fmtint(sHostbasedAuthentication, o->hostbased_authentication);
@@ -4385,23 +4385,23 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sBanner, o->banner);
 	dump_cfg_string(sForceCommand, o->adm_forced_command);
 	dump_cfg_string(sChrootDirectory, o->chroot_directory);
-	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_keys);
-	dump_cfg_string(sSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_சாவிகள்);
+	dump_cfg_string(s_Security_சாவி_Provider, o->sk_provider);
 	dump_cfg_string(sAuthorizedPrincipalsFile,
 	    o->authorized_principals_file);
 	dump_cfg_string(sVersionAddendum, *o->version_addendum == '\0'
 	    ? "none" : o->version_addendum);
-	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
-	dump_cfg_string(sAuthorizedKeysCommandUser, o->authorized_keys_command_user);
+	dump_cfg_string(s_Authorized_சாவிகள்_Command, o->authorized_சாவிகள்_command);
+	dump_cfg_string(s_Authorized_சாவிகள்_Command_User, o->authorized_சாவிகள்_command_user);
 	dump_cfg_string(sAuthorizedPrincipalsCommand, o->authorized_principals_command);
 	dump_cfg_string(sAuthorizedPrincipalsCommandUser, o->authorized_principals_command_user);
-	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+	dump_cfg_string(s_Host_சாவி_Agent, o->host_சாவி_agent);
 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+	dump_cfg_string(s_Host_சாவி_Algorithms, o->hostkeyalgorithms);
 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
-#if defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+#எனில் defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
 	dump_cfg_string(sRDomain, o->routing_domain);
 #endif
 	dump_cfg_string(sSshdSessionPath, o->sshd_session_path);
@@ -4414,46 +4414,46 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sSyslogFacility, log_facility_name(o->log_facility));
 
 	/* string array arguments */
-	dump_cfg_strarray_oneline(sAuthorizedKeysFile, o->num_authkeys_files,
-	    o->authorized_keys_files);
-	dump_cfg_strarray_oneline(sRevokedKeys, o->num_revoked_keys_files,
-	    o->revoked_keys_files);
-	dump_cfg_strarray(sHostKey, o->num_host_key_files, o->host_key_files);
-	dump_cfg_strarray(sHostCertificate, o->num_host_cert_files,
+	dump_cfg_strarray_oneline(s_Authorized_சாவிகள்_File, o->இலக்கம்_authkeys_files,
+	    o->authorized_சாவிகள்_files);
+	dump_cfg_strarray_oneline(s_Revoked_சாவிகள், o->இலக்கம்_revoked_சாவிகள்_files,
+	    o->revoked_சாவிகள்_files);
+	dump_cfg_strarray(s_Host_சாவி, o->இலக்கம்_host_சாவி_files, o->host_சாவி_files);
+	dump_cfg_strarray(sHostCertificate, o->இலக்கம்_host_cert_files,
 	    o->host_cert_files);
-	dump_cfg_strarray(sAllowUsers, o->num_allow_users, o->allow_users);
-	dump_cfg_strarray(sDenyUsers, o->num_deny_users, o->deny_users);
-	dump_cfg_strarray(sAllowGroups, o->num_allow_groups, o->allow_groups);
-	dump_cfg_strarray(sDenyGroups, o->num_deny_groups, o->deny_groups);
-	dump_cfg_strarray(sAcceptEnv, o->num_accept_env, o->accept_env);
-	dump_cfg_strarray(sSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(sAllowUsers, o->இலக்கம்_allow_users, o->allow_users);
+	dump_cfg_strarray(sDenyUsers, o->இலக்கம்_deny_users, o->deny_users);
+	dump_cfg_strarray(sAllowGroups, o->இலக்கம்_allow_groups, o->allow_groups);
+	dump_cfg_strarray(sDenyGroups, o->இலக்கம்_deny_groups, o->deny_groups);
+	dump_cfg_strarray(sAcceptEnv, o->இலக்கம்_accept_env, o->accept_env);
+	dump_cfg_strarray(sSetEnv, o->இலக்கம்_setenv, o->setenv);
 	dump_cfg_strarray_oneline(sAuthenticationMethods,
-	    o->num_auth_methods, o->auth_methods);
+	    o->இலக்கம்_auth_methods, o->auth_methods);
 	dump_cfg_strarray_oneline(sLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->இலக்கம்_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(sChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->இலக்கம்_channel_timeouts, o->channel_timeouts);
 
 	/* other arguments */
-	for (i = 0; i < o->num_subsystems; i++)
+	க்கு (i = 0; i < o->இலக்கம்_subsystems; i++)
 		printf("Subsystem %s %s\n", o->subsystem_name[i],
 		    o->subsystem_args[i]);
 
 	printf("MaxStartups %d:%d:%d\n", o->max_startups_begin,
 	    o->max_startups_rate, o->max_startups);
 	printf("PerSourceMaxStartups ");
-	if (o->per_source_max_startups == INT_MAX)
+	எனில் (o->per_source_max_startups == INT_MAX)
 		printf("none\n");
-	else
+	இல்லையெனில்
 		printf("%d\n", o->per_source_max_startups);
 	printf("PerSourceNetBlockSize %d:%d\n", o->per_source_masklen_ipv4,
 	    o->per_source_masklen_ipv6);
 
-	s = NULL;
-	for (i = 0; tunmode_desc[i].val != -1; i++) {
-		if (tunmode_desc[i].val == o->permit_tun) {
+	s = வெற்று;
+	க்கு (i = 0; tunmode_desc[i].val != -1; i++) {
+		எனில் (tunmode_desc[i].val == o->permit_tun) {
 			s = tunmode_desc[i].text;
-			break;
+			நிறுத்து;
 		}
 	}
 	dump_cfg_string(sPermitTunnel, s);
@@ -4465,41 +4465,41 @@ dump_config(ServerOptions *o)
 	    o->rekey_interval);
 
 	printf("PermitOpen");
-	if (o->num_permitted_opens == 0)
+	எனில் (o->இலக்கம்_permitted_opens == 0)
 		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_opens; i++)
+	இல்லையெனில் {
+		க்கு (i = 0; i < o->இலக்கம்_permitted_opens; i++)
 			printf(" %s", o->permitted_opens[i]);
 	}
 	printf("\n");
 	printf("PermitListen");
-	if (o->num_permitted_listens == 0)
+	எனில் (o->இலக்கம்_permitted_listens == 0)
 		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_listens; i++)
+	இல்லையெனில் {
+		க்கு (i = 0; i < o->இலக்கம்_permitted_listens; i++)
 			printf(" %s", o->permitted_listens[i]);
 	}
 	printf("\n");
 
-	if (o->permit_user_env_allowlist == NULL) {
+	எனில் (o->permit_user_env_allowlist == வெற்று) {
 		dump_cfg_fmtint(sPermitUserEnvironment, o->permit_user_env);
-	} else {
+	} இல்லையெனில் {
 		printf("PermitUserEnvironment %s\n",
 		    o->permit_user_env_allowlist);
 	}
 
 	printf("PubkeyAuthOptions");
-	if (o->pubkey_auth_options == 0)
+	எனில் (o->pubkey_auth_options == 0)
 		printf(" none");
-	if (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
+	எனில் (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
 		printf(" touch-required");
-	if (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
+	எனில் (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
 		printf(" verify-required");
-	if (o->max_pubkey_ok != -1)
+	எனில் (o->max_pubkey_ok != -1)
 		printf(" max-pk-ok:%d", o->max_pubkey_ok);
 	printf("\n");
 
-	if (o->per_source_penalty.enabled) {
+	எனில் (o->per_source_penalty.enabled) {
 		printf("PerSourcePenalties crash:%f authfail:%f noauth:%f "
 		    "invaliduser:%f "
 		    "grace-exceeded:%f refuseconnection:%f max:%f min:%f "
@@ -4521,6 +4521,6 @@ dump_config(ServerOptions *o)
 		    o->per_source_penalty.overflow_mode6 ==
 		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
 		    "deny-all" : "permissive");
-	} else
+	} இல்லையெனில்
 		printf("PerSourcePenalties no\n");
 }

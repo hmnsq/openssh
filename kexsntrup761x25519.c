@@ -23,78 +23,78 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef USE_SNTRUP761X25519
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "ssherr.h"
 
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
+நிலையற்ற crypto_int16 crypto_int16_optblocker = 0;
+நிலையற்ற crypto_int32 crypto_int32_optblocker = 0;
+நிலையற்ற crypto_int64 crypto_int64_optblocker = 0;
 
-int
-kex_kem_sntrup761x25519_keypair(struct kex *kex)
+முழு
+kex_kem_sntrup761x25519_keypair(கட்டமைப்பு kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	u_char *cp = வெற்று;
 	size_t need;
-	int r;
+	முழு r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	எனில் ((buf = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
 	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
-		goto out;
-	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_key);
+	எனில் ((r = sshbuf_reserve(buf, need, &cp)) != 0)
+		செல் out;
+	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_சாவி);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key sntrup761:", cp,
 	    crypto_kem_sntrup761_PUBLICKEYBYTES);
 #endif
 	cp += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	kexc25519_keygen(kex->c25519_client_சாவி, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = வெற்று;
  out:
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_kem_sntrup761x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+முழு
+kex_kem_sntrup761x25519_enc(கட்டமைப்பு kex *kex,
+   மாறிலி கட்டமைப்பு sshbuf *client_blob, கட்டமைப்பு sshbuf **server_blobp,
+   கட்டமைப்பு sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
-	u_char *kem_key, *ciphertext, *server_pub;
-	u_char server_key[CURVE25519_SIZE];
+	கட்டமைப்பு sshbuf *server_blob = வெற்று;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	மாறிலி u_char *client_pub;
+	u_char *kem_சாவி, *ciphertext, *server_pub;
+	u_char server_சாவி[CURVE25519_SIZE];
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
-	int r;
+	முழு r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = வெற்று;
+	*shared_secretp = வெற்று;
 
 	/* client_blob contains both KEM and ECDH client pubkeys */
 	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(client_blob) != need) {
+	எனில் (sshbuf_len(client_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		செல் out;
 	}
 	client_pub = sshbuf_ptr(client_blob);
 #ifdef DEBUG_KEXECDH
@@ -106,77 +106,77 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 #endif
 	/* allocate buffer for concatenation of KEM key and ECDH shared key */
 	/* the buffer will be hashed and the result is the shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	எனில் ((buf = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
+	    &kem_சாவி)) != 0)
+		செல் out;
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	எனில் ((server_blob = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
 	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
+		செல் out;
 	/* generate and encrypt KEM key with client key */
-	crypto_kem_sntrup761_enc(ciphertext, kem_key, client_pub);
+	crypto_kem_sntrup761_enc(ciphertext, kem_சாவி, client_pub);
 	/* generate ECDH key pair, store server pubkey after ciphertext */
 	server_pub = ciphertext + crypto_kem_sntrup761_CIPHERTEXTBYTES;
-	kexc25519_keygen(server_key, server_pub);
+	kexc25519_keygen(server_சாவி, server_pub);
 	/* append ECDH shared key */
 	client_pub += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
-		goto out;
+	எனில் ((r = kexc25519_shared_சாவி_ext(server_சாவி, client_pub, buf, 1)) < 0)
+		செல் out;
+	எனில் ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, அளவு(hash))) != 0)
+		செல் out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
 	dump_digest("server cipher text:", ciphertext,
 	    crypto_kem_sntrup761_CIPHERTEXTBYTES);
-	dump_digest("server kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+	dump_digest("server kem key:", kem_சாவி, crypto_kem_sntrup761_BYTES);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	/* string-encoded hash is resulting shared secret */
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	எனில் ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
+		செல் out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
+	server_blob = வெற்று;
+	buf = வெற்று;
  out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(hash, அளவு(hash));
+	explicit_bzero(server_சாவி, அளவு(server_சாவி));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_kem_sntrup761x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+முழு
+kex_kem_sntrup761x25519_dec(கட்டமைப்பு kex *kex,
+    மாறிலி கட்டமைப்பு sshbuf *server_blob, கட்டமைப்பு sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	u_char *kem_key = NULL;
-	const u_char *ciphertext, *server_pub;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	u_char *kem_சாவி = வெற்று;
+	மாறிலி u_char *ciphertext, *server_pub;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
-	int r, decoded;
+	முழு r, decoded;
 
-	*shared_secretp = NULL;
+	*shared_secretp = வெற்று;
 
 	need = crypto_kem_sntrup761_CIPHERTEXTBYTES + CURVE25519_SIZE;
-	if (sshbuf_len(server_blob) != need) {
+	எனில் (sshbuf_len(server_blob) != need) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		செல் out;
 	}
 	ciphertext = sshbuf_ptr(server_blob);
 	server_pub = ciphertext + crypto_kem_sntrup761_CIPHERTEXTBYTES;
@@ -186,70 +186,70 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	/* hash concatenation of KEM key and ECDH shared key */
-	if ((buf = sshbuf_new()) == NULL) {
+	எனில் ((buf = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
-		goto out;
-	decoded = crypto_kem_sntrup761_dec(kem_key, ciphertext,
-	    kex->sntrup761_client_key);
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	எனில் ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
+	    &kem_சாவி)) != 0)
+		செல் out;
+	decoded = crypto_kem_sntrup761_dec(kem_சாவி, ciphertext,
+	    kex->sntrup761_client_சாவி);
+	எனில் ((r = kexc25519_shared_சாவி_ext(kex->c25519_client_சாவி, server_pub,
 	    buf, 1)) < 0)
-		goto out;
-	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
-		goto out;
+		செல் out;
+	எனில் ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, அளவு(hash))) != 0)
+		செல் out;
 #ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+	dump_digest("client kem key:", kem_சாவி, crypto_kem_sntrup761_BYTES);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	sshbuf_reset(buf);
-	if ((r = sshbuf_put_string(buf, hash,
+	எனில் ((r = sshbuf_put_string(buf, hash,
 	    ssh_digest_bytes(kex->hash_alg))) != 0)
-		goto out;
+		செல் out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
-	if (decoded != 0) {
+	எனில் (decoded != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		செல் out;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = வெற்று;
  out:
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, அளவு(hash));
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 
-#else
+#இல்லையெனில்
 
-#include "ssherr.h"
+#அந்தர்பாவ "ssherr.h"
 
-struct kex;
-struct sshbuf;
-struct sshkey;
+கட்டமைப்பு kex;
+கட்டமைப்பு sshbuf;
+கட்டமைப்பு sshkey;
 
-int
-kex_kem_sntrup761x25519_keypair(struct kex *kex)
+முழு
+kex_kem_sntrup761x25519_keypair(கட்டமைப்பு kex *kex)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	திரும்பு SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_sntrup761x25519_enc(struct kex *kex,
-   const struct sshbuf *client_blob, struct sshbuf **server_blobp,
-   struct sshbuf **shared_secretp)
+முழு
+kex_kem_sntrup761x25519_enc(கட்டமைப்பு kex *kex,
+   மாறிலி கட்டமைப்பு sshbuf *client_blob, கட்டமைப்பு sshbuf **server_blobp,
+   கட்டமைப்பு sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	திரும்பு SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-kex_kem_sntrup761x25519_dec(struct kex *kex,
-    const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
+முழு
+kex_kem_sntrup761x25519_dec(கட்டமைப்பு kex *kex,
+    மாறிலி கட்டமைப்பு sshbuf *server_blob, கட்டமைப்பு sshbuf **shared_secretp)
 {
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	திரும்பு SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 #endif /* USE_SNTRUP761X25519 */

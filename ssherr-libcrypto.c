@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <string.h>
 
-#include "log.h"
+#அந்தர்பாவ "log.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#அந்தர்பாவ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+மாறிலி எழுத்து *
+ssherr_libcrypto(வெறுமை)
 {
 	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	நிலையான எழுத்து buf[512];
+	எழுத்து செய்தி[4096];
+	மாறிலி எழுத்து *reason = வெற்று, *file, *data;
+	முழு ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, வெற்று);
+	போது ((e = ERR_get_error_வரி_data(&file, &ln, &data, &fl)) != 0) {
+		ERR_error_string_n(e, buf, அளவு(buf));
+		snprintf(செய்தி, அளவு(செய்தி), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+		debug("libcrypto: '%s'", செய்தி);
+		எனில் ((reason = ERR_reason_error_string(e)) != வெற்று)
+			snprintf(buf, அளவு(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	எனில் (reason == வெற்று)
+		திரும்பு வெற்று;
+	திரும்பு buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#இல்லையெனில்
+மாறிலி எழுத்து *
+ssherr_libcrypto(வெறுமை)
 {
-	return NULL;
+	திரும்பு வெற்று;
 }
 #endif

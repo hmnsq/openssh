@@ -29,25 +29,25 @@
 #ifndef _ATOMICIO_H
 #define _ATOMICIO_H
 
-struct iovec;
+கட்டமைப்பு iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+atomicio6(ssize_t (*f) (முழு, வெறுமை *, size_t), முழு fd, வெறுமை *_s, size_t n,
+    முழு (*cb)(வெறுமை *, size_t), வெறுமை *);
+size_t	atomicio(ssize_t (*)(முழு, வெறுமை *, size_t), முழு, வெறுமை *, size_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(முழு, வெறுமை *, size_t))லிக
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+atomiciov6(ssize_t (*f) (முழு, மாறிலி கட்டமைப்பு iovec *, முழு), முழு fd,
+    மாறிலி கட்டமைப்பு iovec *_iov, முழு iovcnt, முழு (*cb)(வெறுமை *, size_t), வெறுமை *);
+size_t	atomiciov(ssize_t (*)(முழு, மாறிலி கட்டமைப்பு iovec *, முழு),
+    முழு, மாறிலி கட்டமைப்பு iovec *, முழு);
 
 #endif /* _ATOMICIO_H */

@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if 0
-#include "file.h"
+#எனில் 0
+#அந்தர்பாவ "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#எனில் !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+நிலையான ssize_t
+getdelim(எழுத்து **buf, size_t *bufsiz, முழு delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	எழுத்து *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	எனில் (*buf == வெற்று || *bufsiz == 0) {
+		எனில் ((*buf = malloc(BUFSIZ)) == வெற்று)
+			திரும்பு -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	க்கு (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		முழு c = fgetc(fp);
+		எனில் (c == -1) {
+			எனில் (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				எனில் (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					திரும்பு diff;
 				}
 			}
-			return -1;
+			திரும்பு -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		எனில் (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			திரும்பு ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
+		எனில் (ptr + 2 >= eptr) {
+			எழுத்து *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			எனில் ((nbuf = realloc(*buf, nbufsiz)) == வெற்று)
+				திரும்பு -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(எழுத்து **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	திரும்பு getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+முழு
+முதன்மை(முழு argc, எழுத்து *argv[])
 {
-	char *p = NULL;
+	எழுத்து *p = வெற்று;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	போது ((len = getline(&p, &n, stdin)) != -1)
+		(வெறுமை)printf("%" SIZE_T_FORMAT "d %s", len, p);
+	விடுவி(p);
+	திரும்பு 0;
 }
 #endif

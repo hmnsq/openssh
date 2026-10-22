@@ -1,20 +1,20 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
 
-extern "C" {
+வெளி "C" {
 
-#include "sshkey.h"
-#include "sshbuf.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "sshbuf.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+முழு LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t* data, size_t size)
 {
-	struct sshkey *k = NULL;
-	struct sshbuf *b = sshbuf_from(data, size);
-	(void)sshkey_private_deserialize(b, &k);
+	கட்டமைப்பு sshkey *k = வெற்று;
+	கட்டமைப்பு sshbuf *b = sshbuf_from(data, size);
+	(வெறுமை)sshkey_private_deserialize(b, &k);
 	sshkey_free(k);
 	sshbuf_free(b);
-	return 0;
+	திரும்பு 0;
 }
 
 } // extern

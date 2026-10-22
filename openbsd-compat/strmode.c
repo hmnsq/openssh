@@ -30,117 +30,117 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 #ifndef HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+வெறுமை
+strmode(முழு mode, எழுத்து *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	தேர்வு (mode & S_IFMT) {
+	நிலை S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		நிறுத்து;
+	நிலை S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		நிறுத்து;
+	நிலை S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		நிறுத்து;
+	நிலை S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		நிறுத்து;
+	நிலை S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
+		நிறுத்து;
 #ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+	நிலை S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
+		நிறுத்து;
 #endif
 #ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+	நிலை S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
+		நிறுத்து;
 #endif
-	default:			/* unknown */
+	இயல்பு:			/* unknown */
 		*p++ = '?';
-		break;
+		நிறுத்து;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	எனில் (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	எனில் (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	தேர்வு (mode & (S_IXUSR | S_ISUID)) {
+	நிலை 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		நிறுத்து;
+	நிலை S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		நிறுத்து;
+	நிலை S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		நிறுத்து;
+	நிலை S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		நிறுத்து;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	எனில் (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	எனில் (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	தேர்வு (mode & (S_IXGRP | S_ISGID)) {
+	நிலை 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		நிறுத்து;
+	நிலை S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		நிறுத்து;
+	நிலை S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		நிறுத்து;
+	நிலை S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		நிறுத்து;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	எனில் (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	எனில் (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	இல்லையெனில்
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	தேர்வு (mode & (S_IXOTH | S_ISVTX)) {
+	நிலை 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		நிறுத்து;
+	நிலை S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		நிறுத்து;
+	நிலை S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		நிறுத்து;
+	நிலை S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		நிறுத்து;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';

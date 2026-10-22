@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 #ifndef HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -45,64 +45,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(மாறிலி எழுத்து *nptr, எழுத்து **endptr, முழு base)
 {
-	const char *s;
+	மாறிலி எழுத்து *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	முழு c;
+	முழு neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	செய் {
+		c = (unsigned எழுத்து) *s++;
+	} போது (isspace(c));
+	எனில் (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} இல்லையெனில் {
 		neg = 0;
-		if (c == '+')
+		எனில் (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	எனில் ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	எனில் (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	க்கு (acc = 0, any = 0;; c = (unsigned எழுத்து) *s++) {
+		எனில் (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		இல்லையெனில் எனில் (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		இல்லையெனில்
+			நிறுத்து;
+		எனில் (c >= base)
+			நிறுத்து;
+		எனில் (any < 0)
+			தொடர்;
+		எனில் (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} இல்லையெனில் {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	எனில் (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	எனில் (endptr != 0)
+		*endptr = (எழுத்து *) (any ? s - 1 : nptr);
+	திரும்பு (acc);
 }
 #endif /* !HAVE_STRTOUL */

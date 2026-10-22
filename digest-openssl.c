@@ -15,193 +15,193 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include <openssl/evp.h>
+#அந்தர்பாவ <openssl/evp.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "digest.h"
+#அந்தர்பாவ "ssherr.h"
 
 #ifndef HAVE_EVP_SHA256
-# define EVP_sha256 NULL
+# define EVP_sha256 வெற்று
 #endif
 #ifndef HAVE_EVP_SHA384
-# define EVP_sha384 NULL
+# define EVP_sha384 வெற்று
 #endif
 #ifndef HAVE_EVP_SHA512
-# define EVP_sha512 NULL
+# define EVP_sha512 வெற்று
 #endif
 
-struct ssh_digest_ctx {
-	int alg;
+கட்டமைப்பு ssh_digest_ctx {
+	முழு alg;
 	EVP_MD_CTX *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+கட்டமைப்பு ssh_digest {
+	முழு id;
+	மாறிலி எழுத்து *name;
 	size_t digest_len;
-	const EVP_MD *(*mdfunc)(void);
+	மாறிலி EVP_MD *(*mdfunc)(வெறுமை);
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[] = {
+மாறிலி கட்டமைப்பு ssh_digest digests[] = {
 	{ SSH_DIGEST_MD5,	"MD5",		16,	EVP_md5 },
 	{ SSH_DIGEST_SHA1,	"SHA1",		20,	EVP_sha1 },
 	{ SSH_DIGEST_SHA256,	"SHA256",	32,	EVP_sha256 },
 	{ SSH_DIGEST_SHA384,	"SHA384",	48,	EVP_sha384 },
 	{ SSH_DIGEST_SHA512,	"SHA512",	64,	EVP_sha512 },
-	{ -1,			NULL,		0,	NULL },
+	{ -1,			வெற்று,		0,	வெற்று },
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+நிலையான மாறிலி கட்டமைப்பு ssh_digest *
+ssh_digest_by_alg(முழு alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	எனில் (alg < 0 || alg >= SSH_DIGEST_MAX)
+		திரும்பு வெற்று;
+	எனில் (digests[alg].id != alg) /* sanity */
+		திரும்பு வெற்று;
+	எனில் (digests[alg].mdfunc == வெற்று)
+		திரும்பு வெற்று;
+	திரும்பு &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+முழு
+ssh_digest_alg_by_name(மாறிலி எழுத்து *name)
 {
-	int alg;
+	முழு alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	க்கு (alg = 0; digests[alg].id != -1; alg++) {
+		எனில் (strcasecmp(name, digests[alg].name) == 0)
+			திரும்பு digests[alg].id;
 	}
-	return -1;
+	திரும்பு -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+மாறிலி எழுத்து *
+ssh_digest_alg_name(முழு alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	மாறிலி கட்டமைப்பு ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	திரும்பு digest == வெற்று ? வெற்று : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(முழு alg)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	மாறிலி கட்டமைப்பு ssh_digest *digest = ssh_digest_by_alg(alg);
+
+	திரும்பு digest == வெற்று ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(கட்டமைப்பு ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	திரும்பு EVP_MD_CTX_block_size(ctx->mdctx);
+}
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+கட்டமைப்பு ssh_digest_ctx *
+ssh_digest_start(முழு alg)
+{
+	மாறிலி கட்டமைப்பு ssh_digest *digest = ssh_digest_by_alg(alg);
+	கட்டமைப்பு ssh_digest_ctx *ret;
+
+	எனில் (digest == வெற்று || ((ret = calloc(1, அளவு(*ret))) == வெற்று))
+		திரும்பு வெற்று;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
-		free(ret);
-		return NULL;
+	எனில் ((ret->mdctx = EVP_MD_CTX_new()) == வெற்று) {
+		விடுவி(ret);
+		திரும்பு வெற்று;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	எனில் (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), வெற்று) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		திரும்பு வெற்று;
 	}
-	return ret;
+	திரும்பு ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+முழு
+ssh_digest_copy_state(கட்டமைப்பு ssh_digest_ctx *from, கட்டமைப்பு ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	எனில் (from->alg != to->alg)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	எனில் (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
+	திரும்பு 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+முழு
+ssh_digest_update(கட்டமைப்பு ssh_digest_ctx *ctx, மாறிலி வெறுமை *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	எனில் (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
+	திரும்பு 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+முழு
+ssh_digest_update_buffer(கட்டமைப்பு ssh_digest_ctx *ctx, மாறிலி கட்டமைப்பு sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	திரும்பு ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+முழு
+ssh_digest_final(கட்டமைப்பு ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	மாறிலி கட்டமைப்பு ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	எனில் (digest == வெற்று || dlen > UINT_MAX)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (dlen < digest->digest_len) /* No truncation allowed */
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
+	எனில் (l != digest->digest_len) /* sanity */
+		திரும்பு SSH_ERR_INTERNAL_ERROR;
+	திரும்பு 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+வெறுமை
+ssh_digest_free(கட்டமைப்பு ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	எனில் (ctx == வெற்று)
+		திரும்பு;
 	EVP_MD_CTX_free(ctx->mdctx);
-	freezero(ctx, sizeof(*ctx));
+	freezero(ctx, அளவு(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+முழு
+ssh_digest_memory(முழு alg, மாறிலி வெறுமை *m, size_t mlen, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	மாறிலி கட்டமைப்பு ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	எனில் (digest == வெற்று)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (dlen > UINT_MAX)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
+	எனில் (dlen < digest->digest_len)
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	எனில் (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), வெற்று))
+		திரும்பு SSH_ERR_LIBCRYPTO_ERROR;
+	திரும்பு 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+முழு
+ssh_digest_buffer(முழு alg, மாறிலி கட்டமைப்பு sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	திரும்பு ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

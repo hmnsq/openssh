@@ -19,14 +19,14 @@
 #ifndef _ADDR_H
 #define _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <netinet/in.h>
 
-struct xaddr {
+கட்டமைப்பு xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	ஒன்றிப்பு {
+		கட்டமைப்பு in_addr		v4;
+		கட்டமைப்பு in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
@@ -39,15 +39,15 @@ struct xaddr {
 #define addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+முழு addr_sa_to_xaddr(கட்டமைப்பு sockaddr *sa, socklen_t slen, கட்டமைப்பு xaddr *xa);
+முழு addr_netmask(முழு af, u_int l, கட்டமைப்பு xaddr *n);
+முழு addr_pton(மாறிலி எழுத்து *p, கட்டமைப்பு xaddr *n);
+முழு addr_pton_cidr(மாறிலி எழுத்து *p, கட்டமைப்பு xaddr *n, u_int *l);
+முழு addr_ntop(மாறிலி கட்டமைப்பு xaddr *n, எழுத்து *p, size_t len);
+முழு addr_and(கட்டமைப்பு xaddr *dst, மாறிலி கட்டமைப்பு xaddr *a, மாறிலி கட்டமைப்பு xaddr *b);
+முழு addr_cmp(மாறிலி கட்டமைப்பு xaddr *a, மாறிலி கட்டமைப்பு xaddr *b);
+முழு addr_host_to_all1s(கட்டமைப்பு xaddr *a, u_int masklen);
+முழு addr_netmatch(மாறிலி கட்டமைப்பு xaddr *host, மாறிலி கட்டமைப்பு xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
+வெறுமை addr_increment(கட்டமைப்பு xaddr *a);
 #endif /* _ADDR_H */

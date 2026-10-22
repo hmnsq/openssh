@@ -30,18 +30,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/rpc/bindresvport.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE_BINDRESVPORT_SA
-#include <sys/types.h>
-#include <sys/socket.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
 #define STARTPORT 600
 #define ENDPORT (IPPORT_RESERVED - 1)
@@ -50,71 +50,71 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+முழு
+bindresvport_sa(முழு sd, கட்டமைப்பு sockaddr *sa)
 {
-	int error, af;
-	struct sockaddr_storage myaddr;
-	struct sockaddr_in *in;
-	struct sockaddr_in6 *in6;
+	முழு error, af;
+	கட்டமைப்பு sockaddr_storage myaddr;
+	கட்டமைப்பு sockaddr_in *in;
+	கட்டமைப்பு sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	முழு i;
 
-	if (sa == NULL) {
-		memset(&myaddr, 0, sizeof(myaddr));
-		sa = (struct sockaddr *)&myaddr;
-		salen = sizeof(myaddr);
+	எனில் (sa == வெற்று) {
+		memset(&myaddr, 0, அளவு(myaddr));
+		sa = (கட்டமைப்பு sockaddr *)&myaddr;
+		salen = அளவு(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		எனில் (getsockname(sd, sa, &salen) == -1)
+			திரும்பு -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} இல்லையெனில்
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
-		in = (struct sockaddr_in *)sa;
-		salen = sizeof(struct sockaddr_in);
+	எனில் (af == AF_INET) {
+		in = (கட்டமைப்பு sockaddr_in *)sa;
+		salen = அளவு(கட்டமைப்பு sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
-		in6 = (struct sockaddr_in6 *)sa;
-		salen = sizeof(struct sockaddr_in6);
+	} இல்லையெனில் எனில் (af == AF_INET6) {
+		in6 = (கட்டமைப்பு sockaddr_in6 *)sa;
+		salen = அளவு(கட்டமைப்பு sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} இல்லையெனில் {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		திரும்பு (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	எனில் (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
+	க்கு(i = 0; i < NPORTS; i++) {
 		*portp = htons(port);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
-			break;
+		எனில் (error == 0)
+			நிறுத்து;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
-			break;
+		எனில் ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+			நிறுத்து;
 			
 		port++;
-		if (port > ENDPORT)
+		எனில் (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	திரும்பு (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */

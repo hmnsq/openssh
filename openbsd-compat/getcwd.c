@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#எனில் !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <dirent.h>
+#அந்தர்பாவ <sys/dir.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ "includes.h"
 
 #define	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+எழுத்து *
+getcwd(எழுத்து *pt, size_t size)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	கட்டமைப்பு dirent *dp;
+	DIR *dir = வெற்று;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
+	முழு first;
+	எழுத்து *bpt, *bup;
+	கட்டமைப்பு stat s;
+	dev_t வேர்_dev;
+	ino_t வேர்_ino;
 	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	முழு save_errno;
+	எழுத்து *ept, *eup, *up;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	எனில் (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		எனில் (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			திரும்பு (வெற்று);
+		} இல்லையெனில் எனில் (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			திரும்பு (வெற்று);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} இல்லையெனில் {
+		எனில் ((pt = malloc(ptsize = MAXPATHLEN)) == வெற்று)
+			திரும்பு (வெற்று);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,32 +91,32 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
+	எனில் ((up = malloc(upsize = MAXPATHLEN)) == வெற்று)
+		செல் err;
 	eup = up + upsize;
 	bup = up;
 	up[0] = '.';
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	எனில் (stat("/", &s))
+		செல் err;
+	வேர்_dev = s.st_dev;
+	வேர்_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	க்கு (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		எனில் (lstat(up, &s))
+			செல் err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		எனில் (வேர்_dev == dev && வேர்_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -124,8 +124,8 @@ getcwd(char *pt, size_t size)
 			 * been that way and stuff would probably break.
 			 */
 			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			விடுவி(up);
+			திரும்பு (pt);
 		}
 
 		/*
@@ -133,11 +133,11 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		எனில் (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			எழுத்து *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
+			எனில் ((nup = realloc(up, upsize *= 2)) == வெற்று)
+				செல் err;
 			bup = nup + (bup - up);
 			up = nup;
 			eup = up + upsize;
@@ -147,8 +147,8 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		எனில் (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+			செல் err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		எனில் (s.st_dev == dev) {
+			க்கு (;;) {
+				எனில் (!(dp = readdir(dir)))
+					செல் notfound;
+				எனில் (dp->d_fileno == ino)
+					நிறுத்து;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
+		} இல்லையெனில்
+			க்கு (;;) {
+				எனில் (!(dp = readdir(dir)))
+					செல் notfound;
+				எனில் (ISDOT(dp))
+					தொடர்;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				எனில் (lstat(up, &s)) {
+					எனில் (!save_errno)
 						save_errno = errno;
 					errno = 0;
-					continue;
+					தொடர்;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				எனில் (s.st_dev == dev && s.st_ino == ino)
+					நிறுத்து;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		எனில் (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
-			char *npt;
+			எழுத்து *npt;
 
-			if (!ptsize) {
+			எனில் (!ptsize) {
 				errno = ERANGE;
-				goto err;
+				செல் err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			எனில் ((npt = realloc(pt, ptsize *= 2)) == வெற்று)
+				செல் err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		எனில் (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		(வெறுமை)closedir(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	எனில் (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	எனில் (ptsize)
+		விடுவி(pt);
+	விடுவி(up);
+	எனில் (dir)
+		(வெறுமை)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	திரும்பு (வெற்று);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

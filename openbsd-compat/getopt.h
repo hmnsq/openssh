@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# எனில் defined __cplusplus
 #  define __THROW throw()
-# else
+# இல்லையெனில்
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#எனில் 0
+கட்டமைப்பு option {
 	/* name of long option */
-	const char *name;
+	மாறிலி எழுத்து *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	முழு has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	முழு *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	முழு val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+முழு	 getopt_long(முழு, எழுத்து * மாறிலி *, மாறிலி எழுத்து *,
+	    மாறிலி கட்டமைப்பு option *, முழு *);
+முழு	 getopt_long_only(முழு, எழுத்து * மாறிலி *, மாறிலி எழுத்து *,
+	    மாறிலி கட்டமைப்பு option *, முழு *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+முழு	 getopt(முழு, எழுத்து * மாறிலி *, மாறிலி எழுத்து *) __THROW;
+முழு	 getsubopt(எழுத்து **, எழுத்து * மாறிலி *, எழுத்து **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+வெளி   எழுத்து *optarg;                  /* getopt(3) external variables */
+வெளி   முழு opterr;
+வெளி   முழு optind;
+வெளி   முழு optopt;
+வெளி   முழு optreset;
+வெளி   எழுத்து *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

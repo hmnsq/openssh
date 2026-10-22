@@ -25,143 +25,143 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/queue.h>
-#include <sys/wait.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/uio.h>
+#அந்தர்பாவ <sys/queue.h>
+#அந்தர்பாவ <sys/wait.h>
 
-#include <errno.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/evp.h>
+#அந்தர்பாவ <openssl/bn.h>
+#அந்தர்பாவ <openssl/dh.h>
+#அந்தர்பாவ <openssl/evp.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "ssh.h"
 #ifdef WITH_OPENSSL
-#include "dh.h"
+#அந்தர்பாவ "dh.h"
 #endif
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "packet.h"
-#include "mac.h"
-#include "log.h"
-#include "auth-pam.h"
-#include "monitor.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "cipher.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "auth-options.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "mac.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "auth-pam.h"
+#அந்தர்பாவ "monitor.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#அந்தர்பாவ "ssh-gss.h"
 #endif
-#include "atomicio.h"
-#include "monitor_fdpass.h"
-#include "misc.h"
+#அந்தர்பாவ "atomicio.h"
+#அந்தர்பாவ "monitor_fdpass.h"
+#அந்தர்பாவ "misc.h"
 
-#include "channels.h"
-#include "session.h"
-#include "servconf.h"
-#include "monitor_wrap.h"
-#include "srclimit.h"
+#அந்தர்பாவ "channels.h"
+#அந்தர்பாவ "session.h"
+#அந்தர்பாவ "servconf.h"
+#அந்தர்பாவ "monitor_wrap.h"
+#அந்தர்பாவ "srclimit.h"
 
-#include "ssherr.h"
+#அந்தர்பாவ "ssherr.h"
 
 /* Imports */
-extern struct monitor *pmonitor;
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+வெளி கட்டமைப்பு monitor *pmonitor;
+வெளி கட்டமைப்பு sshbuf *loginmsg;
+வெளி ServerOptions options;
 
-void
-mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
+வெறுமை
+mm_log_handler(LogLevel level, முழு forced, மாறிலி எழுத்து *செய்தி, வெறுமை *ctx)
 {
-	struct sshbuf *log_msg;
-	struct monitor *mon = (struct monitor *)ctx;
-	int r;
+	கட்டமைப்பு sshbuf *log_செய்தி;
+	கட்டமைப்பு monitor *mon = (கட்டமைப்பு monitor *)ctx;
+	முழு r;
 	size_t len;
 
-	if (mon->m_log_sendfd == -1)
+	எனில் (mon->m_log_sendfd == -1)
 		fatal_f("no log channel");
 
-	if ((log_msg = sshbuf_new()) == NULL)
+	எனில் ((log_செய்தி = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 
-	if ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
-	    (r = sshbuf_put_u32(log_msg, level)) != 0 ||
-	    (r = sshbuf_put_u32(log_msg, forced)) != 0 ||
-	    (r = sshbuf_put_cstring(log_msg, msg)) != 0)
+	எனில் ((r = sshbuf_put_u32(log_செய்தி, 0)) != 0 || /* length; filled below */
+	    (r = sshbuf_put_u32(log_செய்தி, level)) != 0 ||
+	    (r = sshbuf_put_u32(log_செய்தி, forced)) != 0 ||
+	    (r = sshbuf_put_cstring(log_செய்தி, செய்தி)) != 0)
 		fatal_fr(r, "assemble");
-	if ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
+	எனில் ((len = sshbuf_len(log_செய்தி)) < 4 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
-	POKE_U32(sshbuf_mutable_ptr(log_msg), len - 4);
-	if (atomicio(vwrite, mon->m_log_sendfd,
-	    sshbuf_mutable_ptr(log_msg), len) != len) {
-		if (errno == EPIPE) {
+	POKE_U32(sshbuf_mutable_ptr(log_செய்தி), len - 4);
+	எனில் (atomicio(vwrite, mon->m_log_sendfd,
+	    sshbuf_mutable_ptr(log_செய்தி), len) != len) {
+		எனில் (errno == EPIPE) {
 			debug_f("write: %s", strerror(errno));
 			cleanup_exit(255);
 		}
 		fatal_f("write: %s", strerror(errno));
 	}
-	sshbuf_free(log_msg);
+	sshbuf_free(log_செய்தி);
 }
 
-static void
-mm_reap(void)
+நிலையான வெறுமை
+mm_reap(வெறுமை)
 {
-	int status = -1;
+	முழு status = -1;
 
-	if (!mm_is_monitor())
-		return;
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
-			continue;
+	எனில் (!mm_is_monitor())
+		திரும்பு;
+	போது (waitpid(pmonitor->m_pid, &status, 0) == -1) {
+		எனில் (errno == EINTR)
+			தொடர்;
 		pmonitor->m_pid = -1;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0) {
+	எனில் (WIFEXITED(status)) {
+		எனில் (WEXITSTATUS(status) != 0) {
 			debug_f("child exited with status %d",
 			    WEXITSTATUS(status));
 			cleanup_exit(255);
 		}
-	} else if (WIFSIGNALED(status)) {
+	} இல்லையெனில் எனில் (WIFSIGNALED(status)) {
 		error_f("child terminated by signal %d",
 		    WTERMSIG(status));
 		cleanup_exit(signal_is_crash(WTERMSIG(status)) ?
 		    EXIT_CHILD_CRASH : 255);
-	} else {
+	} இல்லையெனில் {
 		error_f("child terminated abnormally (status=0x%x)",
 		    status);
 		cleanup_exit(EXIT_CHILD_CRASH);
 	}
 }
 
-void
-mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
+வெறுமை
+mm_request_send(முழு sock, எண்ணிக்கை monitor_reqtype type, கட்டமைப்பு sshbuf *m)
 {
 	size_t mlen = sshbuf_len(m);
 	u_char buf[5];
 
 	debug3_f("entering, type %d", type);
 
-	if (mlen >= MONITOR_MAX_MSGLEN)
+	எனில் (mlen >= MONITOR_MAX_MSGLEN)
 		fatal_f("bad length %zu", mlen);
 	POKE_U32(buf, mlen + 1);
 	buf[4] = (u_char) type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, sock, buf, sizeof(buf)) != sizeof(buf) ||
+	எனில் (atomicio(vwrite, sock, buf, அளவு(buf)) != அளவு(buf) ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(m), mlen) != mlen) {
-		if (errno == EPIPE) {
+		எனில் (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
@@ -170,65 +170,65 @@ mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
 	}
 }
 
-void
-mm_request_receive(int sock, struct sshbuf *m)
+வெறுமை
+mm_request_receive(முழு sock, கட்டமைப்பு sshbuf *m)
 {
-	u_char buf[4], *p = NULL;
-	u_int msg_len;
-	int oerrno, r;
+	u_char buf[4], *p = வெற்று;
+	u_int செய்தி_len;
+	முழு oerrno, r;
 
 	debug3_f("entering");
 
-	if (atomicio(read, sock, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno == EPIPE) {
+	எனில் (atomicio(பட, sock, buf, அளவு(buf)) != அளவு(buf)) {
+		எனில் (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
 		}
 		fatal_f("read: %s", strerror(errno));
 	}
-	msg_len = PEEK_U32(buf);
-	if (msg_len > MONITOR_MAX_MSGLEN)
-		fatal_f("read: bad msg_len %d", msg_len);
+	செய்தி_len = PEEK_U32(buf);
+	எனில் (செய்தி_len > MONITOR_MAX_MSGLEN)
+		fatal_f("read: bad msg_len %d", செய்தி_len);
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	எனில் ((r = sshbuf_reserve(m, செய்தி_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio(read, sock, p, msg_len) != msg_len) {
+	எனில் (atomicio(பட, sock, p, செய்தி_len) != செய்தி_len) {
 		oerrno = errno;
 		error_f("read: %s", strerror(errno));
-		if (oerrno == EPIPE)
+		எனில் (oerrno == EPIPE)
 			mm_reap();
 		cleanup_exit(255);
 	}
 }
 
-void
-mm_request_receive_expect(int sock, enum monitor_reqtype type, struct sshbuf *m)
+வெறுமை
+mm_request_receive_expect(முழு sock, எண்ணிக்கை monitor_reqtype type, கட்டமைப்பு sshbuf *m)
 {
 	u_char rtype;
-	int r;
+	முழு r;
 
 	debug3_f("entering, type %d", type);
 
 	mm_request_receive(sock, m);
-	if ((r = sshbuf_get_u8(m, &rtype)) != 0)
+	எனில் ((r = sshbuf_get_u8(m, &rtype)) != 0)
 		fatal_fr(r, "parse");
-	if (rtype != type)
+	எனில் (rtype != type)
 		fatal_f("read: rtype %d != type %d", rtype, type);
 }
 
 #ifdef WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_choose_dh(முழு min, முழு nbits, முழு max)
 {
 	BIGNUM *p, *g;
-	int r;
+	முழு r;
 	u_char success = 0;
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, min)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(m, min)) != 0 ||
 	    (r = sshbuf_put_u32(m, nbits)) != 0 ||
 	    (r = sshbuf_put_u32(m, max)) != 0)
 		fatal_fr(r, "assemble");
@@ -238,49 +238,49 @@ mm_choose_dh(int min, int nbits, int max)
 	debug3_f("waiting for MONITOR_ANS_MODULI");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_MODULI, m);
 
-	if ((r = sshbuf_get_u8(m, &success)) != 0)
+	எனில் ((r = sshbuf_get_u8(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0)
+	எனில் (success == 0)
 		fatal_f("MONITOR_ANS_MODULI failed");
 
-	if ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
+	எனில் ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
 	    (r = sshbuf_get_bignum2(m, &g)) != 0)
 		fatal_fr(r, "parse group");
 
 	debug3_f("remaining %zu", sshbuf_len(m));
 	sshbuf_free(m);
 
-	return (dh_new_group(g, p));
+	திரும்பு (dh_new_group(g, p));
 }
 #endif
 
-void
-mm_sshkey_setcompat(struct ssh *ssh)
+வெறுமை
+mm_sshkey_setcompat(கட்டமைப்பு ssh *ssh)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
+	எனில் ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_SETCOMPAT, m);
 }
 
-int
-mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *hostkey_alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+முழு
+mm_sshkey_sign(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshkey *சாவி, u_char **sigp, size_t *lenp,
+    மாறிலி u_char *data, size_t datalen, மாறிலி எழுத்து *hostkey_alg,
+    மாறிலி எழுத்து *sk_provider, மாறிலி எழுத்து *sk_pin, u_int compat)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	எனில் ((r = sshkey_puts(சாவி, m)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, compat)) != 0)
@@ -290,58 +290,58 @@ mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 
 	debug3_f("waiting for MONITOR_ANS_SIGN");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_SIGN, m);
-	if ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
+	எனில் ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 	debug3_f("%s signature len=%zu", hostkey_alg ? hostkey_alg : "(null)",
 	    *lenp);
 
-	return (0);
+	திரும்பு (0);
 }
 
-void
-mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m)
+வெறுமை
+mm_decode_activate_server_options(கட்டமைப்பு ssh *ssh, கட்டமைப்பு sshbuf *m)
 {
-	struct sshbuf *config;
-	int r;
+	கட்டமைப்பு sshbuf *config;
+	முழு r;
 	u_int i;
 
-	if ((r = sshbuf_froms(m, &config)) != 0)
+	எனில் ((r = sshbuf_froms(m, &config)) != 0)
 		fatal_fr(r, "parse opts");
-	if ((r = deserialise_server_options(config, &options)) != 0)
+	எனில் ((r = deserialise_server_options(config, &options)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 	sshbuf_free(config);
 
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	க்கு (i = 0; i < options.இலக்கம்_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 }
 
 #define GETPW(b, id) \
-	do { \
-		if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
+	செய் { \
+		எனில் ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
 			fatal_fr(r, "parse pw %s", #id); \
-		if (len != sizeof(pw->id)) \
+		எனில் (len != அளவு(pw->id)) \
 			fatal_fr(r, "bad length for %s", #id); \
 		memcpy(&pw->id, p, len); \
-	} while (0)
+	} போது (0)
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *username)
+கட்டமைப்பு passwd *
+mm_getpwnamallow(கட்டமைப்பு ssh *ssh, மாறிலி எழுத்து *username)
 {
-	struct sshbuf *m;
-	struct passwd *pw;
+	கட்டமைப்பு sshbuf *m;
+	கட்டமைப்பு passwd *pw;
 	size_t len;
-	int r;
+	முழு r;
 	u_char ok;
-	const u_char *p;
+	மாறிலி u_char *p;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, username)) != 0)
+	எனில் ((r = sshbuf_put_cstring(m, username)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PWNAM, m);
@@ -349,15 +349,15 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 	debug3_f("waiting for MONITOR_ANS_PWNAM");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PWNAM, m);
 
-	if ((r = sshbuf_get_u8(m, &ok)) != 0)
+	எனில் ((r = sshbuf_get_u8(m, &ok)) != 0)
 		fatal_fr(r, "parse success");
-	if (ok == 0) {
-		pw = NULL;
-		goto out;
+	எனில் (ok == 0) {
+		pw = வெற்று;
+		செல் out;
 	}
 
 	/* XXX don't like passing struct passwd like this */
-	pw = xcalloc(sizeof(*pw), 1);
+	pw = xcalloc(அளவு(*pw), 1);
 	GETPW(m, pw_uid);
 	GETPW(m, pw_gid);
 #ifdef HAVE_STRUCT_PASSWD_PW_CHANGE
@@ -366,16 +366,16 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 #ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 	GETPW(m, pw_expire);
 #endif
-	if ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_cstring(m, &pw->pw_name, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, வெற்று)) != 0 ||
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, வெற்று)) != 0 ||
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	    (r = sshbuf_get_cstring(m, &pw->pw_class, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_class, வெற்று)) != 0 ||
 #endif
-	    (r = sshbuf_get_cstring(m, &pw->pw_dir, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &pw->pw_shell, NULL)) != 0)
+	    (r = sshbuf_get_cstring(m, &pw->pw_dir, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_shell, வெற்று)) != 0)
 		fatal_fr(r, "parse pw");
 
 out:
@@ -391,50 +391,50 @@ out:
 	    options.rekey_interval);
 	sshbuf_free(m);
 
-	return (pw);
+	திரும்பு (pw);
 }
 
-char *
-mm_auth2_read_banner(void)
+எழுத்து *
+mm_auth2_read_banner(வெறுமை)
 {
-	struct sshbuf *m;
-	char *banner;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	எழுத்து *banner;
+	முழு r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTH2_READ_BANNER, m);
 	sshbuf_reset(m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTH2_READ_BANNER, m);
-	if ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(m, &banner, வெற்று)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	/* treat empty banner as missing banner */
-	if (strlen(banner) == 0) {
-		free(banner);
-		banner = NULL;
+	எனில் (strlen(banner) == 0) {
+		விடுவி(banner);
+		banner = வெற்று;
 	}
-	return (banner);
+	திரும்பு (banner);
 }
 
 /* Inform the privileged process about service and style */
 
-void
-mm_inform_authserv(char *service, char *style)
+வெறுமை
+mm_inform_authserv(எழுத்து *service, எழுத்து *style)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, service)) != 0 ||
+	எனில் ((r = sshbuf_put_cstring(m, service)) != 0 ||
 	    (r = sshbuf_put_cstring(m, style ? style : "")) != 0)
 		fatal_fr(r, "assemble");
 
@@ -444,20 +444,20 @@ mm_inform_authserv(char *service, char *style)
 }
 
 /* Do the password authentication */
-int
-mm_auth_password(struct ssh *ssh, char *password)
+முழு
+mm_auth_password(கட்டமைப்பு ssh *ssh, எழுத்து *password)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	கட்டமைப்பு sshbuf *m;
+	முழு r, authenticated = 0;
 #ifdef USE_PAM
 	u_int maxtries = 0;
 #endif
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, password)) != 0)
+	எனில் ((r = sshbuf_put_cstring(m, password)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTHPASSWORD, m);
 
@@ -465,12 +465,12 @@ mm_auth_password(struct ssh *ssh, char *password)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTHPASSWORD, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 #ifdef USE_PAM
-	if ((r = sshbuf_get_u32(m, &maxtries)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &maxtries)) != 0)
 		fatal_fr(r, "parse PAM");
-	if (maxtries > INT_MAX)
+	எனில் (maxtries > INT_MAX)
 		fatal_fr(r, "bad maxtries");
 	sshpam_set_maxtries_reached(maxtries);
 #endif
@@ -478,43 +478,43 @@ mm_auth_password(struct ssh *ssh, char *password)
 	sshbuf_free(m);
 
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	திரும்பு (authenticated);
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int pubkey_auth_attempt, struct sshauthopt **authoptp)
+முழு
+mm_user_சாவி_allowed(கட்டமைப்பு ssh *ssh, கட்டமைப்பு passwd *pw, கட்டமைப்பு sshkey *சாவி,
+    முழு pubkey_auth_attempt, கட்டமைப்பு sshauthopt **authoptp)
 {
-	return (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
+	திரும்பு (mm_சாவி_allowed(MM_USERKEY, வெற்று, வெற்று, சாவி,
 	    pubkey_auth_attempt, authoptp));
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *user, const char *host, struct sshkey *key)
+முழு
+mm_hostbased_சாவி_allowed(கட்டமைப்பு ssh *ssh, கட்டமைப்பு passwd *pw,
+    மாறிலி எழுத்து *user, மாறிலி எழுத்து *host, கட்டமைப்பு sshkey *சாவி)
 {
-	return (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
+	திரும்பு (mm_சாவி_allowed(MM_HOSTKEY, user, host, சாவி, 0, வெற்று));
 }
 
-int
-mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
-    struct sshkey *key, int pubkey_auth_attempt, struct sshauthopt **authoptp)
+முழு
+mm_சாவி_allowed(எண்ணிக்கை mm_keytype type, மாறிலி எழுத்து *user, மாறிலி எழுத்து *host,
+    கட்டமைப்பு sshkey *சாவி, முழு pubkey_auth_attempt, கட்டமைப்பு sshauthopt **authoptp)
 {
-	struct sshbuf *m;
-	int r, allowed = 0;
-	struct sshauthopt *opts = NULL;
+	கட்டமைப்பு sshbuf *m;
+	முழு r, allowed = 0;
+	கட்டமைப்பு sshauthopt *opts = வெற்று;
 
 	debug3_f("entering");
 
-	if (authoptp != NULL)
-		*authoptp = NULL;
+	எனில் (authoptp != வெற்று)
+		*authoptp = வெற்று;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, type)) != 0 ||
+	எனில் ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_cstring(m, user ? user : "")) != 0 ||
 	    (r = sshbuf_put_cstring(m, host ? host : "")) != 0 ||
-	    (r = sshkey_puts(key, m)) != 0 ||
+	    (r = sshkey_puts(சாவி, m)) != 0 ||
 	    (r = sshbuf_put_u32(m, pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "assemble");
 
@@ -524,20 +524,20 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYALLOWED, m);
 
-	if ((r = sshbuf_get_u32(m, &allowed)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &allowed)) != 0)
 		fatal_fr(r, "parse");
-	if (allowed && type == MM_USERKEY &&
+	எனில் (allowed && type == MM_USERKEY &&
 	    (r = sshauthopt_deserialise(m, &opts)) != 0)
 		fatal_fr(r, "sshauthopt_deserialise");
 	sshbuf_free(m);
 
-	if (authoptp != NULL) {
+	எனில் (authoptp != வெற்று) {
 		*authoptp = opts;
-		opts = NULL;
+		opts = வெற்று;
 	}
 	sshauthopt_free(opts);
 
-	return allowed;
+	திரும்பு allowed;
 }
 
 /*
@@ -546,27 +546,27 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
  * for authentication.
  */
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *sigalg, u_int compat,
-    struct sshkey_sig_details **sig_detailsp)
+முழு
+mm_sshkey_verify(மாறிலி கட்டமைப்பு sshkey *சாவி, மாறிலி u_char *sig, size_t siglen,
+    மாறிலி u_char *data, size_t datalen, மாறிலி எழுத்து *sigalg, u_int compat,
+    கட்டமைப்பு sshkey_sig_details **sig_detailsp)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	u_int encoded_ret = 0;
-	int r;
+	முழு r;
 	u_char sig_details_present, flags;
 	u_int counter;
 
 	debug3_f("entering");
 
-	if (sig_detailsp != NULL)
-		*sig_detailsp = NULL;
-	if ((m = sshbuf_new()) == NULL)
+	எனில் (sig_detailsp != வெற்று)
+		*sig_detailsp = வெற்று;
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	எனில் ((r = sshkey_puts(சாவி, m)) != 0 ||
 	    (r = sshbuf_put_string(m, sig, siglen)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(m, sigalg == NULL ? "" : sigalg)) != 0)
+	    (r = sshbuf_put_cstring(m, sigalg == வெற்று ? "" : sigalg)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_KEYVERIFY, m);
@@ -575,15 +575,15 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYVERIFY, m);
 
-	if ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
+	எனில் ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
 	    (r = sshbuf_get_u8(m, &sig_details_present)) != 0)
 		fatal_fr(r, "parse");
-	if (sig_details_present && encoded_ret == 0) {
-		if ((r = sshbuf_get_u32(m, &counter)) != 0 ||
+	எனில் (sig_details_present && encoded_ret == 0) {
+		எனில் ((r = sshbuf_get_u32(m, &counter)) != 0 ||
 		    (r = sshbuf_get_u8(m, &flags)) != 0)
 			fatal_fr(r, "parse sig_details");
-		if (sig_detailsp != NULL) {
-			*sig_detailsp = xcalloc(1, sizeof(**sig_detailsp));
+		எனில் (sig_detailsp != வெற்று) {
+			*sig_detailsp = xcalloc(1, அளவு(**sig_detailsp));
 			(*sig_detailsp)->sk_counter = counter;
 			(*sig_detailsp)->sk_flags = flags;
 		}
@@ -591,95 +591,95 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 
 	sshbuf_free(m);
 
-	if (encoded_ret != 0)
-		return SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	எனில் (encoded_ret != 0)
+		திரும்பு SSH_ERR_SIGNATURE_INVALID;
+	திரும்பு 0;
 }
 
-void
-mm_send_keystate(struct ssh *ssh, struct monitor *monitor)
+வெறுமை
+mm_send_keystate(கட்டமைப்பு ssh *ssh, கட்டமைப்பு monitor *monitor)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = ssh_packet_get_state(ssh, m)) != 0)
+	எனில் ((r = ssh_packet_get_state(ssh, m)) != 0)
 		fatal_fr(r, "ssh_packet_get_state");
 	mm_request_send(monitor->m_recvfd, MONITOR_REQ_KEYEXPORT, m);
 	debug3_f("Finished sending state");
 	sshbuf_free(m);
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+முழு
+mm_pty_allocate(முழு *ptyfd, முழு *ttyfd, எழுத்து *namebuf, size_t namebuflen)
 {
-	struct sshbuf *m;
-	char *p, *msg;
-	int success = 0, tmp1 = -1, tmp2 = -1, r;
+	கட்டமைப்பு sshbuf *m;
+	எழுத்து *p, *செய்தி;
+	முழு success = 0, tmp1 = -1, tmp2 = -1, r;
 
 	/* Kludge: ensure there are fds free to receive the pty/tty */
-	if ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
+	எனில் ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
 	    (tmp2 = dup(pmonitor->m_recvfd)) == -1) {
 		error_f("cannot allocate fds for pty");
-		if (tmp1 >= 0)
+		எனில் (tmp1 >= 0)
 			close(tmp1);
-		return 0;
+		திரும்பு 0;
 	}
 	close(tmp1);
 	close(tmp2);
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTY, m);
 
 	debug3_f("waiting for MONITOR_ANS_PTY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PTY, m);
 
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	எனில் (success == 0) {
 		debug3_f("pty alloc failed");
 		sshbuf_free(m);
-		return (0);
+		திரும்பு (0);
 	}
-	if ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(m, &p, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &செய்தி, வெற்று)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	strlcpy(namebuf, p, namebuflen); /* Possible truncation */
-	free(p);
+	விடுவி(p);
 
-	if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	எனில் ((r = sshbuf_put(loginmsg, செய்தி, strlen(செய்தி))) != 0)
 		fatal_fr(r, "put loginmsg");
-	free(msg);
+	விடுவி(செய்தி);
 
-	if ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
+	எனில் ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
 	    (*ttyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1)
 		fatal_f("receive fds failed");
 
 	/* Success */
-	return (1);
+	திரும்பு (1);
 }
 
-void
+வெறுமை
 mm_session_pty_cleanup2(Session *s)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
-	if (s->ttyfd == -1)
-		return;
-	if ((m = sshbuf_new()) == NULL)
+	எனில் (s->ttyfd == -1)
+		திரும்பு;
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, s->tty)) != 0)
+	எனில் ((r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assmble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTYCLEANUP, m);
 	sshbuf_free(m);
 
 	/* closed dup'ed master */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	எனில் (s->ptymaster != -1 && close(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
 		    s->ptymaster, strerror(errno));
 
@@ -688,15 +688,15 @@ mm_session_pty_cleanup2(Session *s)
 }
 
 #ifdef USE_PAM
-void
-mm_start_pam(struct ssh *ssh)
+வெறுமை
+mm_start_pam(கட்டமைப்பு ssh *ssh)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	எனில் (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_START, m);
 
@@ -704,132 +704,132 @@ mm_start_pam(struct ssh *ssh)
 }
 
 u_int
-mm_do_pam_account(void)
+mm_do_pam_account(வெறுமை)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	u_int ret;
-	char *msg;
+	எழுத்து *செய்தி;
 	size_t msglen;
-	int r;
+	முழு r;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	எனில் (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_ACCOUNT, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_ACCOUNT, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, &msglen)) != 0 ||
-	    (r = sshbuf_put(loginmsg, msg, msglen)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &செய்தி, &msglen)) != 0 ||
+	    (r = sshbuf_put(loginmsg, செய்தி, msglen)) != 0)
 		fatal_fr(r, "buffer error");
 
-	free(msg);
+	விடுவி(செய்தி);
 	sshbuf_free(m);
 
 	debug3_f("returning %d", ret);
 
-	return (ret);
+	திரும்பு (ret);
 }
 
-void *
+வெறுமை *
 mm_sshpam_init_ctx(Authctxt *authctxt)
 {
-	struct sshbuf *m;
-	int r, success;
+	கட்டமைப்பு sshbuf *m;
+	முழு r, success;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_INIT_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_INIT_CTX");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_INIT_CTX, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "buffer error");
-	if (success == 0) {
+	எனில் (success == 0) {
 		debug3_f("pam_init_ctx failed");
 		sshbuf_free(m);
-		return (NULL);
+		திரும்பு (வெற்று);
 	}
 	sshbuf_free(m);
-	return (authctxt);
+	திரும்பு (authctxt);
 }
 
-int
-mm_sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+முழு
+mm_sshpam_query(வெறுமை *ctx, எழுத்து **name, எழுத்து **info,
+    u_int *இலக்கம், எழுத்து ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	u_int i, n;
-	int r, ret;
+	முழு r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_QUERY, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_QUERY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PAM_QUERY, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
-	    (r = sshbuf_get_cstring(m, name, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, info, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	    (r = sshbuf_get_cstring(m, name, வெற்று)) != 0 ||
+	    (r = sshbuf_get_cstring(m, info, வெற்று)) != 0 ||
 	    (r = sshbuf_get_u32(m, &n)) != 0 ||
-	    (r = sshbuf_get_u32(m, num)) != 0)
+	    (r = sshbuf_get_u32(m, இலக்கம்)) != 0)
 		fatal_fr(r, "buffer error");
 	debug3_f("pam_query returned %d", ret);
 	sshpam_set_maxtries_reached(n);
-	if (*num > PAM_MAX_NUM_MSG)
+	எனில் (*இலக்கம் > PAM_MAX_இலக்கம்_செய்தி)
 		fatal("%s: received %u PAM messages, expected <= %u",
-		    __func__, *num, PAM_MAX_NUM_MSG);
-	*prompts = xcalloc((*num + 1), sizeof(char *));
-	*echo_on = xcalloc((*num + 1), sizeof(u_int));
-	for (i = 0; i < *num; ++i) {
-		if ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
+		    __func__, *இலக்கம், PAM_MAX_இலக்கம்_செய்தி);
+	*prompts = xcalloc((*இலக்கம் + 1), அளவு(எழுத்து *));
+	*echo_on = xcalloc((*இலக்கம் + 1), அளவு(u_int));
+	க்கு (i = 0; i < *இலக்கம்; ++i) {
+		எனில் ((r = sshbuf_get_cstring(m, &((*prompts)[i]), வெற்று)) != 0 ||
 		    (r = sshbuf_get_u32(m, &((*echo_on)[i]))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	sshbuf_free(m);
-	return (ret);
+	திரும்பு (ret);
 }
 
-int
-mm_sshpam_respond(void *ctx, u_int num, char **resp)
+முழு
+mm_sshpam_respond(வெறுமை *ctx, u_int இலக்கம், எழுத்து **resp)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	u_int n, i;
-	int r, ret;
+	முழு r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, num)) != 0)
+	எனில் ((r = sshbuf_put_u32(m, இலக்கம்)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, resp[i])) != 0)
+	க்கு (i = 0; i < இலக்கம்; ++i) {
+		எனில் ((r = sshbuf_put_cstring(m, resp[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_RESPOND, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_RESPOND");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_RESPOND, m);
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	ret = (int)n; /* XXX */
+	ret = (முழு)n; /* XXX */
 	debug3_f("pam_respond returned %d", ret);
 	sshbuf_free(m);
-	return (ret);
+	திரும்பு (ret);
 }
 
-void
-mm_sshpam_free_ctx(void *ctxtp)
+வெறுமை
+mm_sshpam_free_ctx(வெறுமை *ctxtp)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_FREE_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_FREE_CTX");
@@ -841,12 +841,12 @@ mm_sshpam_free_ctx(void *ctxtp)
 
 /* Request process termination */
 
-void
-mm_terminate(void)
+வெறுமை
+mm_terminate(வெறுமை)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_TERM, m);
 	sshbuf_free(m);
@@ -854,20 +854,20 @@ mm_terminate(void)
 
 /* Request state information */
 
-void
-mm_get_state(struct ssh *ssh,
-    ServerOptions *opts, struct sshbuf **confdatap,
+வெறுமை
+mm_get_state(கட்டமைப்பு ssh *ssh,
+    ServerOptions *opts, கட்டமைப்பு sshbuf **confdatap,
     uint64_t *timing_secretp,
-    struct sshbuf **hostkeysp, struct sshbuf **keystatep,
+    கட்டமைப்பு sshbuf **hostkeysp, கட்டமைப்பு sshbuf **keystatep,
     u_char **pw_namep,
-    struct sshbuf **authinfop, struct sshbuf **auth_optsp)
+    கட்டமைப்பு sshbuf **authinfop, கட்டமைப்பு sshbuf **auth_optsp)
 {
-	struct sshbuf *m, *config;
-	int r;
+	கட்டமைப்பு sshbuf *m, *config;
+	முழு r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று || (config = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_STATE, m);
@@ -876,7 +876,7 @@ mm_get_state(struct ssh *ssh,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_STATE, m);
 
-	if ((r = sshbuf_froms(m, &config)) != 0 ||
+	எனில் ((r = sshbuf_froms(m, &config)) != 0 ||
 	    (r = sshbuf_get_u64(m, timing_secretp)) != 0 ||
 	    (r = sshbuf_froms(m, hostkeysp)) != 0 ||
 	    (r = sshbuf_get_stringb(m, ssh->kex->server_version)) != 0 ||
@@ -884,15 +884,15 @@ mm_get_state(struct ssh *ssh,
 		fatal_fr(r, "parse config");
 
 	/* postauth */
-	if (confdatap) {
-		if ((r = sshbuf_froms(m, confdatap)) != 0 ||
+	எனில் (confdatap) {
+		எனில் ((r = sshbuf_froms(m, confdatap)) != 0 ||
 		    (r = sshbuf_froms(m, keystatep)) != 0 ||
-		    (r = sshbuf_get_string(m, pw_namep, NULL)) != 0 ||
+		    (r = sshbuf_get_string(m, pw_namep, வெற்று)) != 0 ||
 		    (r = sshbuf_froms(m, authinfop)) != 0 ||
 		    (r = sshbuf_froms(m, auth_optsp)) != 0)
 			fatal_fr(r, "parse config postauth");
 	}
-	if ((r = deserialise_server_options(config, opts)) != 0)
+	எனில் ((r = deserialise_server_options(config, opts)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 
 	sshbuf_free(m);
@@ -901,45 +901,45 @@ mm_get_state(struct ssh *ssh,
 	debug3_f("done");
 }
 
-static void
-mm_chall_setup(char **name, char **infotxt, u_int *numprompts,
-    char ***prompts, u_int **echo_on)
+நிலையான வெறுமை
+mm_chall_setup(எழுத்து **name, எழுத்து **infotxt, u_int *numprompts,
+    எழுத்து ***prompts, u_int **echo_on)
 {
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, அளவு(எழுத்து *));
+	*echo_on = xcalloc(*numprompts, அளவு(u_int));
 	(*echo_on)[0] = 0;
 }
 
-int
-mm_bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+முழு
+mm_bsdauth_query(வெறுமை *ctx, எழுத்து **name, எழுத்து **infotxt,
+   u_int *numprompts, எழுத்து ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	u_int success;
-	char *challenge;
-	int r;
+	எழுத்து *challenge;
+	முழு r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHQUERY, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHQUERY, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	எனில் (success == 0) {
 		debug3_f("no challenge");
 		sshbuf_free(m);
-		return (-1);
+		திரும்பு (-1);
 	}
 
 	/* Get the challenge, and format the response */
-	if ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(m, &challenge, வெற்று)) != 0)
 		fatal_fr(r, "parse challenge");
 	sshbuf_free(m);
 
@@ -948,64 +948,64 @@ mm_bsdauth_query(void *ctx, char **name, char **infotxt,
 
 	debug3_f("received challenge: %s", challenge);
 
-	return (0);
+	திரும்பு (0);
 }
 
-int
-mm_bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+முழு
+mm_bsdauth_respond(வெறுமை *ctx, u_int numresponses, எழுத்து **responses)
 {
-	struct sshbuf *m;
-	int r, authok;
+	கட்டமைப்பு sshbuf *m;
+	முழு r, authok;
 
 	debug3_f("entering");
-	if (numresponses != 1)
-		return (-1);
+	எனில் (numresponses != 1)
+		திரும்பு (-1);
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, responses[0])) != 0)
+	எனில் ((r = sshbuf_put_cstring(m, responses[0])) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHRESPOND, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHRESPOND, m);
 
-	if ((r = sshbuf_get_u32(m, &authok)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &authok)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
-	return ((authok == 0) ? -1 : 0);
+	திரும்பு ((authok == 0) ? -1 : 0);
 }
 
 #ifdef SSH_AUDIT_EVENTS
-void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+வெறுமை
+mm_audit_event(கட்டமைப்பு ssh *ssh, ssh_audit_event_t event)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, event)) != 0)
+	எனில் ((r = sshbuf_put_u32(m, event)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_EVENT, m);
 	sshbuf_free(m);
 }
 
-void
-mm_audit_run_command(const char *command)
+வெறுமை
+mm_audit_run_command(மாறிலி எழுத்து *command)
 {
-	struct sshbuf *m;
-	int r;
+	கட்டமைப்பு sshbuf *m;
+	முழு r;
 
 	debug3_f("entering command %s", command);
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, command)) != 0)
+	எனில் ((r = sshbuf_put_cstring(m, command)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_COMMAND, m);
@@ -1017,101 +1017,101 @@ mm_audit_run_command(const char *command)
 OM_uint32
 mm_ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID goid)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	OM_uint32 major;
-	int r;
+	முழு r;
 
 	/* Client doesn't get to see the context */
-	*ctx = NULL;
+	*ctx = வெற்று;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
+	எனில் ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSETUP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSETUP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
-	return (major);
+	திரும்பு (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *in,
     gss_buffer_desc *out, OM_uint32 *flagsp)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	OM_uint32 major;
 	u_int flags;
-	int r;
+	முழு r;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
+	எனில் ((r = sshbuf_put_string(m, in->மதிப்பு, in->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSTEP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSTEP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0 ||
+	எனில் ((r = sshbuf_get_u32(m, &major)) != 0 ||
 	    (r = ssh_gssapi_get_buffer_desc(m, out)) != 0)
 		fatal_fr(r, "parse");
-	if (flagsp != NULL) {
-		if ((r = sshbuf_get_u32(m, &flags)) != 0)
+	எனில் (flagsp != வெற்று) {
+		எனில் ((r = sshbuf_get_u32(m, &flags)) != 0)
 			fatal_fr(r, "parse flags");
 		*flagsp = flags;
 	}
 
 	sshbuf_free(m);
 
-	return (major);
+	திரும்பு (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 {
-	struct sshbuf *m;
+	கட்டமைப்பு sshbuf *m;
 	OM_uint32 major;
-	int r;
+	முழு r;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
-	    (r = sshbuf_put_string(m, gssmic->value, gssmic->length)) != 0)
+	எனில் ((r = sshbuf_put_string(m, gssbuf->மதிப்பு, gssbuf->length)) != 0 ||
+	    (r = sshbuf_put_string(m, gssmic->மதிப்பு, gssmic->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSCHECKMIC, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSCHECKMIC, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
-	return(major);
+	திரும்பு(major);
 }
 
-int
-mm_ssh_gssapi_userok(char *user)
+முழு
+mm_ssh_gssapi_userok(எழுத்து *user)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	கட்டமைப்பு sshbuf *m;
+	முழு r, authenticated = 0;
 
-	if ((m = sshbuf_new()) == NULL)
+	எனில் ((m = sshbuf_new()) == வெற்று)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSUSEROK, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSUSEROK, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	எனில் ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	திரும்பு (authenticated);
 }
 #endif /* GSSAPI */
 
@@ -1119,87 +1119,87 @@ mm_ssh_gssapi_userok(char *user)
  * Inform channels layer of permitopen options for a single forwarding
  * direction (local/remote).
  */
-static void
-server_process_permitopen_list(struct ssh *ssh, int listen,
-    char **opens, u_int num_opens)
+நிலையான வெறுமை
+server_process_permitopen_list(கட்டமைப்பு ssh *ssh, முழு listen,
+    எழுத்து **opens, u_int இலக்கம்_opens)
 {
 	u_int i;
-	int port;
-	char *host, *arg, *oarg;
-	int where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
-	const char *what = listen ? "permitlisten" : "permitopen";
+	முழு port;
+	எழுத்து *host, *arg, *oarg;
+	முழு where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
+	மாறிலி எழுத்து *what = listen ? "permitlisten" : "permitopen";
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	எனில் (இலக்கம்_opens == 0)
+		திரும்பு; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	எனில் (இலக்கம்_opens == 1 && strcmp(opens[0], "any") == 0)
+		திரும்பு;
+	எனில் (இலக்கம்_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		திரும்பு;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	க்கு (i = 0; i < இலக்கம்_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		host = hpdelim(&arg);
-		if (host == NULL)
+		எனில் (host == வெற்று)
 			fatal_f("missing host in %s", what);
 		host = cleanhostname(host);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		எனில் (arg == வெற்று || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
 		    where, host, port);
-		free(oarg);
+		விடுவி(oarg);
 	}
 }
 
 /*
  * Inform channels layer of permitopen options from configuration.
  */
-void
-server_process_permitopen(struct ssh *ssh)
+வெறுமை
+server_process_permitopen(கட்டமைப்பு ssh *ssh)
 {
 	server_process_permitopen_list(ssh, 0,
-	    options.permitted_opens, options.num_permitted_opens);
+	    options.permitted_opens, options.இலக்கம்_permitted_opens);
 	server_process_permitopen_list(ssh, 1,
-	    options.permitted_listens, options.num_permitted_listens);
+	    options.permitted_listens, options.இலக்கம்_permitted_listens);
 }
 
-void
-server_process_channel_timeouts(struct ssh *ssh)
+வெறுமை
+server_process_channel_timeouts(கட்டமைப்பு ssh *ssh)
 {
 	u_int i;
-	double secs;
-	char *type;
+	இரட்டை secs;
+	எழுத்து *type;
 
-	debug3_f("setting %u timeouts", options.num_channel_timeouts);
+	debug3_f("setting %u timeouts", options.இலக்கம்_channel_timeouts);
 	channel_clear_timeouts(ssh);
-	for (i = 0; i < options.num_channel_timeouts; i++) {
-		if (parse_pattern_interval(options.channel_timeouts[i],
+	க்கு (i = 0; i < options.இலக்கம்_channel_timeouts; i++) {
+		எனில் (parse_pattern_interval(options.channel_timeouts[i],
 		    &type, &secs) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[i]);
 		}
 		channel_add_timeout(ssh, type, secs);
-		free(type);
+		விடுவி(type);
 	}
 }
 
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
+கட்டமைப்பு connection_info *
+server_get_connection_info(கட்டமைப்பு ssh *ssh, முழு populate, முழு use_dns)
 {
-	static struct connection_info ci;
+	நிலையான கட்டமைப்பு connection_info ci;
 
-	if (ssh == NULL || !populate)
-		return &ci;
+	எனில் (ssh == வெற்று || !populate)
+		திரும்பு &ci;
 	ci.host = use_dns ? ssh_remote_hostname(ssh) : ssh_remote_ipaddr(ssh);
 	ci.address = ssh_remote_ipaddr(ssh);
 	ci.laddress = ssh_local_ipaddr(ssh);
 	ci.lport = ssh_local_port(ssh);
 	ci.rdomain = ssh_packet_rdomain_in(ssh);
-	return &ci;
+	திரும்பு &ci;
 }
 

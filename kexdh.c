@@ -23,81 +23,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#அந்தர்பாவ <openssl/bn.h>
+#அந்தர்பாவ <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#அந்தர்பாவ "kex.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "dh.h"
+#அந்தர்பாவ "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+முழு
+kex_dh_keygen(கட்டமைப்பு kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	தேர்வு (kex->kex_type) {
+	நிலை KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		நிறுத்து;
+	நிலை KEX_DH_GRP14_SHA1:
+	நிலை KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		நிறுத்து;
+	நிலை KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		நிறுத்து;
+	நிலை KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		நிறுத்து;
+	இயல்பு:
+		திரும்பு SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	எனில் (kex->dh == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	திரும்பு (dh_gen_சாவி(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+முழு
+kex_dh_compute_சாவி(கட்டமைப்பு kex *kex, BIGNUM *dh_pub, கட்டமைப்பு sshbuf *out)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
+	BIGNUM *shared_secret = வெற்று;
+	u_char *kbuf = வெற்று;
 	size_t klen = 0;
-	int kout, r;
+	முழு kout, r;
 
 #ifdef DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_இலக்கம்_bits(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
 #endif
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
+	எனில் (!dh_pub_is_valid(kex->dh, dh_pub)) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		செல் out;
 	}
 	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	எனில் ((kbuf = malloc(klen)) == வெற்று ||
+	    (shared_secret = BN_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	எனில் ((kout = DH_compute_சாவி(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == வெற்று) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		செல் out;
 	}
 #ifdef DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
@@ -106,96 +106,96 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
  out:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+முழு
+kex_dh_keypair(கட்டமைப்பு kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	மாறிலி BIGNUM *pub_சாவி;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	முழு r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
+	எனில் ((r = kex_dh_keygen(kex)) != 0)
+		திரும்பு r;
+	DH_get0_சாவி(kex->dh, &pub_சாவி, வெற்று);
+	எனில் ((buf = sshbuf_new()) == வெற்று)
+		திரும்பு SSH_ERR_ALLOC_FAIL;
+	எனில் ((r = sshbuf_put_bignum2(buf, pub_சாவி)) != 0 ||
+	    (r = sshbuf_get_u32(buf, வெற்று)) != 0)
+		செல் out;
 #ifdef DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_சாவி);
 	fprintf(stderr, "\n");
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = வெற்று;
  out:
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+முழு
+kex_dh_enc(கட்டமைப்பு kex *kex, மாறிலி கட்டமைப்பு sshbuf *client_blob,
+    கட்டமைப்பு sshbuf **server_blobp, கட்டமைப்பு sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	மாறிலி BIGNUM *pub_சாவி;
+	கட்டமைப்பு sshbuf *server_blob = வெற்று;
+	முழு r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = வெற்று;
+	*shared_secretp = வெற்று;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	எனில் ((r = kex_dh_keygen(kex)) != 0)
+		செல் out;
+	DH_get0_சாவி(kex->dh, &pub_சாவி, வெற்று);
+	எனில் ((server_blob = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	எனில் ((r = sshbuf_put_bignum2(server_blob, pub_சாவி)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, வெற்று)) != 0)
+		செல் out;
+	எனில் ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		செல் out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = வெற்று;
  out:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = வெற்று;
 	sshbuf_free(server_blob);
-	return r;
+	திரும்பு r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+முழு
+kex_dh_dec(கட்டமைப்பு kex *kex, மாறிலி கட்டமைப்பு sshbuf *dh_blob,
+    கட்டமைப்பு sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	கட்டமைப்பு sshbuf *buf = வெற்று;
+	BIGNUM *dh_pub = வெற்று;
+	முழு r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = வெற்று;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	எனில் ((buf = sshbuf_new()) == வெற்று) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		செல் out;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	எனில் ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		செல் out;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	எனில் ((r = kex_dh_compute_சாவி(kex, dh_pub, buf)) != 0)
+		செல் out;
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = வெற்று;
  out:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = வெற்று;
 	sshbuf_free(buf);
-	return r;
+	திரும்பு r;
 }
 #endif /* WITH_OPENSSL */

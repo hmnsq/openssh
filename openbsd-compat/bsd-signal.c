@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <signal.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "openbsd-compat/bsd-signal.h"
+#அந்தர்பாவ "openbsd-compat/bsd-signal.h"
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int sig)
+#எனில் !defined(HAVE_STRSIGNAL)
+எழுத்து *strsignal(முழு sig)
 {
-	static char buf[16];
+	நிலையான எழுத்து buf[16];
 
-	(void)snprintf(buf, sizeof(buf), "%d", sig);
-	return buf;
+	(வெறுமை)snprintf(buf, அளவு(buf), "%d", sig);
+	திரும்பு buf;
 }
 #endif
 

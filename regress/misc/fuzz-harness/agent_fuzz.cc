@@ -1,15 +1,15 @@
 // cc_fuzz_target test for ssh-agent.
-extern "C" {
+வெளி "C" {
 
-#include <stdint.h>
-#include <sys/types.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <sys/types.h>
 
-extern void test_one(const uint8_t* s, size_t slen);
+வெளி வெறுமை test_one(மாறிலி uint8_t* s, size_t slen);
 
-int LLVMFuzzerTestOneInput(const uint8_t* s, size_t slen)
+முழு LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t* s, size_t slen)
 {
 	test_one(s, slen);
-	return 0;
+	திரும்பு 0;
 }
 
 } // extern

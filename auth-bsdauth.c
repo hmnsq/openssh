@@ -23,105 +23,105 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
 
 #ifdef BSD_AUTH
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "hostfile.h"
+#அந்தர்பாவ "auth.h"
+#அந்தர்பாவ "log.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#அந்தர்பாவ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#அந்தர்பாவ "monitor_wrap.h"
 
-static void *
+நிலையான வெறுமை *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	திரும்பு authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+முழு
+bsdauth_query(வெறுமை *ctx, எழுத்து **name, எழுத்து **infotxt,
+   u_int *numprompts, எழுத்து ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	எழுத்து *challenge = வெற்று;
 
-	*infotxt = NULL;
+	*infotxt = வெற்று;
 	*numprompts = 0;
-	*prompts = NULL;
-	*echo_on = NULL;
+	*prompts = வெற்று;
+	*echo_on = வெற்று;
 
-	if (authctxt->as != NULL) {
+	எனில் (authctxt->as != வெற்று) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		எனில் (challenge == வெற்று) {
 			auth_close(authctxt->as);
-			authctxt->as = NULL;
+			authctxt->as = வெற்று;
 		}
 	}
 
-	if (challenge == NULL) {
+	எனில் (challenge == வெற்று) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
-			challenge = NULL;
+		எனில் (authctxt->as == வெற்று)
+			challenge = வெற்று;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	எனில் (challenge == வெற்று)
+		திரும்பு -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, அளவு(எழுத்து *));
+	*echo_on = xcalloc(*numprompts, அளவு(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	திரும்பு 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+முழு
+bsdauth_respond(வெறுமை *ctx, u_int numresponses, எழுத்து **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	முழு authok;
 
-	if (!authctxt->valid)
-		return -1;
+	எனில் (!authctxt->valid)
+		திரும்பு -1;
 
-	if (authctxt->as == NULL)
+	எனில் (authctxt->as == வெற்று)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	எனில் (numresponses != 1)
+		திரும்பு -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
-	authctxt->as = NULL;
+	authctxt->as = வெற்று;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	திரும்பு (authok == 0) ? -1 : 0;
 }
 
-static void
-bsdauth_free_ctx(void *ctx)
+நிலையான வெறுமை
+bsdauth_free_ctx(வெறுமை *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	எனில் (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
-		authctxt->as = NULL;
+		authctxt->as = வெற்று;
 	}
 }
 

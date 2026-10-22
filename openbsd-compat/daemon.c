@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/daemon.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE_DAEMON
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <sys/stat.h>
+#அந்தர்பாவ <sys/stat.h>
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+முழு
+daemon(முழு nochdir, முழு noclose)
 {
-	int fd;
+	முழு fd;
 
-	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
-	default:
+	தேர்வு (fork()) {
+	நிலை -1:
+		திரும்பு (-1);
+	நிலை 0:
+		நிறுத்து;
+	இயல்பு:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	எனில் (setsid() == -1)
+		திரும்பு (-1);
 
-	if (!nochdir)
-		(void)chdir("/");
+	எனில் (!nochdir)
+		(வெறுமை)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
-		(void)dup2(fd, STDIN_FILENO);
-		(void)dup2(fd, STDOUT_FILENO);
-		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
-			(void)close (fd);
+	எனில் (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+		(வெறுமை)dup2(fd, STDIN_FILENO);
+		(வெறுமை)dup2(fd, STDOUT_FILENO);
+		(வெறுமை)dup2(fd, STDERR_FILENO);
+		எனில் (fd > 2)
+			(வெறுமை)close (fd);
 	}
-	return (0);
+	திரும்பு (0);
 }
 
 #endif /* !HAVE_DAEMON */

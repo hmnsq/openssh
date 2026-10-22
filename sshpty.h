@@ -14,14 +14,14 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include <termios.h>
+#அந்தர்பாவ <termios.h>
 
-struct termios *get_saved_tio(void);
-void	 leave_raw_mode(int);
-void	 enter_raw_mode(int);
+கட்டமைப்பு termios *get_saved_tio(வெறுமை);
+வெறுமை	 leave_raw_mode(முழு);
+வெறுமை	 enter_raw_mode(முழு);
 
-int	 pty_allocate(int *, int *, char *, size_t);
-void	 pty_release(const char *);
-void	 pty_make_controlling_tty(int *, const char *);
-void	 pty_change_window_size(int, u_int, u_int, u_int, u_int);
-void	 pty_setowner(struct passwd *, const char *);
+முழு	 pty_allocate(முழு *, முழு *, எழுத்து *, size_t);
+வெறுமை	 pty_release(மாறிலி எழுத்து *);
+வெறுமை	 pty_make_controlling_tty(முழு *, மாறிலி எழுத்து *);
+வெறுமை	 pty_change_window_size(முழு, u_int, u_int, u_int, u_int);
+வெறுமை	 pty_setowner(கட்டமைப்பு passwd *, மாறிலி எழுத்து *);

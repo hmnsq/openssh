@@ -37,7 +37,7 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#எனில் !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -45,34 +45,34 @@
 #ifndef _COMPAT_GLOB_H_
 #define	_COMPAT_GLOB_H_
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <sys/types.h>
 
 # define glob_t _ssh_compat_glob_t
 # define glob(a, b, c, d)  _ssh__compat_glob(a, b, c, d)
 # define globfree(a)  _ssh__compat_globfree(a)
 
-struct stat;
-typedef struct {
+கட்டமைப்பு stat;
+வகைவரை கட்டமைப்பு {
 	size_t gl_pathc;	/* Count of total paths so far. */
 	size_t gl_matchc;	/* Count of paths matching pattern. */
 	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
-	char **gl_pathv;	/* List of paths matching pattern. */
-	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
+	முழு gl_flags;		/* Copy of flags parameter to glob. */
+	எழுத்து **gl_pathv;	/* List of paths matching pattern. */
+	கட்டமைப்பு stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	முழு (*gl_errfunc)(மாறிலி எழுத்து *, முழு);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
 	 * versions of closedir(3), readdir(3), opendir(3), stat(2)
 	 * and lstat(2).
 	 */
-	void (*gl_closedir)(void *);
-	struct dirent *(*gl_readdir)(void *);	
-	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	வெறுமை (*gl_closedir)(வெறுமை *);
+	கட்டமைப்பு dirent *(*gl_readdir)(வெறுமை *);	
+	வெறுமை *(*gl_opendir)(மாறிலி எழுத்து *);
+	முழு (*gl_lstat)(மாறிலி எழுத்து *, கட்டமைப்பு stat *);
+	முழு (*gl_stat)(மாறிலி எழுத்து *, கட்டமைப்பு stat *);
 } glob_t;
 
 #define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
@@ -98,8 +98,8 @@ typedef struct {
 #define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
 #define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
-void	globfree(glob_t *);
+முழு	glob(மாறிலி எழுத்து *, முழு, முழு (*)(மாறிலி எழுத்து *, முழு), glob_t *);
+வெறுமை	globfree(glob_t *);
 
 #endif /* !_GLOB_H_ */
 

@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <netinet/in.h>
+#அந்தர்பாவ <arpa/nameser.h>
+#அந்தர்பாவ <netdb.h>
+#அந்தர்பாவ <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+கட்டமைப்பு rdatainfo {
+	unsigned முழு		rdi_length;	/* length of data */
+	unsigned எழுத்து		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+கட்டமைப்பு rrsetinfo {
+	unsigned முழு		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned முழு		rri_rdclass;	/* class number */
+	unsigned முழு		rri_rdtype;	/* RR type number */
+	unsigned முழு		rri_ttl;	/* time to live */
+	unsigned முழு		rri_nrdatas;	/* size of rdatas array */
+	unsigned முழு		rri_nsigs;	/* size of sigs array */
+	எழுத்து			*rri_name;	/* canonical name */
+	கட்டமைப்பு rdatainfo	*rri_rdatas;	/* individual records */
+	கட்டமைப்பு rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+முழு		getrrsetbyname(மாறிலி எழுத்து *, unsigned முழு, unsigned முழு, unsigned முழு, கட்டமைப்பு rrsetinfo **);
+வெறுமை		freerrset(கட்டமைப்பு rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

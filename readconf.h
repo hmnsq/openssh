@@ -19,177 +19,177 @@
 /* Data structure for representing option data. */
 
 #define SSH_MAX_HOSTS_FILES	32
-#define PATH_MAX_SUN		(sizeof((struct sockaddr_un *)0)->sun_path)
+#define PATH_MAX_SUN		(அளவு((கட்டமைப்பு sockaddr_un *)0)->sun_path)
 
-struct allowed_cname {
-	char *source_list;
-	char *target_list;
+கட்டமைப்பு allowed_cname {
+	எழுத்து *source_list;
+	எழுத்து *target_list;
 };
 
-typedef struct {
-	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
-	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
-	char   *xauth_location;	/* Location for xauth program */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+வகைவரை கட்டமைப்பு {
+	எழுத்து   *host_arg;	/* Host arg as specified on command line. */
+	முழு     forward_agent;	/* Forward authentication agent. */
+	எழுத்து   *forward_agent_sock_path; /* Optional path of the agent. */
+	முழு     forward_x11;	/* Forward X11 display. */
+	முழு     forward_x11_timeout;	/* Expiration for Cookies */
+	முழு     forward_x11_trusted;	/* Trust Forward X11 display. */
+	முழு     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	எழுத்து   *xauth_location;	/* Location for xauth program */
+	கட்டமைப்பு ForwardOptions fwd_opts;	/* forwarding options */
+	முழு     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	முழு     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	முழு     gss_authentication;	/* Try GSS authentication */
+	முழு     gss_deleg_creds;	/* Delegate GSS credentials */
+	முழு     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
-	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	முழு     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	எழுத்து	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
+	முழு     batch_mode;	/* Batch mode: do not ask for passwords. */
+	முழு     check_host_ip;	/* Also keep track of keys for IP address */
+	முழு     strict_host_சாவி_checking;	/* Strict host key checking. */
+	முழு     compression;	/* Compress packets in both directions. */
+	முழு     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	முழு	ip_qos_interactive;	/* DSCP value for interactive */
+	முழு	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
-	u_int	num_log_verbose;	/* Verbose log overrides */
-	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	u_int	இலக்கம்_log_verbose;	/* Verbose log overrides */
+	எழுத்து   **log_verbose;
+	முழு     port;		/* Port to connect. */
+	முழு     address_family;
+	முழு     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	முழு     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	முழு     எண்_of_password_prompts;	/* Max number of password
 						 * prompts. */
-	char   *ciphers;	/* SSH2 ciphers in order of preference. */
-	char   *macs;		/* SSH2 macs in order of preference. */
-	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
-	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
-	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
-	char   *hostname;	/* Real host to connect. */
-	char   *tag;		/* Configuration tag name. */
-	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
-	char   *proxy_command;	/* Proxy command for connecting the host. */
-	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	எழுத்து   *ciphers;	/* SSH2 ciphers in order of preference. */
+	எழுத்து   *macs;		/* SSH2 macs in order of preference. */
+	எழுத்து   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
+	எழுத்து   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
+	முழு	kex_algorithms_set; /* KexAlgorithms was set by the user */
+	எழுத்து   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
+	எழுத்து   *hostname;	/* Real host to connect. */
+	எழுத்து   *tag;		/* Configuration tag name. */
+	எழுத்து   *host_சாவி_alias;	/* hostname alias for .ssh/known_hosts */
+	எழுத்து   *proxy_command;	/* Proxy command for connecting the host. */
+	எழுத்து   *user;		/* User to log in as. */
+	முழு     escape_char;	/* Escape character; -2 = none */
 
-	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
-	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
-	u_int	num_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
-	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
-	char   *preferred_authentications;
-	char   *bind_address;	/* local socket address for connection to sshd */
-	char   *bind_interface;	/* local interface for bind address */
-	char   *pkcs11_provider; /* PKCS#11 provider */
-	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	u_int	இலக்கம்_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
+	எழுத்து   *system_hostfiles[SSH_MAX_HOSTS_FILES];
+	u_int	இலக்கம்_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
+	எழுத்து   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+	எழுத்து   *preferred_authentications;
+	எழுத்து   *bind_address;	/* local socket address for connection to sshd */
+	எழுத்து   *bind_interface;	/* local interface for bind address */
+	எழுத்து   *pkcs11_provider; /* PKCS#11 provider */
+	எழுத்து   *sk_provider; /* Security key provider */
+	முழு	verify_host_சாவி_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
-	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	முழு     இலக்கம்_identity_files;	/* Number of files for identities. */
+	எழுத்து   *identity_files[SSH_MAX_IDENTITY_FILES];
+	முழு    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	கட்டமைப்பு sshkey *identity_சாவிகள்[SSH_MAX_IDENTITY_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
-	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	முழு	இலக்கம்_certificate_files; /* Number of extra certificates for ssh. */
+	எழுத்து	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	முழு	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	கட்டமைப்பு sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
-	char   *identity_agent;		/* Optional path to ssh-agent socket */
+	முழு	add_சாவிகள்_to_agent;
+	முழு	add_சாவிகள்_to_agent_lifespan;
+	எழுத்து   *identity_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
-	struct Forward *local_forwards;
+	முழு     இலக்கம்_local_forwards;
+	கட்டமைப்பு Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
-	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	முழு     இலக்கம்_remote_forwards;
+	கட்டமைப்பு Forward *remote_forwards;
+	முழு	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
-	char  **permitted_remote_opens;
-	u_int	num_permitted_remote_opens;
+	எழுத்து  **permitted_remote_opens;
+	u_int	இலக்கம்_permitted_remote_opens;
 
 	/* stdio forwarding (-W) host and port */
-	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	எழுத்து   *stdio_forward_host;
+	முழு	stdio_forward_port;
 
-	int	enable_ssh_keysign;
+	முழு	enable_ssh_keysign;
 	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	முழு	rekey_interval;
+	முழு	no_host_authentication_for_localhost;
+	முழு	identities_only;
+	முழு	server_alive_interval;
+	முழு	server_alive_மொத்தம்_max;
 
-	u_int	num_send_env;
-	char	**send_env;
-	u_int	num_setenv;
-	char	**setenv;
+	u_int	இலக்கம்_send_env;
+	எழுத்து	**send_env;
+	u_int	இலக்கம்_setenv;
+	எழுத்து	**setenv;
 
-	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	எழுத்து	*control_path;
+	முழு	control_master;
+	முழு     control_persist; /* ControlPersist flag */
+	முழு     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	முழு	hash_known_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	முழு	tun_open;	/* tun(4) */
+	முழு     tun_local;	/* force tun device (optional) */
+	முழு     tun_remote;	/* force tun device (optional) */
 
-	char	*local_command;
-	int	permit_local_command;
-	char	*remote_command;
-	int	visual_host_key;
+	எழுத்து	*local_command;
+	முழு	permit_local_command;
+	எழுத்து	*remote_command;
+	முழு	visual_host_சாவி;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	முழு	request_tty;
+	முழு	session_type;
+	முழு	stdin_null;
+	முழு	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	முழு	proxy_use_fdpass;
 
-	int	num_canonical_domains;
-	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
-	struct allowed_cname *permitted_cnames;
+	முழு	இலக்கம்_canonical_domains;
+	எழுத்து	**canonical_domains;
+	முழு	canonicalize_hostname;
+	முழு	canonicalize_max_dots;
+	முழு	canonicalize_fallback_local;
+	முழு	இலக்கம்_permitted_cnames;
+	கட்டமைப்பு allowed_cname *permitted_cnames;
 
-	u_int	num_revoked_host_keys;
-	char	**revoked_host_keys;
+	u_int	இலக்கம்_revoked_host_சாவிகள்;
+	எழுத்து	**revoked_host_சாவிகள்;
 
-	int	 fingerprint_hash;
+	முழு	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	முழு	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
-	char   *hostbased_accepted_algos;
-	char   *pubkey_accepted_algos;
+	எழுத்து   *hostbased_accepted_algos;
+	எழுத்து   *pubkey_accepted_algos;
 
-	char   *jump_user;
-	char   *jump_host;
-	int	jump_port;
-	char   *jump_extra;
+	எழுத்து   *jump_user;
+	எழுத்து   *jump_host;
+	முழு	jump_port;
+	எழுத்து   *jump_extra;
 
-	char   *known_hosts_command;
+	எழுத்து   *known_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	முழு	required_rsa_size;	/* minimum size of RSA keys */
+	முழு	enable_escape_commandline;	/* ~C commandline */
+	முழு	obscure_keystroke_timing_interval;
+	முழு	warn_weak_crypto;
 
-	char	**channel_timeouts;	/* inactivity timeout by channel type */
-	u_int	num_channel_timeouts;
+	எழுத்து	**channel_timeouts;	/* inactivity timeout by channel type */
+	u_int	இலக்கம்_channel_timeouts;
 
-	char	*version_addendum;
+	எழுத்து	*version_addendum;
 
-	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
+	எழுத்து	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 }       Options;
 
 #define SSH_PUBKEY_AUTH_NO	0x00
@@ -239,30 +239,30 @@ typedef struct {
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-const char *kex_default_pk_alg(void);
-char	*ssh_connection_hash(const char *thishost, const char *host,
-    const char *portstr, const char *user, const char *jump_host);
-void     initialize_options(Options *);
-int      fill_default_options(Options *);
-void	 fill_default_options_for_canonicalization(Options *);
-void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
-void	 dump_client_config(Options *o, const char *host);
+மாறிலி எழுத்து *kex_default_pk_alg(வெறுமை);
+எழுத்து	*ssh_connection_hash(மாறிலி எழுத்து *thishost, மாறிலி எழுத்து *host,
+    மாறிலி எழுத்து *portstr, மாறிலி எழுத்து *user, மாறிலி எழுத்து *jump_host);
+வெறுமை     initialize_options(Options *);
+முழு      fill_default_options(Options *);
+வெறுமை	 fill_default_options_for_canonicalization(Options *);
+வெறுமை	 free_options(Options *o);
+முழு	 process_config_வரி(Options *, கட்டமைப்பு passwd *, மாறிலி எழுத்து *,
+    மாறிலி எழுத்து *, மாறிலி எழுத்து *, எழுத்து *, மாறிலி எழுத்து *, முழு, முழு *, முழு);
+முழு	 read_config_file(மாறிலி எழுத்து *, கட்டமைப்பு passwd *, மாறிலி எழுத்து *,
+    மாறிலி எழுத்து *, மாறிலி எழுத்து *, Options *, முழு, முழு *);
+முழு	 parse_forward(கட்டமைப்பு Forward *, மாறிலி எழுத்து *, முழு, முழு);
+முழு	 ssh_valid_hostname(மாறிலி எழுத்து *);
+முழு	 ssh_valid_ruser(மாறிலி எழுத்து *);
+முழு	 parse_jump(மாறிலி எழுத்து *, Options *, முழு, முழு);
+முழு	 parse_ssh_uri(மாறிலி எழுத்து *, எழுத்து **, எழுத்து **, முழு *);
+முழு	 default_ssh_port(வெறுமை);
+முழு	 option_clear_or_none(மாறிலி எழுத்து *);
+முழு	 config_has_permitted_cnames(Options *);
+வெறுமை	 dump_client_config(Options *o, மாறிலி எழுத்து *host);
 
-void	 add_local_forward(Options *, const struct Forward *);
-void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+வெறுமை	 add_local_forward(Options *, மாறிலி கட்டமைப்பு Forward *);
+வெறுமை	 add_remote_forward(Options *, மாறிலி கட்டமைப்பு Forward *);
+வெறுமை	 add_identity_file(Options *, மாறிலி எழுத்து *, மாறிலி எழுத்து *, முழு);
+வெறுமை	 add_certificate_file(Options *, மாறிலி எழுத்து *, முழு);
 
 #endif				/* READCONF_H */

@@ -92,31 +92,31 @@
  *
  **************************************************************/
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#எனில் defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#எனில் !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <errno.h>
+#அந்தர்பாவ <ctype.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <limits.h>
+#அந்தர்பாவ <errno.h>
 
 #ifdef HAVE_LONG_DOUBLE
-# define LDOUBLE long double
-#else
-# define LDOUBLE double
+# define LDOUBLE long இரட்டை
+#இல்லையெனில்
+# define LDOUBLE இரட்டை
 #endif
 
 #ifdef HAVE_LONG_LONG
 # define LLONG long long
-#else
+#இல்லையெனில்
 # define LLONG long
 #endif
 
@@ -138,7 +138,7 @@
 #define DP_F_MINUS	(1 << 0)
 #define DP_F_PLUS	(1 << 1)
 #define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
+#define DP_F_இலக்கம்	(1 << 3)
 #define DP_F_ZERO	(1 << 4)
 #define DP_F_UP		(1 << 5)
 #define DP_F_UNSIGNED	(1 << 6)
@@ -157,37 +157,37 @@
 #endif
 
 #define DOPR_OUTCH(buf, pos, buflen, thechar) \
-	do { \
-		if (pos + 1 >= INT_MAX) { \
+	செய் { \
+		எனில் (pos + 1 >= INT_MAX) { \
 			errno = ERANGE; \
-			return -1; \
+			திரும்பு -1; \
 		} \
-		if (pos < buflen) \
+		எனில் (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} போது (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
+நிலையான முழு dopr(எழுத்து *buffer, size_t maxlen, மாறிலி எழுத்து *format,
     va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+நிலையான முழு fmtstr(எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    எழுத்து *மதிப்பு, முழு flags, முழு min, முழு max);
+நிலையான முழு fmtint(எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    intmax_t மதிப்பு, முழு base, முழு min, முழு max, முழு flags);
+நிலையான முழு fmtfp(எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, முழு min, முழு max, முழு flags);
 
-static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+நிலையான முழு
+dopr(எழுத்து *buffer, size_t maxlen, மாறிலி எழுத்து *format, va_list args_in)
 {
-	char ch;
-	intmax_t value;
+	எழுத்து ch;
+	intmax_t மதிப்பு;
 	LDOUBLE fvalue;
-	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
+	எழுத்து *strvalue;
+	முழு min;
+	முழு max;
+	முழு state;
+	முழு flags;
+	முழு cflags;
 	size_t currlen;
 	va_list args;
 
@@ -198,395 +198,395 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	போது (state != DP_S_DONE) {
+		எனில் (ch == '\0')
 			state = DP_S_DONE;
 
-		switch(state) {
-		case DP_S_DEFAULT:
-			if (ch == '%')
+		தேர்வு(state) {
+		நிலை DP_S_DEFAULT:
+			எனில் (ch == '%')
 				state = DP_S_FLAGS;
-			else
+			இல்லையெனில்
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
 			ch = *format++;
-			break;
-		case DP_S_FLAGS:
-			switch (ch) {
-			case '-':
+			நிறுத்து;
+		நிலை DP_S_FLAGS:
+			தேர்வு (ch) {
+			நிலை '-':
 				flags |= DP_F_MINUS;
 				ch = *format++;
-				break;
-			case '+':
+				நிறுத்து;
+			நிலை '+':
 				flags |= DP_F_PLUS;
 				ch = *format++;
-				break;
-			case ' ':
+				நிறுத்து;
+			நிலை ' ':
 				flags |= DP_F_SPACE;
 				ch = *format++;
-				break;
-			case '#':
-				flags |= DP_F_NUM;
+				நிறுத்து;
+			நிலை '#':
+				flags |= DP_F_இலக்கம்;
 				ch = *format++;
-				break;
-			case '0':
+				நிறுத்து;
+			நிலை '0':
 				flags |= DP_F_ZERO;
 				ch = *format++;
-				break;
-			default:
+				நிறுத்து;
+			இயல்பு:
 				state = DP_S_MIN;
-				break;
+				நிறுத்து;
 			}
-			break;
-		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			நிறுத்து;
+		நிலை DP_S_MIN:
+			எனில் (isdigit((unsigned எழுத்து)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} இல்லையெனில் எனில் (ch == '*') {
+				min = va_arg (args, முழு);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} இல்லையெனில் {
 				state = DP_S_DOT;
 			}
-			break;
-		case DP_S_DOT:
-			if (ch == '.') {
+			நிறுத்து;
+		நிலை DP_S_DOT:
+			எனில் (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} இல்லையெனில் {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			நிறுத்து;
+		நிலை DP_S_MAX:
+			எனில் (isdigit((unsigned எழுத்து)ch)) {
+				எனில் (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} இல்லையெனில் எனில் (ch == '*') {
+				max = va_arg (args, முழு);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} இல்லையெனில் {
 				state = DP_S_MOD;
 			}
-			break;
-		case DP_S_MOD:
-			switch (ch) {
-			case 'h':
+			நிறுத்து;
+		நிலை DP_S_MOD:
+			தேர்வு (ch) {
+			நிலை 'h':
 				cflags = DP_C_SHORT;
 				ch = *format++;
-				break;
-			case 'j':
+				நிறுத்து;
+			நிலை 'j':
 				cflags = DP_C_INTMAX;
 				ch = *format++;
-				break;
-			case 'l':
+				நிறுத்து;
+			நிலை 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				எனில் (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
-				break;
-			case 'L':
+				நிறுத்து;
+			நிலை 'L':
 				cflags = DP_C_LDOUBLE;
 				ch = *format++;
-				break;
-			case 'z':
+				நிறுத்து;
+			நிலை 'z':
 				cflags = DP_C_SIZE;
 				ch = *format++;
-				break;
-			default:
-				break;
+				நிறுத்து;
+			இயல்பு:
+				நிறுத்து;
 			}
 			state = DP_S_CONV;
-			break;
-		case DP_S_CONV:
-			switch (ch) {
-			case 'd':
-			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'o':
+			நிறுத்து;
+		நிலை DP_S_CONV:
+			தேர்வு (ch) {
+			நிலை 'd':
+			நிலை 'i':
+				எனில் (cflags == DP_C_SHORT)
+					மதிப்பு = va_arg (args, முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LONG)
+					மதிப்பு = va_arg (args, long முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LLONG)
+					மதிப்பு = va_arg (args, LLONG);
+				இல்லையெனில் எனில் (cflags == DP_C_SIZE)
+					மதிப்பு = va_arg (args, ssize_t);
+				இல்லையெனில் எனில் (cflags == DP_C_INTMAX)
+					மதிப்பு = va_arg (args, intmax_t);
+				இல்லையெனில்
+					மதிப்பு = va_arg (args, முழு);
+				எனில் (fmtint(buffer, &currlen, maxlen,
+				    மதிப்பு, 10, min, max, flags) == -1)
+					செல் fail;
+				நிறுத்து;
+			நிலை 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				எனில் (cflags == DP_C_SHORT)
+					மதிப்பு = va_arg (args, unsigned முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LONG)
+					மதிப்பு = (long)va_arg (args, unsigned long முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LLONG)
+					மதிப்பு = (long)va_arg (args, unsigned LLONG);
+				இல்லையெனில் எனில் (cflags == DP_C_SIZE)
+					மதிப்பு = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				இல்லையெனில் எனில் (cflags == DP_C_INTMAX)
+					மதிப்பு = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				இல்லையெனில்
+					மதிப்பு = (long)va_arg (args, unsigned முழு);
+				எனில் (fmtint(buffer, &currlen, maxlen, மதிப்பு,
 				    8, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'u':
+					செல் fail;
+				நிறுத்து;
+			நிலை 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				எனில் (cflags == DP_C_SHORT)
+					மதிப்பு = va_arg (args, unsigned முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LONG)
+					மதிப்பு = (long)va_arg (args, unsigned long முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LLONG)
+					மதிப்பு = (LLONG)va_arg (args, unsigned LLONG);
+				இல்லையெனில் எனில் (cflags == DP_C_SIZE)
+					மதிப்பு = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				இல்லையெனில் எனில் (cflags == DP_C_INTMAX)
+					மதிப்பு = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				இல்லையெனில்
+					மதிப்பு = (long)va_arg (args, unsigned முழு);
+				எனில் (fmtint(buffer, &currlen, maxlen, மதிப்பு,
 				    10, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'X':
+					செல் fail;
+				நிறுத்து;
+			நிலை 'X':
 				flags |= DP_F_UP;
-			case 'x':
+			நிலை 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+				எனில் (cflags == DP_C_SHORT)
+					மதிப்பு = va_arg (args, unsigned முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LONG)
+					மதிப்பு = (long)va_arg (args, unsigned long முழு);
+				இல்லையெனில் எனில் (cflags == DP_C_LLONG)
+					மதிப்பு = (LLONG)va_arg (args, unsigned LLONG);
+				இல்லையெனில் எனில் (cflags == DP_C_SIZE)
+					மதிப்பு = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+				இல்லையெனில் எனில் (cflags == DP_C_INTMAX)
+					மதிப்பு = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				இல்லையெனில்
+					மதிப்பு = (long)va_arg (args, unsigned முழு);
+				எனில் (fmtint(buffer, &currlen, maxlen, மதிப்பு,
 				    16, min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'f':
-				if (cflags == DP_C_LDOUBLE)
+					செல் fail;
+				நிறுத்து;
+			நிலை 'f':
+				எனில் (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				இல்லையெனில்
+					fvalue = va_arg (args, இரட்டை);
+				எனில் (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'E':
+					செல் fail;
+				நிறுத்து;
+			நிலை 'E':
 				flags |= DP_F_UP;
-			case 'e':
-				if (cflags == DP_C_LDOUBLE)
+			நிலை 'e':
+				எனில் (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				இல்லையெனில்
+					fvalue = va_arg (args, இரட்டை);
+				எனில் (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'G':
+					செல் fail;
+				நிறுத்து;
+			நிலை 'G':
 				flags |= DP_F_UP;
-			case 'g':
-				if (cflags == DP_C_LDOUBLE)
+			நிலை 'g':
+				எனில் (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
-					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				இல்லையெனில்
+					fvalue = va_arg (args, இரட்டை);
+				எனில் (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
-					goto fail;
-				break;
-			case 'c':
+					செல் fail;
+				நிறுத்து;
+			நிலை 'c':
 				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
-				break;
-			case 's':
-				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
+				    va_arg (args, முழு));
+				நிறுத்து;
+			நிலை 's':
+				strvalue = va_arg (args, எழுத்து *);
+				எனில் (!strvalue) strvalue = "(NULL)";
+				எனில் (max == -1) {
 					max = strlen(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				எனில் (min > 0 && max >= 0 && min > max) max = min;
+				எனில் (fmtstr(buffer, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
-					goto fail;
-				break;
-			case 'p':
-				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
+					செல் fail;
+				நிறுத்து;
+			நிலை 'p':
+				strvalue = va_arg (args, வெறுமை *);
+				எனில் (fmtint(buffer, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
-					goto fail;
-				break;
-#if we_dont_want_this_in_openssh
-			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					செல் fail;
+				நிறுத்து;
+#எனில் we_dont_want_this_in_openssh
+			நிலை 'n':
+				எனில் (cflags == DP_C_SHORT) {
+					short முழு *இலக்கம்;
+					இலக்கம் = va_arg (args, short முழு *);
+					*இலக்கம் = currlen;
+				} இல்லையெனில் எனில் (cflags == DP_C_LONG) {
+					long முழு *இலக்கம்;
+					இலக்கம் = va_arg (args, long முழு *);
+					*இலக்கம் = (long முழு)currlen;
+				} இல்லையெனில் எனில் (cflags == DP_C_LLONG) {
+					LLONG *இலக்கம்;
+					இலக்கம் = va_arg (args, LLONG *);
+					*இலக்கம் = (LLONG)currlen;
+				} இல்லையெனில் எனில் (cflags == DP_C_SIZE) {
+					ssize_t *இலக்கம்;
+					இலக்கம் = va_arg (args, ssize_t *);
+					*இலக்கம் = (ssize_t)currlen;
+				} இல்லையெனில் எனில் (cflags == DP_C_INTMAX) {
+					intmax_t *இலக்கம்;
+					இலக்கம் = va_arg (args, intmax_t *);
+					*இலக்கம் = (intmax_t)currlen;
+				} இல்லையெனில் {
+					முழு *இலக்கம்;
+					இலக்கம் = va_arg (args, முழு *);
+					*இலக்கம் = currlen;
 				}
-				break;
+				நிறுத்து;
 #endif
-			case '%':
+			நிலை '%':
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
-				break;
-			default:
+				நிறுத்து;
+			இயல்பு:
 				/* Unknown, skip */
-				break;
+				நிறுத்து;
 			}
 			ch = *format++;
 			state = DP_S_DEFAULT;
 			flags = cflags = min = 0;
 			max = -1;
-			break;
-		case DP_S_DONE:
-			break;
-		default:
+			நிறுத்து;
+		நிலை DP_S_DONE:
+			நிறுத்து;
+		இயல்பு:
 			/* hmm? */
-			break; /* some picky compilers need this */
+			நிறுத்து; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
+	எனில் (maxlen != 0) {
+		எனில் (currlen < maxlen - 1)
 			buffer[currlen] = '\0';
-		else if (maxlen > 0)
+		இல்லையெனில் எனில் (maxlen > 0)
 			buffer[maxlen - 1] = '\0';
 	}
 	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	திரும்பு currlen < INT_MAX ? (முழு)currlen : -1;
  fail:
 	va_end(args);
-	return -1;
+	திரும்பு -1;
 }
 
-static int
-fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+நிலையான முழு
+fmtstr(எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    எழுத்து *மதிப்பு, முழு flags, முழு min, முழு max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	முழு padlen, strln;     /* amount to pad */
+	முழு cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
+	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, மதிப்பு);
 #endif
-	if (value == 0) {
-		value = "<NULL>";
+	எனில் (மதிப்பு == 0) {
+		மதிப்பு = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	க்கு (strln = 0; strln < max && மதிப்பு[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	எனில் (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	எனில் (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
+	போது ((padlen > 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	போது (*மதிப்பு && (cnt < max)) {
+		DOPR_OUTCH(buffer, *currlen, maxlen, *மதிப்பு);
+		மதிப்பு++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
+	போது ((padlen < 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
-fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+நிலையான முழு
+fmtint(எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    intmax_t மதிப்பு, முழு base, முழு min, முழு max, முழு flags)
 {
-	int signvalue = 0;
+	முழு signvalue = 0;
 	unsigned LLONG uvalue;
-	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	எழுத்து convert[20];
+	முழு place = 0;
+	முழு spadlen = 0; /* amount to space pad */
+	முழு zpadlen = 0; /* amount to zero pad */
+	முழு caps = 0;
 
-	if (max < 0)
+	எனில் (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = மதிப்பு;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	எனில்(!(flags & DP_F_UNSIGNED)) {
+		எனில்( மதிப்பு < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+			uvalue = -மதிப்பு;
+		} இல்லையெனில் {
+			எனில் (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			இல்லையெனில் எனில் (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	எனில் (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
-	do {
+	செய் {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
 			[uvalue % (unsigned)base  ];
 		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+	} போது(uvalue && (place < 20));
+	எனில் (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	எனில் (zpadlen < 0) zpadlen = 0;
+	எனில் (spadlen < 0) spadlen = 0;
+	எனில் (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	எனில் (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
@@ -595,162 +595,162 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 #endif
 
 	/* Spaces */
-	while (spadlen > 0) {
+	போது (spadlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
+	எனில் (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
+	எனில் (zpadlen > 0) {
+		போது (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	போது (place > 0) {
 		--place;
 		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
+	போது (spadlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+நிலையான LDOUBLE abs_val(LDOUBLE மதிப்பு)
 {
-	LDOUBLE result = value;
+	LDOUBLE result = மதிப்பு;
 
-	if (value < 0)
-		result = -value;
+	எனில் (மதிப்பு < 0)
+		result = -மதிப்பு;
 
-	return result;
+	திரும்பு result;
 }
 
-static LDOUBLE POW10(int val)
+நிலையான LDOUBLE POW10(முழு val)
 {
 	LDOUBLE result = 1;
 
-	while (val) {
+	போது (val) {
 		result *= 10;
 		val--;
 	}
 
-	return result;
+	திரும்பு result;
 }
 
-static LLONG ROUND(LDOUBLE value)
+நிலையான LLONG ROUND(LDOUBLE மதிப்பு)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)மதிப்பு;
+	மதிப்பு = மதிப்பு - intpart;
+	எனில் (மதிப்பு >= 0.5) intpart++;
 
-	return intpart;
+	திரும்பு intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
-static double my_modf(double x0, double *iptr)
+நிலையான இரட்டை my_modf(இரட்டை x0, இரட்டை *iptr)
 {
-	int i;
+	முழு i;
 	long l;
-	double x = x0;
-	double f = 1.0;
+	இரட்டை x = x0;
+	இரட்டை f = 1.0;
 
-	for (i=0;i<100;i++) {
+	க்கு (i=0;i<100;i++) {
 		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+		எனில் (l <= (x+1) && l >= (x-1)) நிறுத்து;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	எனில் (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		திரும்பு 0;
 	}
 
-	if (i != 0) {
-		double i2;
-		double ret;
+	எனில் (i != 0) {
+		இரட்டை i2;
+		இரட்டை ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		திரும்பு ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	திரும்பு x - (*iptr);
 }
 
 
-static int
-fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+நிலையான முழு
+fmtfp (எழுத்து *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, முழு min, முழு max, முழு flags)
 {
-	int signvalue = 0;
-	double ufvalue;
-	char iconvert[311];
-	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
+	முழு signvalue = 0;
+	இரட்டை ufvalue;
+	எழுத்து iconvert[311];
+	எழுத்து fconvert[311];
+	முழு iplace = 0;
+	முழு fplace = 0;
+	முழு padlen = 0; /* amount to pad */
+	முழு zpadlen = 0;
+#எனில் 0
+	முழு caps = 0;
 #endif
-	int idx;
-	double intpart;
-	double fracpart;
-	double temp;
+	முழு idx;
+	இரட்டை intpart;
+	இரட்டை fracpart;
+	இரட்டை temp;
 
 	/*
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	எனில் (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	எனில் (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} இல்லையெனில் {
+		எனில் (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} இல்லையெனில் {
+			எனில் (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#எனில் 0
+	எனில் (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 #endif
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#எனில் 0
+	 எனில் (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
 #endif
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	எனில் (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
@@ -762,66 +762,66 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	எனில் (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
 
 	/* Convert integer part */
-	do {
+	செய் {
 		temp = intpart*0.1;
 		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+		idx = (முழு) ((temp -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} போது (intpart && (iplace < 311));
+	எனில் (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	எனில் (fracpart)
 	{
-		do {
+		செய் {
 			temp = fracpart*0.1;
 			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+			idx = (முழு) ((temp -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} போது(fracpart && (fplace < 311));
+		எனில் (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	எனில் (zpadlen < 0) zpadlen = 0;
+	எனில் (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	எனில் (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
+	எனில் ((flags & DP_F_ZERO) && (padlen > 0)) {
+		எனில் (signvalue) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
+		போது (padlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
+	போது (padlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
+	எனில் (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	போது (iplace > 0) {
 		--iplace;
 		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
 	}
@@ -834,46 +834,46 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
+	எனில் (max > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
+		போது (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		போது (fplace > 0) {
 			--fplace;
 			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
+	போது (padlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	திரும்பு 0;
 }
 #endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+#எனில் !defined(HAVE_VSNPRINTF)
+முழு
+vsnprintf (எழுத்து *str, size_t மொத்தம், மாறிலி எழுத்து *fmt, va_list args)
 {
-	return dopr(str, count, fmt, args);
+	திரும்பு dopr(str, மொத்தம், fmt, args);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF)
-int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+#எனில் !defined(HAVE_SNPRINTF)
+முழு
+snprintf(எழுத்து *str, size_t மொத்தம், SNPRINTF_CONST எழுத்து *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, மொத்தம், fmt, ap);
 	va_end(ap);
-	return ret;
+	திரும்பு ret;
 }
 #endif

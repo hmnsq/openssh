@@ -5,58 +5,58 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/stat.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
+#அந்தர்பாவ <openssl/bn.h>
+#அந்தர்பாவ <openssl/ec.h>
+#அந்தர்பாவ <openssl/rsa.h>
+#அந்தர்பாவ <openssl/objects.h>
 #endif
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "authfile.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "sshbuf.h"
 
-#include "common.h"
+#அந்தர்பாவ "common.h"
 
-void sshkey_fuzz_tests(void);
+வெறுமை sshkey_fuzz_tests(வெறுமை);
 
-static void
-onerror(void *fuzz)
+நிலையான வெறுமை
+onerror(வெறுமை *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((கட்டமைப்பு fuzz *)fuzz);
 }
 
-static void
-public_fuzz(struct sshkey *k)
+நிலையான வெறுமை
+public_fuzz(கட்டமைப்பு sshkey *k)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf;
-	struct fuzz *fuzz;
+	கட்டமைப்பு sshkey *k1;
+	கட்டமைப்பு sshbuf *buf;
+	கட்டமைப்பு fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	எனில் (test_is_fast() || sshkey_type_plain(k->type) == சாவி_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	எனில் (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP | FUZZ_2_BYTE_FLIP;
 
-	ASSERT_PTR_NE(buf = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(buf = sshbuf_new(), வெற்று);
 	ASSERT_INT_EQ(sshkey_putb(k, buf), 0);
 	fuzz = fuzz_begin(fuzzers, sshbuf_mutable_ptr(buf), sshbuf_len(buf));
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(buf), sshbuf_len(buf),
@@ -64,73 +64,73 @@ public_fuzz(struct sshkey *k)
 	sshkey_free(k1);
 	sshbuf_free(buf);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
-		if (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
+	க்கு(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+		எனில் (sshkey_from_blob(fuzz_ptr(fuzz), fuzz_len(fuzz), &k1) == 0)
 			sshkey_free(k1);
 	}
 	fuzz_cleanup(fuzz);
 }
 
-static void
-sig_fuzz(struct sshkey *k, const char *sig_alg)
+நிலையான வெறுமை
+sig_fuzz(கட்டமைப்பு sshkey *k, மாறிலி எழுத்து *sig_alg)
 {
-	struct fuzz *fuzz;
+	கட்டமைப்பு fuzz *fuzz;
 	u_char *sig, c[] = "some junk to be signed";
 	size_t l;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	எனில் (test_is_fast() || sshkey_type_plain(k->type) == சாவி_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_2_BYTE_FLIP;
-	if (test_is_slow())
+	எனில் (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP;
 
-	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, sizeof(c),
-	    sig_alg, NULL, NULL, 0), 0);
+	ASSERT_INT_EQ(sshkey_sign(k, &sig, &l, c, அளவு(c),
+	    sig_alg, வெற்று, வெற்று, 0), 0);
 	ASSERT_SIZE_T_GT(l, 0);
 	fuzz = fuzz_begin(fuzzers, sig, l);
-	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, sizeof(c), NULL, 0, NULL), 0);
-	free(sig);
+	ASSERT_INT_EQ(sshkey_verify(k, sig, l, c, அளவு(c), வெற்று, 0, வெற்று), 0);
+	விடுவி(sig);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	க்கு(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
-			continue;
+		எனில் (fuzz_matches_original(fuzz))
+			தொடர்;
 		ASSERT_INT_NE(sshkey_verify(k, fuzz_ptr(fuzz), fuzz_len(fuzz),
-		    c, sizeof(c), NULL, 0, NULL), 0);
+		    c, அளவு(c), வெற்று, 0, வெற்று), 0);
 	}
 	fuzz_cleanup(fuzz);
 }
 
-#define NUM_FAST_BASE64_TESTS	1024
+#define இலக்கம்_FAST_BASE64_TESTS	1024
 
-void
-sshkey_fuzz_tests(void)
+வெறுமை
+sshkey_fuzz_tests(வெறுமை)
 {
-	struct sshkey *k1;
-	struct sshbuf *buf, *fuzzed;
-	struct fuzz *fuzz;
-	int r, i;
+	கட்டமைப்பு sshkey *k1;
+	கட்டமைப்பு sshbuf *buf, *fuzzed;
+	கட்டமைப்பு fuzz *fuzz;
+	முழு r, i;
 
 #ifdef WITH_OPENSSL
 	TEST_START("fuzz RSA private");
 	buf = load_file("rsa_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -140,19 +140,19 @@ sshkey_fuzz_tests(void)
 	buf = load_file("rsa_n");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -163,19 +163,19 @@ sshkey_fuzz_tests(void)
 	buf = load_file("ecdsa_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -185,19 +185,19 @@ sshkey_fuzz_tests(void)
 	buf = load_file("ecdsa_n");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -208,19 +208,19 @@ sshkey_fuzz_tests(void)
 	buf = load_file("ed25519_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -231,22 +231,22 @@ sshkey_fuzz_tests(void)
 	buf = load_file("mldsa44_ed25519_1");
 	fuzz = fuzz_begin(FUZZ_BASE64, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf));
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshkey_free(k1);
 	sshbuf_free(buf);
-	ASSERT_PTR_NE(fuzzed = sshbuf_new(), NULL);
+	ASSERT_PTR_NE(fuzzed = sshbuf_new(), வெற்று);
 	TEST_ONERROR(onerror, fuzz);
-	for(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
+	க்கு(i = 0; !fuzz_done(fuzz); i++, fuzz_next(fuzz)) {
 		r = sshbuf_put(fuzzed, fuzz_ptr(fuzz), fuzz_len(fuzz));
 		ASSERT_INT_EQ(r, 0);
-		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
+		எனில் (sshkey_parse_private_fileblob(fuzzed, "", &k1, வெற்று) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (test_is_fast() && i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 		/* MLDSA44_ED25519 keys are large and slow to fuzz */
-		if (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
-			break;
+		எனில் (!test_is_slow() || i >= இலக்கம்_FAST_BASE64_TESTS)
+			நிறுத்து;
 	}
 	sshbuf_free(fuzzed);
 	fuzz_cleanup(fuzz);
@@ -255,7 +255,7 @@ sshkey_fuzz_tests(void)
 #ifdef WITH_OPENSSL
 	TEST_START("fuzz RSA public");
 	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	public_fuzz(k1);
 	sshkey_free(k1);
@@ -270,7 +270,7 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz ECDSA public");
 	buf = load_file("ecdsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	public_fuzz(k1);
 	sshkey_free(k1);
@@ -285,7 +285,7 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz Ed25519 public");
 	buf = load_file("ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	public_fuzz(k1);
 	sshkey_free(k1);
@@ -299,7 +299,7 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz MLDSA44-ED25519 public");
 	buf = load_file("mldsa44_ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	public_fuzz(k1);
 	sshkey_free(k1);
@@ -315,7 +315,7 @@ sshkey_fuzz_tests(void)
 #ifdef WITH_OPENSSL
 	TEST_START("fuzz RSA sig");
 	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "ssh-rsa");
 	sshkey_free(k1);
@@ -323,7 +323,7 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz RSA SHA256 sig");
 	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "rsa-sha2-256");
 	sshkey_free(k1);
@@ -331,7 +331,7 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz RSA SHA512 sig");
 	buf = load_file("rsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
 	sig_fuzz(k1, "rsa-sha2-512");
 	sshkey_free(k1);
@@ -340,26 +340,26 @@ sshkey_fuzz_tests(void)
 
 	TEST_START("fuzz ECDSA sig");
 	buf = load_file("ecdsa_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, வெற்று);
 	sshkey_free(k1);
 	TEST_DONE();
 #endif /* WITH_OPENSSL */
 
 	TEST_START("fuzz Ed25519 sig");
 	buf = load_file("ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, வெற்று);
 	sshkey_free(k1);
 	TEST_DONE();
 
 	TEST_START("fuzz MLDSA44-ED25519 sig");
 	buf = load_file("mldsa44_ed25519_1");
-	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
+	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, வெற்று), 0);
 	sshbuf_free(buf);
-	sig_fuzz(k1, NULL);
+	sig_fuzz(k1, வெற்று);
 	sshkey_free(k1);
 	TEST_DONE();
 

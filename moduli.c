@@ -37,30 +37,30 @@
  * Second step: test primes' safety (processor intensive)
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#அந்தர்பாவ <openssl/bn.h>
+#அந்தர்பாவ <openssl/dh.h>
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <limits.h>
 
-#include "xmalloc.h"
-#include "dh.h"
-#include "log.h"
-#include "misc.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "dh.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "misc.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 
 /*
  * File output defines
@@ -100,7 +100,7 @@
 #define SMALL_MAXIMUM	(0xffffffffUL)
 
 /* Constant: can sieve all primes less than 2**32, as 65537**2 > 2**32-1. */
-#define TINY_NUMBER	(1UL<<16)
+#define TINY_எண்	(1UL<<16)
 
 /* Ensure enough bit space for testing 2*q. */
 #define TEST_MAXIMUM	(1UL<<16)
@@ -125,58 +125,58 @@
  */
 
 /* sieve 2**16 */
-static uint32_t *TinySieve, tinybits;
+நிலையான uint32_t *TinySieve, tinybits;
 
 /* sieve 2**30 in 2**16 parts */
-static uint32_t *SmallSieve, smallbits, smallbase;
+நிலையான uint32_t *SmallSieve, smallbits, smallbase;
 
 /* sieve relative to the initial value */
-static uint32_t *LargeSieve, largewords, largetries, largenumbers;
-static uint32_t largebits, largememory;	/* megabytes */
-static BIGNUM *largebase;
+நிலையான uint32_t *LargeSieve, largewords, largetries, largenumbers;
+நிலையான uint32_t largebits, largememory;	/* megabytes */
+நிலையான BIGNUM *largebase;
 
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
+முழு gen_candidates(FILE *, uint32_t, BIGNUM *);
+முழு பகாஎண்_test(FILE *, FILE *, uint32_t, uint32_t, எழுத்து *, unsigned long,
     unsigned long);
 
 /*
  * print moduli out in consistent form,
  */
-static int
+நிலையான முழு
 qfileout(FILE * ofile, uint32_t otype, uint32_t otests, uint32_t otries,
     uint32_t osize, uint32_t ogenerator, BIGNUM * omodulus)
 {
-	struct tm *gtm;
+	கட்டமைப்பு tm *gtm;
 	time_t time_now;
-	int res;
+	முழு res;
 
 	time(&time_now);
 	gtm = gmtime(&time_now);
-	if (gtm == NULL)
-		return -1;
+	எனில் (gtm == வெற்று)
+		திரும்பு -1;
 
 	res = fprintf(ofile, "%04d%02d%02d%02d%02d%02d %u %u %u %u %x ",
 	    gtm->tm_year + 1900, gtm->tm_mon + 1, gtm->tm_mday,
 	    gtm->tm_hour, gtm->tm_min, gtm->tm_sec,
 	    otype, otests, otries, osize, ogenerator);
 
-	if (res < 0)
-		return (-1);
+	எனில் (res < 0)
+		திரும்பு (-1);
 
-	if (BN_print_fp(ofile, omodulus) < 1)
-		return (-1);
+	எனில் (BN_print_fp(ofile, omodulus) < 1)
+		திரும்பு (-1);
 
 	res = fprintf(ofile, "\n");
 	fflush(ofile);
 
-	return (res > 0 ? 0 : -1);
+	திரும்பு (res > 0 ? 0 : -1);
 }
 
 
 /*
  ** Sieve p's and q's with small factors
  */
-static void
+நிலையான வெறுமை
 sieve_large(uint32_t s32)
 {
 	uint64_t r, u, s = s32;
@@ -185,46 +185,46 @@ sieve_large(uint32_t s32)
 	largetries++;
 	/* r = largebase mod s */
 	r = BN_mod_word(largebase, s32);
-	if (r == 0)
+	எனில் (r == 0)
 		u = 0; /* s divides into largebase exactly */
-	else
+	இல்லையெனில்
 		u = s - r; /* largebase+u is first entry divisible by s */
 
-	if (u < largebits * 2ULL) {
+	எனில் (u < largebits * 2ULL) {
 		/*
 		 * The sieve omits p's and q's divisible by 2, so ensure that
 		 * largebase+u is odd. Then, step through the sieve in
 		 * increments of 2*s
 		 */
-		if (u & 0x1)
+		எனில் (u & 0x1)
 			u += s; /* Make largebase+u odd, and u even */
 
 		/* Mark all multiples of 2*s */
-		for (u /= 2; u < largebits; u += s)
+		க்கு (u /= 2; u < largebits; u += s)
 			BIT_SET(LargeSieve, u);
 	}
 
 	/* r = p mod s */
 	r = (2 * r + 1) % s;
-	if (r == 0)
+	எனில் (r == 0)
 		u = 0; /* s divides p exactly */
-	else
+	இல்லையெனில்
 		u = s - r; /* p+u is first entry divisible by s */
 
-	if (u < largebits * 4ULL) {
+	எனில் (u < largebits * 4ULL) {
 		/*
 		 * The sieve omits p's divisible by 4, so ensure that
 		 * largebase+u is not. Then, step through the sieve in
 		 * increments of 4*s
 		 */
-		while (u & 0x3) {
-			if (SMALL_MAXIMUM - u < s)
-				return;
+		போது (u & 0x3) {
+			எனில் (SMALL_MAXIMUM - u < s)
+				திரும்பு;
 			u += s;
 		}
 
 		/* Mark all multiples of 4*s */
-		for (u /= 4; u < largebits; u += s)
+		க்கு (u /= 4; u < largebits; u += s)
 			BIT_SET(LargeSieve, u);
 	}
 }
@@ -234,27 +234,27 @@ sieve_large(uint32_t s32)
  * to standard output.
  * The list is checked against small known primes (less than 2**30).
  */
-int
+முழு
 gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 {
 	BIGNUM *q;
 	uint32_t j, r, s, t;
-	uint32_t smallwords = TINY_NUMBER >> 6;
-	uint32_t tinywords = TINY_NUMBER >> 6;
+	uint32_t smallwords = TINY_எண் >> 6;
+	uint32_t tinywords = TINY_எண் >> 6;
 	time_t time_start, time_stop;
 	uint32_t i;
-	int ret = 0;
+	முழு ret = 0;
 
 	/*
 	 * Set power to the length in bits of the prime to be generated.
 	 * This is changed to 1 less than the desired safe prime moduli p.
 	 */
-	if (power > TEST_MAXIMUM) {
+	எனில் (power > TEST_MAXIMUM) {
 		error("Too many bits: %u > %lu", power, TEST_MAXIMUM);
-		return (-1);
-	} else if (power < TEST_MINIMUM) {
+		திரும்பு (-1);
+	} இல்லையெனில் எனில் (power < TEST_MINIMUM) {
 		error("Too few bits: %u < %u", power, TEST_MINIMUM);
-		return (-1);
+		திரும்பு (-1);
 	}
 	power--; /* decrement before squaring */
 
@@ -262,37 +262,37 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	largememory = LARGE_MAXIMUM;
 	largewords = (largememory << SHIFT_MEGAWORD);
 
-	TinySieve = xcalloc(tinywords, sizeof(uint32_t));
+	TinySieve = xcalloc(tinywords, அளவு(uint32_t));
 	tinybits = tinywords << SHIFT_WORD;
 
-	SmallSieve = xcalloc(smallwords, sizeof(uint32_t));
+	SmallSieve = xcalloc(smallwords, அளவு(uint32_t));
 	smallbits = smallwords << SHIFT_WORD;
 
-	LargeSieve = xcalloc(largewords, sizeof(uint32_t));
+	LargeSieve = xcalloc(largewords, அளவு(uint32_t));
 	largebits = largewords << SHIFT_WORD;
 	largenumbers = largebits * 2;	/* even numbers excluded */
 
 	/* validation check: count the number of primes tried */
 	largetries = 0;
-	if ((q = BN_new()) == NULL)
+	எனில் ((q = BN_new()) == வெற்று)
 		fatal("BN_new failed");
 
 	/*
 	 * Generate random starting point for subprime search, or use
 	 * specified parameter.
 	 */
-	if ((largebase = BN_new()) == NULL)
+	எனில் ((largebase = BN_new()) == வெற்று)
 		fatal("BN_new failed");
-	if (start == NULL) {
-		if (BN_rand(largebase, power, 1, 1) == 0)
+	எனில் (start == வெற்று) {
+		எனில் (BN_rand(largebase, power, 1, 1) == 0)
 			fatal("BN_rand failed");
-	} else {
-		if (BN_copy(largebase, start) == NULL)
+	} இல்லையெனில் {
+		எனில் (BN_copy(largebase, start) == வெற்று)
 			fatal("BN_copy: failed");
 	}
 
 	/* ensure odd */
-	if (BN_set_bit(largebase, 0) == 0)
+	எனில் (BN_set_bit(largebase, 0) == 0)
 		fatal("BN_set_bit: failed");
 
 	time(&time_start);
@@ -304,15 +304,15 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	/*
 	 * TinySieve
 	 */
-	for (i = 0; i < tinybits; i++) {
-		if (BIT_TEST(TinySieve, i))
-			continue; /* 2*i+3 is composite */
+	க்கு (i = 0; i < tinybits; i++) {
+		எனில் (BIT_TEST(TinySieve, i))
+			தொடர்; /* 2*i+3 is composite */
 
 		/* The next tiny prime */
 		t = 2 * i + 3;
 
 		/* Mark all multiples of t */
-		for (j = i + t; j < tinybits; j += t)
+		க்கு (j = i + t; j < tinybits; j += t)
 			BIT_SET(TinySieve, j);
 
 		sieve_large(t);
@@ -322,20 +322,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	 * Start the small block search at the next possible prime. To avoid
 	 * fencepost errors, the last pass is skipped.
 	 */
-	for (smallbase = TINY_NUMBER + 3;
-	    smallbase < (SMALL_MAXIMUM - TINY_NUMBER);
-	    smallbase += TINY_NUMBER) {
-		for (i = 0; i < tinybits; i++) {
-			if (BIT_TEST(TinySieve, i))
-				continue; /* 2*i+3 is composite */
+	க்கு (smallbase = TINY_எண் + 3;
+	    smallbase < (SMALL_MAXIMUM - TINY_எண்);
+	    smallbase += TINY_எண்) {
+		க்கு (i = 0; i < tinybits; i++) {
+			எனில் (BIT_TEST(TinySieve, i))
+				தொடர்; /* 2*i+3 is composite */
 
 			/* The next tiny prime */
 			t = 2 * i + 3;
 			r = smallbase % t;
 
-			if (r == 0) {
+			எனில் (r == 0) {
 				s = 0; /* t divides into smallbase exactly */
-			} else {
+			} இல்லையெனில் {
 				/* smallbase+s is first entry divisible by t */
 				s = t - r;
 			}
@@ -345,20 +345,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 			 * smallbase+s is odd. Then, step through the sieve
 			 * in increments of 2*t
 			 */
-			if (s & 1)
+			எனில் (s & 1)
 				s += t; /* Make smallbase+s odd, and s even */
 
 			/* Mark all multiples of 2*t */
-			for (s /= 2; s < smallbits; s += t)
+			க்கு (s /= 2; s < smallbits; s += t)
 				BIT_SET(SmallSieve, s);
 		}
 
 		/*
 		 * SmallSieve
 		 */
-		for (i = 0; i < smallbits; i++) {
-			if (BIT_TEST(SmallSieve, i))
-				continue; /* 2*i+smallbase is composite */
+		க்கு (i = 0; i < smallbits; i++) {
+			எனில் (BIT_TEST(SmallSieve, i))
+				தொடர்; /* 2*i+smallbase is composite */
 
 			/* The next small prime */
 			sieve_large((2 * i) + smallbase);
@@ -372,20 +372,20 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 	logit("%.24s Sieved with %u small primes in %lld seconds",
 	    ctime(&time_stop), largetries, (long long)(time_stop - time_start));
 
-	for (j = r = 0; j < largebits; j++) {
-		if (BIT_TEST(LargeSieve, j))
-			continue; /* Definitely composite, skip */
+	க்கு (j = r = 0; j < largebits; j++) {
+		எனில் (BIT_TEST(LargeSieve, j))
+			தொடர்; /* Definitely composite, skip */
 
 		debug2("test q = largebase+%u", 2 * j);
-		if (BN_set_word(q, 2 * j) == 0)
+		எனில் (BN_set_word(q, 2 * j) == 0)
 			fatal("BN_set_word failed");
-		if (BN_add(q, q, largebase) == 0)
+		எனில் (BN_add(q, q, largebase) == 0)
 			fatal("BN_add failed");
-		if (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
+		எனில் (qfileout(out, MODULI_TYPE_SOPHIE_GERMAIN,
 		    MODULI_TESTS_SIEVE, largetries,
 		    (power - 1) /* MSB */, (0), q) == -1) {
 			ret = -1;
-			break;
+			நிறுத்து;
 		}
 
 		r++; /* count q */
@@ -393,136 +393,136 @@ gen_candidates(FILE *out, uint32_t power, BIGNUM *start)
 
 	time(&time_stop);
 
-	free(LargeSieve);
-	free(SmallSieve);
-	free(TinySieve);
+	விடுவி(LargeSieve);
+	விடுவி(SmallSieve);
+	விடுவி(TinySieve);
 
 	logit("%.24s Found %u candidates", ctime(&time_stop), r);
 
-	return (ret);
+	திரும்பு (ret);
 }
 
-static void
-write_checkpoint(char *cpfile, uint32_t lineno)
+நிலையான வெறுமை
+write_checkpoint(எழுத்து *cpfile, uint32_t lineno)
 {
 	FILE *fp;
-	char tmp[PATH_MAX];
-	int r, writeok, closeok;
+	எழுத்து tmp[PATH_MAX];
+	முழு r, writeok, closeok;
 
-	r = snprintf(tmp, sizeof(tmp), "%s.XXXXXXXXXX", cpfile);
-	if (r < 0 || r >= PATH_MAX) {
+	r = snprintf(tmp, அளவு(tmp), "%s.XXXXXXXXXX", cpfile);
+	எனில் (r < 0 || r >= PATH_MAX) {
 		logit("write_checkpoint: temp pathname too long");
-		return;
+		திரும்பு;
 	}
-	if ((r = mkstemp(tmp)) == -1) {
+	எனில் ((r = mkstemp(tmp)) == -1) {
 		logit("mkstemp(%s): %s", tmp, strerror(errno));
-		return;
+		திரும்பு;
 	}
-	if ((fp = fdopen(r, "w")) == NULL) {
+	எனில் ((fp = fdopen(r, "w")) == வெற்று) {
 		logit("write_checkpoint: fdopen: %s", strerror(errno));
 		unlink(tmp);
 		close(r);
-		return;
+		திரும்பு;
 	}
 	writeok = (fprintf(fp, "%lu\n", (unsigned long)lineno) > 0);
 	closeok = (fclose(fp) == 0);
-	if (writeok && closeok && rename(tmp, cpfile) == 0) {
+	எனில் (writeok && closeok && rename(tmp, cpfile) == 0) {
 		debug3("wrote checkpoint line %lu to '%s'",
 		    (unsigned long)lineno, cpfile);
-	} else {
+	} இல்லையெனில் {
 		logit("failed to write to checkpoint file '%s': %s", cpfile,
 		    strerror(errno));
-		(void)unlink(tmp);
+		(வெறுமை)unlink(tmp);
 	}
 }
 
-static unsigned long
-read_checkpoint(char *cpfile)
+நிலையான unsigned long
+read_checkpoint(எழுத்து *cpfile)
 {
 	FILE *fp;
 	unsigned long lineno = 0;
 
-	if ((fp = fopen(cpfile, "r")) == NULL)
-		return 0;
-	if (fscanf(fp, "%lu\n", &lineno) < 1)
+	எனில் ((fp = fopen(cpfile, "r")) == வெற்று)
+		திரும்பு 0;
+	எனில் (fscanf(fp, "%lu\n", &lineno) < 1)
 		logit("Failed to load checkpoint from '%s'", cpfile);
-	else
+	இல்லையெனில்
 		logit("Loaded checkpoint from '%s' line %lu", cpfile, lineno);
 	fclose(fp);
-	return lineno;
+	திரும்பு lineno;
 }
 
-static unsigned long
-count_lines(FILE *f)
+நிலையான unsigned long
+மொத்தம்_வரிகள்(FILE *f)
 {
-	unsigned long count = 0;
-	char lp[QLINESIZE + 1];
+	unsigned long மொத்தம் = 0;
+	எழுத்து lp[QLINESIZE + 1];
 
-	if (fseek(f, 0, SEEK_SET) != 0) {
+	எனில் (fseek(f, 0, SEEK_SET) != 0) {
 		debug("input file is not seekable");
-		return ULONG_MAX;
+		திரும்பு ULONG_MAX;
 	}
-	while (fgets(lp, QLINESIZE + 1, f) != NULL)
-		count++;
+	போது (fgets(lp, QLINESIZE + 1, f) != வெற்று)
+		மொத்தம்++;
 	rewind(f);
-	debug("input file has %lu lines", count);
-	return count;
+	debug("input file has %lu lines", மொத்தம்);
+	திரும்பு மொத்தம்;
 }
 
-static char *
+நிலையான எழுத்து *
 fmt_time(time_t seconds)
 {
-	int day, hr, min;
-	static char buf[128];
+	முழு day, hr, min;
+	நிலையான எழுத்து buf[128];
 
 	min = (seconds / 60) % 60;
 	hr = (seconds / 60 / 60) % 24;
 	day = seconds / 60 / 60 / 24;
-	if (day > 0)
-		snprintf(buf, sizeof buf, "%dd %d:%02d", day, hr, min);
-	else
-		snprintf(buf, sizeof buf, "%d:%02d", hr, min);
-	return buf;
+	எனில் (day > 0)
+		snprintf(buf, அளவு buf, "%dd %d:%02d", day, hr, min);
+	இல்லையெனில்
+		snprintf(buf, அளவு buf, "%d:%02d", hr, min);
+	திரும்பு buf;
 }
 
-static void
+நிலையான வெறுமை
 print_progress(unsigned long start_lineno, unsigned long current_lineno,
     unsigned long end_lineno)
 {
-	static time_t time_start, time_prev;
+	நிலையான time_t time_start, time_prev;
 	time_t time_now, elapsed;
-	unsigned long num_to_process, processed, remaining, percent, eta;
-	double time_per_line;
-	char *eta_str;
+	unsigned long இலக்கம்_to_process, processed, remaining, percent, eta;
+	இரட்டை time_per_வரி;
+	எழுத்து *eta_str;
 
 	time_now = monotime();
-	if (time_start == 0) {
+	எனில் (time_start == 0) {
 		time_start = time_prev = time_now;
-		return;
+		திரும்பு;
 	}
 	/* print progress after 1m then once per 5m */
-	if (time_now - time_prev < 5 * 60)
-		return;
+	எனில் (time_now - time_prev < 5 * 60)
+		திரும்பு;
 	time_prev = time_now;
 	elapsed = time_now - time_start;
 	processed = current_lineno - start_lineno;
 	remaining = end_lineno - current_lineno;
-	num_to_process = end_lineno - start_lineno;
-	time_per_line = (double)elapsed / processed;
+	இலக்கம்_to_process = end_lineno - start_lineno;
+	time_per_வரி = (இரட்டை)elapsed / processed;
 	/* if we don't know how many we're processing just report count+time */
 	time(&time_now);
-	if (end_lineno == ULONG_MAX) {
+	எனில் (end_lineno == ULONG_MAX) {
 		logit("%.24s processed %lu in %s", ctime(&time_now),
 		    processed, fmt_time(elapsed));
-		return;
+		திரும்பு;
 	}
-	percent = 100 * processed / num_to_process;
-	eta = time_per_line * remaining;
+	percent = 100 * processed / இலக்கம்_to_process;
+	eta = time_per_வரி * remaining;
 	eta_str = xstrdup(fmt_time(eta));
 	logit("%.24s processed %lu of %lu (%lu%%) in %s, ETA %s",
-	    ctime(&time_now), processed, num_to_process, percent,
+	    ctime(&time_now), processed, இலக்கம்_to_process, percent,
 	    fmt_time(elapsed), eta_str);
-	free(eta_str);
+	விடுவி(eta_str);
 }
 
 /*
@@ -531,62 +531,62 @@ print_progress(unsigned long start_lineno, unsigned long current_lineno,
  * (checking both q and p)
  * The result is a list of so-call "safe" primes
  */
-int
-prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
-    char *checkpoint_file, unsigned long start_lineno, unsigned long num_lines)
+முழு
+பகாஎண்_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
+    எழுத்து *checkpoint_file, unsigned long start_lineno, unsigned long இலக்கம்_வரிகள்)
 {
 	BIGNUM *q, *p, *a;
-	char *cp, *lp;
-	uint32_t count_in = 0, count_out = 0, count_possible = 0;
+	எழுத்து *cp, *lp;
+	uint32_t மொத்தம்_in = 0, மொத்தம்_out = 0, மொத்தம்_possible = 0;
 	uint32_t generator_known, in_tests, in_tries, in_type, in_size;
 	unsigned long last_processed = 0, end_lineno;
 	time_t time_start, time_stop;
-	int res, is_prime;
+	முழு res, is_பகாஎண்;
 
-	if (trials < TRIAL_MINIMUM) {
+	எனில் (trials < TRIAL_MINIMUM) {
 		error("Minimum primality trials is %d", TRIAL_MINIMUM);
-		return (-1);
+		திரும்பு (-1);
 	}
 
-	if (num_lines == 0)
-		end_lineno = count_lines(in);
-	else
-		end_lineno = start_lineno + num_lines;
+	எனில் (இலக்கம்_வரிகள் == 0)
+		end_lineno = மொத்தம்_வரிகள்(in);
+	இல்லையெனில்
+		end_lineno = start_lineno + இலக்கம்_வரிகள்;
 
 	time(&time_start);
 
-	if ((p = BN_new()) == NULL)
+	எனில் ((p = BN_new()) == வெற்று)
 		fatal("BN_new failed");
-	if ((q = BN_new()) == NULL)
+	எனில் ((q = BN_new()) == வெற்று)
 		fatal("BN_new failed");
 
 	debug2("%.24s Final %u Miller-Rabin trials (%x generator)",
 	    ctime(&time_start), trials, generator_wanted);
 
-	if (checkpoint_file != NULL)
+	எனில் (checkpoint_file != வெற்று)
 		last_processed = read_checkpoint(checkpoint_file);
 	last_processed = start_lineno = MAXIMUM(last_processed, start_lineno);
-	if (end_lineno == ULONG_MAX)
+	எனில் (end_lineno == ULONG_MAX)
 		debug("process from line %lu from pipe", last_processed);
-	else
+	இல்லையெனில்
 		debug("process from line %lu to line %lu", last_processed,
 		    end_lineno);
 
 	res = 0;
 	lp = xmalloc(QLINESIZE + 1);
-	while (fgets(lp, QLINESIZE + 1, in) != NULL && count_in < end_lineno) {
-		count_in++;
-		if (count_in <= last_processed) {
+	போது (fgets(lp, QLINESIZE + 1, in) != வெற்று && மொத்தம்_in < end_lineno) {
+		மொத்தம்_in++;
+		எனில் (மொத்தம்_in <= last_processed) {
 			debug3("skipping line %u, before checkpoint or "
-			    "specified start line", count_in);
-			continue;
+			    "specified start line", மொத்தம்_in);
+			தொடர்;
 		}
-		if (checkpoint_file != NULL)
-			write_checkpoint(checkpoint_file, count_in);
-		print_progress(start_lineno, count_in, end_lineno);
-		if (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
-			debug2("%10u: comment or short line", count_in);
-			continue;
+		எனில் (checkpoint_file != வெற்று)
+			write_checkpoint(checkpoint_file, மொத்தம்_in);
+		print_progress(start_lineno, மொத்தம்_in, end_lineno);
+		எனில் (strlen(lp) < 14 || *lp == '!' || *lp == '#') {
+			debug2("%10u: comment or short line", மொத்தம்_in);
+			தொடர்;
 		}
 
 		/* XXX - fragile parser */
@@ -599,9 +599,9 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		/* tests */
 		in_tests = strtoul(cp, &cp, 10);
 
-		if (in_tests & MODULI_TESTS_COMPOSITE) {
-			debug2("%10u: known composite", count_in);
-			continue;
+		எனில் (in_tests & MODULI_TESTS_COMPOSITE) {
+			debug2("%10u: known composite", மொத்தம்_in);
+			தொடர்;
 		}
 
 		/* tries */
@@ -617,89 +617,89 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		cp += strspn(cp, " ");
 
 		/* modulus (hex) */
-		switch (in_type) {
-		case MODULI_TYPE_SOPHIE_GERMAIN:
-			debug2("%10u: (%u) Sophie-Germain", count_in, in_type);
+		தேர்வு (in_type) {
+		நிலை MODULI_TYPE_SOPHIE_GERMAIN:
+			debug2("%10u: (%u) Sophie-Germain", மொத்தம்_in, in_type);
 			a = q;
-			if (BN_hex2bn(&a, cp) == 0)
+			எனில் (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* p = 2*q + 1 */
-			if (BN_lshift(p, q, 1) == 0)
+			எனில் (BN_lshift(p, q, 1) == 0)
 				fatal("BN_lshift failed");
-			if (BN_add_word(p, 1) == 0)
+			எனில் (BN_add_word(p, 1) == 0)
 				fatal("BN_add_word failed");
 			in_size += 1;
 			generator_known = 0;
-			break;
-		case MODULI_TYPE_UNSTRUCTURED:
-		case MODULI_TYPE_SAFE:
-		case MODULI_TYPE_SCHNORR:
-		case MODULI_TYPE_STRONG:
-		case MODULI_TYPE_UNKNOWN:
-			debug2("%10u: (%u)", count_in, in_type);
+			நிறுத்து;
+		நிலை MODULI_TYPE_UNSTRUCTURED:
+		நிலை MODULI_TYPE_SAFE:
+		நிலை MODULI_TYPE_SCHNORR:
+		நிலை MODULI_TYPE_STRONG:
+		நிலை MODULI_TYPE_UNKNOWN:
+			debug2("%10u: (%u)", மொத்தம்_in, in_type);
 			a = p;
-			if (BN_hex2bn(&a, cp) == 0)
+			எனில் (BN_hex2bn(&a, cp) == 0)
 				fatal("BN_hex2bn failed");
 			/* q = (p-1) / 2 */
-			if (BN_rshift(q, p, 1) == 0)
+			எனில் (BN_rshift(q, p, 1) == 0)
 				fatal("BN_rshift failed");
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			debug2("Unknown prime type");
-			break;
+			நிறுத்து;
 		}
 
 		/*
 		 * due to earlier inconsistencies in interpretation, check
 		 * the proposed bit size.
 		 */
-		if ((uint32_t)BN_num_bits(p) != (in_size + 1)) {
-			debug2("%10u: bit size %u mismatch", count_in, in_size);
-			continue;
+		எனில் ((uint32_t)BN_இலக்கம்_bits(p) != (in_size + 1)) {
+			debug2("%10u: bit size %u mismatch", மொத்தம்_in, in_size);
+			தொடர்;
 		}
-		if (in_size < QSIZE_MINIMUM) {
-			debug2("%10u: bit size %u too short", count_in, in_size);
-			continue;
+		எனில் (in_size < QSIZE_MINIMUM) {
+			debug2("%10u: bit size %u too short", மொத்தம்_in, in_size);
+			தொடர்;
 		}
 
-		if (in_tests & MODULI_TESTS_MILLER_RABIN)
+		எனில் (in_tests & MODULI_TESTS_MILLER_RABIN)
 			in_tries += trials;
-		else
+		இல்லையெனில்
 			in_tries = trials;
 
 		/*
 		 * guess unknown generator
 		 */
-		if (generator_known == 0) {
-			if (BN_mod_word(p, 24) == 11)
+		எனில் (generator_known == 0) {
+			எனில் (BN_mod_word(p, 24) == 11)
 				generator_known = 2;
-			else {
+			இல்லையெனில் {
 				uint32_t r = BN_mod_word(p, 10);
 
-				if (r == 3 || r == 7)
+				எனில் (r == 3 || r == 7)
 					generator_known = 5;
 			}
 		}
 		/*
 		 * skip tests when desired generator doesn't match
 		 */
-		if (generator_wanted > 0 &&
+		எனில் (generator_wanted > 0 &&
 		    generator_wanted != generator_known) {
 			debug2("%10u: generator %d != %d",
-			    count_in, generator_known, generator_wanted);
-			continue;
+			    மொத்தம்_in, generator_known, generator_wanted);
+			தொடர்;
 		}
 
 		/*
 		 * Primes with no known generator are useless for DH, so
 		 * skip those.
 		 */
-		if (generator_known == 0) {
-			debug2("%10u: no known generator", count_in);
-			continue;
+		எனில் (generator_known == 0) {
+			debug2("%10u: no known generator", மொத்தம்_in);
+			தொடர்;
 		}
 
-		count_possible++;
+		மொத்தம்_possible++;
 
 		/*
 		 * The (1/4)^N performance bound on Miller-Rabin is
@@ -708,13 +708,13 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * that p is also prime. A single pass will weed out the
 		 * vast majority of composite q's.
 		 */
-		is_prime = BN_is_prime_ex(q, 1, NULL, NULL);
-		if (is_prime < 0)
+		is_பகாஎண் = BN_is_பகாஎண்_ex(q, 1, வெற்று, வெற்று);
+		எனில் (is_பகாஎண் < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
+		எனில் (is_பகாஎண் == 0) {
 			debug("%10u: q failed first possible prime test",
-			    count_in);
-			continue;
+			    மொத்தம்_in);
+			தொடர்;
 		}
 
 		/*
@@ -724,48 +724,48 @@ prime_test(FILE *in, FILE *out, uint32_t trials, uint32_t generator_wanted,
 		 * will show up on the first Rabin-Miller iteration so it
 		 * doesn't hurt to specify a high iteration count.
 		 */
-		is_prime = BN_is_prime_ex(p, trials, NULL, NULL);
-		if (is_prime < 0)
+		is_பகாஎண் = BN_is_பகாஎண்_ex(p, trials, வெற்று, வெற்று);
+		எனில் (is_பகாஎண் < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: p is not prime", count_in);
-			continue;
+		எனில் (is_பகாஎண் == 0) {
+			debug("%10u: p is not prime", மொத்தம்_in);
+			தொடர்;
 		}
-		debug("%10u: p is almost certainly prime", count_in);
+		debug("%10u: p is almost certainly prime", மொத்தம்_in);
 
 		/* recheck q more rigorously */
-		is_prime = BN_is_prime_ex(q, trials - 1, NULL, NULL);
-		if (is_prime < 0)
+		is_பகாஎண் = BN_is_பகாஎண்_ex(q, trials - 1, வெற்று, வெற்று);
+		எனில் (is_பகாஎண் < 0)
 			fatal("BN_is_prime_ex failed");
-		if (is_prime == 0) {
-			debug("%10u: q is not prime", count_in);
-			continue;
+		எனில் (is_பகாஎண் == 0) {
+			debug("%10u: q is not prime", மொத்தம்_in);
+			தொடர்;
 		}
-		debug("%10u: q is almost certainly prime", count_in);
+		debug("%10u: q is almost certainly prime", மொத்தம்_in);
 
-		if (qfileout(out, MODULI_TYPE_SAFE,
+		எனில் (qfileout(out, MODULI_TYPE_SAFE,
 		    in_tests | MODULI_TESTS_MILLER_RABIN,
 		    in_tries, in_size, generator_known, p)) {
 			res = -1;
-			break;
+			நிறுத்து;
 		}
 
-		count_out++;
+		மொத்தம்_out++;
 	}
 
 	time(&time_stop);
-	free(lp);
+	விடுவி(lp);
 	BN_free(p);
 	BN_free(q);
 
-	if (checkpoint_file != NULL)
+	எனில் (checkpoint_file != வெற்று)
 		unlink(checkpoint_file);
 
 	logit("%.24s Found %u safe primes of %u candidates in %ld seconds",
-	    ctime(&time_stop), count_out, count_possible,
+	    ctime(&time_stop), மொத்தம்_out, மொத்தம்_possible,
 	    (long) (time_stop - time_start));
 
-	return (res);
+	திரும்பு (res);
 }
 
 #endif /* WITH_OPENSSL */

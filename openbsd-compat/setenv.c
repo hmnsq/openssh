@@ -30,17 +30,17 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#எனில் !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-extern char **environ;
+வெளி எழுத்து **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+நிலையான எழுத்து **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+நிலையான எழுத்து *
+__findenv(மாறிலி எழுத்து *name, முழு len, முழு *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	வெளி எழுத்து **environ;
+	முழு i;
+	மாறிலி எழுத்து *np;
+	எழுத்து **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	எனில் (name == வெற்று || environ == வெற்று)
+		திரும்பு (வெற்று);
+	க்கு (p = environ + *offset; (cp = *p) != வெற்று; ++p) {
+		க்கு (np = name, i = len; i && *cp; i--)
+			எனில் (*cp++ != *np++)
+				நிறுத்து;
+		எனில் (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			திரும்பு (cp);
 		}
 	}
-	return (NULL);
+	திரும்பு (வெற்று);
 }
 
-#if 0 /* nothing uses putenv */
+#எனில் 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+முழு
+putenv(எழுத்து *str)
 {
-	char **P, *cp;
+	எழுத்து **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	முழு offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	க்கு (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	எனில் (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		திரும்பு (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	எனில் (__findenv(str, (முழு)(cp - str), &offset) != வெற்று) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		போது (__findenv(str, (முழு)(cp - str), &offset)) {
+			க்கு (P = &environ[offset];; ++P)
+				எனில் (!(*P = *(P + 1)))
+					நிறுத்து;
 		}
-		return (0);
+		திரும்பு (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	க்கு (P = environ; *P != வெற்று; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (எழுத்து **)realloc(lastenv, அளவு(எழுத்து *) * (cnt + 2));
+	எனில் (!P)
+		திரும்பு (-1);
+	எனில் (lastenv != environ)
+		memcpy(P, environ, cnt * அளவு(எழுத்து *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = வெற்று;
+	திரும்பு (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+முழு
+setenv(மாறிலி எழுத்து *name, மாறிலி எழுத்து *மதிப்பு, முழு rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	எழுத்து *C, **P;
+	மாறிலி எழுத்து *np;
+	முழு l_மதிப்பு, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	க்கு (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	எனில் (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		திரும்பு (-1);			/* has `=' in name */
 	}
 #endif
 
-	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	l_மதிப்பு = strlen(மதிப்பு);
+	எனில் ((C = __findenv(name, (முழு)(np - name), &offset)) != வெற்று) {
+		முழு tmpoff = offset + 1;
+		எனில் (!rewrite)
+			திரும்பு (0);
+#எனில் 0 /* XXX - existing entry may not be writable */
+		எனில் (strlen(C) >= l_மதிப்பு) {	/* old larger; copy over */
+			போது ((*C++ = *மதிப்பு++))
 				;
-			return (0);
+			திரும்பு (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		போது (__findenv(name, (முழு)(np - name), &tmpoff)) {
+			க்கு (P = &environ[tmpoff];; ++P)
+				எனில் (!(*P = *(P + 1)))
+					நிறுத்து;
 		}
-	} else {					/* create new slot */
+	} இல்லையெனில் {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		க்கு (P = environ; *P != வெற்று; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (எழுத்து **)realloc(lastenv, அளவு(எழுத்து *) * (cnt + 2));
+		எனில் (!P)
+			திரும்பு (-1);
+		எனில் (lastenv != environ)
+			memcpy(P, environ, cnt * அளவு(எழுத்து *));
 		lastenv = environ = P;
 		offset = cnt;
-		environ[cnt + 1] = NULL;
+		environ[cnt + 1] = வெற்று;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	எனில் (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((முழு)(np - name) + l_மதிப்பு + 2))))
+		திரும்பு (-1);
+	க்கு (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	க்கு (*C++ = '='; (*C++ = *மதிப்பு++); )
 		;
-	return (0);
+	திரும்பு (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+முழு
+unsetenv(மாறிலி எழுத்து *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	எழுத்து **P;
+	மாறிலி எழுத்து *np;
+	முழு offset = 0;
 
-	if (!name || !*name) {
+	எனில் (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		திரும்பு (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	க்கு (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	எனில் (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		திரும்பு (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	போது (__findenv(name, (முழு)(np - name), &offset)) {
+		க்கு (P = &environ[offset];; ++P)
+			எனில் (!(*P = *(P + 1)))
+				நிறுத்து;
 	}
-	return (0);
+	திரும்பு (0);
 }
 #endif /* HAVE_UNSETENV */
 

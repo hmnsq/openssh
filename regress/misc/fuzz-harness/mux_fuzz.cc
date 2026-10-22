@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
 
-extern "C" void fuzz_mux_one(const uint8_t *data, size_t size);
+வெளி "C" வெறுமை fuzz_mux_one(மாறிலி uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+வெளி "C" முழு
+LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t *data, size_t size)
 {
 	fuzz_mux_one(data, size);
-	return 0;
+	திரும்பு 0;
 }

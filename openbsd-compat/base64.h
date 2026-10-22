@@ -43,11 +43,11 @@
 #ifndef _BSD_BASE64_H
 #define _BSD_BASE64_H
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifndef HAVE___B64_NTOP
 # ifndef HAVE_B64_NTOP
-int b64_ntop(u_char const *src, size_t srclength, char *target,
+முழு b64_ntop(u_char மாறிலி *src, size_t srclength, எழுத்து *target,
     size_t targsize);
 # endif /* !HAVE_B64_NTOP */
 # define __b64_ntop(a,b,c,d) b64_ntop(a,b,c,d)
@@ -55,7 +55,7 @@ int b64_ntop(u_char const *src, size_t srclength, char *target,
 
 #ifndef HAVE___B64_PTON
 # ifndef HAVE_B64_PTON
-int b64_pton(char const *src, u_char *target, size_t targsize);
+முழு b64_pton(எழுத்து மாறிலி *src, u_char *target, size_t targsize);
 # endif /* !HAVE_B64_PTON */
 # define __b64_pton(a,b,c) b64_pton(a,b,c)
 #endif /* HAVE___B64_PTON */

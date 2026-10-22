@@ -19,25 +19,25 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#எனில் defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <inttypes.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <time.h>
+#அந்தர்பாவ <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "port-linux.h"
+#அந்தர்பாவ "misc.h"
 
 #ifdef LINUX_OOM_ADJUST
 /*
@@ -46,163 +46,163 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+நிலையான முழு oom_adj_save = INT_MIN;
+நிலையான எழுத்து *oom_adj_path = வெற்று;
+கட்டமைப்பு {
+	எழுத்து *path;
+	முழு மதிப்பு;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{வெற்று, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+வெறுமை
+oom_adjust_setup(வெறுமை)
 {
-	int i, value;
+	முழு i, மதிப்பு;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 க்கு (i = 0; oom_adjust[i].path != வெற்று; i++) {
 		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		மதிப்பு = oom_adjust[i].மதிப்பு;
+		எனில் ((fp = fopen(oom_adj_path, "r+")) != வெற்று) {
+			எனில் (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			இல்லையெனில் {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				எனில் (fprintf(fp, "%d\n", மதிப்பு) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				இல்லையெனில்
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_path, oom_adj_save, மதிப்பு);
 			}
 			fclose(fp);
-			return;
+			திரும்பு;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_path = வெற்று;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+வெறுமை
+oom_adjust_restore(வெறுமை)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	எனில் (oom_adj_save == INT_MIN || oom_adj_path == வெற்று ||
+	    (fp = fopen(oom_adj_path, "w")) == வெற்று)
+		திரும்பு;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	எனில் (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	இல்லையெனில்
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	திரும்பு;
 }
 #endif /* LINUX_OOM_ADJUST */
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#அந்தர்பாவ <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+வெறுமை
+memlock_onfault_setup(வெறுமை)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	எனில் (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	இல்லையெனில்
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
 
 #ifdef SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
+நிலையான வெறுமை ssh_systemd_notify(மாறிலி எழுத்து *, ...)
     __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+நிலையான வெறுமை
+ssh_systemd_notify(மாறிலி எழுத்து *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	எழுத்து *s = வெற்று;
+	மாறிலி எழுத்து *path;
+	கட்டமைப்பு stat sb;
+	கட்டமைப்பு sockaddr_un addr;
+	முழு fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	எனில் ((path = getenv("NOTIFY_SOCKET")) == வெற்று || strlen(path) == 0)
+		திரும்பு;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	எனில் (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+		செல் out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	எனில் (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+		செல் out;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, அளவு(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
+	எனில் (strlcpy(addr.sun_path, path,
+	    அளவு(addr.sun_path)) >= அளவு(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
-		goto out;
+		செல் out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	எனில் (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	எனில் ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+		செல் out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	எனில் (connect(fd, (கட்டமைப்பு sockaddr *)&addr, அளவு(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+		செல் out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	எனில் (லிக(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+		செல் out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	எனில் (fd != -1)
 		close(fd);
-	free(s);
+	விடுவி(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+வெறுமை
+ssh_systemd_notify_ready(வெறுமை)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+வெறுமை
+ssh_systemd_notify_reload(வெறுமை)
 {
-	struct timespec now;
+	கட்டமைப்பு timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	எனில் (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} இல்லையெனில் {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

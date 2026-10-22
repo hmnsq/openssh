@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdlib.h>
 
-extern "C" {
+வெளி "C" {
 
-#include "auth-options.h"
+#அந்தர்பாவ "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+முழு LLVMFuzzer_Test_One_உள்ளீடு(மாறிலி uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	எழுத்து *cp = (எழுத்து *)malloc(size + 1);
+	கட்டமைப்பு sshauthopt *opts = வெற்று, *merge = வெற்று, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
+	எனில் (cp == வெற்று || add == வெற்று)
+		செல் out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	எனில் ((opts = sshauthopt_parse(cp, வெற்று)) == வெற்று)
+		செல் out;
+	எனில் ((merge = sshauthopt_merge(opts, add, வெற்று)) == வெற்று)
+		செல் out;
 
  out:
-	free(cp);
+	விடுவி(cp);
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	திரும்பு 0;
 }
 
 } // extern "C"

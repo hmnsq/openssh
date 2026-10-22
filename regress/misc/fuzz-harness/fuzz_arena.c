@@ -29,127 +29,127 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <stddef.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+வெளி வெறுமை *__real_malloc(size_t);
+வெளி வெறுமை *__real_calloc(size_t, size_t);
+வெளி வெறுமை *__real_realloc(வெறுமை *, size_t);
+வெளி வெறுமை __real_free(வெறுமை *);
+வெளி எழுத்து *__real_strdup(மாறிலி எழுத்து *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+கட்டமைப்பு arena_முனை {
+	வெறுமை *ptr;
+	கட்டமைப்பு arena_முனை *next;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+நிலையான கட்டமைப்பு arena_முனை *arena_head;
+நிலையான முழு tracking;
 
-static inline void
-arena_track(void *p)
+நிலையான உள்வரி வெறுமை
+arena_track(வெறுமை *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	கட்டமைப்பு arena_முனை *n;
+	எனில் (!tracking || p == வெற்று)
+		திரும்பு;
+	n = (கட்டமைப்பு arena_முனை *)__real_malloc(அளவு(*n));
+	எனில் (n == வெற்று)
+		திரும்பு;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
 }
 
-static inline void
-arena_untrack(void *p)
+நிலையான உள்வரி வெறுமை
+arena_untrack(வெறுமை *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+	கட்டமைப்பு arena_முனை **pp;
+	எனில் (p == வெற்று)
+		திரும்பு;
+	க்கு (pp = &arena_head; *pp != வெற்று; pp = &(*pp)->next) {
+		எனில் ((*pp)->ptr == p) {
+			கட்டமைப்பு arena_முனை *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			திரும்பு;
 		}
 	}
 }
 
-void *
+வெறுமை *
 __wrap_malloc(size_t size)
 {
-	void *p = __real_malloc(size);
+	வெறுமை *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	திரும்பு p;
 }
 
-void *
+வெறுமை *
 __wrap_calloc(size_t nmemb, size_t size)
 {
-	void *p = __real_calloc(nmemb, size);
+	வெறுமை *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	திரும்பு p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+வெறுமை *
+__wrap_realloc(வெறுமை *ptr, size_t size)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	வெறுமை *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	திரும்பு p;
 }
 
-void
-__wrap_free(void *ptr)
+வெறுமை
+__wrap_free(வெறுமை *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+எழுத்து *
+__wrap_strdup(மாறிலி எழுத்து *s)
 {
 	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
+	எழுத்து *p;
+	எனில் (s == வெற்று)
+		திரும்பு வெற்று;
 	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	p = (எழுத்து *)__real_malloc(len);
+	எனில் (p == வெற்று)
+		திரும்பு வெற்று;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	திரும்பு p;
 }
 
-void
-fuzz_arena_begin(void)
+வெறுமை
+fuzz_arena_begin(வெறுமை)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+வெறுமை
+fuzz_arena_release(வெறுமை)
 {
-	struct arena_node *n;
+	கட்டமைப்பு arena_முனை *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	போது (arena_head != வெற்று) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+வெறுமை
+fuzz_arena_cleanup(வெறுமை)
 {
-	struct arena_node *n;
+	கட்டமைப்பு arena_முனை *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	போது (arena_head != வெற்று) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

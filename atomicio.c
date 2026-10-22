@@ -26,144 +26,144 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/uio.h>
+#அந்தர்பாவ <sys/uio.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <poll.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <limits.h>
 
-#include "atomicio.h"
+#அந்தர்பாவ "atomicio.h"
 
 /*
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (முழு, வெறுமை *, size_t), முழு fd, வெறுமை *_s, size_t n,
+    முழு (*cb)(வெறுமை *, size_t), வெறுமை *cb_arg)
 {
-	char *s = _s;
+	எழுத்து *s = _s;
 	size_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	கட்டமைப்பு pollfd pfd;
 
 	pfd.fd = fd;
-	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	pfd.events = f == பட ? POLLIN : POLLOUT;
+	போது (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		தேர்வு (res) {
+		நிலை -1:
+			எனில் (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				எனில் (cb != வெற்று && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					திரும்பு pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				தொடர்;
+			} இல்லையெனில் எனில் (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(வெறுமை)poll(&pfd, 1, -1);
+				தொடர்;
 			}
-			return 0;
-		case 0:
+			திரும்பு 0;
+		நிலை 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			திரும்பு pos;
+		இயல்பு:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			எனில் (cb != வெற்று && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				திரும்பு pos;
 			}
 		}
 	}
-	return pos;
+	திரும்பு pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (முழு, வெறுமை *, size_t), முழு fd, வெறுமை *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	திரும்பு atomicio6(f, fd, _s, n, வெற்று, வெற்று);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (முழு, மாறிலி கட்டமைப்பு iovec *, முழு), முழு fd,
+    மாறிலி கட்டமைப்பு iovec *_iov, முழு iovcnt,
+    முழு (*cb)(வெறுமை *, size_t), வெறுமை *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	கட்டமைப்பு iovec iov_array[IOV_MAX], *iov = iov_array;
+	கட்டமைப்பு pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	எனில் (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		திரும்பு 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	memcpy(iov, _iov, (size_t)iovcnt * அளவு(*_iov));
 
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#இல்லையெனில்
 	pfd.events = POLLIN|POLLOUT;
 #endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+	க்கு (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		தேர்வு (res) {
+		நிலை -1:
+			எனில் (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				எனில் (cb != வெற்று && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					திரும்பு pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				தொடர்;
+			} இல்லையெனில் எனில் (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(வெறுமை)poll(&pfd, 1, -1);
+				தொடர்;
 			}
-			return 0;
-		case 0:
+			திரும்பு 0;
+		நிலை 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			திரும்பு pos;
+		இயல்பு:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			போது (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			எனில் (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				திரும்பு 0;
 			}
-			if (iovcnt == 0)
-				break;
+			எனில் (iovcnt == 0)
+				நிறுத்து;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((எழுத்து *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		எனில் (cb != வெற்று && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			திரும்பு pos;
 		}
 	}
-	return pos;
+	திரும்பு pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (முழு, மாறிலி கட்டமைப்பு iovec *, முழு), முழு fd,
+    மாறிலி கட்டமைப்பு iovec *_iov, முழு iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	திரும்பு atomiciov6(f, fd, _iov, iovcnt, வெற்று, வெற்று);
 }

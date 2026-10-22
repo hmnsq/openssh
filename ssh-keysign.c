@@ -23,189 +23,189 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#அந்தர்பாவ <fcntl.h>
+#அந்தர்பாவ <paths.h>
+#அந்தர்பாவ <pwd.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <errno.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
+#அந்தர்பாவ <openssl/evp.h>
+#அந்தர்பாவ <openssl/rand.h>
+#அந்தர்பாவ <openssl/rsa.h>
+#அந்தர்பாவ "openbsd-compat/openssl-compat.h"
 #endif
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "sshkey.h"
+#அந்தர்பாவ "ssh.h"
+#அந்தர்பாவ "ssh2.h"
+#அந்தர்பாவ "misc.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "authfile.h"
+#அந்தர்பாவ "msg.h"
+#அந்தர்பாவ "canohost.h"
+#அந்தர்பாவ "pathnames.h"
+#அந்தர்பாவ "readconf.h"
+#அந்தர்பாவ "uidswap.h"
+#அந்தர்பாவ "ssherr.h"
 
-extern char *__progname;
+வெளி எழுத்து *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
+நிலையான முழு
+valid_request(கட்டமைப்பு passwd *pw, எழுத்து *host, கட்டமைப்பு sshkey **ret, எழுத்து **pkalgp,
     u_char *data, size_t datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	கட்டமைப்பு sshbuf *b;
+	கட்டமைப்பு sshkey *சாவி = வெற்று;
 	u_char type, *pkblob;
-	char *p;
+	எழுத்து *p;
 	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	எழுத்து *pkalg, *luser;
+	முழு r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	எனில் (ret != வெற்று)
+		*ret = வெற்று;
+	எனில் (pkalgp != வெற்று)
+		*pkalgp = வெற்று;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	எனில் ((b = sshbuf_from(data, datalen)) == வெற்று)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	எனில் ((r = sshbuf_get_string(b, வெற்று, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	எனில் (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	எனில் ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	எனில் (type != SSH2_செய்தி_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	எனில் ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(b, &p, வெற்று)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	எனில் (strcmp("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	விடுவி(p);
 
 	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(b, &p, வெற்று)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	எனில் (strcmp("hostbased", p) != 0)
 		fail++;
-	free(p);
+	விடுவி(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	எனில் ((r = sshbuf_get_cstring(b, &pkalg, வெற்று)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	எனில் (pktype == சாவி_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	இல்லையெனில் எனில் ((r = sshkey_from_blob(pkblob, blen, &சாவி)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} இல்லையெனில் எனில் (சாவி->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	எனில் ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	எனில் (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	இல்லையெனில் எனில் (strlen(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	இல்லையெனில் எனில் (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	இல்லையெனில் எனில் (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	விடுவி(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	எனில் ((r = sshbuf_get_cstring(b, &luser, வெற்று)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	எனில் (strcmp(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	விடுவி(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	எனில் (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	எனில் (!fail) {
+		எனில் (ret != வெற்று) {
+			*ret = சாவி;
+			சாவி = வெற்று;
 		}
-		if (pkalgp != NULL) {
+		எனில் (pkalgp != வெற்று) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = வெற்று;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(சாவி);
+	விடுவி(pkalg);
+	விடுவி(pkblob);
 
-	return (fail ? -1 : 0);
+	திரும்பு (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+முழு
+முதன்மை(முழு argc, எழுத்து **argv)
 {
-	struct sshbuf *b;
+	கட்டமைப்பு sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
+#define இலக்கம்_KEYTYPES 5
+	கட்டமைப்பு sshkey *சாவிகள்[இலக்கம்_KEYTYPES], *சாவி = வெற்று;
+	கட்டமைப்பு passwd *pw;
+	முழு r, சாவி_fd[இலக்கம்_KEYTYPES], i, found, version = 2, fd;
 	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
+	எழுத்து *host, *fp, *pkalg;
 	size_t slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
+	எனில் ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
 		exit(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
+	எனில் (fd > 2)
 		close(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
+	எனில் (pledge("stdio rpath getpw dns id", வெற்று) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	க்கு (i = 0; i < இலக்கம்_KEYTYPES; i++)
+		சாவி_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	சாவி_fd[i++] = open(PATH_HOST_ECDSA_சாவி_FILE, O_RDONLY);
+	சாவி_fd[i++] = open(PATH_HOST_ED25519_சாவி_FILE, O_RDONLY);
+	சாவி_fd[i++] = open(PATH_HOST_RSA_சாவி_FILE, O_RDONLY);
+	சாவி_fd[i++] = open(PATH_HOST_MLDSA44_ED25519_சாவி_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	எனில் ((pw = getpwuid(getuid())) == வெற்று)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
@@ -219,90 +219,90 @@ main(int argc, char **argv)
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(வெறுமை)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, வெற்று);
+	(வெறுமை)fill_default_options(&options);
+	எனில் (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
 		    _PATH_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
+	எனில் (pledge("stdio dns", வெற்று) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
+	க்கு (i = found = 0; i < இலக்கம்_KEYTYPES; i++) {
+		எனில் (சாவி_fd[i] != -1)
 			found = 1;
 	}
-	if (found == 0)
+	எனில் (found == 0)
 		fatal("could not open any host key");
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	க்கு (i = 0; i < இலக்கம்_KEYTYPES; i++) {
+		சாவிகள்[i] = வெற்று;
+		எனில் (சாவி_fd[i] == -1)
+			தொடர்;
+		r = sshkey_load_private_type_fd(சாவி_fd[i], சாவி_UNSPEC,
+		    வெற்று, &சாவி, வெற்று);
+		close(சாவி_fd[i]);
+		எனில் (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
+		இல்லையெனில் எனில் (சாவி != வெற்று) {
+			சாவிகள்[i] = சாவி;
 			found = 1;
 		}
 	}
-	if (!found)
+	எனில் (!found)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	எனில் ((b = sshbuf_new()) == வெற்று)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	எனில் (ssh_செய்தி_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	எனில் ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	எனில் (rver != version)
 		fatal("%s: bad version: received %d, expected %d",
 		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+	எனில் ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	எனில் (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	எனில் ((host = get_local_name(fd)) == வெற்று)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	எனில் ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	எனில் (valid_request(pw, host, &சாவி, &pkalg, data, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	விடுவி(host);
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
+	க்கு (i = 0; i < இலக்கம்_KEYTYPES; i++) {
+		எனில் (சாவிகள்[i] != வெற்று &&
+		    sshkey_equal_public(சாவி, சாவிகள்[i])) {
 			found = 1;
-			break;
+			நிறுத்து;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	எனில் (!found) {
+		எனில் ((fp = sshkey_fingerprint(சாவி, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == வெற்று)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(சாவி), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	எனில் ((r = sshkey_sign(சாவிகள்[i], &signature, &slen, data, dlen,
+	    pkalg, வெற்று, வெற்று, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	விடுவி(data);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	எனில் ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	எனில் (ssh_செய்தி_send(STDOUT_FILENO, version, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	திரும்பு (0);
 }

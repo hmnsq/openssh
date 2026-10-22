@@ -5,123 +5,123 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <sys/time.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "log.h"
+#அந்தர்பாவ "ssherr.h"
+#அந்தர்பாவ "ssh_api.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "packet.h"
+#அந்தர்பாவ "myproposal.h"
+#அந்தர்பாவ "log.h"
 
-void kex_tests(void);
-static int do_debug = 0;
+வெறுமை kex_tests(வெறுமை);
+நிலையான முழு do_debug = 0;
 
-static int
-do_send_and_receive(struct ssh *from, struct ssh *to)
+நிலையான முழு
+do_send_and_receive(கட்டமைப்பு ssh *from, கட்டமைப்பு ssh *to)
 {
 	u_char type;
 	size_t len;
-	const u_char *buf;
-	int r;
+	மாறிலி u_char *buf;
+	முழு r;
 
-	for (;;) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+	க்கு (;;) {
+		எனில் ((r = ssh_packet_next(from, &type)) != 0) {
 			fprintf(stderr, "ssh_packet_next: %s\n", ssh_err(r));
-			return r;
+			திரும்பு r;
 		}
-		if (type != 0)
-			return 0;
+		எனில் (type != 0)
+			திரும்பு 0;
 		buf = ssh_output_ptr(from, &len);
-		if (do_debug)
+		எனில் (do_debug)
 			printf("%zu", len);
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0 ||
-		    (r = ssh_input_append(to, buf, len)) != 0)
-			return r;
+		எனில் (len == 0)
+			திரும்பு 0;
+		எனில் ((r = ssh_output_consume(from, len)) != 0 ||
+		    (r = ssh_உள்ளீடு_append(to, buf, len)) != 0)
+			திரும்பு r;
 	}
 }
 
-static void
-run_kex(struct ssh *client, struct ssh *server)
+நிலையான வெறுமை
+run_kex(கட்டமைப்பு ssh *client, கட்டமைப்பு ssh *server)
 {
-	int r = 0;
+	முழு r = 0;
 
-	while (!server->kex->done || !client->kex->done) {
-		if (do_debug)
+	போது (!server->kex->done || !client->kex->done) {
+		எனில் (do_debug)
 			printf(" S:");
-		if ((r = do_send_and_receive(server, client)))
-			break;
-		if (do_debug)
+		எனில் ((r = do_send_and_receive(server, client)))
+			நிறுத்து;
+		எனில் (do_debug)
 			printf(" C:");
-		if ((r = do_send_and_receive(client, server)))
-			break;
+		எனில் ((r = do_send_and_receive(client, server)))
+			நிறுத்து;
 	}
-	if (do_debug)
+	எனில் (do_debug)
 		printf("done: %s\n", ssh_err(r));
 	ASSERT_INT_EQ(r, 0);
 	ASSERT_INT_EQ(server->kex->done, 1);
 	ASSERT_INT_EQ(client->kex->done, 1);
 }
 
-static void
-do_kex_with_key(char *kex, char *cipher, char *mac,
-    struct sshkey *key, int keytype, int bits)
+நிலையான வெறுமை
+do_kex_with_சாவி(எழுத்து *kex, எழுத்து *cipher, எழுத்து *mac,
+    கட்டமைப்பு sshkey *சாவி, முழு keytype, முழு bits)
 {
-	struct ssh *client = NULL, *server = NULL, *server2 = NULL;
-	struct sshkey *private, *public;
-	struct sshbuf *state;
-	struct kex_params kex_params;
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *keyname = NULL;
+	கட்டமைப்பு ssh *client = வெற்று, *server = வெற்று, *server2 = வெற்று;
+	கட்டமைப்பு sshkey *தனிப்பட்ட, *பொது;
+	கட்டமைப்பு sshbuf *state;
+	கட்டமைப்பு kex_params kex_params;
+	எழுத்து *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	எழுத்து *keyname = வெற்று;
 
-	if (key != NULL) {
-		private = key;
-		keytype = key->type;
-	} else {
+	எனில் (சாவி != வெற்று) {
+		தனிப்பட்ட = சாவி;
+		keytype = சாவி->type;
+	} இல்லையெனில் {
 		TEST_START("sshkey_generate");
-		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &private), 0);
+		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &தனிப்பட்ட), 0);
 		TEST_DONE();
 	}
 
 	TEST_START("sshkey_from_private");
-	ASSERT_INT_EQ(sshkey_from_private(private, &public), 0);
+	ASSERT_INT_EQ(sshkey_from_private(தனிப்பட்ட, &பொது), 0);
 	TEST_DONE();
 
 	TEST_START("ssh_init");
-	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if (kex != NULL)
+	memcpy(kex_params.proposal, myproposal, அளவு(myproposal));
+	எனில் (kex != வெற்று)
 		kex_params.proposal[PROPOSAL_KEX_ALGS] = kex;
-	if (cipher != NULL) {
+	எனில் (cipher != வெற்று) {
 		kex_params.proposal[PROPOSAL_ENC_ALGS_CTOS] = cipher;
 		kex_params.proposal[PROPOSAL_ENC_ALGS_STOC] = cipher;
 	}
-	if (mac != NULL) {
+	எனில் (mac != வெற்று) {
 		kex_params.proposal[PROPOSAL_MAC_ALGS_CTOS] = mac;
 		kex_params.proposal[PROPOSAL_MAC_ALGS_STOC] = mac;
 	}
-	keyname = strdup(sshkey_ssh_name(private));
-	ASSERT_PTR_NE(keyname, NULL);
-	kex_params.proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = keyname;
+	keyname = strdup(sshkey_ssh_name(தனிப்பட்ட));
+	ASSERT_PTR_NE(keyname, வெற்று);
+	kex_params.proposal[PROPOSAL_SERVER_HOST_சாவி_ALGS] = keyname;
 	ASSERT_INT_EQ(ssh_init(&client, 0, &kex_params), 0);
 	ASSERT_INT_EQ(ssh_init(&server, 1, &kex_params), 0);
-	ASSERT_PTR_NE(client, NULL);
-	ASSERT_PTR_NE(server, NULL);
+	ASSERT_PTR_NE(client, வெற்று);
+	ASSERT_PTR_NE(server, வெற்று);
 	TEST_DONE();
 
 	TEST_START("ssh_add_hostkey");
-	ASSERT_INT_EQ(ssh_add_hostkey(server, private), 0);
-	ASSERT_INT_EQ(ssh_add_hostkey(client, public), 0);
+	ASSERT_INT_EQ(ssh_add_hostkey(server, தனிப்பட்ட), 0);
+	ASSERT_INT_EQ(ssh_add_hostkey(client, பொது), 0);
 	TEST_DONE();
 
 	TEST_START("kex");
@@ -140,20 +140,20 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 
 	TEST_START("ssh_packet_get_state");
 	state = sshbuf_new();
-	ASSERT_PTR_NE(state, NULL);
+	ASSERT_PTR_NE(state, வெற்று);
 	ASSERT_INT_EQ(ssh_packet_get_state(server, state), 0);
 	ASSERT_INT_GE(sshbuf_len(state), 1);
 	TEST_DONE();
 
 	TEST_START("ssh_packet_set_state");
-	server2 = NULL;
-	ASSERT_INT_EQ(ssh_init(&server2, 1, NULL), 0);
-	ASSERT_PTR_NE(server2, NULL);
-	ASSERT_INT_EQ(ssh_add_hostkey(server2, private), 0);
+	server2 = வெற்று;
+	ASSERT_INT_EQ(ssh_init(&server2, 1, வெற்று), 0);
+	ASSERT_PTR_NE(server2, வெற்று);
+	ASSERT_INT_EQ(ssh_add_hostkey(server2, தனிப்பட்ட), 0);
 	ASSERT_INT_EQ(ssh_packet_set_state(server2, state), 0);
 	ASSERT_INT_EQ(sshbuf_len(state), 0);
 	sshbuf_free(state);
-	ASSERT_PTR_NE(server2->kex, NULL);
+	ASSERT_PTR_NE(server2->kex, வெற்று);
 	/* XXX we need to set the callbacks */
 #ifdef WITH_OPENSSL
 	server2->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
@@ -168,8 +168,8 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	server2->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	server2->kex->load_host_public_key = server->kex->load_host_public_key;
-	server2->kex->load_host_private_key = server->kex->load_host_private_key;
+	server2->kex->load_host_public_சாவி = server->kex->load_host_public_சாவி;
+	server2->kex->load_host_private_சாவி = server->kex->load_host_private_சாவி;
 	server2->kex->sign = server->kex->sign;
 	TEST_DONE();
 
@@ -181,49 +181,49 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	TEST_DONE();
 
 	TEST_START("cleanup");
-	sshkey_free(public);
-	if (key == NULL)
-		sshkey_free(private);
+	sshkey_free(பொது);
+	எனில் (சாவி == வெற்று)
+		sshkey_free(தனிப்பட்ட);
 	ssh_free(client);
 	ssh_free(server);
 	ssh_free(server2);
-	free(keyname);
+	விடுவி(keyname);
 	TEST_DONE();
 }
 
-static void
-do_kex(char *kex)
+நிலையான வெறுமை
+do_kex(எழுத்து *kex)
 {
-	struct sshkey *key = NULL;
-	char name[256];
+	கட்டமைப்பு sshkey *சாவி = வெற்று;
+	எழுத்து name[256];
 
-	if (test_is_benchmark()) {
-		snprintf(name, sizeof(name), "generate %s", kex);
+	எனில் (test_is_benchmark()) {
+		snprintf(name, அளவு(name), "generate %s", kex);
 		TEST_START(name);
-		ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 0, &key), 0);
+		ASSERT_INT_EQ(sshkey_generate(சாவி_ED25519, 0, &சாவி), 0);
 		TEST_DONE();
-		snprintf(name, sizeof(name), "KEX %s", kex);
+		snprintf(name, அளவு(name), "KEX %s", kex);
 		BENCH_START(name);
 		/*
 		 * NB. use a cipher/MAC here that requires minimal bits from
 		 * the KEX to avoid DH-GEX taking forever.
 		 */
-		do_kex_with_key(kex, "aes128-ctr", "hmac-sha2-256", key,
-		    KEY_ED25519, 256);
+		do_kex_with_சாவி(kex, "aes128-ctr", "hmac-sha2-256", சாவி,
+		    சாவி_ED25519, 256);
 		BENCH_FINISH("kex");
-		sshkey_free(key);
-		return;
+		sshkey_free(சாவி);
+		திரும்பு;
 	}
 
 #ifdef WITH_OPENSSL
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_RSA, 2048);
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ECDSA, 256);
+	do_kex_with_சாவி(kex, வெற்று, வெற்று, வெற்று, சாவி_RSA, 2048);
+	do_kex_with_சாவி(kex, வெற்று, வெற்று, வெற்று, சாவி_ECDSA, 256);
 #endif /* WITH_OPENSSL */
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ED25519, 256);
+	do_kex_with_சாவி(kex, வெற்று, வெற்று, வெற்று, சாவி_ED25519, 256);
 }
 
-void
-kex_tests(void)
+வெறுமை
+kex_tests(வெறுமை)
 {
 	do_kex("curve25519-sha256");
 #ifdef WITH_OPENSSL
@@ -234,7 +234,7 @@ kex_tests(void)
 	do_kex("diffie-hellman-group-exchange-sha1");
 	do_kex("diffie-hellman-group14-sha1");
 	do_kex("diffie-hellman-group1-sha1");
-	if (test_is_benchmark()) {
+	எனில் (test_is_benchmark()) {
 		do_kex("diffie-hellman-group14-sha256");
 		do_kex("diffie-hellman-group16-sha512");
 		do_kex("diffie-hellman-group18-sha512");

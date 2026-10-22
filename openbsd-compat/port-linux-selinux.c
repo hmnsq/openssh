@@ -19,78 +19,78 @@
  * Linux-specific portability code: SELinux support
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 #ifdef WITH_SELINUX
 
-#include <sys/socket.h>
-#include <sys/un.h>
+#அந்தர்பாவ <sys/socket.h>
+#அந்தர்பாவ <sys/un.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "xmalloc.h"
+#அந்தர்பாவ "port-linux.h"
+#அந்தர்பாவ "misc.h"
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
-#include <selinux/get_context_list.h>
+#அந்தர்பாவ <selinux/selinux.h>
+#அந்தர்பாவ <selinux/label.h>
+#அந்தர்பாவ <selinux/get_context_list.h>
 
 #ifndef SSH_SELINUX_UNCONFINED_TYPE
 # define SSH_SELINUX_UNCONFINED_TYPE ":unconfined_t:"
 #endif
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
-ssh_selinux_enabled(void)
+முழு
+ssh_selinux_enabled(வெறுமை)
 {
-	static int enabled = -1;
+	நிலையான முழு enabled = -1;
 
-	if (enabled == -1) {
+	எனில் (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	திரும்பு (enabled);
 }
 
 /* Return the default security context for the given username */
-static char *
-ssh_selinux_getctxbyname(char *pwname)
+நிலையான எழுத்து *
+ssh_selinux_getctxbyname(எழுத்து *pwname)
 {
-	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	எழுத்து *sc = வெற்று, *sename = வெற்று, *lvl = வெற்று;
+	முழு r;
 
 #ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+	எனில் (getseuserbyname(pwname, &sename, &lvl) != 0)
+		திரும்பு வெற்று;
+#இல்லையெனில்
 	sename = pwname;
-	lvl = NULL;
+	lvl = வெற்று;
 #endif
 
 #ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
-	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
-	r = get_default_context(sename, NULL, &sc);
+	r = get_default_context_with_level(sename, lvl, வெற்று, &sc);
+#இல்லையெனில்
+	r = get_default_context(sename, வெற்று, &sc);
 #endif
 
-	if (r != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	எனில் (r != 0) {
+		தேர்வு (security_getenforce()) {
+		நிலை -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
 			    "security_getenforce() failed", __func__);
-		case 0:
+		நிலை 0:
 			error("%s: Failed to get default SELinux security "
 			    "context for %s", __func__, pwname);
-			sc = NULL;
-			break;
-		default:
+			sc = வெற்று;
+			நிறுத்து;
+		இயல்பு:
 			fatal("%s: Failed to get default SELinux security "
 			    "context for %s (in enforcing mode)",
 			    __func__, pwname);
@@ -98,53 +98,53 @@ ssh_selinux_getctxbyname(char *pwname)
 	}
 
 #ifdef HAVE_GETSEUSERBYNAME
-	free(sename);
-	free(lvl);
+	விடுவி(sename);
+	விடுவி(lvl);
 #endif
 
-	return sc;
+	திரும்பு sc;
 }
 
 /* Set the execution context to the default for the specified user */
-void
-ssh_selinux_setup_exec_context(char *pwname)
+வெறுமை
+ssh_selinux_setup_exec_context(எழுத்து *pwname)
 {
-	char *user_ctx = NULL;
+	எழுத்து *user_ctx = வெற்று;
 
-	if (!ssh_selinux_enabled())
-		return;
+	எனில் (!ssh_selinux_enabled())
+		திரும்பு;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	எனில் (setexeccon(user_ctx) != 0) {
+		தேர்வு (security_getenforce()) {
+		நிலை -1:
 			fatal("%s: security_getenforce() failed", __func__);
-		case 0:
+		நிலை 0:
 			error("%s: Failed to set SELinux execution "
 			    "context for %s", __func__, pwname);
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			fatal("%s: Failed to set SELinux execution context "
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	எனில் (user_ctx != வெற்று)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
 }
 
 /* Set the TTY context for the specified user */
-void
-ssh_selinux_setup_pty(char *pwname, const char *tty)
+வெறுமை
+ssh_selinux_setup_pty(எழுத்து *pwname, மாறிலி எழுத்து *tty)
 {
-	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
+	எழுத்து *new_tty_ctx = வெற்று, *user_ctx = வெற்று, *old_tty_ctx = வெற்று;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	எனில் (!ssh_selinux_enabled())
+		திரும்பு;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,90 +152,90 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	எனில் (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
-		goto out;
+		செல் out;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	எனில் ((chrclass = string_to_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
-		goto out;
+		செல் out;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	எனில் (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
-		goto out;
+		செல் out;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	எனில் (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
  out:
-	if (new_tty_ctx != NULL)
+	எனில் (new_tty_ctx != வெற்று)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	எனில் (old_tty_ctx != வெற்று)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	எனில் (user_ctx != வெற்று)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
 
-void
-ssh_selinux_change_context(const char *newname)
+வெறுமை
+ssh_selinux_change_context(மாறிலி எழுத்து *newname)
 {
-	char *oldctx, *newctx, *cx, *cx2;
+	எழுத்து *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	எனில் (!ssh_selinux_enabled())
+		திரும்பு;
 
-	if (getcon(&oldctx) < 0) {
+	எனில் (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		திரும்பு;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
-	    (cx = strchr(cx + 1, ':')) == NULL ||
+	எனில் ((cx = strchr(oldctx, ':')) == வெற்று ||
+	    (cx = strchr(cx + 1, ':')) == வெற்று ||
 	    (cx - oldctx) >= INT_MAX) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		திரும்பு;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
-	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
+	எனில் (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	    அளவு(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
-	    newname, cx2 == NULL ? "" : cx2);
+	xasprintf(&newctx, "%.*s%s%s", (முழு)(cx - oldctx + 1), oldctx,
+	    newname, cx2 == வெற்று ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	எனில் (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
-	free(oldctx);
-	free(newctx);
+	விடுவி(oldctx);
+	விடுவி(newctx);
 }
 
-void
-ssh_selinux_setfscreatecon(const char *path)
+வெறுமை
+ssh_selinux_setfscreatecon(மாறிலி எழுத்து *path)
 {
-	char *context;
-	struct selabel_handle *shandle = NULL;
+	எழுத்து *context;
+	கட்டமைப்பு selabel_handle *shandle = வெற்று;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
-		setfscreatecon(NULL);
-		return;
+	எனில் (!ssh_selinux_enabled())
+		திரும்பு;
+	எனில் (path == வெற்று) {
+		setfscreatecon(வெற்று);
+		திரும்பு;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	எனில் ((shandle = selabel_open(SELABEL_CTX_FILE, வெற்று, 0)) == வெற்று) {
 		debug_f("selabel_open failed");
-		return;
+		திரும்பு;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	எனில் (selabel_lookup(shandle, &context, path, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }

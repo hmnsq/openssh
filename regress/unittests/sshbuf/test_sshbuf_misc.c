@@ -5,130 +5,130 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#அந்தர்பாவ <sys/types.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdint.h>
+#அந்தர்பாவ <stdlib.h>
+#அந்தர்பாவ <string.h>
 
-#include "../test_helper/test_helper.h"
+#அந்தர்பாவ "../test_helper/test_helper.h"
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "ssherr.h"
 
-void sshbuf_misc_tests(void);
+வெறுமை sshbuf_misc_tests(வெறுமை);
 
-static void
-test_sshbuf_dump(void)
+நிலையான வெறுமை
+test_sshbuf_dump(வெறுமை)
 {
-	struct sshbuf *p1;
-	char tmp[512];
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து tmp[512];
 	FILE *out;
 	size_t sz;
 
 	TEST_START("sshbuf_dump");
 	out = tmpfile();
-	ASSERT_PTR_NE(out, NULL);
+	ASSERT_PTR_NE(out, வெற்று);
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x12345678), 0);
 	sshbuf_dump(p1, out);
 	fflush(out);
 	rewind(out);
-	sz = fread(tmp, 1, sizeof(tmp), out);
+	sz = fread(tmp, 1, அளவு(tmp), out);
 	ASSERT_INT_EQ(ferror(out), 0);
 	ASSERT_INT_NE(feof(out), 0);
 	ASSERT_SIZE_T_GT(sz, 0);
 	tmp[sz] = '\0';
-	ASSERT_PTR_NE(strstr(tmp, "12 34 56 78"), NULL);
+	ASSERT_PTR_NE(strstr(tmp, "12 34 56 78"), வெற்று);
 	fclose(out);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_dtob16(void)
+நிலையான வெறுமை
+test_sshbuf_dtob16(வெறுமை)
 {
-	struct sshbuf *p1;
-	char *p;
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து *p;
 
 	TEST_START("sshbuf_dtob16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x12345678), 0);
 	p = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_STRING_EQ(p, "12345678");
-	free(p);
+	விடுவி(p);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_dtob64_string(void)
+நிலையான வெறுமை
+test_sshbuf_dtob64_string(வெறுமை)
 {
-	struct sshbuf *p1;
-	char *p;
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து *p;
 
 	TEST_START("sshbuf_dtob64_string len 1");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x11), 0);
 	p = sshbuf_dtob64_string(p1, 0);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_STRING_EQ(p, "EQ==");
-	free(p);
+	விடுவி(p);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_dtob64_string len 2");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x11), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x22), 0);
 	p = sshbuf_dtob64_string(p1, 0);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_STRING_EQ(p, "ESI=");
-	free(p);
+	விடுவி(p);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_dtob64_string len 3");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x11), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x22), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x33), 0);
 	p = sshbuf_dtob64_string(p1, 0);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_STRING_EQ(p, "ESIz");
-	free(p);
+	விடுவி(p);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_dtob64_string len 8191");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 8192, NULL), 0);
+	ASSERT_PTR_NE(p1, வெற்று);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 8192, வெற்று), 0);
 	bzero(sshbuf_mutable_ptr(p1), 8192);
 	p = sshbuf_dtob64_string(p1, 0);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_SIZE_T_EQ(strlen(p), ((8191 + 2) / 3) * 4);
-	free(p);
+	விடுவி(p);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_b64tod(void)
+நிலையான வெறுமை
+test_sshbuf_b64tod(வெறுமை)
 {
-	struct sshbuf *p1;
+	கட்டமைப்பு sshbuf *p1;
 
 	TEST_START("sshbuf_b64tod len 1");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_b64tod(p1, "0A=="), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1);
 	ASSERT_U8_EQ(*sshbuf_ptr(p1), 0xd0);
@@ -137,7 +137,7 @@ test_sshbuf_b64tod(void)
 
 	TEST_START("sshbuf_b64tod len 2");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_b64tod(p1, "0A8="), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 2);
 	ASSERT_U16_EQ(PEEK_U16(sshbuf_ptr(p1)), 0xd00f);
@@ -146,7 +146,7 @@ test_sshbuf_b64tod(void)
 
 	TEST_START("sshbuf_b64tod len 4");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_b64tod(p1, "0A/QDw=="), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4);
 	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), 0xd00fd00f);
@@ -154,51 +154,51 @@ test_sshbuf_b64tod(void)
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_dup_string(void)
+நிலையான வெறுமை
+test_sshbuf_dup_string(வெறுமை)
 {
-	struct sshbuf *p1;
-	char *p;
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து *p;
 
 	TEST_START("sshbuf_dup_string");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, வெற்று);
 	/* Check empty buffer */
 	p = sshbuf_dup_string(p1);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_SIZE_T_EQ(strlen(p), 0);
-	free(p);
+	விடுவி(p);
 	/* Check buffer with string */
 	ASSERT_INT_EQ(sshbuf_put(p1, "quad1", strlen("quad1")), 0);
 	p = sshbuf_dup_string(p1);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_SIZE_T_EQ(strlen(p), strlen("quad1"));
 	ASSERT_STRING_EQ(p, "quad1");
-	free(p);
+	விடுவி(p);
 	/* Check buffer with terminating nul */
 	ASSERT_INT_EQ(sshbuf_put(p1, "\0", 1), 0);
 	p = sshbuf_dup_string(p1);
-	ASSERT_PTR_NE(p, NULL);
+	ASSERT_PTR_NE(p, வெற்று);
 	ASSERT_SIZE_T_EQ(strlen(p), strlen("quad1"));
 	ASSERT_STRING_EQ(p, "quad1");
-	free(p);
+	விடுவி(p);
 	/* Check buffer with data after nul (expect failure) */
 	ASSERT_INT_EQ(sshbuf_put(p1, "quad2", strlen("quad2")), 0);
 	p = sshbuf_dup_string(p1);
-	ASSERT_PTR_EQ(p, NULL);
+	ASSERT_PTR_EQ(p, வெற்று);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_cmp(void)
+நிலையான வெறுமை
+test_sshbuf_cmp(வெறுமை)
 {
-	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து செய்தி[] = "imploring ping silence ping over";
 
 	TEST_START("sshbuf_cmp");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
-	ASSERT_PTR_NE(p1, NULL);
+	p1 = sshbuf_from(செய்தி, அளவு(செய்தி) - 1);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "i", 1), 0);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "j", 1), SSH_ERR_INVALID_FORMAT);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "imploring", 9), 0);
@@ -213,21 +213,21 @@ test_sshbuf_cmp(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 1000, "silence", 7),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, msg, sizeof(msg) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, செய்தி, அளவு(செய்தி) - 1), 0);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_find(void)
+நிலையான வெறுமை
+test_sshbuf_find(வெறுமை)
 {
-	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	கட்டமைப்பு sshbuf *p1;
+	எழுத்து செய்தி[] = "imploring ping silence ping over";
 	size_t sz;
 
 	TEST_START("sshbuf_find");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
-	ASSERT_PTR_NE(p1, NULL);
+	p1 = sshbuf_from(செய்தி, அளவு(செய்தி) - 1);
+	ASSERT_PTR_NE(p1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_find(p1, 0, "i", 1, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 0);
 	ASSERT_INT_EQ(sshbuf_find(p1, 0, "j", 1, &sz), SSH_ERR_INVALID_FORMAT);
@@ -251,22 +251,22 @@ test_sshbuf_find(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_find(p1, 1000, "silence", 7, &sz),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_find(p1, 0, msg + 1, sizeof(msg) - 2, &sz), 0);
+	ASSERT_INT_EQ(sshbuf_find(p1, 0, செய்தி + 1, அளவு(செய்தி) - 2, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 1);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_equals(void)
+நிலையான வெறுமை
+test_sshbuf_equals(வெறுமை)
 {
-	struct sshbuf *b1, *b2;
+	கட்டமைப்பு sshbuf *b1, *b2;
 
 	TEST_START("sshbuf_equals identical");
 	b1 = sshbuf_new();
 	b2 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
-	ASSERT_PTR_NE(b2, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
+	ASSERT_PTR_NE(b2, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put(b2, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b2), 0);
@@ -277,8 +277,8 @@ test_sshbuf_equals(void)
 	TEST_START("sshbuf_equals different content");
 	b1 = sshbuf_new();
 	b2 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
-	ASSERT_PTR_NE(b2, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
+	ASSERT_PTR_NE(b2, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put(b2, "world", 5), 0);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b2), SSH_ERR_INVALID_FORMAT);
@@ -289,8 +289,8 @@ test_sshbuf_equals(void)
 	TEST_START("sshbuf_equals different length");
 	b1 = sshbuf_new();
 	b2 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
-	ASSERT_PTR_NE(b2, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
+	ASSERT_PTR_NE(b2, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put(b2, "hell", 4), 0);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b2), SSH_ERR_MESSAGE_INCOMPLETE);
@@ -301,8 +301,8 @@ test_sshbuf_equals(void)
 	TEST_START("sshbuf_equals empty buffers");
 	b1 = sshbuf_new();
 	b2 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
-	ASSERT_PTR_NE(b2, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
+	ASSERT_PTR_NE(b2, வெற்று);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b2), 0);
 	sshbuf_free(b1);
 	sshbuf_free(b2);
@@ -311,8 +311,8 @@ test_sshbuf_equals(void)
 	TEST_START("sshbuf_equals one empty buffer");
 	b1 = sshbuf_new();
 	b2 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
-	ASSERT_PTR_NE(b2, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
+	ASSERT_PTR_NE(b2, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b2), SSH_ERR_MESSAGE_INCOMPLETE);
 	sshbuf_free(b1);
@@ -321,28 +321,28 @@ test_sshbuf_equals(void)
 
 	TEST_START("sshbuf_equals buffer to self");
 	b1 = sshbuf_new();
-	ASSERT_PTR_NE(b1, NULL);
+	ASSERT_PTR_NE(b1, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_equals(b1, b1), 0);
 	sshbuf_free(b1);
 	TEST_DONE();
 }
 
-static void
-test_sshbuf_dtourlb64(void)
+நிலையான வெறுமை
+test_sshbuf_dtourlb64(வெறுமை)
 {
-	struct sshbuf *b, *b64;
-	char *s;
+	கட்டமைப்பு sshbuf *b, *b64;
+	எழுத்து *s;
 	/* From RFC4648 */
-	const u_char test_vec1[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
-	const u_char test_vec2[] = {0xff, 0xff, 0xff};
-	const u_char test_vec3[] = {0xfb};
+	மாறிலி u_char test_vec1[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
+	மாறிலி u_char test_vec2[] = {0xff, 0xff, 0xff};
+	மாறிலி u_char test_vec3[] = {0xfb};
 
 	TEST_START("sshbuf_dtourlb64 empty");
 	b = sshbuf_new();
 	b64 = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
-	ASSERT_PTR_NE(b64, NULL);
+	ASSERT_PTR_NE(b, வெற்று);
+	ASSERT_PTR_NE(b64, வெற்று);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(b64), 0);
 	sshbuf_free(b);
@@ -352,14 +352,14 @@ test_sshbuf_dtourlb64(void)
 	TEST_START("sshbuf_dtourlb64 no special chars");
 	b = sshbuf_new();
 	b64 = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
-	ASSERT_PTR_NE(b64, NULL);
+	ASSERT_PTR_NE(b, வெற்று);
+	ASSERT_PTR_NE(b64, வெற்று);
 	ASSERT_INT_EQ(sshbuf_put(b, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, வெற்று);
 	ASSERT_STRING_EQ(s, "aGVsbG8");
-	free(s);
+	விடுவி(s);
 	sshbuf_free(b);
 	sshbuf_free(b64);
 	TEST_DONE();
@@ -367,14 +367,14 @@ test_sshbuf_dtourlb64(void)
 	TEST_START("sshbuf_dtourlb64 with '+' char");
 	b = sshbuf_new();
 	b64 = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
-	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec1, sizeof(test_vec1)), 0);
+	ASSERT_PTR_NE(b, வெற்று);
+	ASSERT_PTR_NE(b64, வெற்று);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec1, அளவு(test_vec1)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, வெற்று);
 	ASSERT_STRING_EQ(s, "FPucA9l-");
-	free(s);
+	விடுவி(s);
 	sshbuf_free(b);
 	sshbuf_free(b64);
 	TEST_DONE();
@@ -382,14 +382,14 @@ test_sshbuf_dtourlb64(void)
 	TEST_START("sshbuf_dtourlb64 with '/' char");
 	b = sshbuf_new();
 	b64 = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
-	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec2, sizeof(test_vec2)), 0);
+	ASSERT_PTR_NE(b, வெற்று);
+	ASSERT_PTR_NE(b64, வெற்று);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec2, அளவு(test_vec2)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, வெற்று);
 	ASSERT_STRING_EQ(s, "____");
-	free(s);
+	விடுவி(s);
 	sshbuf_free(b);
 	sshbuf_free(b64);
 	TEST_DONE();
@@ -397,21 +397,21 @@ test_sshbuf_dtourlb64(void)
 	TEST_START("sshbuf_dtourlb64 with padding removed");
 	b = sshbuf_new();
 	b64 = sshbuf_new();
-	ASSERT_PTR_NE(b, NULL);
-	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec3, sizeof(test_vec3)), 0);
+	ASSERT_PTR_NE(b, வெற்று);
+	ASSERT_PTR_NE(b64, வெற்று);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec3, அளவு(test_vec3)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, வெற்று);
 	ASSERT_STRING_EQ(s, "-w");
-	free(s);
+	விடுவி(s);
 	sshbuf_free(b);
 	sshbuf_free(b64);
 	TEST_DONE();
 }
 
-void
-sshbuf_misc_tests(void)
+வெறுமை
+sshbuf_misc_tests(வெறுமை)
 {
 	test_sshbuf_dump();
 	test_sshbuf_dtob16();

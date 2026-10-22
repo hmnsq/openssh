@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+எண்ணிக்கை monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+கட்டமைப்பு ssh;
+கட்டமைப்பு sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+கட்டமைப்பு monitor {
+	முழு			 m_recvfd;
+	முழு			 m_sendfd;
+	முழு			 m_log_recvfd;
+	முழு			 m_log_sendfd;
+	கட்டமைப்பு kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+கட்டமைப்பு monitor *monitor_init(வெறுமை);
+வெறுமை monitor_reinit(கட்டமைப்பு monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+கட்டமைப்பு Authctxt;
+வெறுமை monitor_child_preauth(கட்டமைப்பு ssh *, கட்டமைப்பு monitor *);
+வெறுமை monitor_child_postauth(கட்டமைப்பு ssh *, கட்டமைப்பு monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+வெறுமை monitor_clear_keystate(கட்டமைப்பு ssh *, கட்டமைப்பு monitor *);
+வெறுமை monitor_apply_keystate(கட்டமைப்பு ssh *, கட்டமைப்பு monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+முழு  monitor_auth_attempted(வெறுமை);
+முழு  monitor_invalid_user(வெறுமை);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+வெறுமை mm_request_send(முழு, எண்ணிக்கை monitor_reqtype, கட்டமைப்பு sshbuf *);
+வெறுமை mm_request_receive(முழு, கட்டமைப்பு sshbuf *);
+வெறுமை mm_request_receive_expect(முழு, எண்ணிக்கை monitor_reqtype, கட்டமைப்பு sshbuf *);
+வெறுமை mm_get_keystate(கட்டமைப்பு ssh *, கட்டமைப்பு monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+வெறுமை mm_encode_server_options(கட்டமைப்பு sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+கட்டமைப்பு sshbuf *pack_hostkeys(வெறுமை);
 
 #endif /* _MONITOR_H_ */

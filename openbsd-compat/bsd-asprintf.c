@@ -17,83 +17,83 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
 /*
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#எனில் defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
 
 #ifndef HAVE_VASPRINTF
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <stdarg.h>
+#அந்தர்பாவ <stdio.h>
+#அந்தர்பாவ <stdlib.h>
 
 #define INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+முழு
+vasprintf(எழுத்து **str, மாறிலி எழுத்து *fmt, va_list ap)
 {
-	int ret = -1;
+	முழு ret = -1;
 	va_list ap2;
-	char *string, *newstr;
+	எழுத்து *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
-		goto fail;
+	எனில் ((string = malloc(INIT_SZ)) == வெற்று)
+		செல் fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	எனில் (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
-		free(string);
-		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} இல்லையெனில் எனில் (ret == INT_MAX || ret < 0) { /* Bad length */
+		விடுவி(string);
+		செல் fail;
+	} இல்லையெனில் {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
-			free(string);
-			goto fail;
-		} else {
+		எனில் ((newstr = realloc(string, len)) == வெற்று) {
+			விடுவி(string);
+			செல் fail;
+		} இல்லையெனில் {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			எனில் (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
-				free(newstr);
-				goto fail;
+			} இல்லையெனில் { /* failed with realloc'ed string, give up */
+				விடுவி(newstr);
+				செல் fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	திரும்பு (ret);
 
 fail:
-	*str = NULL;
+	*str = வெற்று;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	திரும்பு (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+முழு asprintf(எழுத்து **str, மாறிலி எழுத்து *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	முழு ret;
 
-	*str = NULL;
+	*str = வெற்று;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	திரும்பு ret;
 }
 #endif

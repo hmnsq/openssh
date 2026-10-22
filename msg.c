@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#அந்தர்பாவ "includes.h"
 
-#include <sys/types.h>
+#அந்தர்பாவ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
+#அந்தர்பாவ <errno.h>
+#அந்தர்பாவ <string.h>
+#அந்தர்பாவ <unistd.h>
+#அந்தர்பாவ <stdarg.h>
 
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "msg.h"
-#include "misc.h"
+#அந்தர்பாவ "sshbuf.h"
+#அந்தர்பாவ "log.h"
+#அந்தர்பாவ "atomicio.h"
+#அந்தர்பாவ "msg.h"
+#அந்தர்பாவ "misc.h"
 
-int
-ssh_msg_send(int fd, u_char type, struct sshbuf *m)
+முழு
+ssh_செய்தி_send(முழு fd, u_char type, கட்டமைப்பு sshbuf *m)
 {
 	u_char buf[5];
 	u_int mlen = sshbuf_len(m);
 
-	debug3_f("type %u len %zu", (unsigned int)type & 0xff, sshbuf_len(m));
+	debug3_f("type %u len %zu", (unsigned முழு)type & 0xff, sshbuf_len(m));
 
 	put_u32(buf, mlen + 1);
 	buf[4] = type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, fd, buf, sizeof(buf)) != sizeof(buf)) {
+	எனில் (atomicio(vwrite, fd, buf, அளவு(buf)) != அளவு(buf)) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		திரும்பு (-1);
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
+	எனில் (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		திரும்பு (-1);
 	}
 	debug3_f("done");
-	return (0);
+	திரும்பு (0);
 }
 
-int
-ssh_msg_recv(int fd, struct sshbuf *m)
+முழு
+ssh_செய்தி_recv(முழு fd, கட்டமைப்பு sshbuf *m)
 {
 	u_char buf[4], *p;
-	u_int msg_len;
-	int r;
+	u_int செய்தி_len;
+	முழு r;
 
 	debug3("ssh_msg_recv entering");
 
-	if (atomicio(read, fd, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno != EPIPE)
+	எனில் (atomicio(பட, fd, buf, அளவு(buf)) != அளவு(buf)) {
+		எனில் (errno != EPIPE)
 			error_f("read header: %s", strerror(errno));
-		return (-1);
+		திரும்பு (-1);
 	}
-	msg_len = get_u32(buf);
-	if (msg_len > sshbuf_max_size(m)) {
-		error_f("read: bad msg_len %u", msg_len);
-		return (-1);
+	செய்தி_len = get_u32(buf);
+	எனில் (செய்தி_len > sshbuf_max_size(m)) {
+		error_f("read: bad msg_len %u", செய்தி_len);
+		திரும்பு (-1);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0) {
+	எனில் ((r = sshbuf_reserve(m, செய்தி_len, &p)) != 0) {
 		error_fr(r, "reserve");
-		return -1;
+		திரும்பு -1;
 	}
-	if (atomicio(read, fd, p, msg_len) != msg_len) {
+	எனில் (atomicio(பட, fd, p, செய்தி_len) != செய்தி_len) {
 		error_f("read: %s", strerror(errno));
-		return (-1);
+		திரும்பு (-1);
 	}
-	return (0);
+	திரும்பு (0);
 }
