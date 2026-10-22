@@ -16,58 +16,58 @@
 #ifndef AUTHFD_H
 #define AUTHFD_H
 
-struct sshbuf;
-struct sshkey;
+संरचना sshbuf;
+संरचना sshkey;
 
 /* List of identities returned by ssh_fetch_identitylist() */
-struct ssh_identitylist {
+संरचना ssh_identitylist {
 	size_t nkeys;
-	struct sshkey **keys;
-	char **comments;
+	संरचना sshkey **कुञ्चिकाः;
+	वर्ण **comments;
 };
 
 /* Key destination restrictions */
-struct dest_constraint_hop {
-	char *user;	/* wildcards allowed */
-	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+संरचना dest_constraint_hop {
+	वर्ण *user;	/* wildcards allowed */
+	वर्ण *hostname; /* used to matching cert principals and for display */
+	पूर्णाङ्क is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
-	struct sshkey **keys;
-	int *key_is_ca;
+	संरचना sshkey **कुञ्चिकाः;
+	पूर्णाङ्क *कुञ्चिका_is_ca;
 };
-struct dest_constraint {
-	struct dest_constraint_hop from;
-	struct dest_constraint_hop to;
+संरचना dest_constraint {
+	संरचना dest_constraint_hop from;
+	संरचना dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+पूर्णाङ्क	ssh_get_authentication_socket(पूर्णाङ्क *fdp);
+पूर्णाङ्क	ssh_get_authentication_socket_path(ध्रुव वर्ण *authsocket, पूर्णाङ्क *fdp);
+शून्य	ssh_close_authentication_socket(पूर्णाङ्क sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
-void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm, const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
-	    const char *pin, u_int life, u_int confirm,
-	    struct dest_constraint **dest_constraints,
+पूर्णाङ्क	ssh_lock_agent(पूर्णाङ्क sock, पूर्णाङ्क lock, ध्रुव वर्ण *password);
+पूर्णाङ्क	ssh_fetch_identitylist(पूर्णाङ्क sock, संरचना ssh_identitylist **idlp);
+शून्य	ssh_free_identitylist(संरचना ssh_identitylist *idl);
+पूर्णाङ्क	ssh_add_identity_constrained(पूर्णाङ्क sock, संरचना sshkey *कुञ्चिका,
+    ध्रुव वर्ण *comment, u_int life, u_int confirm, ध्रुव वर्ण *provider,
+    संरचना dest_constraint **dest_constraints, size_t ndest_constraints);
+पूर्णाङ्क	ssh_agent_has_कुञ्चिका(पूर्णाङ्क sock, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क	ssh_remove_identity(पूर्णाङ्क sock, ध्रुव संरचना sshkey *कुञ्चिका);
+पूर्णाङ्क	ssh_update_card(पूर्णाङ्क sock, पूर्णाङ्क add, ध्रुव वर्ण *reader_id,
+	    ध्रुव वर्ण *pin, u_int life, u_int confirm,
+	    संरचना dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    पूर्णाङ्क cert_only, संरचना sshkey **certs, size_t ncerts);
+पूर्णाङ्क	ssh_remove_all_identities(पूर्णाङ्क sock, पूर्णाङ्क version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+पूर्णाङ्क	ssh_agent_sign(पूर्णाङ्क sock, ध्रुव संरचना sshkey *कुञ्चिका,
 	    u_char **sigp, size_t *lenp,
-	    const u_char *data, size_t datalen, const char *alg, u_int compat);
+	    ध्रुव u_char *data, size_t datalen, ध्रुव वर्ण *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+पूर्णाङ्क	ssh_agent_bind_hostkey(पूर्णाङ्क sock, ध्रुव संरचना sshkey *कुञ्चिका,
+    ध्रुव संरचना sshbuf *session_id, ध्रुव संरचना sshbuf *signature,
+    पूर्णाङ्क forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+पूर्णाङ्क	ssh_agent_query_extensions(पूर्णाङ्क sock, वर्ण ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1
@@ -90,8 +90,8 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 #define SSH2_AGENTC_REMOVE_ALL_IDENTITIES	19
 
 /* smartcard */
-#define SSH_AGENTC_ADD_SMARTCARD_KEY		20
-#define SSH_AGENTC_REMOVE_SMARTCARD_KEY		21
+#define SSH_AGENTC_ADD_SMARTCARD_कुञ्चिका		20
+#define SSH_AGENTC_REMOVE_SMARTCARD_कुञ्चिका		21
 
 /* lock/unlock the agent */
 #define SSH_AGENTC_LOCK				22
@@ -100,7 +100,7 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 /* add key with constraints */
 #define SSH_AGENTC_ADD_RSA_ID_CONSTRAINED	24
 #define SSH2_AGENTC_ADD_ID_CONSTRAINED		25
-#define SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED 26
+#define SSH_AGENTC_ADD_SMARTCARD_कुञ्चिका_CONSTRAINED 26
 
 /* generic extension mechanism */
 #define SSH_AGENTC_EXTENSION			27

@@ -14,27 +14,27 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#सचे !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
 #ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
+#अन्तर्भाव <sys/mount.h>
 #endif
 #ifdef HAVE_SYS_STATFS_H
-#include <sys/statfs.h>
+#अन्तर्भाव <sys/statfs.h>
 #endif
 #ifdef HAVE_SYS_VFS_H
-#include <sys/vfs.h>
+#अन्तर्भाव <sys/vfs.h>
 #endif
 
 #ifndef HAVE_FSBLKCNT_T
-typedef unsigned long fsblkcnt_t;
+प्रकारनिर्देश unsigned long fsblkcnt_t;
 #endif
 #ifndef HAVE_FSFILCNT_T
-typedef unsigned long fsfilcnt_t;
+प्रकारनिर्देश unsigned long fsfilcnt_t;
 #endif
 
 #ifndef ST_RDONLY
@@ -45,7 +45,7 @@ typedef unsigned long fsfilcnt_t;
 #endif
 
 	/* as defined in IEEE Std 1003.1, 2004 Edition */
-struct statvfs {
+संरचना statvfs {
 	unsigned long f_bsize;	/* File system block size. */
 	unsigned long f_frsize;	/* Fundamental file system block size. */
 	fsblkcnt_t f_blocks;	/* Total number of blocks on file system in */
@@ -64,9 +64,9 @@ struct statvfs {
 #endif
 
 #ifndef HAVE_STATVFS
-int statvfs(const char *, struct statvfs *);
+पूर्णाङ्क statvfs(ध्रुव वर्ण *, संरचना statvfs *);
 #endif
 
 #ifndef HAVE_FSTATVFS
-int fstatvfs(int, struct statvfs *);
+पूर्णाङ्क fstatvfs(पूर्णाङ्क, संरचना statvfs *);
 #endif

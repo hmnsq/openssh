@@ -17,20 +17,20 @@
 #ifndef _BSD_SIGNAL_H
 #define _BSD_SIGNAL_H
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <signal.h>
+#अन्तर्भाव <signal.h>
 
 #ifndef _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# अञ्ञथा
 #  define _NSIG 128
 # endif
 #endif
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
+#सचे !defined(HAVE_STRSIGNAL)
+वर्ण *strsignal(पूर्णाङ्क);
 #endif
 
 #endif /* _BSD_SIGNAL_H */

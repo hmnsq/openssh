@@ -43,19 +43,19 @@
  * suitable code.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <termios.h>
-#include <stdarg.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <termios.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "packet.h"
-#include "log.h"
-#include "compat.h"
-#include "sshbuf.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "compat.h"
+#अन्तर्भाव "sshbuf.h"
 
 #define TTY_OP_END		0
 /*
@@ -68,205 +68,205 @@
  * Converts POSIX speed_t to a baud rate.  The values of the
  * constants for speed_t are not themselves portable.
  */
-static int
+स्थिर पूर्णाङ्क
 speed_to_baud(speed_t speed)
 {
-	switch (speed) {
-	case B0:
-		return 0;
-	case B50:
-		return 50;
-	case B75:
-		return 75;
-	case B110:
-		return 110;
-	case B134:
-		return 134;
-	case B150:
-		return 150;
-	case B200:
-		return 200;
-	case B300:
-		return 300;
-	case B600:
-		return 600;
-	case B1200:
-		return 1200;
-	case B1800:
-		return 1800;
-	case B2400:
-		return 2400;
-	case B4800:
-		return 4800;
-	case B9600:
-		return 9600;
+	विकल्प (speed) {
+	पक्ष B0:
+		पटिनिवत्त 0;
+	पक्ष B50:
+		पटिनिवत्त 50;
+	पक्ष B75:
+		पटिनिवत्त 75;
+	पक्ष B110:
+		पटिनिवत्त 110;
+	पक्ष B134:
+		पटिनिवत्त 134;
+	पक्ष B150:
+		पटिनिवत्त 150;
+	पक्ष B200:
+		पटिनिवत्त 200;
+	पक्ष B300:
+		पटिनिवत्त 300;
+	पक्ष B600:
+		पटिनिवत्त 600;
+	पक्ष B1200:
+		पटिनिवत्त 1200;
+	पक्ष B1800:
+		पटिनिवत्त 1800;
+	पक्ष B2400:
+		पटिनिवत्त 2400;
+	पक्ष B4800:
+		पटिनिवत्त 4800;
+	पक्ष B9600:
+		पटिनिवत्त 9600;
 
 #ifdef B19200
-	case B19200:
-		return 19200;
-#else /* B19200 */
+	पक्ष B19200:
+		पटिनिवत्त 19200;
+#अञ्ञथा /* B19200 */
 #ifdef EXTA
-	case EXTA:
-		return 19200;
+	पक्ष EXTA:
+		पटिनिवत्त 19200;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
-	case B38400:
-		return 38400;
-#else /* B38400 */
+	पक्ष B38400:
+		पटिनिवत्त 38400;
+#अञ्ञथा /* B38400 */
 #ifdef EXTB
-	case EXTB:
-		return 38400;
+	पक्ष EXTB:
+		पटिनिवत्त 38400;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
-	case B7200:
-		return 7200;
+	पक्ष B7200:
+		पटिनिवत्त 7200;
 #endif /* B7200 */
 #ifdef B14400
-	case B14400:
-		return 14400;
+	पक्ष B14400:
+		पटिनिवत्त 14400;
 #endif /* B14400 */
 #ifdef B28800
-	case B28800:
-		return 28800;
+	पक्ष B28800:
+		पटिनिवत्त 28800;
 #endif /* B28800 */
 #ifdef B57600
-	case B57600:
-		return 57600;
+	पक्ष B57600:
+		पटिनिवत्त 57600;
 #endif /* B57600 */
 #ifdef B76800
-	case B76800:
-		return 76800;
+	पक्ष B76800:
+		पटिनिवत्त 76800;
 #endif /* B76800 */
 #ifdef B115200
-	case B115200:
-		return 115200;
+	पक्ष B115200:
+		पटिनिवत्त 115200;
 #endif /* B115200 */
 #ifdef B230400
-	case B230400:
-		return 230400;
+	पक्ष B230400:
+		पटिनिवत्त 230400;
 #endif /* B230400 */
-	default:
-		return 9600;
+	स्वभाव:
+		पटिनिवत्त 9600;
 	}
 }
 
 /*
  * Converts a numeric baud rate to a POSIX speed_t.
  */
-static speed_t
-baud_to_speed(int baud)
+स्थिर speed_t
+baud_to_speed(पूर्णाङ्क baud)
 {
-	switch (baud) {
-	case 0:
-		return B0;
-	case 50:
-		return B50;
-	case 75:
-		return B75;
-	case 110:
-		return B110;
-	case 134:
-		return B134;
-	case 150:
-		return B150;
-	case 200:
-		return B200;
-	case 300:
-		return B300;
-	case 600:
-		return B600;
-	case 1200:
-		return B1200;
-	case 1800:
-		return B1800;
-	case 2400:
-		return B2400;
-	case 4800:
-		return B4800;
-	case 9600:
-		return B9600;
+	विकल्प (baud) {
+	पक्ष 0:
+		पटिनिवत्त B0;
+	पक्ष 50:
+		पटिनिवत्त B50;
+	पक्ष 75:
+		पटिनिवत्त B75;
+	पक्ष 110:
+		पटिनिवत्त B110;
+	पक्ष 134:
+		पटिनिवत्त B134;
+	पक्ष 150:
+		पटिनिवत्त B150;
+	पक्ष 200:
+		पटिनिवत्त B200;
+	पक्ष 300:
+		पटिनिवत्त B300;
+	पक्ष 600:
+		पटिनिवत्त B600;
+	पक्ष 1200:
+		पटिनिवत्त B1200;
+	पक्ष 1800:
+		पटिनिवत्त B1800;
+	पक्ष 2400:
+		पटिनिवत्त B2400;
+	पक्ष 4800:
+		पटिनिवत्त B4800;
+	पक्ष 9600:
+		पटिनिवत्त B9600;
 
 #ifdef B19200
-	case 19200:
-		return B19200;
-#else /* B19200 */
+	पक्ष 19200:
+		पटिनिवत्त B19200;
+#अञ्ञथा /* B19200 */
 #ifdef EXTA
-	case 19200:
-		return EXTA;
+	पक्ष 19200:
+		पटिनिवत्त EXTA;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
-	case 38400:
-		return B38400;
-#else /* B38400 */
+	पक्ष 38400:
+		पटिनिवत्त B38400;
+#अञ्ञथा /* B38400 */
 #ifdef EXTB
-	case 38400:
-		return EXTB;
+	पक्ष 38400:
+		पटिनिवत्त EXTB;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
-	case 7200:
-		return B7200;
+	पक्ष 7200:
+		पटिनिवत्त B7200;
 #endif /* B7200 */
 #ifdef B14400
-	case 14400:
-		return B14400;
+	पक्ष 14400:
+		पटिनिवत्त B14400;
 #endif /* B14400 */
 #ifdef B28800
-	case 28800:
-		return B28800;
+	पक्ष 28800:
+		पटिनिवत्त B28800;
 #endif /* B28800 */
 #ifdef B57600
-	case 57600:
-		return B57600;
+	पक्ष 57600:
+		पटिनिवत्त B57600;
 #endif /* B57600 */
 #ifdef B76800
-	case 76800:
-		return B76800;
+	पक्ष 76800:
+		पटिनिवत्त B76800;
 #endif /* B76800 */
 #ifdef B115200
-	case 115200:
-		return B115200;
+	पक्ष 115200:
+		पटिनिवत्त B115200;
 #endif /* B115200 */
 #ifdef B230400
-	case 230400:
-		return B230400;
+	पक्ष 230400:
+		पटिनिवत्त B230400;
 #endif /* B230400 */
-	default:
-		return B9600;
+	स्वभाव:
+		पटिनिवत्त B9600;
 	}
 }
 
 /*
  * Encode a special character into SSH line format.
  */
-static u_int
+स्थिर u_int
 special_char_encode(cc_t c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == _POSIX_VDISABLE)
-		return 255;
+	सचे (c == _POSIX_VDISABLE)
+		पटिनिवत्त 255;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	पटिनिवत्त c;
 }
 
 /*
  * Decode a special character from SSH line format.
  */
-static cc_t
+स्थिर cc_t
 special_char_decode(u_int c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == 255)
-		return _POSIX_VDISABLE;
+	सचे (c == 255)
+		पटिनिवत्त _POSIX_VDISABLE;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	पटिनिवत्त c;
 }
 
 /*
@@ -274,32 +274,32 @@ special_char_decode(u_int c)
  * or tiop in a portable manner, and appends the modes to a packet
  * being constructed.
  */
-void
-ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
+शून्य
+ssh_tty_make_modes(संरचना ssh *ssh, पूर्णाङ्क fd, संरचना termios *tiop)
 {
-	struct termios tio;
-	struct sshbuf *buf;
-	int r, ibaud, obaud;
+	संरचना termios tio;
+	संरचना sshbuf *buf;
+	पूर्णाङ्क r, ibaud, obaud;
 
-	if ((buf = sshbuf_new()) == NULL)
+	सचे ((buf = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 
-	if (tiop == NULL) {
-		if (fd == -1) {
+	सचे (tiop == रिक्त) {
+		सचे (fd == -1) {
 			debug_f("no fd or tio");
-			goto end;
+			गच्छ end;
 		}
-		if (tcgetattr(fd, &tio) == -1) {
+		सचे (tcgetattr(fd, &tio) == -1) {
 			logit("tcgetattr: %.100s", strerror(errno));
-			goto end;
+			गच्छ end;
 		}
-	} else
+	} अञ्ञथा
 		tio = *tiop;
 
 	/* Store input and output baud rates. */
 	obaud = speed_to_baud(cfgetospeed(&tio));
 	ibaud = speed_to_baud(cfgetispeed(&tio));
-	if ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
+	सचे ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, obaud)) != 0 ||
 	    (r = sshbuf_put_u8(buf, TTY_OP_ISPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, ibaud)) != 0)
@@ -307,7 +307,7 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 
 	/* Store values of mode flags. */
 #define TTYCHAR(NAME, OP) \
-	if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	सचे ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, \
 	    special_char_encode(tio.c_cc[NAME]))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
@@ -315,20 +315,20 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 #define SSH_TTYMODE_IUTF8 42  /* for SSH_BUG_UTF8TTYMODE */
 
 #define TTYMODE(NAME, FIELD, OP) \
-	if (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
+	सचे (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
 		debug3_f("SSH_BUG_UTF8TTYMODE"); \
-	} else if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	} अञ्ञथा सचे ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, ((tio.FIELD & NAME) != 0))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
 
-#include "ttymodes.h"
+#अन्तर्भाव "ttymodes.h"
 
 #undef TTYCHAR
 #undef TTYMODE
 
 end:
 	/* Mark end of mode data. */
-	if ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
+	सचे ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, buf)) != 0)
 		fatal_fr(r, "compose end");
 	sshbuf_free(buf);
@@ -338,24 +338,24 @@ end:
  * Decodes terminal modes for the terminal referenced by fd in a portable
  * manner from a packet being read.
  */
-void
-ssh_tty_parse_modes(struct ssh *ssh, int fd)
+शून्य
+ssh_tty_parse_modes(संरचना ssh *ssh, पूर्णाङ्क fd)
 {
-	struct termios tio;
-	struct sshbuf *buf;
-	const u_char *data;
+	संरचना termios tio;
+	संरचना sshbuf *buf;
+	ध्रुव u_char *data;
 	u_char opcode;
 	u_int baud, u;
-	int r, failure = 0;
+	पूर्णाङ्क r, failure = 0;
 	size_t len;
 
-	if ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
+	सचे ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
 		fatal_fr(r, "parse");
-	if (len == 0)
-		return;
-	if ((buf = sshbuf_from(data, len)) == NULL) {
+	सचे (len == 0)
+		पटिनिवत्त;
+	सचे ((buf = sshbuf_from(data, len)) == रिक्त) {
 		error_f("sshbuf_from failed");
-		return;
+		पटिनिवत्त;
 	}
 
 	/*
@@ -363,56 +363,56 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 	 * flags. I am hoping that if there are any machine-specific
 	 * modes, they will initially have reasonable values.
 	 */
-	if (tcgetattr(fd, &tio) == -1) {
+	सचे (tcgetattr(fd, &tio) == -1) {
 		logit("tcgetattr: %.100s", strerror(errno));
 		failure = -1;
 	}
 
-	while (sshbuf_len(buf) > 0) {
-		if ((r = sshbuf_get_u8(buf, &opcode)) != 0)
+	याव (sshbuf_len(buf) > 0) {
+		सचे ((r = sshbuf_get_u8(buf, &opcode)) != 0)
 			fatal_fr(r, "parse opcode");
-		switch (opcode) {
-		case TTY_OP_END:
-			goto set;
+		विकल्प (opcode) {
+		पक्ष TTY_OP_END:
+			गच्छ set;
 
-		case TTY_OP_ISPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		पक्ष TTY_OP_ISPEED:
+			सचे ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ispeed");
-			if (failure != -1 &&
+			सचे (failure != -1 &&
 			    cfsetispeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetispeed failed for %d", baud);
-			break;
+			भङ्ग;
 
-		case TTY_OP_OSPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+		पक्ष TTY_OP_OSPEED:
+			सचे ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ospeed");
-			if (failure != -1 &&
+			सचे (failure != -1 &&
 			    cfsetospeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetospeed failed for %d", baud);
-			break;
+			भङ्ग;
 
 #define TTYCHAR(NAME, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+		पक्ष OP: \
+			सचे ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
 			tio.c_cc[NAME] = special_char_decode(u); \
-			break;
+			भङ्ग;
 #define TTYMODE(NAME, FIELD, OP) \
-		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+		पक्ष OP: \
+			सचे ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
-			if (u) \
+			सचे (u) \
 				tio.FIELD |= NAME; \
-			else \
+			अञ्ञथा \
 				tio.FIELD &= ~NAME; \
-			break;
+			भङ्ग;
 
-#include "ttymodes.h"
+#अन्तर्भाव "ttymodes.h"
 
 #undef TTYCHAR
 #undef TTYMODE
 
-		default:
+		स्वभाव:
 			debug("Ignoring unsupported tty mode opcode %d (0x%x)",
 			    opcode, opcode);
 			/*
@@ -422,13 +422,13 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 			 * Opcodes 160 to 255 are undefined and cause parsing
 			 * to stop.
 			 */
-			if (opcode > 0 && opcode < 160) {
-				if ((r = sshbuf_get_u32(buf, NULL)) != 0)
+			सचे (opcode > 0 && opcode < 160) {
+				सचे ((r = sshbuf_get_u32(buf, रिक्त)) != 0)
 					fatal_fr(r, "parse arg");
-				break;
-			} else {
+				भङ्ग;
+			} अञ्ञथा {
 				logit_f("unknown opcode %d", opcode);
-				goto set;
+				गच्छ set;
 			}
 		}
 	}
@@ -436,14 +436,14 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 set:
 	len = sshbuf_len(buf);
 	sshbuf_free(buf);
-	if (len > 0) {
+	सचे (len > 0) {
 		logit_f("%zu bytes left", len);
-		return;		/* Don't process bytes passed */
+		पटिनिवत्त;		/* Don't process bytes passed */
 	}
-	if (failure == -1)
-		return;		/* Packet parsed ok but tcgetattr() failed */
+	सचे (failure == -1)
+		पटिनिवत्त;		/* Packet parsed ok but tcgetattr() failed */
 
 	/* Set the new modes for the terminal. */
-	if (tcsetattr(fd, TCSANOW, &tio) == -1)
+	सचे (tcsetattr(fd, TCSANOW, &tio) == -1)
 		logit("Setting tty modes failed: %.100s", strerror(errno));
 }

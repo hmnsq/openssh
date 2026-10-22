@@ -19,25 +19,25 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#सचे defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#अन्तर्भाव <sys/socket.h>
+#अन्तर्भाव <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <inttypes.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "port-linux.h"
+#अन्तर्भाव "misc.h"
 
 #ifdef LINUX_OOM_ADJUST
 /*
@@ -46,163 +46,163 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+स्थिर पूर्णाङ्क oom_adj_save = INT_MIN;
+स्थिर वर्ण *oom_adj_path = रिक्त;
+संरचना {
+	वर्ण *path;
+	पूर्णाङ्क मानम्;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{रिक्त, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+शून्य
+oom_adjust_setup(शून्य)
 {
-	int i, value;
+	पूर्णाङ्क i, मानम्;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 अत्थाय (i = 0; oom_adjust[i].path != रिक्त; i++) {
 		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		मानम् = oom_adjust[i].मानम्;
+		सचे ((fp = fopen(oom_adj_path, "r+")) != रिक्त) {
+			सचे (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			अञ्ञथा {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				सचे (fprintf(fp, "%d\n", मानम्) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				अञ्ञथा
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_path, oom_adj_save, मानम्);
 			}
 			fclose(fp);
-			return;
+			पटिनिवत्त;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_path = रिक्त;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+शून्य
+oom_adjust_restore(शून्य)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	सचे (oom_adj_save == INT_MIN || oom_adj_path == रिक्त ||
+	    (fp = fopen(oom_adj_path, "w")) == रिक्त)
+		पटिनिवत्त;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	सचे (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	अञ्ञथा
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	पटिनिवत्त;
 }
 #endif /* LINUX_OOM_ADJUST */
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#अन्तर्भाव <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+शून्य
+memlock_onfault_setup(शून्य)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	सचे (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	अञ्ञथा
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
 
 #ifdef SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
+स्थिर शून्य ssh_systemd_notify(ध्रुव वर्ण *, ...)
     __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+स्थिर शून्य
+ssh_systemd_notify(ध्रुव वर्ण *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	वर्ण *s = रिक्त;
+	ध्रुव वर्ण *path;
+	संरचना stat sb;
+	संरचना sockaddr_un addr;
+	पूर्णाङ्क fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	सचे ((path = getenv("NOTIFY_SOCKET")) == रिक्त || strlen(path) == 0)
+		पटिनिवत्त;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	सचे (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+		गच्छ out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	सचे (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+		गच्छ out;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, परिमाण(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
+	सचे (strlcpy(addr.sun_path, path,
+	    परिमाण(addr.sun_path)) >= परिमाण(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
-		goto out;
+		गच्छ out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	सचे (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	सचे ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+		गच्छ out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	सचे (connect(fd, (संरचना sockaddr *)&addr, परिमाण(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+		गच्छ out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	सचे (लिख(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+		गच्छ out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	सचे (fd != -1)
 		close(fd);
-	free(s);
+	मुक्त(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+शून्य
+ssh_systemd_notify_ready(शून्य)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+शून्य
+ssh_systemd_notify_reload(शून्य)
 {
-	struct timespec now;
+	संरचना timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	सचे (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} अञ्ञथा {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

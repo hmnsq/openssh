@@ -17,32 +17,32 @@
 #ifndef _PORT_TUN_H
 #define _PORT_TUN_H
 
-struct Channel;
-struct ssh;
+संरचना Channel;
+संरचना ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#सचे defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+पूर्णाङ्क	  sys_tun_open(पूर्णाङ्क, पूर्णाङ्क, वर्ण **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#सचे defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
+पूर्णाङ्क	 sys_tun_infilter(संरचना ssh *, संरचना Channel *, वर्ण *, पूर्णाङ्क);
+u_char	*sys_tun_outfilter(संरचना ssh *, संरचना Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#सचे defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+वर्ण *sys_get_rdomain(पूर्णाङ्क fd);
+पूर्णाङ्क sys_set_rdomain(पूर्णाङ्क fd, ध्रुव वर्ण *name);
+पूर्णाङ्क sys_valid_rdomain(ध्रुव वर्ण *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#सचे defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
+शून्य sys_set_process_rdomain(ध्रुव वर्ण *name);
 #endif
 
 #endif

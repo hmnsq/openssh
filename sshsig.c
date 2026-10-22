@@ -15,29 +15,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
-#include "authfd.h"
-#include "authfile.h"
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "match.h"
-#include "digest.h"
+#अन्तर्भाव "authfd.h"
+#अन्तर्भाव "authfile.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "sshsig.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "digest.h"
 
 #define SIG_VERSION		0x01
 #define MAGIC_PREAMBLE		"SSHSIG"
-#define MAGIC_PREAMBLE_LEN	(sizeof(MAGIC_PREAMBLE) - 1)
+#define MAGIC_PREAMBLE_LEN	(परिमाण(MAGIC_PREAMBLE) - 1)
 #define BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
 #define END_SIGNATURE		"-----END SSH SIGNATURE-----"
 #define RSA_SIGN_ALG		"rsa-sha2-512"
@@ -45,1120 +45,1120 @@
 #define HASHALG_DEFAULT		"sha512"
 #define HASHALG_ALLOWED		"sha256,sha512"
 
-int
-sshsig_armor(const struct sshbuf *blob, struct sshbuf **out)
+पूर्णाङ्क
+sshsig_armor(ध्रुव संरचना sshbuf *blob, संरचना sshbuf **out)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *buf = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	*out = NULL;
+	*out = रिक्त;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	सचे ((buf = sshbuf_new()) == रिक्त) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
-	if ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
+	सचे ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		गच्छ out;
 	}
 
-	if ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
+	सचे ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
 		error_fr(r, "base64 encode signature");
-		goto out;
+		गच्छ out;
 	}
 
-	if ((r = sshbuf_put(buf, END_SIGNATURE,
-	    sizeof(END_SIGNATURE)-1)) != 0 ||
+	सचे ((r = sshbuf_put(buf, END_SIGNATURE,
+	    परिमाण(END_SIGNATURE)-1)) != 0 ||
 	    (r = sshbuf_put_u8(buf, '\n')) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		गच्छ out;
 	}
 	/* success */
 	*out = buf;
-	buf = NULL; /* transferred */
+	buf = रिक्त; /* transferred */
 	r = 0;
  out:
 	sshbuf_free(buf);
-	return r;
+	पटिनिवत्त r;
 }
 
-int
-sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out)
+पूर्णाङ्क
+sshsig_dearmor(संरचना sshbuf *sig, संरचना sshbuf **out)
 {
-	int r;
+	पूर्णाङ्क r;
 	size_t eoffset = 0;
-	struct sshbuf *buf = NULL;
-	struct sshbuf *sbuf = NULL;
-	char *b64 = NULL;
+	संरचना sshbuf *buf = रिक्त;
+	संरचना sshbuf *sbuf = रिक्त;
+	वर्ण *b64 = रिक्त;
 
-	if ((sbuf = sshbuf_fromb(sig)) == NULL) {
+	सचे ((sbuf = sshbuf_fromb(sig)) == रिक्त) {
 		error_f("sshbuf_fromb failed");
-		return SSH_ERR_ALLOC_FAIL;
+		पटिनिवत्त SSH_ERR_ALLOC_FAIL;
 	}
 
 	/* Expect and consume preamble + lf/crlf */
-	if ((r = sshbuf_cmp(sbuf, 0,
-	    BEGIN_SIGNATURE, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	सचे ((r = sshbuf_cmp(sbuf, 0,
+	    BEGIN_SIGNATURE, परिमाण(BEGIN_SIGNATURE)-1)) != 0) {
 		error("Couldn't parse signature: missing header");
-		goto done;
+		गच्छ done;
 	}
-	if ((r = sshbuf_consume(sbuf, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	सचे ((r = sshbuf_consume(sbuf, परिमाण(BEGIN_SIGNATURE)-1)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		गच्छ done;
 	}
-	if ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
+	सचे ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
 		eoffset = 2;
-	else if ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
+	अञ्ञथा सचे ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
 		eoffset = 1;
-	else {
+	अञ्ञथा {
 		r = SSH_ERR_INVALID_FORMAT;
 		error_f("no header eol");
-		goto done;
+		गच्छ done;
 	}
-	if ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
+	सचे ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
 		error_fr(r, "consume eol");
-		goto done;
+		गच्छ done;
 	}
 	/* Find and consume lf + suffix (any prior cr would be ignored) */
-	if ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
-	    sizeof(END_SIGNATURE), &eoffset)) != 0) {
+	सचे ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
+	    परिमाण(END_SIGNATURE), &eoffset)) != 0) {
 		error("Couldn't parse signature: missing footer");
-		goto done;
+		गच्छ done;
 	}
-	if ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
+	सचे ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		गच्छ done;
 	}
 
-	if ((b64 = sshbuf_dup_string(sbuf)) == NULL) {
+	सचे ((b64 = sshbuf_dup_string(sbuf)) == रिक्त) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		गच्छ done;
 	}
 
-	if ((buf = sshbuf_new()) == NULL) {
+	सचे ((buf = sshbuf_new()) == रिक्त) {
 		error_f("sshbuf_new() failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		गच्छ done;
 	}
 
-	if ((r = sshbuf_b64tod(buf, b64)) != 0) {
+	सचे ((r = sshbuf_b64tod(buf, b64)) != 0) {
 		error_fr(r, "decode base64");
-		goto done;
+		गच्छ done;
 	}
 
 	/* success */
 	*out = buf;
 	r = 0;
-	buf = NULL; /* transferred */
+	buf = रिक्त; /* transferred */
 done:
 	sshbuf_free(buf);
 	sshbuf_free(sbuf);
-	free(b64);
-	return r;
+	मुक्त(b64);
+	पटिनिवत्त r;
 }
 
-static int
-sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *h_message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+स्थिर पूर्णाङ्क
+sshsig_wrap_sign(संरचना sshkey *कुञ्चिका, ध्रुव वर्ण *hashalg,
+    ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin, ध्रुव संरचना sshbuf *h_message,
+    ध्रुव वर्ण *sig_namespace, संरचना sshbuf **out,
+    sshsig_signer *signer, शून्य *signer_ctx)
 {
-	int r;
+	पूर्णाङ्क r;
 	size_t slen = 0;
-	u_char *sig = NULL;
-	struct sshbuf *blob = NULL;
-	struct sshbuf *tosign = NULL;
-	const char *sign_alg = NULL;
+	u_char *sig = रिक्त;
+	संरचना sshbuf *blob = रिक्त;
+	संरचना sshbuf *tosign = रिक्त;
+	ध्रुव वर्ण *sign_alg = रिक्त;
 
-	if ((tosign = sshbuf_new()) == NULL ||
-	    (blob = sshbuf_new()) == NULL) {
+	सचे ((tosign = sshbuf_new()) == रिक्त ||
+	    (blob = sshbuf_new()) == रिक्त) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		गच्छ done;
 	}
 
-	if ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	सचे ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(tosign, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(tosign, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(tosign, रिक्त, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(tosign, hashalg)) != 0 ||
 	    (r = sshbuf_put_stringb(tosign, h_message)) != 0) {
 		error_fr(r, "assemble message to sign");
-		goto done;
+		गच्छ done;
 	}
 
 	/* If using RSA keys then default to a good signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	सचे (sshkey_type_plain(कुञ्चिका->type) == कुञ्चिका_RSA) {
 		sign_alg = RSA_SIGN_ALG;
-		if (strcmp(hashalg, "sha256") == 0)
+		सचे (strcmp(hashalg, "sha256") == 0)
 			sign_alg = "rsa-sha2-256";
-		else if (strcmp(hashalg, "sha512") == 0)
+		अञ्ञथा सचे (strcmp(hashalg, "sha512") == 0)
 			sign_alg = "rsa-sha2-512";
 	}
 
-	if (signer != NULL) {
-		if ((r = signer(key, &sig, &slen,
+	सचे (signer != रिक्त) {
+		सचे ((r = signer(कुञ्चिका, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0, signer_ctx)) != 0) {
 			error_r(r, "Couldn't sign message (signer)");
-			goto done;
+			गच्छ done;
 		}
-	} else {
-		if ((r = sshkey_sign(key, &sig, &slen,
+	} अञ्ञथा {
+		सचे ((r = sshkey_sign(कुञ्चिका, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0)) != 0) {
 			error_r(r, "Couldn't sign message");
-			goto done;
+			गच्छ done;
 		}
 	}
 
-	if ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	सचे ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_u32(blob, SIG_VERSION)) != 0 ||
-	    (r = sshkey_puts(key, blob)) != 0 ||
+	    (r = sshkey_puts(कुञ्चिका, blob)) != 0 ||
 	    (r = sshbuf_put_cstring(blob, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(blob, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(blob, रिक्त, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(blob, hashalg)) != 0 ||
 	    (r = sshbuf_put_string(blob, sig, slen)) != 0) {
 		error_fr(r, "assemble signature object");
-		goto done;
+		गच्छ done;
 	}
 
-	if (out != NULL) {
+	सचे (out != रिक्त) {
 		*out = blob;
-		blob = NULL;
+		blob = रिक्त;
 	}
 	r = 0;
 done:
-	free(sig);
+	मुक्त(sig);
 	sshbuf_free(blob);
 	sshbuf_free(tosign);
-	return r;
+	पटिनिवत्त r;
 }
 
 /* Check preamble and version. */
-static int
-sshsig_parse_preamble(struct sshbuf *buf)
+स्थिर पूर्णाङ्क
+sshsig_parse_preamble(संरचना sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	uint32_t sversion;
 
-	if ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_consume(buf, (sizeof(MAGIC_PREAMBLE)-1))) != 0 ||
+	सचे ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_consume(buf, (परिमाण(MAGIC_PREAMBLE)-1))) != 0 ||
 	    (r = sshbuf_get_u32(buf, &sversion)) != 0) {
 		error("Couldn't verify signature: invalid format");
-		return r;
+		पटिनिवत्त r;
 	}
 
-	if (sversion > SIG_VERSION) {
+	सचे (sversion > SIG_VERSION) {
 		error("Signature version %lu is larger than supported "
 		    "version %u", (unsigned long)sversion, SIG_VERSION);
-		return SSH_ERR_INVALID_FORMAT;
+		पटिनिवत्त SSH_ERR_INVALID_FORMAT;
 	}
-	return 0;
+	पटिनिवत्त 0;
 }
 
-static int
-sshsig_check_hashalg(const char *hashalg)
+स्थिर पूर्णाङ्क
+sshsig_check_hashalg(ध्रुव वर्ण *hashalg)
 {
-	if (hashalg == NULL ||
+	सचे (hashalg == रिक्त ||
 	    match_pattern_list(hashalg, HASHALG_ALLOWED, 0) == 1)
-		return 0;
+		पटिनिवत्त 0;
 	error_f("unsupported hash algorithm \"%.100s\"", hashalg);
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	पटिनिवत्त SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-static int
-sshsig_peek_hashalg(struct sshbuf *signature, char **hashalgp)
+स्थिर पूर्णाङ्क
+sshsig_peek_hashalg(संरचना sshbuf *signature, वर्ण **hashalgp)
 {
-	struct sshbuf *buf = NULL;
-	char *hashalg = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *buf = रिक्त;
+	वर्ण *hashalg = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	if ((buf = sshbuf_fromb(signature)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshsig_parse_preamble(buf)) != 0)
-		goto done;
-	if ((r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(buf, &hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0) {
+	सचे (hashalgp != रिक्त)
+		*hashalgp = रिक्त;
+	सचे ((buf = sshbuf_fromb(signature)) == रिक्त)
+		पटिनिवत्त SSH_ERR_ALLOC_FAIL;
+	सचे ((r = sshsig_parse_preamble(buf)) != 0)
+		गच्छ done;
+	सचे ((r = sshbuf_get_string_direct(buf, रिक्त, रिक्त)) != 0 ||
+	    (r = sshbuf_get_string_direct(buf, रिक्त, रिक्त)) != 0 ||
+	    (r = sshbuf_get_string(buf, रिक्त, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(buf, &hashalg, रिक्त)) != 0 ||
+	    (r = sshbuf_get_string_direct(buf, रिक्त, रिक्त)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		गच्छ done;
 	}
 
 	/* success */
 	r = 0;
 	*hashalgp = hashalg;
-	hashalg = NULL;
+	hashalg = रिक्त;
  done:
-	free(hashalg);
+	मुक्त(hashalg);
 	sshbuf_free(buf);
-	return r;
+	पटिनिवत्त r;
 }
 
-static int
-sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
-    const struct sshbuf *h_message, const char *expect_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details)
+स्थिर पूर्णाङ्क
+sshsig_wrap_verify(संरचना sshbuf *signature, ध्रुव वर्ण *hashalg,
+    ध्रुव संरचना sshbuf *h_message, ध्रुव वर्ण *expect_namespace,
+    संरचना sshkey **sign_keyp, संरचना sshkey_sig_details **sig_details)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *buf = NULL, *toverify = NULL;
-	struct sshkey *key = NULL;
-	const u_char *sig;
-	char *got_namespace = NULL, *sigtype = NULL, *sig_hashalg = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *buf = रिक्त, *toverify = रिक्त;
+	संरचना sshkey *कुञ्चिका = रिक्त;
+	ध्रुव u_char *sig;
+	वर्ण *got_namespace = रिक्त, *sigtype = रिक्त, *sig_hashalg = रिक्त;
 	size_t siglen;
 
 	debug_f("verify message length %zu", sshbuf_len(h_message));
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
+	सचे (sig_details != रिक्त)
+		*sig_details = रिक्त;
+	सचे (sign_keyp != रिक्त)
+		*sign_keyp = रिक्त;
 
-	if ((toverify = sshbuf_new()) == NULL) {
+	सचे ((toverify = sshbuf_new()) == रिक्त) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		गच्छ done;
 	}
-	if ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
+	सचे ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
 	    MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(toverify, expect_namespace)) != 0 ||
-	    (r = sshbuf_put_string(toverify, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(toverify, रिक्त, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(toverify, hashalg)) != 0 ||
 	    (r = sshbuf_put_stringb(toverify, h_message)) != 0) {
 		error_fr(r, "assemble message to verify");
-		goto done;
+		गच्छ done;
 	}
 
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		goto done;
+	सचे ((r = sshsig_parse_preamble(signature)) != 0)
+		गच्छ done;
 
-	if ((r = sshkey_froms(signature, &key)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &got_namespace, NULL)) != 0 ||
-	    (r = sshbuf_get_string(signature, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &sig_hashalg, NULL)) != 0 ||
+	सचे ((r = sshkey_froms(signature, &कुञ्चिका)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &got_namespace, रिक्त)) != 0 ||
+	    (r = sshbuf_get_string(signature, रिक्त, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &sig_hashalg, रिक्त)) != 0 ||
 	    (r = sshbuf_get_string_direct(signature, &sig, &siglen)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		गच्छ done;
 	}
 
-	if (sshbuf_len(signature) != 0) {
+	सचे (sshbuf_len(signature) != 0) {
 		error("Signature contains trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		गच्छ done;
 	}
 
-	if (strcmp(expect_namespace, got_namespace) != 0) {
+	सचे (strcmp(expect_namespace, got_namespace) != 0) {
 		error("Couldn't verify signature: namespace does not match");
 		debug_f("expected namespace \"%s\" received \"%s\"",
 		    expect_namespace, got_namespace);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		गच्छ done;
 	}
-	if (strcmp(hashalg, sig_hashalg) != 0) {
+	सचे (strcmp(hashalg, sig_hashalg) != 0) {
 		error("Couldn't verify signature: hash algorithm mismatch");
 		debug_f("expected algorithm \"%s\" received \"%s\"",
 		    hashalg, sig_hashalg);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		गच्छ done;
 	}
 	/* Ensure that RSA keys use an acceptable signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
-		if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
+	सचे (sshkey_type_plain(कुञ्चिका->type) == कुञ्चिका_RSA) {
+		सचे ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
 			error_r(r, "Couldn't verify signature: unable to get "
 			    "signature type");
-			goto done;
+			गच्छ done;
 		}
-		if (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
+		सचे (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
 			error("Couldn't verify signature: unsupported RSA "
 			    "signature algorithm %s", sigtype);
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-			goto done;
+			गच्छ done;
 		}
 	}
-	if ((r = sshkey_verify(key, sig, siglen, sshbuf_ptr(toverify),
-	    sshbuf_len(toverify), NULL, 0, sig_details)) != 0) {
+	सचे ((r = sshkey_verify(कुञ्चिका, sig, siglen, sshbuf_ptr(toverify),
+	    sshbuf_len(toverify), रिक्त, 0, sig_details)) != 0) {
 		error_r(r, "Signature verification failed");
-		goto done;
+		गच्छ done;
 	}
 
 	/* success */
 	r = 0;
-	if (sign_keyp != NULL) {
-		*sign_keyp = key;
-		key = NULL; /* transferred */
+	सचे (sign_keyp != रिक्त) {
+		*sign_keyp = कुञ्चिका;
+		कुञ्चिका = रिक्त; /* transferred */
 	}
 done:
-	free(got_namespace);
-	free(sigtype);
-	free(sig_hashalg);
+	मुक्त(got_namespace);
+	मुक्त(sigtype);
+	मुक्त(sig_hashalg);
 	sshbuf_free(buf);
 	sshbuf_free(toverify);
-	sshkey_free(key);
-	return r;
+	sshkey_free(कुञ्चिका);
+	पटिनिवत्त r;
 }
 
-static int
-hash_buffer(const struct sshbuf *m, const char *hashalg, struct sshbuf **bp)
+स्थिर पूर्णाङ्क
+hash_buffer(ध्रुव संरचना sshbuf *m, ध्रुव वर्ण *hashalg, संरचना sshbuf **bp)
 {
-	char *hex, hash[SSH_DIGEST_MAX_LENGTH];
-	int alg, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	वर्ण *hex, hash[SSH_DIGEST_MAX_LENGTH];
+	पूर्णाङ्क alg, r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = रिक्त;
+	memset(hash, 0, परिमाण(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	सचे ((r = sshsig_check_hashalg(hashalg)) != 0)
+		पटिनिवत्त r;
+	सचे ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		पटिनिवत्त SSH_ERR_INTERNAL_ERROR;
 	}
-	if ((r = ssh_digest_buffer(alg, m, hash, sizeof(hash))) != 0) {
+	सचे ((r = ssh_digest_buffer(alg, m, hash, परिमाण(hash))) != 0) {
 		error_fr(r, "ssh_digest_buffer");
-		return r;
+		पटिनिवत्त r;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	सचे ((hex = tohex(hash, ssh_digest_bytes(alg))) != रिक्त) {
 		debug3_f("final hash: %s", hex);
 		freezero(hex, strlen(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	सचे ((b = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	सचे ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		गच्छ out;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = रिक्त; /* transferred */
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	explicit_bzero(hash, sizeof(hash));
-	return r;
+	explicit_bzero(hash, परिमाण(hash));
+	पटिनिवत्त r;
 }
 
-int
-sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx)
+पूर्णाङ्क
+sshsig_signb(संरचना sshkey *कुञ्चिका, ध्रुव वर्ण *hashalg,
+    ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin,
+    ध्रुव संरचना sshbuf *message, ध्रुव वर्ण *sig_namespace,
+    संरचना sshbuf **out, sshsig_signer *signer, शून्य *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalg == NULL)
+	सचे (hashalg == रिक्त)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	सचे (out != रिक्त)
+		*out = रिक्त;
+	सचे ((r = hash_buffer(message, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	सचे ((r = sshsig_wrap_sign(कुञ्चिका, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+		गच्छ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	पटिनिवत्त r;
 }
 
-int
-sshsig_verifyb(struct sshbuf *signature, const struct sshbuf *message,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+पूर्णाङ्क
+sshsig_verifyb(संरचना sshbuf *signature, ध्रुव संरचना sshbuf *message,
+    ध्रुव वर्ण *expect_namespace, संरचना sshkey **sign_keyp,
+    संरचना sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *hashalg = रिक्त;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	सचे (sig_details != रिक्त)
+		*sig_details = रिक्त;
+	सचे (sign_keyp != रिक्त)
+		*sign_keyp = रिक्त;
+	सचे ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		पटिनिवत्त r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	सचे ((r = hash_buffer(message, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	सचे ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		गच्छ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	मुक्त(hashalg);
+	पटिनिवत्त r;
 }
 
-static int
-hash_file(int fd, const char *hashalg, struct sshbuf **bp)
+स्थिर पूर्णाङ्क
+hash_file(पूर्णाङ्क fd, ध्रुव वर्ण *hashalg, संरचना sshbuf **bp)
 {
-	char *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
+	वर्ण *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
 	ssize_t n, total = 0;
-	struct ssh_digest_ctx *ctx = NULL;
-	int alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	संरचना ssh_digest_ctx *ctx = रिक्त;
+	पूर्णाङ्क alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = रिक्त;
+	memset(hash, 0, परिमाण(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	सचे ((r = sshsig_check_hashalg(hashalg)) != 0)
+		पटिनिवत्त r;
+	सचे ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		पटिनिवत्त SSH_ERR_INTERNAL_ERROR;
 	}
-	if ((ctx = ssh_digest_start(alg)) == NULL) {
+	सचे ((ctx = ssh_digest_start(alg)) == रिक्त) {
 		error_f("ssh_digest_start failed");
-		return SSH_ERR_INTERNAL_ERROR;
+		पटिनिवत्त SSH_ERR_INTERNAL_ERROR;
 	}
-	for (;;) {
-		if ((n = read(fd, rbuf, sizeof(rbuf))) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
+	अत्थाय (;;) {
+		सचे ((n = पठ(fd, rbuf, परिमाण(rbuf))) == -1) {
+			सचे (errno == EINTR || errno == EAGAIN)
+				अनुवर्त;
 			oerrno = errno;
 			error_f("read: %s", strerror(errno));
 			errno = oerrno;
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
-		} else if (n == 0) {
+			गच्छ out;
+		} अञ्ञथा सचे (n == 0) {
 			debug2_f("hashed %zu bytes", total);
-			break; /* EOF */
+			भङ्ग; /* EOF */
 		}
 		total += (size_t)n;
-		if ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
+		सचे ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
 			error_fr(r, "ssh_digest_update");
-			goto out;
+			गच्छ out;
 		}
 	}
-	if ((r = ssh_digest_final(ctx, hash, sizeof(hash))) != 0) {
+	सचे ((r = ssh_digest_final(ctx, hash, परिमाण(hash))) != 0) {
 		error_fr(r, "ssh_digest_final");
-		goto out;
+		गच्छ out;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	सचे ((hex = tohex(hash, ssh_digest_bytes(alg))) != रिक्त) {
 		debug3_f("final hash: %s", hex);
 		freezero(hex, strlen(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	सचे ((b = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	सचे ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		गच्छ out;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = रिक्त; /* transferred */
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	sshbuf_free(b);
 	ssh_digest_free(ctx);
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, परिमाण(hash));
 	errno = oerrno;
-	return r;
+	पटिनिवत्त r;
 }
 
-int
-sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+पूर्णाङ्क
+sshsig_sign_fd(संरचना sshkey *कुञ्चिका, ध्रुव वर्ण *hashalg,
+    ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin,
+    पूर्णाङ्क fd, ध्रुव वर्ण *sig_namespace, संरचना sshbuf **out,
+    sshsig_signer *signer, शून्य *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalg == NULL)
+	सचे (hashalg == रिक्त)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	सचे (out != रिक्त)
+		*out = रिक्त;
+	सचे ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		return r;
+		पटिनिवत्त r;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	सचे ((r = sshsig_wrap_sign(कुञ्चिका, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+		गच्छ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	पटिनिवत्त r;
 }
 
-int
-sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+पूर्णाङ्क
+sshsig_verify_fd(संरचना sshbuf *signature, पूर्णाङ्क fd,
+    ध्रुव वर्ण *expect_namespace, संरचना sshkey **sign_keyp,
+    संरचना sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *hashalg = रिक्त;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	सचे (sig_details != रिक्त)
+		*sig_details = रिक्त;
+	सचे (sign_keyp != रिक्त)
+		*sign_keyp = रिक्त;
+	सचे ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		पटिनिवत्त r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	सचे ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	सचे ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		गच्छ out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	मुक्त(hashalg);
+	पटिनिवत्त r;
 }
 
-struct sshsigopt {
-	int ca;
-	char *namespaces;
+संरचना sshsigopt {
+	पूर्णाङ्क ca;
+	वर्ण *namespaces;
 	uint64_t valid_after, valid_before;
 };
 
-struct sshsigopt *
-sshsigopt_parse(const char *opts, const char *path, u_long linenum,
-    const char **errstrp)
+संरचना sshsigopt *
+sshsigopt_parse(ध्रुव वर्ण *opts, ध्रुव वर्ण *path, u_long linenum,
+    ध्रुव वर्ण **errstrp)
 {
-	struct sshsigopt *ret;
-	int r;
-	char *opt;
-	const char *errstr = NULL;
+	संरचना sshsigopt *ret;
+	पूर्णाङ्क r;
+	वर्ण *opt;
+	ध्रुव वर्ण *errstr = रिक्त;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if (opts == NULL || *opts == '\0')
-		return ret; /* Empty options yields empty options :) */
+	सचे ((ret = calloc(1, परिमाण(*ret))) == रिक्त)
+		पटिनिवत्त रिक्त;
+	सचे (opts == रिक्त || *opts == '\0')
+		पटिनिवत्त ret; /* Empty options yields empty options :) */
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	याव (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		सचे ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->ca = 1;
-		} else if (opt_match(&opts, "namespaces")) {
-			if (ret->namespaces != NULL) {
+		} अञ्ञथा सचे (opt_match(&opts, "namespaces")) {
+			सचे (ret->namespaces != रिक्त) {
 				errstr = "multiple \"namespaces\" clauses";
-				goto fail;
+				गच्छ fail;
 			}
 			ret->namespaces = opt_dequote(&opts, &errstr);
-			if (ret->namespaces == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "valid-after")) {
-			if (ret->valid_after != 0) {
+			सचे (ret->namespaces == रिक्त)
+				गच्छ fail;
+		} अञ्ञथा सचे (opt_match(&opts, "valid-after")) {
+			सचे (ret->valid_after != 0) {
 				errstr = "multiple \"valid-after\" clauses";
-				goto fail;
+				गच्छ fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_after) != 0 ||
+			सचे ((opt = opt_dequote(&opts, &errstr)) == रिक्त)
+				गच्छ fail;
+			सचे (parse_absolute_time(opt, &ret->valid_after) != 0 ||
 			    ret->valid_after == 0) {
-				free(opt);
+				मुक्त(opt);
 				errstr = "invalid \"valid-after\" time";
-				goto fail;
+				गच्छ fail;
 			}
-			free(opt);
-		} else if (opt_match(&opts, "valid-before")) {
-			if (ret->valid_before != 0) {
+			मुक्त(opt);
+		} अञ्ञथा सचे (opt_match(&opts, "valid-before")) {
+			सचे (ret->valid_before != 0) {
 				errstr = "multiple \"valid-before\" clauses";
-				goto fail;
+				गच्छ fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_before) != 0 ||
+			सचे ((opt = opt_dequote(&opts, &errstr)) == रिक्त)
+				गच्छ fail;
+			सचे (parse_absolute_time(opt, &ret->valid_before) != 0 ||
 			    ret->valid_before == 0) {
-				free(opt);
+				मुक्त(opt);
 				errstr = "invalid \"valid-before\" time";
-				goto fail;
+				गच्छ fail;
 			}
-			free(opt);
+			मुक्त(opt);
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		सचे (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			भङ्ग;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		सचे (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			गच्छ fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		सचे (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			गच्छ fail;
 		}
 	}
 	/* final consistency check */
-	if (ret->valid_after != 0 && ret->valid_before != 0 &&
+	सचे (ret->valid_after != 0 && ret->valid_before != 0 &&
 	    ret->valid_before <= ret->valid_after) {
 		errstr = "\"valid-before\" time is before \"valid-after\"";
-		goto fail;
+		गच्छ fail;
 	}
 	/* success */
-	return ret;
+	पटिनिवत्त ret;
  fail:
-	if (errstrp != NULL)
+	सचे (errstrp != रिक्त)
 		*errstrp = errstr;
 	sshsigopt_free(ret);
-	return NULL;
+	पटिनिवत्त रिक्त;
 }
 
-void
-sshsigopt_free(struct sshsigopt *opts)
+शून्य
+sshsigopt_free(संरचना sshsigopt *opts)
 {
-	if (opts == NULL)
-		return;
-	free(opts->namespaces);
-	free(opts);
+	सचे (opts == रिक्त)
+		पटिनिवत्त;
+	मुक्त(opts->namespaces);
+	मुक्त(opts);
 }
 
-static int
-parse_principals_key_and_options(const char *path, u_long linenum, char *line,
-    const char *required_principal, char **principalsp, struct sshkey **keyp,
-    struct sshsigopt **sigoptsp)
+स्थिर पूर्णाङ्क
+parse_principals_कुञ्चिका_and_options(ध्रुव वर्ण *path, u_long linenum, वर्ण *पङ्क्तिः,
+    ध्रुव वर्ण *required_principal, वर्ण **principalsp, संरचना sshkey **keyp,
+    संरचना sshsigopt **sigoptsp)
 {
-	char *opts = NULL, *tmp, *cp, *principals = NULL;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *opts = रिक्त, *tmp, *cp, *principals = रिक्त;
+	ध्रुव वर्ण *reason = रिक्त;
+	संरचना sshsigopt *sigopts = रिक्त;
+	संरचना sshkey *कुञ्चिका = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (sigoptsp != NULL)
-		*sigoptsp = NULL;
-	if (keyp != NULL)
-		*keyp = NULL;
+	सचे (principalsp != रिक्त)
+		*principalsp = रिक्त;
+	सचे (sigoptsp != रिक्त)
+		*sigoptsp = रिक्त;
+	सचे (keyp != रिक्त)
+		*keyp = रिक्त;
 
-	cp = line;
+	cp = पङ्क्तिः;
 	cp = cp + strspn(cp, " \t\n\r"); /* skip leading whitespace */
-	if (*cp == '#' || *cp == '\0')
-		return SSH_ERR_KEY_NOT_FOUND; /* blank or all-comment line */
+	सचे (*cp == '#' || *cp == '\0')
+		पटिनिवत्त SSH_ERR_कुञ्चिका_NOT_FOUND; /* blank or all-comment line */
 
 	/* format: identity[,identity...] [option[,option...]] key */
-	if ((tmp = strdelimw(&cp)) == NULL || cp == NULL) {
+	सचे ((tmp = strdelimw(&cp)) == रिक्त || cp == रिक्त) {
 		error("%s:%lu: invalid line", path, linenum);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if ((principals = strdup(tmp)) == NULL) {
+	सचे ((principals = strdup(tmp)) == रिक्त) {
 		error_f("strdup failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 	/*
 	 * Bail out early if we're looking for a particular principal and this
 	 * line does not list it.
 	 */
-	if (required_principal != NULL) {
-		if (match_pattern_list(required_principal,
+	सचे (required_principal != रिक्त) {
+		सचे (match_pattern_list(required_principal,
 		    principals, 0) != 1) {
 			/* principal didn't match */
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_कुञ्चिका_NOT_FOUND;
+			गच्छ out;
 		}
 		debug_f("%s:%lu: matched principal \"%s\"",
 		    path, linenum, required_principal);
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL) {
+	सचे ((कुञ्चिका = sshkey_new(कुञ्चिका_UNSPEC)) == रिक्त) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (sshkey_read(key, &cp) != 0) {
+	सचे (sshkey_read(कुञ्चिका, &cp) != 0) {
 		/* no key? Check for options */
 		opts = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
+		सचे (sshkey_advance_past_options(&cp) != 0) {
 			error("%s:%lu: invalid options", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		if (cp == NULL || *cp == '\0') {
+		सचे (cp == रिक्त || *cp == '\0') {
 			error("%s:%lu: missing key", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 		*cp++ = '\0';
 		skip_space(&cp);
-		if (sshkey_read(key, &cp) != 0) {
+		सचे (sshkey_read(कुञ्चिका, &cp) != 0) {
 			error("%s:%lu: invalid key", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
-	debug3("%s:%lu: options %s", path, linenum, opts == NULL ? "" : opts);
-	if ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == NULL) {
+	debug3("%s:%lu: options %s", path, linenum, opts == रिक्त ? "" : opts);
+	सचे ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == रिक्त) {
 		error("%s:%lu: bad options: %s", path, linenum, reason);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	/* success */
-	if (principalsp != NULL) {
+	सचे (principalsp != रिक्त) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = रिक्त; /* transferred */
 	}
-	if (sigoptsp != NULL) {
+	सचे (sigoptsp != रिक्त) {
 		*sigoptsp = sigopts;
-		sigopts = NULL; /* transferred */
+		sigopts = रिक्त; /* transferred */
 	}
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL; /* transferred */
+	सचे (keyp != रिक्त) {
+		*keyp = कुञ्चिका;
+		कुञ्चिका = रिक्त; /* transferred */
 	}
 	r = 0;
  out:
-	free(principals);
+	मुक्त(principals);
 	sshsigopt_free(sigopts);
-	sshkey_free(key);
-	return r;
+	sshkey_free(कुञ्चिका);
+	पटिनिवत्त r;
 }
 
-static int
-cert_filter_principals(const char *path, u_long linenum,
-    char **principalsp, const struct sshkey *cert, uint64_t verify_time)
+स्थिर पूर्णाङ्क
+cert_filter_principals(ध्रुव वर्ण *path, u_long linenum,
+    वर्ण **principalsp, ध्रुव संरचना sshkey *cert, uint64_t verify_time)
 {
-	char *cp, *oprincipals, *principals;
-	const char *reason;
-	struct sshbuf *nprincipals;
-	int r = SSH_ERR_INTERNAL_ERROR, success = 0;
+	वर्ण *cp, *oprincipals, *principals;
+	ध्रुव वर्ण *reason;
+	संरचना sshbuf *nprincipals;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR, success = 0;
 	u_int i;
 
 	oprincipals = principals = *principalsp;
-	*principalsp = NULL;
+	*principalsp = रिक्त;
 
-	if ((nprincipals = sshbuf_new()) == NULL) {
+	सचे ((nprincipals = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
-	while ((cp = strsep(&principals, ",")) != NULL && *cp != '\0') {
+	याव ((cp = strsep(&principals, ",")) != रिक्त && *cp != '\0') {
 		/* Check certificate validity */
-		if ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
-		    NULL, &reason)) != 0) {
+		सचे ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
+		    रिक्त, &reason)) != 0) {
 			debug("%s:%lu: principal \"%s\" not authorized: %s",
 			    path, linenum, cp, reason);
-			continue;
+			अनुवर्त;
 		}
 		/* Return all matching principal names from the cert */
-		for (i = 0; i < cert->cert->nprincipals; i++) {
-			if (match_pattern(cert->cert->principals[i], cp)) {
-				if ((r = sshbuf_putf(nprincipals, "%s%s",
+		अत्थाय (i = 0; i < cert->cert->nprincipals; i++) {
+			सचे (match_pattern(cert->cert->principals[i], cp)) {
+				सचे ((r = sshbuf_putf(nprincipals, "%s%s",
 					sshbuf_len(nprincipals) != 0 ? "," : "",
 						cert->cert->principals[i])) != 0) {
 					error_f("buffer error");
-					goto out;
+					गच्छ out;
 				}
 			}
 		}
 	}
-	if (sshbuf_len(nprincipals) == 0) {
+	सचे (sshbuf_len(nprincipals) == 0) {
 		error("%s:%lu: no valid principals found", path, linenum);
-		r = SSH_ERR_KEY_CERT_INVALID;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_CERT_INVALID;
+		गच्छ out;
 	}
-	if ((principals = sshbuf_dup_string(nprincipals)) == NULL) {
+	सचे ((principals = sshbuf_dup_string(nprincipals)) == रिक्त) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 	/* success */
 	success = 1;
 	*principalsp = principals;
  out:
 	sshbuf_free(nprincipals);
-	free(oprincipals);
-	return success ? 0 : r;
+	मुक्त(oprincipals);
+	पटिनिवत्त success ? 0 : r;
 }
 
-static int
-check_allowed_keys_line(const char *path, u_long linenum, char *line,
-    const struct sshkey *sign_key, const char *principal,
-    const char *sig_namespace, uint64_t verify_time, char **principalsp)
+स्थिर पूर्णाङ्क
+check_allowed_कुञ्चिकाः_पङ्क्तिः(ध्रुव वर्ण *path, u_long linenum, वर्ण *पङ्क्तिः,
+    ध्रुव संरचना sshkey *sign_कुञ्चिका, ध्रुव वर्ण *principal,
+    ध्रुव वर्ण *sig_namespace, uint64_t verify_time, वर्ण **principalsp)
 {
-	struct sshkey *found_key = NULL;
-	char *principals = NULL;
-	int r, success = 0;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	char tvalid[64], tverify[64];
+	संरचना sshkey *found_कुञ्चिका = रिक्त;
+	वर्ण *principals = रिक्त;
+	पूर्णाङ्क r, success = 0;
+	ध्रुव वर्ण *reason = रिक्त;
+	संरचना sshsigopt *sigopts = रिक्त;
+	वर्ण tvalid[64], tverify[64];
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
+	सचे (principalsp != रिक्त)
+		*principalsp = रिक्त;
 
 	/* Parse the line */
-	if ((r = parse_principals_key_and_options(path, linenum, line,
-	    principal, &principals, &found_key, &sigopts)) != 0) {
+	सचे ((r = parse_principals_कुञ्चिका_and_options(path, linenum, पङ्क्तिः,
+	    principal, &principals, &found_कुञ्चिका, &sigopts)) != 0) {
 		/* error already logged */
-		goto done;
+		गच्छ done;
 	}
 
-	if (!sigopts->ca && sshkey_equal(found_key, sign_key)) {
+	सचे (!sigopts->ca && sshkey_equal(found_कुञ्चिका, sign_कुञ्चिका)) {
 		/* Exact match of key */
 		debug("%s:%lu: matched key", path, linenum);
-	} else if (sigopts->ca && sshkey_is_cert(sign_key) &&
-	    sshkey_equal_public(sign_key->cert->signature_key, found_key)) {
-		if (principal) {
+	} अञ्ञथा सचे (sigopts->ca && sshkey_is_cert(sign_कुञ्चिका) &&
+	    sshkey_equal_public(sign_कुञ्चिका->cert->signature_कुञ्चिका, found_कुञ्चिका)) {
+		सचे (principal) {
 			/* Match certificate CA key with specified principal */
-			if ((r = sshkey_cert_check_authority(sign_key, 0, 0,
+			सचे ((r = sshkey_cert_check_authority(sign_कुञ्चिका, 0, 0,
 			    verify_time, principal, &reason)) != 0) {
 				error("%s:%lu: certificate not authorized: %s",
 				    path, linenum, reason);
-				goto done;
+				गच्छ done;
 			}
 			debug("%s:%lu: matched certificate CA key",
 			    path, linenum);
-		} else {
+		} अञ्ञथा {
 			/* No principal specified - find all matching ones */
-			if ((r = cert_filter_principals(path, linenum,
-			    &principals, sign_key, verify_time)) != 0) {
+			सचे ((r = cert_filter_principals(path, linenum,
+			    &principals, sign_कुञ्चिका, verify_time)) != 0) {
 				/* error already displayed */
 				debug_r(r, "%s:%lu: cert_filter_principals",
 				    path, linenum);
-				goto done;
+				गच्छ done;
 			}
 			debug("%s:%lu: matched certificate CA key",
 			    path, linenum);
 		}
-	} else {
+	} अञ्ञथा {
 		/* Didn't match key */
-		goto done;
+		गच्छ done;
 	}
 
 	/* Check whether options preclude the use of this key */
-	if (sigopts->namespaces != NULL && sig_namespace != NULL &&
+	सचे (sigopts->namespaces != रिक्त && sig_namespace != रिक्त &&
 	    match_pattern_list(sig_namespace, sigopts->namespaces, 0) != 1) {
 		error("%s:%lu: key is not permitted for use in signature "
 		    "namespace \"%s\"", path, linenum, sig_namespace);
-		goto done;
+		गच्छ done;
 	}
 
 	/* check key time validity */
-	format_absolute_time((uint64_t)verify_time, tverify, sizeof(tverify));
-	if (sigopts->valid_after != 0 &&
+	format_absolute_time((uint64_t)verify_time, tverify, परिमाण(tverify));
+	सचे (sigopts->valid_after != 0 &&
 	    (uint64_t)verify_time < sigopts->valid_after) {
 		format_absolute_time(sigopts->valid_after,
-		    tvalid, sizeof(tvalid));
+		    tvalid, परिमाण(tvalid));
 		error("%s:%lu: key is not yet valid: "
 		    "verify time %s < valid-after %s", path, linenum,
 		    tverify, tvalid);
-		goto done;
+		गच्छ done;
 	}
-	if (sigopts->valid_before != 0 &&
+	सचे (sigopts->valid_before != 0 &&
 	    (uint64_t)verify_time > sigopts->valid_before) {
 		format_absolute_time(sigopts->valid_before,
-		    tvalid, sizeof(tvalid));
+		    tvalid, परिमाण(tvalid));
 		error("%s:%lu: key has expired: "
 		    "verify time %s > valid-before %s", path, linenum,
 		    tverify, tvalid);
-		goto done;
+		गच्छ done;
 	}
 	success = 1;
 
  done:
-	if (success && principalsp != NULL) {
+	सचे (success && principalsp != रिक्त) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = रिक्त; /* transferred */
 	}
-	free(principals);
-	sshkey_free(found_key);
+	मुक्त(principals);
+	sshkey_free(found_कुञ्चिका);
 	sshsigopt_free(sigopts);
-	return success ? 0 : SSH_ERR_KEY_NOT_FOUND;
+	पटिनिवत्त success ? 0 : SSH_ERR_कुञ्चिका_NOT_FOUND;
 }
 
-int
-sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *sig_namespace, uint64_t verify_time)
+पूर्णाङ्क
+sshsig_check_allowed_कुञ्चिकाः(ध्रुव वर्ण *path, ध्रुव संरचना sshkey *sign_कुञ्चिका,
+    ध्रुव वर्ण *principal, ध्रुव वर्ण *sig_namespace, uint64_t verify_time)
 {
-	FILE *f = NULL;
-	char *line = NULL;
+	FILE *f = रिक्त;
+	वर्ण *पङ्क्तिः = रिक्त;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	पूर्णाङ्क r = SSH_ERR_कुञ्चिका_NOT_FOUND, oerrno;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	सचे ((f = fopen(path, "r")) == रिक्त) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		पटिनिवत्त SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	याव (getline(&पङ्क्तिः, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line, sign_key,
-		    principal, sig_namespace, verify_time, NULL);
-		free(line);
-		line = NULL;
+		r = check_allowed_कुञ्चिकाः_पङ्क्तिः(path, linenum, पङ्क्तिः, sign_कुञ्चिका,
+		    principal, sig_namespace, verify_time, रिक्त);
+		मुक्त(पङ्क्तिः);
+		पङ्क्तिः = रिक्त;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		सचे (r == SSH_ERR_कुञ्चिका_NOT_FOUND)
+			अनुवर्त;
+		अञ्ञथा सचे (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			पटिनिवत्त 0;
+		} अञ्ञथा
+			भङ्ग;
 	}
 	/* Either we hit an error parsing or we simply didn't find the key */
 	fclose(f);
-	free(line);
-	return r;
+	मुक्त(पङ्क्तिः);
+	पटिनिवत्त r;
 }
 
-int
-sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principals)
+पूर्णाङ्क
+sshsig_find_principals(ध्रुव वर्ण *path, ध्रुव संरचना sshkey *sign_कुञ्चिका,
+    uint64_t verify_time, वर्ण **principals)
 {
-	FILE *f = NULL;
-	char *line = NULL;
+	FILE *f = रिक्त;
+	वर्ण *पङ्क्तिः = रिक्त;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	पूर्णाङ्क r = SSH_ERR_कुञ्चिका_NOT_FOUND, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	सचे ((f = fopen(path, "r")) == रिक्त) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		पटिनिवत्त SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	याव (getline(&पङ्क्तिः, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line,
-		    sign_key, NULL, NULL, verify_time, principals);
-		free(line);
-		line = NULL;
+		r = check_allowed_कुञ्चिकाः_पङ्क्तिः(path, linenum, पङ्क्तिः,
+		    sign_कुञ्चिका, रिक्त, रिक्त, verify_time, principals);
+		मुक्त(पङ्क्तिः);
+		पङ्क्तिः = रिक्त;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		सचे (r == SSH_ERR_कुञ्चिका_NOT_FOUND)
+			अनुवर्त;
+		अञ्ञथा सचे (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			पटिनिवत्त 0;
+		} अञ्ञथा
+			भङ्ग;
 	}
-	free(line);
+	मुक्त(पङ्क्तिः);
 	/* Either we hit an error parsing or we simply didn't find the key */
-	if (ferror(f) != 0) {
+	सचे (ferror(f) != 0) {
 		oerrno = errno;
 		fclose(f);
 		error("Unable to read allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		पटिनिवत्त SSH_ERR_SYSTEM_ERROR;
 	}
 	fclose(f);
-	return r;
+	पटिनिवत्त r;
 }
 
-int
-sshsig_match_principals(const char *path, const char *principal,
-    char ***principalsp, size_t *nprincipalsp)
+पूर्णाङ्क
+sshsig_match_principals(ध्रुव वर्ण *path, ध्रुव वर्ण *principal,
+    वर्ण ***principalsp, size_t *nprincipalsp)
 {
-	FILE *f = NULL;
-	char *found, *line = NULL, **principals = NULL, **tmp;
+	FILE *f = रिक्त;
+	वर्ण *found, *पङ्क्तिः = रिक्त, **principals = रिक्त, **tmp;
 	size_t i, nprincipals = 0, linesize = 0;
 	u_long linenum = 0;
-	int oerrno = 0, r, ret = 0;
+	पूर्णाङ्क oerrno = 0, r, ret = 0;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (nprincipalsp != NULL)
+	सचे (principalsp != रिक्त)
+		*principalsp = रिक्त;
+	सचे (nprincipalsp != रिक्त)
 		*nprincipalsp = 0;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	सचे ((f = fopen(path, "r")) == रिक्त) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		पटिनिवत्त SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	याव (getline(&पङ्क्तिः, &linesize, f) != -1) {
 		linenum++;
 		/* Parse the line */
-		if ((r = parse_principals_key_and_options(path, linenum, line,
-		    principal, &found, NULL, NULL)) != 0) {
-			if (r == SSH_ERR_KEY_NOT_FOUND)
-				continue;
+		सचे ((r = parse_principals_कुञ्चिका_and_options(path, linenum, पङ्क्तिः,
+		    principal, &found, रिक्त, रिक्त)) != 0) {
+			सचे (r == SSH_ERR_कुञ्चिका_NOT_FOUND)
+				अनुवर्त;
 			ret = r;
 			oerrno = errno;
-			break; /* unexpected error */
+			भङ्ग; /* unexpected error */
 		}
-		if ((tmp = recallocarray(principals, nprincipals,
-		    nprincipals + 1, sizeof(*principals))) == NULL) {
+		सचे ((tmp = recallocarray(principals, nprincipals,
+		    nprincipals + 1, परिमाण(*principals))) == रिक्त) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			free(found);
-			break;
+			मुक्त(found);
+			भङ्ग;
 		}
 		principals = tmp;
 		principals[nprincipals++] = found; /* transferred */
-		free(line);
-		line = NULL;
+		मुक्त(पङ्क्तिः);
+		पङ्क्तिः = रिक्त;
 		linesize = 0;
 	}
 	fclose(f);
-	free(line);
+	मुक्त(पङ्क्तिः);
 
-	if (ret == 0) {
-		if (nprincipals == 0)
-			ret = SSH_ERR_KEY_NOT_FOUND;
-		if (nprincipalsp != NULL)
+	सचे (ret == 0) {
+		सचे (nprincipals == 0)
+			ret = SSH_ERR_कुञ्चिका_NOT_FOUND;
+		सचे (nprincipalsp != रिक्त)
 			*nprincipalsp = nprincipals;
-		if (principalsp != NULL) {
+		सचे (principalsp != रिक्त) {
 			*principalsp = principals;
-			principals = NULL; /* transferred */
+			principals = रिक्त; /* transferred */
 			nprincipals = 0;
 		}
 	}
 
-	for (i = 0; i < nprincipals; i++)
-		free(principals[i]);
-	free(principals);
+	अत्थाय (i = 0; i < nprincipals; i++)
+		मुक्त(principals[i]);
+	मुक्त(principals);
 
 	errno = oerrno;
-	return ret;
+	पटिनिवत्त ret;
 }
 
-int
-sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey)
+पूर्णाङ्क
+sshsig_get_pubkey(संरचना sshbuf *signature, संरचना sshkey **pubkey)
 {
-	struct sshkey *pk = NULL;
-	int r = SSH_ERR_SIGNATURE_INVALID;
+	संरचना sshkey *pk = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_SIGNATURE_INVALID;
 
-	if (pubkey == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		return r;
-	if ((r = sshkey_froms(signature, &pk)) != 0)
-		return r;
+	सचे (pubkey == रिक्त)
+		पटिनिवत्त SSH_ERR_INTERNAL_ERROR;
+	सचे ((r = sshsig_parse_preamble(signature)) != 0)
+		पटिनिवत्त r;
+	सचे ((r = sshkey_froms(signature, &pk)) != 0)
+		पटिनिवत्त r;
 
 	*pubkey = pk;
-	pk = NULL;
-	return 0;
+	pk = रिक्त;
+	पटिनिवत्त 0;
 }

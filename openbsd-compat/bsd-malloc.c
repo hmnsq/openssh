@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#अन्तर्भाव "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
+#सचे defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+शून्य *
 rpl_malloc(size_t size)
 {
-	if (size == 0)
+	सचे (size == 0)
 		size = 1;
-	return malloc(size);
+	पटिनिवत्त malloc(size);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
+#सचे defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+शून्य *
 rpl_calloc(size_t nmemb, size_t size)
 {
-	if (nmemb == 0)
+	सचे (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
+	सचे (size == 0)
 		size = 1;
-	return calloc(nmemb, size);
+	पटिनिवत्त calloc(nmemb, size);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#सचे defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+शून्य *
+rpl_realloc(शून्य *ptr, size_t size)
 {
-	if (size == 0)
+	सचे (size == 0)
 		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	सचे (ptr == 0)
+		पटिनिवत्त malloc(size);
+	पटिनिवत्त realloc(ptr, size);
 }
 #endif

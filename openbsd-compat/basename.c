@@ -18,50 +18,50 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/basename.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifndef HAVE_BASENAME
-#include <errno.h>
-#include <string.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
 
-char *
-basename(const char *path)
+वर्ण *
+basename(ध्रुव वर्ण *path)
 {
-	static char bname[MAXPATHLEN];
+	स्थिर वर्ण bname[MAXPATHLEN];
 	size_t len;
-	const char *endp, *startp;
+	ध्रुव वर्ण *endp, *startp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	सचे (path == रिक्त || *path == '\0') {
 		bname[0] = '.';
 		bname[1] = '\0';
-		return (bname);
+		पटिनिवत्त (bname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	याव (endp > path && *endp == '/')
 		endp--;
 
 	/* All slashes becomes "/" */
-	if (endp == path && *endp == '/') {
+	सचे (endp == path && *endp == '/') {
 		bname[0] = '/';
 		bname[1] = '\0';
-		return (bname);
+		पटिनिवत्त (bname);
 	}
 
 	/* Find the start of the base */
 	startp = endp;
-	while (startp > path && *(startp - 1) != '/')
+	याव (startp > path && *(startp - 1) != '/')
 		startp--;
 
 	len = endp - startp + 1;
-	if (len >= sizeof(bname)) {
+	सचे (len >= परिमाण(bname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		पटिनिवत्त (रिक्त);
 	}
 	memcpy(bname, startp, len);
 	bname[len] = '\0';
-	return (bname);
+	पटिनिवत्त (bname);
 }
 
 #endif /* !defined(HAVE_BASENAME) */

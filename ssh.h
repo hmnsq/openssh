@@ -71,7 +71,7 @@
  * Length of the session key in bytes.  (Specified as 256 bits in the
  * protocol.)
  */
-#define SSH_SESSION_KEY_LENGTH		32
+#define SSH_SESSION_कुञ्चिका_LENGTH		32
 
 /* Used to identify ``EscapeChar none'' */
 #define SSH_ESCAPECHAR_NONE		-2
@@ -90,4 +90,4 @@
 
 /* Limits for banner exchange */
 #define SSH_MAX_BANNER_LEN		8192
-#define SSH_MAX_PRE_BANNER_LINES	1024
+#define SSH_MAX_PRE_BANNER_पङ्क्तयः	1024

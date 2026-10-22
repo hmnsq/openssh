@@ -17,83 +17,83 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 /*
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#सचे defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
 
 #ifndef HAVE_VASPRINTF
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
 
 #define INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+पूर्णाङ्क
+vasprintf(वर्ण **str, ध्रुव वर्ण *fmt, va_list ap)
 {
-	int ret = -1;
+	पूर्णाङ्क ret = -1;
 	va_list ap2;
-	char *string, *newstr;
+	वर्ण *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
-		goto fail;
+	सचे ((string = malloc(INIT_SZ)) == रिक्त)
+		गच्छ fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	सचे (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
-		free(string);
-		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} अञ्ञथा सचे (ret == INT_MAX || ret < 0) { /* Bad length */
+		मुक्त(string);
+		गच्छ fail;
+	} अञ्ञथा {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
-			free(string);
-			goto fail;
-		} else {
+		सचे ((newstr = realloc(string, len)) == रिक्त) {
+			मुक्त(string);
+			गच्छ fail;
+		} अञ्ञथा {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			सचे (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
-				free(newstr);
-				goto fail;
+			} अञ्ञथा { /* failed with realloc'ed string, give up */
+				मुक्त(newstr);
+				गच्छ fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	पटिनिवत्त (ret);
 
 fail:
-	*str = NULL;
+	*str = रिक्त;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	पटिनिवत्त (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+पूर्णाङ्क asprintf(वर्ण **str, ध्रुव वर्ण *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	पूर्णाङ्क ret;
 
-	*str = NULL;
+	*str = रिक्त;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	पटिनिवत्त ret;
 }
 #endif

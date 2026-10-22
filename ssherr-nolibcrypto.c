@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stddef.h>
+#अन्तर्भाव <stddef.h>
 
-#include "ssherr.h"
+#अन्तर्भाव "ssherr.h"
 
-const char *
-ssherr_libcrypto(void)
+ध्रुव वर्ण *
+ssherr_libcrypto(शून्य)
 {
-	return NULL;
+	पटिनिवत्त रिक्त;
 }

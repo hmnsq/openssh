@@ -25,80 +25,80 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/memmem.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_MEMMEM
 
-#include <string.h>
-#include <stdint.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdint.h>
 
-static char *
-twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर वर्ण *
+twobyte_memmem(ध्रुव unsigned वर्ण *h, size_t k, ध्रुव unsigned वर्ण *n)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
-	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+	अत्थाय (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
+		सचे (hw == nw) पटिनिवत्त (वर्ण *)h-2;
+	पटिनिवत्त hw == nw ? (वर्ण *)h-2 : 0;
 }
 
-static char *
-threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर वर्ण *
+threebyte_memmem(ध्रुव unsigned वर्ण *h, size_t k, ध्रुव unsigned वर्ण *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8;
-	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+	अत्थाय (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
+		सचे (hw == nw) पटिनिवत्त (वर्ण *)h-3;
+	पटिनिवत्त hw == nw ? (वर्ण *)h-3 : 0;
 }
 
-static char *
-fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर वर्ण *
+fourbyte_memmem(ध्रुव unsigned वर्ण *h, size_t k, ध्रुव unsigned वर्ण *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
-	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+	अत्थाय (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
+		सचे (hw == nw) पटिनिवत्त (वर्ण *)h-4;
+	पटिनिवत्त hw == nw ? (वर्ण *)h-4 : 0;
 }
 
-#if 0
+#सचे 0
 /* In -portable, defines.h ensures that these are already defined. */
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 
 #define BITOP(a,b,op) \
- ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
+ ((a)[(size_t)(b)/(8*परिमाण *(a))] op (size_t)1<<((size_t)(b)%(8*परिमाण *(a))))
 
 /*
  * Maxime Crochemore and Dominique Perrin, Two-way string-matching,
  * Journal of the ACM, 38(3):651-675, July 1991.
  */
-static char *
-twoway_memmem(const unsigned char *h, const unsigned char *z,
-    const unsigned char *n, size_t l)
+स्थिर वर्ण *
+twoway_memmem(ध्रुव unsigned वर्ण *h, ध्रुव unsigned वर्ण *z,
+    ध्रुव unsigned वर्ण *n, size_t l)
 {
 	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
+	size_t byteset[32 / परिमाण(size_t)] = { 0 };
 	size_t shift[256];
 
 	/* Computing length of needle and fill shift table */
-	for (i=0; i<l; i++)
+	अत्थाय (i=0; i<l; i++)
 		BITOP(byteset, n[i], |=), shift[n[i]] = i+1;
 
 	/* Compute maximal suffix */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	याव (jp+k<l) {
+		सचे (n[ip+k] == n[jp+k]) {
+			सचे (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] > n[jp+k]) {
+			} अञ्ञथा k++;
+		} अञ्ञथा सचे (n[ip+k] > n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} अञ्ञथा {
 			ip = jp++;
 			k = p = 1;
 		}
@@ -108,87 +108,87 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 
 	/* And with the opposite comparison */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	याव (jp+k<l) {
+		सचे (n[ip+k] == n[jp+k]) {
+			सचे (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] < n[jp+k]) {
+			} अञ्ञथा k++;
+		} अञ्ञथा सचे (n[ip+k] < n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} अञ्ञथा {
 			ip = jp++;
 			k = p = 1;
 		}
 	}
-	if (ip+1 > ms+1) ms = ip;
-	else p = p0;
+	सचे (ip+1 > ms+1) ms = ip;
+	अञ्ञथा p = p0;
 
 	/* Periodic needle? */
-	if (memcmp(n, n+p, ms+1)) {
+	सचे (memcmp(n, n+p, ms+1)) {
 		mem0 = 0;
 		p = MAX(ms, l-ms-1) + 1;
-	} else mem0 = l-p;
+	} अञ्ञथा mem0 = l-p;
 	mem = 0;
 
 	/* Search loop */
-	for (;;) {
+	अत्थाय (;;) {
 		/* If remainder of haystack is shorter than needle, done */
-		if (z-h < l) return 0;
+		सचे (z-h < l) पटिनिवत्त 0;
 
 		/* Check last byte first; advance by shift on mismatch */
-		if (BITOP(byteset, h[l-1], &)) {
+		सचे (BITOP(byteset, h[l-1], &)) {
 			k = l-shift[h[l-1]];
-			if (k) {
-				if (k < mem) k = mem;
+			सचे (k) {
+				सचे (k < mem) k = mem;
 				h += k;
 				mem = 0;
-				continue;
+				अनुवर्त;
 			}
-		} else {
+		} अञ्ञथा {
 			h += l;
 			mem = 0;
-			continue;
+			अनुवर्त;
 		}
 
 		/* Compare right half */
-		for (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
-		if (k < l) {
+		अत्थाय (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
+		सचे (k < l) {
 			h += k-ms;
 			mem = 0;
-			continue;
+			अनुवर्त;
 		}
 		/* Compare left half */
-		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		अत्थाय (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
+		सचे (k <= mem) पटिनिवत्त (वर्ण *)h;
 		h += p;
 		mem = mem0;
 	}
 }
 
-void *
-memmem(const void *h0, size_t k, const void *n0, size_t l)
+शून्य *
+memmem(ध्रुव शून्य *h0, size_t k, ध्रुव शून्य *n0, size_t l)
 {
-	const unsigned char *h = h0, *n = n0;
+	ध्रुव unsigned वर्ण *h = h0, *n = n0;
 
 	/* Return immediately on empty needle */
-	if (!l) return (void *)h;
+	सचे (!l) पटिनिवत्त (शून्य *)h;
 
 	/* Return immediately when needle is longer than haystack */
-	if (k<l) return 0;
+	सचे (k<l) पटिनिवत्त 0;
 
 	/* Use faster algorithms for short needles */
 	h = memchr(h0, *n, k);
-	if (!h || l==1) return (void *)h;
-	k -= h - (const unsigned char *)h0;
-	if (k<l) return 0;
-	if (l==2) return twobyte_memmem(h, k, n);
-	if (l==3) return threebyte_memmem(h, k, n);
-	if (l==4) return fourbyte_memmem(h, k, n);
+	सचे (!h || l==1) पटिनिवत्त (शून्य *)h;
+	k -= h - (ध्रुव unsigned वर्ण *)h0;
+	सचे (k<l) पटिनिवत्त 0;
+	सचे (l==2) पटिनिवत्त twobyte_memmem(h, k, n);
+	सचे (l==3) पटिनिवत्त threebyte_memmem(h, k, n);
+	सचे (l==4) पटिनिवत्त fourbyte_memmem(h, k, n);
 
-	return twoway_memmem(h, h+k, n, l);
+	पटिनिवत्त twoway_memmem(h, h+k, n, l);
 }
 DEF_WEAK(memmem);
 #endif /* HAVE_MEMMEM */

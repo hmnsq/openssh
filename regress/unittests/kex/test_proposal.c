@@ -5,43 +5,43 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "cipher.h"
-#include "compat.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "kex.h"
-#include "myproposal.h"
-#include "packet.h"
-#include "xmalloc.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "compat.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "myproposal.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "xmalloc.h"
 
-void kex_proposal_tests(void);
-void kex_proposal_populate_tests(void);
+शून्य kex_proposal_tests(शून्य);
+शून्य kex_proposal_populate_tests(शून्य);
 
 #define CURVE25519 "curve25519-sha256@libssh.org"
 #define DHGEX1 "diffie-hellman-group-exchange-sha1"
 #define DHGEX256 "diffie-hellman-group-exchange-sha256"
 #define KEXALGOS CURVE25519","DHGEX256","DHGEX1
-void
-kex_proposal_tests(void)
+शून्य
+kex_proposal_tests(शून्य)
 {
 	size_t i;
-	struct ssh ssh;
-	char *result, *out, *in;
-	struct {
-		char *in;	/* TODO: make this const */
-		char *out;
-		int compat;
+	संरचना ssh ssh;
+	वर्ण *result, *out, *in;
+	संरचना {
+		वर्ण *in;	/* TODO: make this const */
+		वर्ण *out;
+		पूर्णाङ्क compat;
 	} tests[] = {
 		{ KEXALGOS, KEXALGOS, 0},
 		{ KEXALGOS, DHGEX256","DHGEX1, SSH_BUG_CURVE25519PAD },
@@ -52,45 +52,45 @@ kex_proposal_tests(void)
 	};
 
 	TEST_START("compat_kex_proposal");
-	for (i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
+	अत्थाय (i = 0; i < परिमाण(tests) / परिमाण(*tests); i++) {
 		ssh.compat = tests[i].compat;
 		/* match entire string */
 		result = compat_kex_proposal(&ssh, tests[i].in);
 		ASSERT_STRING_EQ(result, tests[i].out);
-		free(result);
+		मुक्त(result);
 		/* match at end */
 		in = kex_names_cat("a", tests[i].in);
 		out = kex_names_cat("a", tests[i].out);
 		result = compat_kex_proposal(&ssh, in);
 		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		मुक्त(result); मुक्त(in); मुक्त(out);
 		/* match at start */
 		in = kex_names_cat(tests[i].in, "a");
 		out = kex_names_cat(tests[i].out, "a");
 		result = compat_kex_proposal(&ssh, in);
 		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		मुक्त(result); मुक्त(in); मुक्त(out);
 		/* match in middle */
 		xasprintf(&in, "a,%s,b", tests[i].in);
-		if (*(tests[i].out) == '\0')
+		सचे (*(tests[i].out) == '\0')
 			out = xstrdup("a,b");
-		else
+		अञ्ञथा
 			xasprintf(&out, "a,%s,b", tests[i].out);
 		result = compat_kex_proposal(&ssh, in);
 		ASSERT_STRING_EQ(result, out);
-		free(result); free(in); free(out);
+		मुक्त(result); मुक्त(in); मुक्त(out);
 	}
 	TEST_DONE();
 }
 
-void
-kex_proposal_populate_tests(void)
+शून्य
+kex_proposal_populate_tests(शून्य)
 {
-	char *prop[PROPOSAL_MAX], *kexalgs, *ciphers, *macs, *hkalgs;
-	const char *comp = compression_alg_list(0);
-	int i;
-	struct ssh ssh;
-	struct kex kex;
+	वर्ण *prop[PROPOSAL_MAX], *kexalgs, *ciphers, *macs, *hkalgs;
+	ध्रुव वर्ण *comp = compression_alg_list(0);
+	पूर्णाङ्क i;
+	संरचना ssh ssh;
+	संरचना kex kex;
 
 	kexalgs = kex_alg_list(',');
 	ciphers = cipher_alg_list(',', 0);
@@ -99,24 +99,24 @@ kex_proposal_populate_tests(void)
 
 	ssh.kex = &kex;
 	TEST_START("compat_kex_proposal_populate");
-	for (i = 0; i <= 1; i++) {
+	अत्थाय (i = 0; i <= 1; i++) {
 		kex.server = i;
-		for (ssh.compat = 0; ssh.compat < 0x40000000; ) {
-			kex_proposal_populate_entries(&ssh, prop, NULL, NULL,
-			    NULL, NULL, NULL);
+		अत्थाय (ssh.compat = 0; ssh.compat < 0x40000000; ) {
+			kex_proposal_populate_entries(&ssh, prop, रिक्त, रिक्त,
+			    रिक्त, रिक्त, रिक्त);
 			kex_proposal_free_entries(prop);
 			kex_proposal_populate_entries(&ssh, prop, kexalgs,
 			    ciphers, macs, hkalgs, comp);
 			kex_proposal_free_entries(prop);
-			if (ssh.compat == 0)
+			सचे (ssh.compat == 0)
 				ssh.compat = 1;
-			else
+			अञ्ञथा
 				ssh.compat <<= 1;
 		}
 	}
 
-	free(kexalgs);
-	free(ciphers);
-	free(macs);
-	free(hkalgs);
+	मुक्त(kexalgs);
+	मुक्त(ciphers);
+	मुक्त(macs);
+	मुक्त(hkalgs);
 }

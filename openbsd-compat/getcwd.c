@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#सचे !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#अन्तर्भाव <sys/stat.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <dirent.h>
+#अन्तर्भाव <sys/dir.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव "includes.h"
 
 #define	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+वर्ण *
+getcwd(वर्ण *pt, size_t size)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	संरचना dirent *dp;
+	DIR *dir = रिक्त;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
+	पूर्णाङ्क first;
+	वर्ण *bpt, *bup;
+	संरचना stat s;
+	dev_t मूलम्_dev;
+	ino_t मूलम्_ino;
 	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	पूर्णाङ्क save_errno;
+	वर्ण *ept, *eup, *up;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	सचे (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		सचे (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			पटिनिवत्त (रिक्त);
+		} अञ्ञथा सचे (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			पटिनिवत्त (रिक्त);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} अञ्ञथा {
+		सचे ((pt = malloc(ptsize = MAXPATHLEN)) == रिक्त)
+			पटिनिवत्त (रिक्त);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,32 +91,32 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
+	सचे ((up = malloc(upsize = MAXPATHLEN)) == रिक्त)
+		गच्छ err;
 	eup = up + upsize;
 	bup = up;
 	up[0] = '.';
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	सचे (stat("/", &s))
+		गच्छ err;
+	मूलम्_dev = s.st_dev;
+	मूलम्_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	अत्थाय (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		सचे (lstat(up, &s))
+			गच्छ err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		सचे (मूलम्_dev == dev && मूलम्_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -124,8 +124,8 @@ getcwd(char *pt, size_t size)
 			 * been that way and stuff would probably break.
 			 */
 			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			मुक्त(up);
+			पटिनिवत्त (pt);
 		}
 
 		/*
@@ -133,11 +133,11 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		सचे (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			वर्ण *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
+			सचे ((nup = realloc(up, upsize *= 2)) == रिक्त)
+				गच्छ err;
 			bup = nup + (bup - up);
 			up = nup;
 			eup = up + upsize;
@@ -147,8 +147,8 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		सचे (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+			गच्छ err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		सचे (s.st_dev == dev) {
+			अत्थाय (;;) {
+				सचे (!(dp = readdir(dir)))
+					गच्छ notfound;
+				सचे (dp->d_fileno == ino)
+					भङ्ग;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
+		} अञ्ञथा
+			अत्थाय (;;) {
+				सचे (!(dp = readdir(dir)))
+					गच्छ notfound;
+				सचे (ISDOT(dp))
+					अनुवर्त;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				सचे (lstat(up, &s)) {
+					सचे (!save_errno)
 						save_errno = errno;
 					errno = 0;
-					continue;
+					अनुवर्त;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				सचे (s.st_dev == dev && s.st_ino == ino)
+					भङ्ग;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		सचे (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
-			char *npt;
+			वर्ण *npt;
 
-			if (!ptsize) {
+			सचे (!ptsize) {
 				errno = ERANGE;
-				goto err;
+				गच्छ err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			सचे ((npt = realloc(pt, ptsize *= 2)) == रिक्त)
+				गच्छ err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		सचे (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		(शून्य)closedir(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	सचे (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	सचे (ptsize)
+		मुक्त(pt);
+	मुक्त(up);
+	सचे (dir)
+		(शून्य)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	पटिनिवत्त (रिक्त);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

@@ -5,35 +5,35 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "xmalloc.h"
 
-void test_hpdelim(void);
+शून्य test_hpdelim(शून्य);
 
-void
-test_hpdelim(void)
+शून्य
+test_hpdelim(शून्य)
 {
-	char *orig, *str, *cp, *port;
+	वर्ण *orig, *str, *cp, *port;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#define DONE_STRING()	मुक्त(orig)
 
 	TEST_START("hpdelim host only");
 	START_STRING("host");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -41,10 +41,10 @@ test_hpdelim(void)
 	START_STRING(":1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, रिक्त);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -52,10 +52,10 @@ test_hpdelim(void)
 	START_STRING("host:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, रिक्त);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -63,17 +63,17 @@ test_hpdelim(void)
 	START_STRING("[::1]:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "[::1]");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, रिक्त);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, रिक्त);
 	DONE_STRING();
 	TEST_DONE();
 
 	TEST_START("hpdelim missing ] error");
 	START_STRING("[::1:1234");
 	cp = hpdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, रिक्त);
 	DONE_STRING();
 	TEST_DONE();
 

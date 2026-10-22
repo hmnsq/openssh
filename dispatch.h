@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+गणना {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+संरचना ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+प्रकारनिर्देश पूर्णाङ्क dispatch_fn(पूर्णाङ्क, uint32_t, संरचना ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+पूर्णाङ्क	dispatch_protocol_error(पूर्णाङ्क, uint32_t, संरचना ssh *);
+पूर्णाङ्क	dispatch_protocol_ignore(पूर्णाङ्क, uint32_t, संरचना ssh *);
+शून्य	ssh_dispatch_init(संरचना ssh *, dispatch_fn *);
+शून्य	ssh_dispatch_set(संरचना ssh *, पूर्णाङ्क, dispatch_fn *);
+शून्य	ssh_dispatch_range(संरचना ssh *, u_int, u_int, dispatch_fn *);
+पूर्णाङ्क	ssh_dispatch_run(संरचना ssh *, पूर्णाङ्क, चञ्चल sig_atomic_t *);
+शून्य	ssh_dispatch_run_fatal(संरचना ssh *, पूर्णाङ्क, चञ्चल sig_atomic_t *);
 
 #endif

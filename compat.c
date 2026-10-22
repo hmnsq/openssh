@@ -23,27 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "compat.h"
-#include "log.h"
-#include "match.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "compat.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "match.h"
 
 /* determine bug flags from SSH protocol banner */
-void
-compat_banner(struct ssh *ssh, const char *version)
+शून्य
+compat_banner(संरचना ssh *ssh, ध्रुव वर्ण *version)
 {
-	int i;
-	static struct {
-		char	*pat;
+	पूर्णाङ्क i;
+	स्थिर संरचना {
+		वर्ण	*pat;
 		uint32_t bugs;
 	} check[] = {
 		{ "OpenSSH_2.*,"
@@ -119,46 +119,46 @@ compat_banner(struct ssh *ssh, const char *version)
 					SSH_BUG_UTF8TTYMODE },
 		{ "Twisted_*",		0 },
 		{ "Twisted*",		SSH_BUG_DEBUG },
-		{ NULL,			0 }
+		{ रिक्त,			0 }
 	};
 
 	/* process table, return first match */
 	ssh->compat = 0;
-	for (i = 0; check[i].pat; i++) {
-		if (match_pattern_list(version, check[i].pat, 0) == 1) {
+	अत्थाय (i = 0; check[i].pat; i++) {
+		सचे (match_pattern_list(version, check[i].pat, 0) == 1) {
 			debug_f("match: %s pat %s compat 0x%08x",
 			    version, check[i].pat, check[i].bugs);
 			ssh->compat = check[i].bugs;
-			return;
+			पटिनिवत्त;
 		}
 	}
 	debug_f("no match: %s", version);
 }
 
 /* Always returns pointer to allocated memory, caller must free. */
-char *
-compat_kex_proposal(struct ssh *ssh, const char *p)
+वर्ण *
+compat_kex_proposal(संरचना ssh *ssh, ध्रुव वर्ण *p)
 {
-	char *cp = NULL, *cp2 = NULL;
+	वर्ण *cp = रिक्त, *cp2 = रिक्त;
 
-	if ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
-		return xstrdup(p);
+	सचे ((ssh->compat & (SSH_BUG_CURVE25519PAD|SSH_OLD_DHGEX)) == 0)
+		पटिनिवत्त xstrdup(p);
 	debug2_f("original KEX proposal: %s", p);
-	if ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
-		if ((cp = match_filter_denylist(p,
-		    "curve25519-sha256@libssh.org")) == NULL)
+	सचे ((ssh->compat & SSH_BUG_CURVE25519PAD) != 0)
+		सचे ((cp = match_filter_denylist(p,
+		    "curve25519-sha256@libssh.org")) == रिक्त)
 			fatal("match_filter_denylist failed");
-	if ((ssh->compat & SSH_OLD_DHGEX) != 0) {
-		if ((cp2 = match_filter_denylist(cp ? cp : p,
+	सचे ((ssh->compat & SSH_OLD_DHGEX) != 0) {
+		सचे ((cp2 = match_filter_denylist(cp ? cp : p,
 		    "diffie-hellman-group-exchange-sha256,"
-		    "diffie-hellman-group-exchange-sha1")) == NULL)
+		    "diffie-hellman-group-exchange-sha1")) == रिक्त)
 			fatal("match_filter_denylist failed");
-		free(cp);
+		मुक्त(cp);
 		cp = cp2;
 	}
-	if (cp == NULL || *cp == '\0')
+	सचे (cp == रिक्त || *cp == '\0')
 		fatal("No supported key exchange algorithms found");
 	debug2_f("compat KEX proposal: %s", cp);
-	return cp;
+	पटिनिवत्त cp;
 }
 

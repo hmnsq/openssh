@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "auth.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
 
-extern ServerOptions options;
+बाह्य ServerOptions options;
 
 /*
  * Configuration of enabled authentication methods. Separate from the rest of
@@ -38,41 +38,41 @@ extern ServerOptions options;
  */
 
 /* "none" is allowed only one time and it is cleared by userauth_none() later */
-int none_enabled = 1;
-struct authmethod_cfg methodcfg_none = {
+पूर्णाङ्क none_enabled = 1;
+संरचना authmethod_cfg methodcfg_none = {
 	"none",
-	NULL,
+	रिक्त,
 	&none_enabled
 };
-struct authmethod_cfg methodcfg_pubkey = {
+संरचना authmethod_cfg methodcfg_pubkey = {
 	"publickey",
 	"publickey-hostbound-v00@openssh.com",
 	&options.pubkey_authentication
 };
 #ifdef GSSAPI
-struct authmethod_cfg methodcfg_gssapi = {
+संरचना authmethod_cfg methodcfg_gssapi = {
 	"gssapi-with-mic",
-	NULL,
+	रिक्त,
 	&options.gss_authentication
 };
 #endif
-struct authmethod_cfg methodcfg_passwd = {
+संरचना authmethod_cfg methodcfg_passwd = {
 	"password",
-	NULL,
+	रिक्त,
 	&options.password_authentication
 };
-struct authmethod_cfg methodcfg_kbdint = {
+संरचना authmethod_cfg methodcfg_kbdint = {
 	"keyboard-interactive",
-	NULL,
+	रिक्त,
 	&options.kbd_interactive_authentication
 };
-struct authmethod_cfg methodcfg_hostbased = {
+संरचना authmethod_cfg methodcfg_hostbased = {
 	"hostbased",
-	NULL,
+	रिक्त,
 	&options.hostbased_authentication
 };
 
-static struct authmethod_cfg *authmethod_cfgs[] = {
+स्थिर संरचना authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_none,
 	&methodcfg_pubkey,
 #ifdef GSSAPI
@@ -81,7 +81,7 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_passwd,
 	&methodcfg_kbdint,
 	&methodcfg_hostbased,
-	NULL
+	रिक्त
 };
 
 /*
@@ -89,46 +89,46 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
  * non-zero, then also require that the methods are enabled.
  * Returns 0 on success or -1 if the methods list is invalid.
  */
-int
-auth2_methods_valid(const char *_methods, int need_enable)
+पूर्णाङ्क
+auth2_methods_valid(ध्रुव वर्ण *_methods, पूर्णाङ्क need_enable)
 {
-	char *methods, *omethods, *method, *p;
+	वर्ण *methods, *omethods, *method, *p;
 	u_int i, found;
-	int ret = -1;
-	const struct authmethod_cfg *cfg;
+	पूर्णाङ्क ret = -1;
+	ध्रुव संरचना authmethod_cfg *cfg;
 
-	if (*_methods == '\0') {
+	सचे (*_methods == '\0') {
 		error("empty authentication method list");
-		return -1;
+		पटिनिवत्त -1;
 	}
 	omethods = methods = xstrdup(_methods);
-	while ((method = strsep(&methods, ",")) != NULL) {
-		for (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
+	याव ((method = strsep(&methods, ",")) != रिक्त) {
+		अत्थाय (found = i = 0; !found && authmethod_cfgs[i] != रिक्त; i++) {
 			cfg = authmethod_cfgs[i];
-			if ((p = strchr(method, ':')) != NULL)
+			सचे ((p = strchr(method, ':')) != रिक्त)
 				*p = '\0';
-			if (strcmp(method, cfg->name) != 0)
-				continue;
-			if (need_enable) {
-				if (cfg->enabled == NULL ||
+			सचे (strcmp(method, cfg->name) != 0)
+				अनुवर्त;
+			सचे (need_enable) {
+				सचे (cfg->enabled == रिक्त ||
 				    *(cfg->enabled) == 0) {
 					error("Disabled method \"%s\" in "
 					    "AuthenticationMethods list \"%s\"",
 					    method, _methods);
-					goto out;
+					गच्छ out;
 				}
 			}
 			found = 1;
-			break;
+			भङ्ग;
 		}
-		if (!found) {
+		सचे (!found) {
 			error("Unknown authentication method \"%s\" in list",
 			    method);
-			goto out;
+			गच्छ out;
 		}
 	}
 	ret = 0;
  out:
-	free(omethods);
-	return ret;
+	मुक्त(omethods);
+	पटिनिवत्त ret;
 }

@@ -19,29 +19,29 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtonum.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_STRTONUM
-#include <stdlib.h>
-#include <limits.h>
-#include <errno.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <errno.h>
 
 #define INVALID		1
 #define TOOSMALL	2
 #define TOOLARGE	3
 
 long long
-strtonum(const char *numstr, long long minval, long long maxval,
-    const char **errstrp)
+strtonum(ध्रुव वर्ण *numstr, long long minval, long long maxval,
+    ध्रुव वर्ण **errstrp)
 {
 	long long ll = 0;
-	char *ep;
-	int error = 0;
-	struct errval {
-		const char *errstr;
-		int err;
+	वर्ण *ep;
+	पूर्णाङ्क error = 0;
+	संरचना errval {
+		ध्रुव वर्ण *errstr;
+		पूर्णाङ्क err;
 	} ev[4] = {
-		{ NULL,		0 },
+		{ रिक्त,		0 },
 		{ "invalid",	EINVAL },
 		{ "too small",	ERANGE },
 		{ "too large",	ERANGE },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	सचे (minval > maxval)
 		error = INVALID;
-	else {
+	अञ्ञथा {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		सचे (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		अञ्ञथा सचे ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		अञ्ञथा सचे ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	सचे (errstrp != रिक्त)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	सचे (error)
 		ll = 0;
 
-	return (ll);
+	पटिनिवत्त (ll);
 }
 
 #endif /* HAVE_STRTONUM */

@@ -17,56 +17,56 @@
 #ifndef _BSD_MISC_H
 #define _BSD_MISC_H
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+वर्ण *ssh_get_progname(वर्ण *);
+पूर्णाङ्क seed_from_prngd(unsigned वर्ण *, size_t);
 
 #ifndef HAVE_SETSID
 #define setsid() setpgrp(0, getpid())
 #endif /* !HAVE_SETSID */
 
 #ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
+पूर्णाङ्क setenv(ध्रुव वर्ण *, ध्रुव वर्ण *, पूर्णाङ्क);
 #endif /* !HAVE_SETENV */
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *);
+पूर्णाङ्क setlogin(ध्रुव वर्ण *);
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
+पूर्णाङ्क innetgr(ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *, ध्रुव वर्ण *);
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
+#सचे !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+पूर्णाङ्क seteuid(uid_t);
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
+#सचे !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+पूर्णाङ्क setegid(uid_t);
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
+#सचे !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ध्रुव वर्ण *strerror(पूर्णाङ्क);
 #endif
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
+#सचे !defined(HAVE_SETLINEBUF)
+#define setlinebuf(a)	(setvbuf((a), रिक्त, _IOLBF, 0))
 #endif
 
 #ifndef HAVE_UTIMES
 #ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
+संरचना timeval {
 	long tv_sec;
 	long tv_usec;
 }
 #endif /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
+पूर्णाङ्क utimes(ध्रुव वर्ण *, संरचना timeval *);
 #endif /* HAVE_UTIMES */
 
 #ifndef HAVE_DIRFD
-int dirfd(void *);
+पूर्णाङ्क dirfd(शून्य *);
 #endif
 
 #ifndef AT_FDCWD
@@ -74,35 +74,35 @@ int dirfd(void *);
 #endif
 
 #ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
+पूर्णाङ्क fchmodat(पूर्णाङ्क, ध्रुव वर्ण *, mode_t, पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
+पूर्णाङ्क fchownat(पूर्णाङ्क, ध्रुव वर्ण *, uid_t, gid_t, पूर्णाङ्क);
 #endif
 
 #ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
+पूर्णाङ्क fstatat(पूर्णाङ्क, ध्रुव वर्ण *, संरचना stat *, पूर्णाङ्क);
 #endif
 
 #ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
+पूर्णाङ्क unlinkat(पूर्णाङ्क, ध्रुव वर्ण *, पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
+पूर्णाङ्क truncate (ध्रुव वर्ण *, off_t);
 #endif /* HAVE_TRUNCATE */
 
 #ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+संरचना timespec {
 	time_t	tv_sec;
 	long	tv_nsec;
 };
 #endif /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#सचे !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
+पूर्णाङ्क nanosleep(ध्रुव संरचना timespec *, संरचना timespec *);
 #endif
 
 #ifndef HAVE_UTIMENSAT
@@ -111,27 +111,27 @@ int nanosleep(const struct timespec *, struct timespec *);
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
+पूर्णाङ्क utimensat(पूर्णाङ्क, ध्रुव वर्ण *, ध्रुव संरचना timespec[2], पूर्णाङ्क);
 #endif /* !HAVE_UTIMENSAT */
 
 #ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
+पूर्णाङ्क usleep(unsigned पूर्णाङ्क useconds);
 #endif
 
 #ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
+pid_t tcgetpgrp(पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
+पूर्णाङ्क tcsendbreak(पूर्णाङ्क, पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_UNSETENV
-int unsetenv(const char *);
+पूर्णाङ्क unsetenv(ध्रुव वर्ण *);
 #endif
 
 #ifndef HAVE_ISBLANK
-int	isblank(int);
+पूर्णाङ्क	isblank(पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_GETPGID
@@ -139,12 +139,12 @@ pid_t getpgid(pid_t);
 #endif
 
 #ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
+पूर्णाङ्क pselect(पूर्णाङ्क, fd_set *, fd_set *, fd_set *, ध्रुव संरचना timespec *,
+    ध्रुव sigset_t *);
 #endif
 
 #ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
+# define endgrent() करोहि { } याव(0)
 #endif
 
 #ifndef HAVE_KRB5_GET_ERROR_MESSAGE
@@ -152,38 +152,38 @@ int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
 #endif
 
 #ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
+# define krb5_free_error_message(a,b) करोहि { } याव(0)
 #endif
 
 #ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
+पूर्णाङ्क pledge(ध्रुव वर्ण *promises, ध्रुव वर्ण *execpromises);
 #endif
 
 #ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
+पूर्णाङ्क unveil(ध्रुव वर्ण *, ध्रुव वर्ण *);
 #endif
 
 /* bsd-err.h */
 #ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+शून्य err(पूर्णाङ्क, ध्रुव वर्ण *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+शून्य errx(पूर्णाङ्क, ध्रुव वर्ण *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
+शून्य warn(ध्रुव वर्ण *, ...) __attribute__((format(printf, 1, 2)));
 #endif
 
 #ifndef HAVE_LLABS
 long long llabs(long long);
 #endif
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
+#सचे defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+शून्य bzero(शून्य *, size_t);
 #endif
 
 #ifndef HAVE_RAISE
-int raise(int);
+पूर्णाङ्क उत्थापय(पूर्णाङ्क);
 #endif
 
 #ifndef HAVE_GETSID
@@ -195,7 +195,7 @@ pid_t getsid(pid_t);
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
+पूर्णाङ्क flock(पूर्णाङ्क, पूर्णाङ्क);
 #endif
 
 #ifdef FFLUSH_NULL_BUG
@@ -203,15 +203,15 @@ int flock(int, int);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+संरचना tm *localtime_r(ध्रुव time_t *, संरचना tm *);
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
+प्रकारनिर्देश पूर्णाङ्क clockid_t;
 #ifndef CLOCK_REALTIME
 # define CLOCK_REALTIME	0
 #endif
-int clock_gettime(clockid_t, struct timespec *);
+पूर्णाङ्क clock_gettime(clockid_t, संरचना timespec *);
 #endif
 
 #ifndef HAVE_REALPATH

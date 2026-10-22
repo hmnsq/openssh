@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-static int fail = 0;
+स्थिर पूर्णाङ्क fail = 0;
 
-void
-test(const char *a)
+शून्य
+test(ध्रुव वर्ण *a)
 {
-	char *b;
+	वर्ण *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	सचे (b == 0) {
 		fail = 1;
-		return;
+		पटिनिवत्त;
 	}
-	if (strcmp(a, b) != 0)
+	सचे (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	मुक्त(b);
 }
 
-int
-main(void)
+पूर्णाङ्क
+main(शून्य)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	पटिनिवत्त fail;
 }

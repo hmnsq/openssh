@@ -30,17 +30,17 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#अन्तर्भाव "includes.h"
+#सचे !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "vis.h"
+#अन्तर्भाव "vis.h"
 
 #define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
 #define	isvisible(c,flag)						\
@@ -58,89 +58,89 @@
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+वर्ण *
+vis(वर्ण *dst, पूर्णाङ्क c, पूर्णाङ्क flag, पूर्णाङ्क nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	सचे (isvisible(c, flag)) {
+		सचे ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		पटिनिवत्त (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	सचे (flag & VIS_CSTYLE) {
+		विकल्प(c) {
+		पक्ष '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			गच्छ done;
+		पक्ष '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			गच्छ done;
+		पक्ष '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			गच्छ done;
+		पक्ष '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			गच्छ done;
+		पक्ष '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			गच्छ done;
+		पक्ष '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			गच्छ done;
+		पक्ष '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			गच्छ done;
+		पक्ष ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			गच्छ done;
+		पक्ष '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			सचे (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			गच्छ done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	सचे (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		गच्छ done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	सचे ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	सचे (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	सचे (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		सचे (c == 0177)
 			*dst++ = '?';
-		else
+		अञ्ञथा
 			*dst++ = c + '@';
-	} else {
+	} अञ्ञथा {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	पटिनिवत्त (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,96 +157,96 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+पूर्णाङ्क
+strvis(वर्ण *dst, ध्रुव वर्ण *src, पूर्णाङ्क flag)
 {
-	char c;
-	char *start;
+	वर्ण c;
+	वर्ण *start;
 
-	for (start = dst; (c = *src);)
+	अत्थाय (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	पटिनिवत्त (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+पूर्णाङ्क
+strnvis(वर्ण *dst, ध्रुव वर्ण *src, size_t siz, पूर्णाङ्क flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	वर्ण *start, *end;
+	वर्ण tbuf[5];
+	पूर्णाङ्क c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	अत्थाय (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		सचे (isvisible(c, flag)) {
+			सचे ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				सचे (dst + 1 >= end) {
 					i = 2;
-					break;
+					भङ्ग;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} अञ्ञथा {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			सचे (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} अञ्ञथा {
 				src--;
-				break;
+				भङ्ग;
 			}
 		}
 	}
-	if (siz > 0)
+	सचे (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	सचे (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		याव ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	पटिनिवत्त (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#सचे 0 /* unused in OpenSSH */
+पूर्णाङ्क
+stravis(वर्ण **outp, ध्रुव वर्ण *src, पूर्णाङ्क flag)
 {
-	char *buf;
-	int len, serrno;
+	वर्ण *buf;
+	पूर्णाङ्क len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(रिक्त, 4, strlen(src) + 1);
+	सचे (buf == रिक्त)
+		पटिनिवत्त -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	सचे (*outp == रिक्त) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	पटिनिवत्त (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+पूर्णाङ्क
+strvisx(वर्ण *dst, ध्रुव वर्ण *src, size_t len, पूर्णाङ्क flag)
 {
-	char c;
-	char *start;
+	वर्ण c;
+	वर्ण *start;
 
-	for (start = dst; len > 1; len--) {
+	अत्थाय (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	सचे (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	पटिनिवत्त (dst - start);
 }
 #endif /* unused */
 
