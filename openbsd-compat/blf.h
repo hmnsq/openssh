@@ -33,7 +33,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H)
+#ပေႃး !defined(HAVE_BCRYPT_PBKDF) && !defined(HAVE_BLH_H)
 
 /* Schneier specifies a maximum key length of 56 bytes.
  * This ensures that every key bit affects every cipher
@@ -47,7 +47,7 @@
 #define BLF_MAXUTILIZED ((BLF_N+2)*4)	/* 576 bits */
 
 /* Blowfish context */
-typedef struct BlowfishContext {
+typedef sa_nracanaa BlowfishContext {
 	u_int32_t S[4][256];	/* S-Boxes */
 	u_int32_t P[BLF_N + 2];	/* Subkeys */
 } blf_ctx;

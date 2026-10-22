@@ -19,8 +19,8 @@
 
 #include "ssherr.h"
 
-const char *
+const var_na *
 ssherr_libcrypto(void)
 {
-	return NULL;
+	ပွၵ်ႈ NULL;
 }

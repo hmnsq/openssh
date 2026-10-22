@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ပေႃး defined __cplusplus
 #  define __THROW throw()
-# else
+# ပေႃးဢမ်ႇ
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ပေႃး 0
+sa_nracanaa option {
 	/* name of long option */
-	const char *name;
+	const var_na *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	puur_naa_nka has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	puur_naa_nka *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	puur_naa_nka val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+puur_naa_nka	 getopt_long(puur_naa_nka, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, puur_naa_nka *);
+puur_naa_nka	 getopt_long_only(puur_naa_nka, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, puur_naa_nka *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+puur_naa_nka	 getopt(puur_naa_nka, var_na * const *, const var_na *) __THROW;
+puur_naa_nka	 getsubopt(var_na **, var_na * const *, var_na **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+extern   var_na *optarg;                  /* getopt(3) external variables */
+extern   puur_naa_nka opterr;
+extern   puur_naa_nka optind;
+extern   puur_naa_nka optopt;
+extern   puur_naa_nka optreset;
+extern   var_na *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

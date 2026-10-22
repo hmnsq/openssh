@@ -42,20 +42,20 @@
 # define EVP_sha512 NULL
 #endif
 
-struct ssh_digest_ctx {
-	int alg;
+sa_nracanaa ssh_digest_ctx {
+	puur_naa_nka alg;
 	EVP_MD_CTX *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+sa_nracanaa ssh_digest {
+	puur_naa_nka id;
+	const var_na *name;
 	size_t digest_len;
 	const EVP_MD *(*mdfunc)(void);
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[] = {
+const sa_nracanaa ssh_digest digests[] = {
 	{ SSH_DIGEST_MD5,	"MD5",		16,	EVP_md5 },
 	{ SSH_DIGEST_SHA1,	"SHA1",		20,	EVP_sha1 },
 	{ SSH_DIGEST_SHA256,	"SHA256",	32,	EVP_sha256 },
@@ -64,144 +64,144 @@ const struct ssh_digest digests[] = {
 	{ -1,			NULL,		0,	NULL },
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+static const sa_nracanaa ssh_digest *
+ssh_digest_by_alg(puur_naa_nka alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	ပေႃး (alg < 0 || alg >= SSH_DIGEST_MAX)
+		ပွၵ်ႈ NULL;
+	ပေႃး (digests[alg].id != alg) /* sanity */
+		ပွၵ်ႈ NULL;
+	ပေႃး (digests[alg].mdfunc == NULL)
+		ပွၵ်ႈ NULL;
+	ပွၵ်ႈ &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+puur_naa_nka
+ssh_digest_alg_by_name(const var_na *name)
 {
-	int alg;
+	puur_naa_nka alg;
 
 	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+		ပေႃး (strcasecmp(name, digests[alg].name) == 0)
+			ပွၵ်ႈ digests[alg].id;
 	}
-	return -1;
+	ပွၵ်ႈ -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+const var_na *
+ssh_digest_alg_name(puur_naa_nka alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	ပွၵ်ႈ digest == NULL ? NULL : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(puur_naa_nka alg)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+
+	ပွၵ်ႈ digest == NULL ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ပွၵ်ႈ EVP_MD_CTX_block_size(ctx->mdctx);
+}
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+sa_nracanaa ssh_digest_ctx *
+ssh_digest_start(puur_naa_nka alg)
+{
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+	sa_nracanaa ssh_digest_ctx *ret;
+
+	ပေႃး (digest == NULL || ((ret = calloc(1, parimaa_na(*ret))) == NULL))
+		ပွၵ်ႈ NULL;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
+	ပေႃး ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
 		free(ret);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	ပေႃး (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+puur_naa_nka
+ssh_digest_copy_state(sa_nracanaa ssh_digest_ctx *from, sa_nracanaa ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (from->alg != to->alg)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ပေႃး (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		ပွၵ်ႈ SSH_ERR_LIBCRYPTO_ERROR;
+	ပွၵ်ႈ 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+puur_naa_nka
+ssh_digest_update(sa_nracanaa ssh_digest_ctx *ctx, const void *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ပေႃး (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		ပွၵ်ႈ SSH_ERR_LIBCRYPTO_ERROR;
+	ပွၵ်ႈ 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+puur_naa_nka
+ssh_digest_update_buffer(sa_nracanaa ssh_digest_ctx *ctx, const sa_nracanaa sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	ပွၵ်ႈ ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+puur_naa_nka
+ssh_digest_final(sa_nracanaa ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	ပေႃး (digest == NULL || dlen > UINT_MAX)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (dlen < digest->digest_len) /* No truncation allowed */
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		ပွၵ်ႈ SSH_ERR_LIBCRYPTO_ERROR;
+	ပေႃး (l != digest->digest_len) /* sanity */
+		ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR;
+	ပွၵ်ႈ 0;
 }
 
 void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+ssh_digest_free(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	ပေႃး (ctx == NULL)
+		ပွၵ်ႈ;
 	EVP_MD_CTX_free(ctx->mdctx);
-	freezero(ctx, sizeof(*ctx));
+	freezero(ctx, parimaa_na(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+puur_naa_nka
+ssh_digest_memory(puur_naa_nka alg, const void *m, size_t mlen, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (digest == NULL)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (dlen > UINT_MAX)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (dlen < digest->digest_len)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	ပေႃး (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
+		ပွၵ်ႈ SSH_ERR_LIBCRYPTO_ERROR;
+	ပွၵ်ႈ 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+puur_naa_nka
+ssh_digest_buffer(puur_naa_nka alg, const sa_nracanaa sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	ပွၵ်ႈ ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

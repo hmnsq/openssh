@@ -102,13 +102,13 @@
 #define PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
 #define PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+extern var_na *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
 
 /* Name of the server configuration file. */
-char *config_file_name = _PATH_SERVER_CONFIG_FILE;
+var_na *config_file_name = _PATH_SERVER_CONFIG_FILE;
 
 /*
  * Debug mode flag.  This can be set on the command line.  If debug
@@ -116,63 +116,63 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+puur_naa_nka debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+static puur_naa_nka inetd_flag = 0;
 
 /* Saved arguments to main(). */
-static char **saved_argv;
-static int saved_argc;
+static var_na **saved_argv;
+static puur_naa_nka saved_argc;
 
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+puur_naa_nka auth_sock = -1;
+static puur_naa_nka have_agent = 0;
 
 u_int		num_hostkeys;
-struct sshkey	**host_pubkeys;		/* all public host keys */
-struct sshkey	**host_certificates;	/* all public host certificates */
+sa_nracanaa sshkey	**host_pubkeys;		/* all public host keys */
+sa_nracanaa sshkey	**host_certificates;	/* all public host certificates */
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
 
 /* variables used for privilege separation */
-struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+sa_nracanaa monitor *pmonitor = NULL;
+puur_naa_nka privsep_is_preauth = 1;
+static puur_naa_nka privsep_chroot = 1;
 
 /* global connection state and authentication contexts */
 Authctxt *the_authctxt = NULL;
-struct ssh *the_active_state;
+sa_nracanaa ssh *the_active_state;
 
 /* global key/cert auth options. XXX move to permanent ssh->authctxt? */
-struct sshauthopt *auth_opts = NULL;
+sa_nracanaa sshauthopt *auth_opts = NULL;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
+sa_nracanaa sshbuf *cfg;
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+sa_nracanaa include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+sa_nracanaa sshbuf *loginmsg;
 
 /* Prototypes for various functions defined later in this file. */
-static void do_ssh2_kex(struct ssh *);
+static void do_ssh2_kex(sa_nracanaa ssh *);
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+sa_nracanaa passwd *privsep_pw = NULL;
 
 #ifndef HAVE_PLEDGE
-static struct ssh_sandbox *box;
+static sa_nracanaa ssh_sandbox *box;
 #endif
 
 /* XXX stub */
-int
+puur_naa_nka
 mm_is_monitor(void)
 {
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 static void
@@ -181,16 +181,16 @@ privsep_child_demote(void)
 	gid_t gidset[1];
 
 #ifndef HAVE_PLEDGE
-	if ((box = ssh_sandbox_init(pmonitor)) == NULL)
+	ပေႃး ((box = ssh_sandbox_init(pmonitor)) == NULL)
 		fatal_f("ssh_sandbox_init failed");
 #endif
 	/* Demote the child */
-	if (privsep_chroot) {
+	ပေႃး (privsep_chroot) {
 		/* Change our root directory */
-		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+		ပေႃး (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 			    strerror(errno));
-		if (chdir("/") == -1)
+		ပေႃး (chdir("/") == -1)
 			fatal("chdir(\"/\"): %s", strerror(errno));
 
 		/*
@@ -200,167 +200,167 @@ privsep_child_demote(void)
 		debug3("privsep user:group %u:%u", (u_int)privsep_pw->pw_uid,
 		    (u_int)privsep_pw->pw_gid);
 		gidset[0] = privsep_pw->pw_gid;
-		if (setgroups(1, gidset) == -1)
+		ပေႃး (setgroups(1, gidset) == -1)
 			fatal("setgroups: %.100s", strerror(errno));
 		permanently_set_uid(privsep_pw);
 	}
 
 	/* sandbox ourselves */
 #ifdef HAVE_PLEDGE
-	if (pledge("stdio", NULL) == -1)
+	ပေႃး (pledge("stdio", NULL) == -1)
 		fatal_f("pledge()");
-#else
+#ပေႃးဢမ်ႇ
 	ssh_sandbox_child(box);
 #endif
 }
 
 static void
-append_hostkey_type(struct sshbuf *b, const char *s)
+append_hostkey_type(sa_nracanaa sshbuf *b, const var_na *s)
 {
-	int r;
+	puur_naa_nka r;
 
-	if (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
+	ပေႃး (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
 		debug3_f("%s key not permitted by HostkeyAlgorithms", s);
-		return;
+		ပွၵ်ႈ;
 	}
-	if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
+	ပေႃး ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
 		fatal_fr(r, "sshbuf_putf");
 }
 
-static char *
+static var_na *
 list_hostkey_types(void)
 {
-	struct sshbuf *b;
-	struct sshkey *key;
-	char *ret;
+	sa_nracanaa sshbuf *b;
+	sa_nracanaa sshkey *key;
+	var_na *ret;
 	u_int i;
 
-	if ((b = sshbuf_new()) == NULL)
+	ပေႃး ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	for (i = 0; i < options.num_host_key_files; i++) {
 		key = host_pubkeys[i];
-		if (key == NULL)
+		ပေႃး (key == NULL)
 			continue;
 		switch (key->type) {
-		case KEY_RSA:
+		pak_sa KEY_RSA:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b, "rsa-sha2-512");
 			append_hostkey_type(b, "rsa-sha2-256");
 			/* FALLTHROUGH */
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
+		pak_sa KEY_ECDSA:
+		pak_sa KEY_ED25519:
+		pak_sa KEY_MLDSA44_ED25519:
+		pak_sa KEY_ECDSA_SK:
+		pak_sa KEY_ED25519_SK:
 			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+			bha_nga;
 		}
 		/* If the private key has a cert peer, then list that too */
 		key = host_certificates[i];
-		if (key == NULL)
+		ပေႃး (key == NULL)
 			continue;
 		switch (key->type) {
-		case KEY_RSA_CERT:
+		pak_sa KEY_RSA_CERT:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b,
 			    "rsa-sha2-512-cert-v01@openssh.com");
 			append_hostkey_type(b,
 			    "rsa-sha2-256-cert-v01@openssh.com");
 			/* FALLTHROUGH */
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ED25519_CERT:
+		pak_sa KEY_MLDSA44_ED25519_CERT:
+		pak_sa KEY_ECDSA_SK_CERT:
+		pak_sa KEY_ED25519_SK_CERT:
 			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+			bha_nga;
 		}
 	}
-	if ((ret = sshbuf_dup_string(b)) == NULL)
+	ပေႃး ((ret = sshbuf_dup_string(b)) == NULL)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
 	debug_f("%s", ret);
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_public_by_type(puur_naa_nka type, puur_naa_nka nid, sa_nracanaa ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	sa_nracanaa sshkey *key;
 
 	for (i = 0; i < options.num_host_key_files; i++) {
 		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
+		pak_sa KEY_RSA_CERT:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ED25519_CERT:
+		pak_sa KEY_MLDSA44_ED25519_CERT:
+		pak_sa KEY_ECDSA_SK_CERT:
+		pak_sa KEY_ED25519_SK_CERT:
 			key = host_certificates[i];
-			break;
+			bha_nga;
 		default:
 			key = host_pubkeys[i];
-			break;
+			bha_nga;
 		}
-		if (key == NULL || key->type != type)
+		ပေႃး (key == NULL || key->type != type)
 			continue;
 		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
+		pak_sa KEY_ECDSA:
+		pak_sa KEY_ECDSA_SK:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ECDSA_SK_CERT:
+			ပေႃး (key->ecdsa_nid != nid)
 				continue;
 			/* FALLTHROUGH */
 		default:
-			return key;
+			ပွၵ်ႈ key;
 		}
 	}
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_private_by_type(puur_naa_nka type, puur_naa_nka nid, sa_nracanaa ssh *ssh)
 {
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_by_index(int ind)
+sa_nracanaa sshkey *
+get_hostkey_by_index(puur_naa_nka ind)
 {
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
-struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_public_by_index(puur_naa_nka ind, sa_nracanaa ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return host_pubkeys[ind];
+	ပေႃး (ind < 0 || (u_int)ind >= options.num_host_key_files)
+		ပွၵ်ႈ (NULL);
+	ပွၵ်ႈ host_pubkeys[ind];
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+puur_naa_nka
+get_hostkey_index(sa_nracanaa sshkey *key, puur_naa_nka compare, sa_nracanaa ssh *ssh)
 {
 	u_int i;
 
 	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+		ပေႃး (sshkey_is_cert(key)) {
+			ပေႃး (key == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
 			    sshkey_equal(key, host_certificates[i])))
-				return (i);
-		} else {
-			if (key == host_pubkeys[i] ||
+				ပွၵ်ႈ (i);
+		} ပေႃးဢမ်ႇ {
+			ပေႃး (key == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
 			    sshkey_equal(key, host_pubkeys[i])))
-				return (i);
+				ပွၵ်ႈ (i);
 		}
 	}
-	return (-1);
+	ပွၵ်ႈ (-1);
 }
 
 static void
@@ -376,38 +376,38 @@ usage(void)
 }
 
 static void
-parse_hostkeys(struct sshbuf *hostkeys)
+parse_hostkeys(sa_nracanaa sshbuf *hostkeys)
 {
-	int r;
+	puur_naa_nka r;
 	u_int num_keys = 0;
-	struct sshkey *k;
+	sa_nracanaa sshkey *k;
 	const u_char *cp;
 	size_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	ၶၢဝ်း (sshbuf_len(hostkeys) != 0) {
+		ပေႃး (num_keys > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
-		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
+		    num_keys, num_keys + 1, parimaa_na(*host_pubkeys));
 		host_certificates = xrecallocarray(host_certificates,
-		    num_keys, num_keys + 1, sizeof(*host_certificates));
+		    num_keys, num_keys + 1, parimaa_na(*host_certificates));
 		/* public key */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ပေႃး ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ပေႃး (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		host_pubkeys[num_keys] = k;
-		if (k)
+		ပေႃး (k)
 			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
 		/* certificate */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ပေႃး ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ပေႃး (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		host_certificates[num_keys] = k;
-		if (k)
+		ပေႃး (k)
 			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
 		num_keys++;
 	}
@@ -415,9 +415,9 @@ parse_hostkeys(struct sshbuf *hostkeys)
 }
 
 static void
-recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
+recv_privsep_state(sa_nracanaa ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 {
-	struct sshbuf *hostkeys;
+	sa_nracanaa sshbuf *hostkeys;
 
 	debug3_f("begin");
 
@@ -433,14 +433,14 @@ recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+puur_naa_nka
+main(puur_naa_nka ac, var_na **av)
 {
-	struct ssh *ssh = NULL;
-	extern char *optarg;
-	extern int optind;
-	int r, opt, have_key = 0;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
+	sa_nracanaa ssh *ssh = NULL;
+	extern var_na *optarg;
+	extern puur_naa_nka optind;
+	puur_naa_nka r, opt, have_key = 0;
+	puur_naa_nka sock_in = -1, sock_out = -1, rexeced_flag = 0;
 	u_int i;
 	mode_t new_umask;
 	Authctxt *authctxt;
@@ -458,8 +458,8 @@ main(int ac, char **av)
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, parimaa_na(*saved_argv));
+	for (i = 0; (puur_naa_nka)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
 	saved_argv[i] = NULL;
 
@@ -478,90 +478,90 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	ၶၢဝ်း ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
 		switch (opt) {
-		case '4':
+		pak_sa '4':
 			/* ignore */
-			break;
-		case '6':
+			bha_nga;
+		pak_sa '6':
 			/* ignore */
-			break;
-		case 'f':
+			bha_nga;
+		pak_sa 'f':
 			/* ignore */
-			break;
-		case 'c':
+			bha_nga;
+		pak_sa 'c':
 			/* ignore */
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			bha_nga;
+		pak_sa 'd':
+			ပေႃး (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} ပေႃးဢမ်ႇ ပေႃး (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
-		case 'E':
-		case 'e':
+			bha_nga;
+		pak_sa 'D':
+		pak_sa 'E':
+		pak_sa 'e':
 			/* ignore */
-			break;
-		case 'i':
+			bha_nga;
+		pak_sa 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			bha_nga;
+		pak_sa 'r':
 			/* ignore */
-			break;
-		case 'R':
+			bha_nga;
+		pak_sa 'R':
 			rexeced_flag = 1;
-			break;
-		case 'Q':
+			bha_nga;
+		pak_sa 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			bha_nga;
+		pak_sa 'q':
 			/* ignored */
-			break;
-		case 'b':
+			bha_nga;
+		pak_sa 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			bha_nga;
+		pak_sa 'p':
 			/* ignored */
-			break;
-		case 'g':
+			bha_nga;
+		pak_sa 'g':
 			/* ignored */
-			break;
-		case 'k':
+			bha_nga;
+		pak_sa 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			bha_nga;
+		pak_sa 'h':
 			/* ignored */
-			break;
-		case 't':
-		case 'T':
-		case 'G':
-		case 'C':
+			bha_nga;
+		pak_sa 't':
+		pak_sa 'T':
+		pak_sa 'G':
+		pak_sa 'C':
 			fatal("test/dump modes not supported");
-			break;
-		case 'u':
+			bha_nga;
+		pak_sa 'u':
 			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			ပေႃး (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
-			break;
-		case 'o':
+			bha_nga;
+		pak_sa 'o':
 			/* ignored */
-			break;
-		case 'V':
+			bha_nga;
+		pak_sa 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_VERSION, SSH_OPENSSL_VERSION);
 			exit(0);
 		default:
 			usage();
-			break;
+			bha_nga;
 		}
 	}
 
-	if (!rexeced_flag)
+	ပေႃး (!rexeced_flag)
 		fatal("sshd-auth should not be executed directly");
 
 	log_init(__progname,
@@ -571,32 +571,32 @@ main(int ac, char **av)
 	    SYSLOG_FACILITY_AUTH : options.log_facility, 1);
 
 	/* XXX can't use monitor_init(); it makes fds */
-	pmonitor = xcalloc(1, sizeof(*pmonitor));
+	pmonitor = xcalloc(1, parimaa_na(*pmonitor));
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_recvfd = PRIVSEP_MONITOR_FD;
 	pmonitor->m_log_sendfd = PRIVSEP_LOG_FD;
 	set_log_handler(mm_log_handler, pmonitor);
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	ပေႃး (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
 	/* Connection passed by stdin/out */
-	if (inetd_flag) {
+	ပေႃး (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
 		sock_in = dup(STDIN_FILENO);
 		sock_out = dup(STDOUT_FILENO);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		/* rexec case; accept()ed socket in ancestor listener */
 		sock_in = sock_out = dup(STDIN_FILENO);
 	}
 
-	if (stdfd_devnull(1, 1, 0) == -1)
+	ပေႃး (stdfd_devnull(1, 1, 0) == -1)
 		error("stdfd_devnull failed");
 	debug("network sockets: %d, %d", sock_in, sock_out);
 
@@ -604,14 +604,14 @@ main(int ac, char **av)
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	ပေႃး ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
 		fatal("Unable to create connection");
 	the_active_state = ssh;
 	ssh_packet_set_server(ssh);
 	pmonitor->m_pkex = &ssh->kex;
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	ပေႃး ((cfg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[session-auth early]");
 	recv_privsep_state(ssh, &options, &timing_secret);
@@ -627,11 +627,11 @@ main(int ac, char **av)
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	ပေႃး ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
+		ပေႃး (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		privsep_pw = pwcopy(privsep_pw);
 		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
@@ -639,33 +639,33 @@ main(int ac, char **av)
 	endpwent();
 
 #ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
+	ပေႃး (options.moduli_file != NULL)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	ပေႃး (options.host_key_agent) {
+		ပေႃး (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
 			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+		ပေႃး ((r = ssh_get_authentication_socket(NULL)) == 0)
 			have_agent = 1;
-		else
+		ပေႃးဢမ်ႇ
 			error_r(r, "Could not connect to agent \"%s\"",
 			    options.host_key_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	ပေႃး (options.num_host_key_files != num_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
 		    options.num_host_key_files, num_hostkeys);
 	}
 
 	for (i = 0; i < options.num_host_key_files; i++) {
-		if (host_pubkeys[i] != NULL) {
+		ပေႃး (host_pubkeys[i] != NULL) {
 			have_key = 1;
-			break;
+			bha_nga;
 		}
 	}
-	if (!have_key)
+	ပေႃး (!have_key)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
@@ -682,7 +682,7 @@ main(int ac, char **av)
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	ပေႃး (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* This is the child authenticating a new connection. */
@@ -710,18 +710,18 @@ main(int ac, char **av)
 	ssh_packet_set_nonblocking(ssh);
 
 	/* allocate authentication context */
-	authctxt = xcalloc(1, sizeof(*authctxt));
+	authctxt = xcalloc(1, parimaa_na(*authctxt));
 	ssh->authctxt = authctxt;
 
 	/* XXX global for cleanup, access from other modules */
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	ပေႃး ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	ပေႃး ((loginmsg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
@@ -746,38 +746,38 @@ main(int ac, char **av)
 	exit(0);
 }
 
-int
-sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slenp,
-    const u_char *data, size_t dlen, const char *alg)
+puur_naa_nka
+sshd_hostkey_sign(sa_nracanaa ssh *ssh, sa_nracanaa sshkey *privkey,
+    sa_nracanaa sshkey *pubkey, u_char **signature, size_t *slenp,
+    const u_char *data, size_t dlen, const var_na *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
+	ပေႃး (privkey) {
+		ပေႃး (mm_sshkey_sign(ssh, privkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+	} ပေႃးဢမ်ႇ {
+		ပေႃး (mm_sshkey_sign(ssh, pubkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 /* SSH2 key exchange */
 static void
-do_ssh2_kex(struct ssh *ssh)
+do_ssh2_kex(sa_nracanaa ssh *ssh)
 {
-	char *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
-	const char *compression = NULL;
-	struct kex *kex;
-	int r;
+	var_na *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
+	const var_na *compression = NULL;
+	sa_nracanaa kex *kex;
+	puur_naa_nka r;
 
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-	if (options.compression == COMP_NONE)
+	ပေႃး (options.compression == COMP_NONE)
 		compression = "none";
 	hkalgs = list_hostkey_types();
 
@@ -786,16 +786,16 @@ do_ssh2_kex(struct ssh *ssh)
 
 	free(hkalgs);
 
-	if ((r = kex_exchange_identification(ssh, -1,
+	ပေႃး ((r = kex_exchange_identification(ssh, -1,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 	mm_sshkey_setcompat(ssh); /* tell monitor */
 
-	if ((ssh->compat & SSH_BUG_NOREKEY))
+	ပေႃး ((ssh->compat & SSH_BUG_NOREKEY))
 		debug("client does not support rekeying");
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	ပေႃး ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
 	kex_set_server_sig_algs(ssh, options.pubkey_accepted_algos);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto);
@@ -825,7 +825,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	ပေႃး ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -836,7 +836,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 /* server specific fatal cleanup */
 void
-cleanup_exit(int i)
+cleanup_exit(puur_naa_nka i)
 {
 	_exit(i);
 }

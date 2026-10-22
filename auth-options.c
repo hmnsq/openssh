@@ -40,54 +40,54 @@
 #include "ssh2.h"
 #include "auth-options.h"
 
-static int
-dup_strings(char ***dstp, size_t *ndstp, char **src, size_t nsrc)
+static puur_naa_nka
+dup_strings(var_na ***dstp, size_t *ndstp, var_na **src, size_t nsrc)
 {
-	char **dst;
+	var_na **dst;
 	size_t i, j;
 
 	*dstp = NULL;
 	*ndstp = 0;
 
-	if (nsrc == 0)
-		return 0;
-	if (nsrc >= SIZE_MAX / sizeof(*src) ||
-	    (dst = calloc(nsrc, sizeof(*src))) == NULL)
-		return -1;
+	ပေႃး (nsrc == 0)
+		ပွၵ်ႈ 0;
+	ပေႃး (nsrc >= SIZE_MAX / parimaa_na(*src) ||
+	    (dst = calloc(nsrc, parimaa_na(*src))) == NULL)
+		ပွၵ်ႈ -1;
 	for (i = 0; i < nsrc; i++) {
-		if ((dst[i] = strdup(src[i])) == NULL) {
+		ပေႃး ((dst[i] = strdup(src[i])) == NULL) {
 			for (j = 0; j < i; j++)
 				free(dst[j]);
 			free(dst);
-			return -1;
+			ပွၵ်ႈ -1;
 		}
 	}
 	/* success */
 	*dstp = dst;
 	*ndstp = nsrc;
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 #define OPTIONS_CRITICAL	1
 #define OPTIONS_EXTENSIONS	2
-static int
-cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
-    u_int which, int crit)
+static puur_naa_nka
+cert_option_list(sa_nracanaa sshauthopt *opts, sa_nracanaa sshbuf *oblob,
+    u_int which, puur_naa_nka crit)
 {
-	char *command, *allowed;
-	char *name = NULL;
-	struct sshbuf *c = NULL, *data = NULL;
-	int r, ret = -1, found;
+	var_na *command, *allowed;
+	var_na *name = NULL;
+	sa_nracanaa sshbuf *c = NULL, *data = NULL;
+	puur_naa_nka r, ret = -1, found;
 
-	if ((c = sshbuf_fromb(oblob)) == NULL) {
+	ပေႃး ((c = sshbuf_fromb(oblob)) == NULL) {
 		error_f("sshbuf_fromb failed");
 		goto out;
 	}
 
-	while (sshbuf_len(c) > 0) {
+	ၶၢဝ်း (sshbuf_len(c) > 0) {
 		sshbuf_free(data);
 		data = NULL;
-		if ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
+		ပေႃး ((r = sshbuf_get_cstring(c, &name, NULL)) != 0 ||
 		    (r = sshbuf_froms(c, &data)) != 0) {
 			error_r(r, "Unable to parse certificate options");
 			goto out;
@@ -95,41 +95,41 @@ cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
 		debug3("found certificate option \"%.100s\" len %zu",
 		    name, sshbuf_len(data));
 		found = 0;
-		if ((which & OPTIONS_EXTENSIONS) != 0) {
-			if (strcmp(name, "no-touch-required") == 0) {
+		ပေႃး ((which & OPTIONS_EXTENSIONS) != 0) {
+			ပေႃး (strcmp(name, "no-touch-required") == 0) {
 				opts->no_require_user_presence = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-X11-forwarding") == 0) {
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name, "permit-X11-forwarding") == 0) {
 				opts->permit_x11_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name,
 			    "permit-agent-forwarding") == 0) {
 				opts->permit_agent_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name,
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name,
 			    "permit-port-forwarding") == 0) {
 				opts->permit_port_forwarding_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-pty") == 0) {
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name, "permit-pty") == 0) {
 				opts->permit_pty_flag = 1;
 				found = 1;
-			} else if (strcmp(name, "permit-user-rc") == 0) {
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name, "permit-user-rc") == 0) {
 				opts->permit_user_rc = 1;
 				found = 1;
 			}
 		}
-		if (!found && (which & OPTIONS_CRITICAL) != 0) {
-			if (strcmp(name, "verify-required") == 0) {
+		ပေႃး (!found && (which & OPTIONS_CRITICAL) != 0) {
+			ပေႃး (strcmp(name, "verify-required") == 0) {
 				opts->require_verify = 1;
 				found = 1;
-			} else if (strcmp(name, "force-command") == 0) {
-				if ((r = sshbuf_get_cstring(data, &command,
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name, "force-command") == 0) {
+				ပေႃး ((r = sshbuf_get_cstring(data, &command,
 				    NULL)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
 					goto out;
 				}
-				if (opts->force_command != NULL) {
+				ပေႃး (opts->force_command != NULL) {
 					error("Certificate has multiple "
 					    "force-command options");
 					free(command);
@@ -137,21 +137,21 @@ cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
 				}
 				opts->force_command = command;
 				found = 1;
-			} else if (strcmp(name, "source-address") == 0) {
-				if ((r = sshbuf_get_cstring(data, &allowed,
+			} ပေႃးဢမ်ႇ ပေႃး (strcmp(name, "source-address") == 0) {
+				ပေႃး ((r = sshbuf_get_cstring(data, &allowed,
 				    NULL)) != 0) {
 					error_r(r, "Unable to parse \"%s\" "
 					    "section", name);
 					goto out;
 				}
-				if (opts->required_from_host_cert != NULL) {
+				ပေႃး (opts->required_from_host_cert != NULL) {
 					error("Certificate has multiple "
 					    "source-address options");
 					free(allowed);
 					goto out;
 				}
 				/* Check syntax */
-				if (addr_match_cidr_list(NULL, allowed) == -1) {
+				ပေႃး (addr_match_cidr_list(NULL, allowed) == -1) {
 					error("Certificate source-address "
 					    "contents invalid");
 					free(allowed);
@@ -162,16 +162,16 @@ cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
 			}
 		}
 
-		if (!found) {
-			if (crit) {
+		ပေႃး (!found) {
+			ပေႃး (crit) {
 				error("Certificate critical option \"%s\" "
 				    "is not supported", name);
 				goto out;
-			} else {
+			} ပေႃးဢမ်ႇ {
 				logit("Certificate extension \"%s\" "
 				    "is not supported", name);
 			}
-		} else if (sshbuf_len(data) != 0) {
+		} ပေႃးဢမ်ႇ ပေႃး (sshbuf_len(data) != 0) {
 			error("Certificate option \"%s\" corrupt "
 			    "(extra data)", name);
 			goto out;
@@ -186,27 +186,27 @@ cert_option_list(struct sshauthopt *opts, struct sshbuf *oblob,
 	free(name);
 	sshbuf_free(data);
 	sshbuf_free(c);
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-struct sshauthopt *
+sa_nracanaa sshauthopt *
 sshauthopt_new(void)
 {
-	struct sshauthopt *ret;
+	sa_nracanaa sshauthopt *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ပေႃး ((ret = calloc(1, parimaa_na(*ret))) == NULL)
+		ပွၵ်ႈ NULL;
 	ret->force_tun_device = -1;
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
 void
-sshauthopt_free(struct sshauthopt *opts)
+sshauthopt_free(sa_nracanaa sshauthopt *opts)
 {
 	size_t i;
 
-	if (opts == NULL)
-		return;
+	ပေႃး (opts == NULL)
+		ပွၵ်ႈ;
 
 	free(opts->cert_principals);
 	free(opts->force_command);
@@ -225,16 +225,16 @@ sshauthopt_free(struct sshauthopt *opts)
 		free(opts->permitlisten[i]);
 	free(opts->permitlisten);
 
-	freezero(opts, sizeof(*opts));
+	freezero(opts, parimaa_na(*opts));
 }
 
-struct sshauthopt *
+sa_nracanaa sshauthopt *
 sshauthopt_new_with_keys_defaults(void)
 {
-	struct sshauthopt *ret = NULL;
+	sa_nracanaa sshauthopt *ret = NULL;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ပေႃး ((ret = sshauthopt_new()) == NULL)
+		ပွၵ်ႈ NULL;
 
 	/* Defaults for authorized_keys flags */
 	ret->permit_port_forwarding_flag = 1;
@@ -242,183 +242,183 @@ sshauthopt_new_with_keys_defaults(void)
 	ret->permit_x11_forwarding_flag = 1;
 	ret->permit_pty_flag = 1;
 	ret->permit_user_rc = 1;
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
 /*
  * Parse and record a permitopen/permitlisten directive.
  * Return 0 on success. Return -1 on failure and sets *errstrp to error reason.
  */
-static int
-handle_permit(const char **optsp, int allow_bare_port,
-    char ***permitsp, size_t *npermitsp, const char **errstrp)
+static puur_naa_nka
+handle_permit(const var_na **optsp, puur_naa_nka allow_bare_port,
+    var_na ***permitsp, size_t *npermitsp, const var_na **errstrp)
 {
-	char *opt, *tmp, *cp, *host, **permits = *permitsp;
+	var_na *opt, *tmp, *cp, *host, **permits = *permitsp;
 	size_t npermits = *npermitsp;
-	const char *errstr = "unknown error";
+	const var_na *errstr = "unknown error";
 
-	if (npermits > SSH_AUTHOPT_PERMIT_MAX) {
+	ပေႃး (npermits > SSH_AUTHOPT_PERMIT_MAX) {
 		*errstrp = "too many permission directives";
-		return -1;
+		ပွၵ်ႈ -1;
 	}
-	if ((opt = opt_dequote(optsp, &errstr)) == NULL) {
-		return -1;
+	ပေႃး ((opt = opt_dequote(optsp, &errstr)) == NULL) {
+		ပွၵ်ႈ -1;
 	}
-	if (allow_bare_port && strchr(opt, ':') == NULL) {
+	ပေႃး (allow_bare_port && strchr(opt, ':') == NULL) {
 		/*
 		 * Allow a bare port number in permitlisten to indicate a
 		 * listen_host wildcard.
 		 */
-		if (asprintf(&tmp, "*:%s", opt) == -1) {
+		ပေႃး (asprintf(&tmp, "*:%s", opt) == -1) {
 			free(opt);
 			*errstrp = "memory allocation failed";
-			return -1;
+			ပွၵ်ႈ -1;
 		}
 		free(opt);
 		opt = tmp;
 	}
-	if ((tmp = strdup(opt)) == NULL) {
+	ပေႃး ((tmp = strdup(opt)) == NULL) {
 		free(opt);
 		*errstrp = "memory allocation failed";
-		return -1;
+		ပွၵ်ႈ -1;
 	}
 	cp = tmp;
 	/* validate syntax before recording it. */
 	host = hpdelim2(&cp, NULL);
-	if (host == NULL || strlen(host) >= NI_MAXHOST) {
+	ပေႃး (host == NULL || strlen(host) >= NI_MAXHOST) {
 		free(tmp);
 		free(opt);
 		*errstrp = "invalid permission hostname";
-		return -1;
+		ပွၵ်ႈ -1;
 	}
 	/*
 	 * don't want to use permitopen_port to avoid
 	 * dependency on channels.[ch] here.
 	 */
-	if (cp == NULL ||
+	ပေႃး (cp == NULL ||
 	    (strcmp(cp, "*") != 0 && a2port(cp) <= 0)) {
 		free(tmp);
 		free(opt);
 		*errstrp = "invalid permission port";
-		return -1;
+		ပွၵ်ႈ -1;
 	}
 	/* XXX - add streamlocal support */
 	free(tmp);
 	/* Record it */
-	if ((permits = recallocarray(permits, npermits, npermits + 1,
-	    sizeof(*permits))) == NULL) {
+	ပေႃး ((permits = recallocarray(permits, npermits, npermits + 1,
+	    parimaa_na(*permits))) == NULL) {
 		free(opt);
 		/* NB. don't update *permitsp if alloc fails */
 		*errstrp = "memory allocation failed";
-		return -1;
+		ပွၵ်ႈ -1;
 	}
 	permits[npermits++] = opt;
 	*permitsp = permits;
 	*npermitsp = npermits;
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-struct sshauthopt *
-sshauthopt_parse(const char *opts, const char **errstrp)
+sa_nracanaa sshauthopt *
+sshauthopt_parse(const var_na *opts, const var_na **errstrp)
 {
-	char **oarray, *opt, *cp, *tmp;
-	int r;
-	struct sshauthopt *ret = NULL;
-	const char *errstr = "unknown error";
+	var_na **oarray, *opt, *cp, *tmp;
+	puur_naa_nka r;
+	sa_nracanaa sshauthopt *ret = NULL;
+	const var_na *errstr = "unknown error";
 	uint64_t valid_before;
 	size_t i, l;
 
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
+	ပေႃး ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
 		goto alloc_fail;
 
-	if (opts == NULL)
-		return ret;
+	ပေႃး (opts == NULL)
+		ပွၵ်ႈ ret;
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	ၶၢဝ်း (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("restrict", 0, &opts)) != -1) {
+		ပေႃး ((r = opt_flag("restrict", 0, &opts)) != -1) {
 			ret->restricted = 1;
 			ret->permit_port_forwarding_flag = 0;
 			ret->permit_agent_forwarding_flag = 0;
 			ret->permit_x11_forwarding_flag = 0;
 			ret->permit_pty_flag = 0;
 			ret->permit_user_rc = 0;
-		} else if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->cert_authority = r;
-		} else if ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("port-forwarding", 1, &opts)) != -1) {
 			ret->permit_port_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("agent-forwarding", 1, &opts)) != -1) {
 			ret->permit_agent_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("x11-forwarding", 1, &opts)) != -1) {
 			ret->permit_x11_forwarding_flag = r == 1;
-		} else if ((r = opt_flag("touch-required", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("touch-required", 1, &opts)) != -1) {
 			ret->no_require_user_presence = r != 1; /* NB. flip */
-		} else if ((r = opt_flag("verify-required", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("verify-required", 1, &opts)) != -1) {
 			ret->require_verify = r == 1;
-		} else if ((r = opt_flag("pty", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("pty", 1, &opts)) != -1) {
 			ret->permit_pty_flag = r == 1;
-		} else if ((r = opt_flag("user-rc", 1, &opts)) != -1) {
+		} ပေႃးဢမ်ႇ ပေႃး ((r = opt_flag("user-rc", 1, &opts)) != -1) {
 			ret->permit_user_rc = r == 1;
-		} else if (opt_match(&opts, "command")) {
-			if (ret->force_command != NULL) {
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "command")) {
+			ပေႃး (ret->force_command != NULL) {
 				errstr = "multiple \"command\" clauses";
 				goto fail;
 			}
 			ret->force_command = opt_dequote(&opts, &errstr);
-			if (ret->force_command == NULL)
+			ပေႃး (ret->force_command == NULL)
 				goto fail;
-		} else if (opt_match(&opts, "principals")) {
-			if (ret->cert_principals != NULL) {
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "principals")) {
+			ပေႃး (ret->cert_principals != NULL) {
 				errstr = "multiple \"principals\" clauses";
 				goto fail;
 			}
 			ret->cert_principals = opt_dequote(&opts, &errstr);
-			if (ret->cert_principals == NULL)
+			ပေႃး (ret->cert_principals == NULL)
 				goto fail;
-		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "from")) {
+			ပေႃး (ret->required_from_host_keys != NULL) {
 				errstr = "multiple \"from\" clauses";
 				goto fail;
 			}
 			ret->required_from_host_keys = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
+			ပေႃး (ret->required_from_host_keys == NULL)
 				goto fail;
-		} else if (opt_match(&opts, "expiry-time")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "expiry-time")) {
+			ပေႃး ((opt = opt_dequote(&opts, &errstr)) == NULL)
 				goto fail;
-			if (parse_absolute_time(opt, &valid_before) != 0 ||
+			ပေႃး (parse_absolute_time(opt, &valid_before) != 0 ||
 			    valid_before == 0) {
 				free(opt);
 				errstr = "invalid expires time";
 				goto fail;
 			}
 			free(opt);
-			if (ret->valid_before == 0 ||
+			ပေႃး (ret->valid_before == 0 ||
 			    valid_before < ret->valid_before)
 				ret->valid_before = valid_before;
-		} else if (opt_match(&opts, "environment")) {
-			if (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "environment")) {
+			ပေႃး (ret->nenv > SSH_AUTHOPT_ENV_MAX) {
 				errstr = "too many environment strings";
 				goto fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
+			ပေႃး ((opt = opt_dequote(&opts, &errstr)) == NULL)
 				goto fail;
 			/* env name must be alphanumeric and followed by '=' */
-			if ((tmp = strchr(opt, '=')) == NULL) {
+			ပေႃး ((tmp = strchr(opt, '=')) == NULL) {
 				free(opt);
 				errstr = "invalid environment string";
 				goto fail;
 			}
-			if ((cp = strdup(opt)) == NULL) {
+			ပေႃး ((cp = strdup(opt)) == NULL) {
 				free(opt);
 				goto alloc_fail;
 			}
 			l = (size_t)(tmp - opt);
 			cp[l] = '\0'; /* truncate at '=' */
-			if (!valid_env_name(cp)) {
+			ပေႃး (!valid_env_name(cp)) {
 				free(cp);
 				free(opt);
 				errstr = "invalid environment string";
@@ -426,18 +426,18 @@ sshauthopt_parse(const char *opts, const char **errstrp)
 			}
 			/* Check for duplicates; XXX O(n*log(n)) */
 			for (i = 0; i < ret->nenv; i++) {
-				if (strncmp(ret->env[i], cp, l) == 0 &&
+				ပေႃး (strncmp(ret->env[i], cp, l) == 0 &&
 				    ret->env[i][l] == '=')
-					break;
+					bha_nga;
 			}
 			free(cp);
 			/* First match wins */
-			if (i >= ret->nenv) {
+			ပေႃး (i >= ret->nenv) {
 				/* Append it. */
 				oarray = ret->env;
-				if ((ret->env = recallocarray(ret->env,
+				ပေႃး ((ret->env = recallocarray(ret->env,
 				    ret->nenv, ret->nenv + 1,
-				    sizeof(*ret->env))) == NULL) {
+				    parimaa_na(*ret->env))) == NULL) {
 					free(opt);
 					/* put it back for cleanup */
 					ret->env = oarray;
@@ -447,20 +447,20 @@ sshauthopt_parse(const char *opts, const char **errstrp)
 				opt = NULL; /* transferred */
 			}
 			free(opt);
-		} else if (opt_match(&opts, "permitopen")) {
-			if (handle_permit(&opts, 0, &ret->permitopen,
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "permitopen")) {
+			ပေႃး (handle_permit(&opts, 0, &ret->permitopen,
 			    &ret->npermitopen, &errstr) != 0)
 				goto fail;
-		} else if (opt_match(&opts, "permitlisten")) {
-			if (handle_permit(&opts, 1, &ret->permitlisten,
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "permitlisten")) {
+			ပေႃး (handle_permit(&opts, 1, &ret->permitlisten,
 			    &ret->npermitlisten, &errstr) != 0)
 				goto fail;
-		} else if (opt_match(&opts, "tunnel")) {
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
+		} ပေႃးဢမ်ႇ ပေႃး (opt_match(&opts, "tunnel")) {
+			ပေႃး ((opt = opt_dequote(&opts, &errstr)) == NULL)
 				goto fail;
 			ret->force_tun_device = a2tun(opt, NULL);
 			free(opt);
-			if (ret->force_tun_device == SSH_TUNID_ERR) {
+			ပေႃး (ret->force_tun_device == SSH_TUNID_ERR) {
 				errstr = "invalid tun device";
 				goto fail;
 			}
@@ -469,77 +469,77 @@ sshauthopt_parse(const char *opts, const char **errstrp)
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		ပေႃး (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			bha_nga;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		ပေႃး (*opts != ',') {
 			errstr = "unknown key option";
 			goto fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		ပေႃး (*opts == '\0') {
 			errstr = "unexpected end-of-options";
 			goto fail;
 		}
 	}
 
 	/* success */
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = NULL;
-	return ret;
+	ပွၵ်ႈ ret;
 
 alloc_fail:
 	errstr = "memory allocation failed";
 fail:
 	sshauthopt_free(ret);
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = errstr;
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
-struct sshauthopt *
-sshauthopt_from_cert(struct sshkey *k)
+sa_nracanaa sshauthopt *
+sshauthopt_from_cert(sa_nracanaa sshkey *k)
 {
-	struct sshauthopt *ret;
+	sa_nracanaa sshauthopt *ret;
 
-	if (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
+	ပေႃး (k == NULL || !sshkey_type_is_cert(k->type) || k->cert == NULL ||
 	    k->cert->type != SSH2_CERT_TYPE_USER)
-		return NULL;
+		ပွၵ်ႈ NULL;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ပေႃး ((ret = sshauthopt_new()) == NULL)
+		ပွၵ်ႈ NULL;
 
 	/* Handle options and critical extensions separately */
-	if (cert_option_list(ret, k->cert->critical,
+	ပေႃး (cert_option_list(ret, k->cert->critical,
 	    OPTIONS_CRITICAL, 1) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
-	if (cert_option_list(ret, k->cert->extensions,
+	ပေႃး (cert_option_list(ret, k->cert->extensions,
 	    OPTIONS_EXTENSIONS, 0) == -1) {
 		sshauthopt_free(ret);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 	/* success */
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
 /*
  * Merges "additional" options to "primary" and returns the result.
  * NB. Some options from primary have primacy.
  */
-struct sshauthopt *
-sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp)
+sa_nracanaa sshauthopt *
+sshauthopt_merge(const sa_nracanaa sshauthopt *primary,
+    const sa_nracanaa sshauthopt *additional, const var_na **errstrp)
 {
-	struct sshauthopt *ret;
-	const char *errstr = "internal error";
-	const char *tmp;
+	sa_nracanaa sshauthopt *ret;
+	const var_na *errstr = "internal error";
+	const var_na *tmp;
 
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = NULL;
 
-	if ((ret = sshauthopt_new()) == NULL)
+	ပေႃး ((ret = sshauthopt_new()) == NULL)
 		goto alloc_fail;
 
 	/* cert_authority and cert_principals are cleared in result */
@@ -547,14 +547,14 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	/* Prefer access lists from primary. */
 	/* XXX err is both set and mismatch? */
 	tmp = primary->required_from_host_cert;
-	if (tmp == NULL)
+	ပေႃး (tmp == NULL)
 		tmp = additional->required_from_host_cert;
-	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
+	ပေႃး (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
 		goto alloc_fail;
 	tmp = primary->required_from_host_keys;
-	if (tmp == NULL)
+	ပေႃး (tmp == NULL)
 		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
+	ပေႃး (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
 		goto alloc_fail;
 
 	/*
@@ -562,33 +562,33 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * prefer the primary.
 	 */
 	ret->force_tun_device = primary->force_tun_device;
-	if (ret->force_tun_device == -1)
+	ပေႃး (ret->force_tun_device == -1)
 		ret->force_tun_device = additional->force_tun_device;
-	if (primary->nenv > 0) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	ပေႃး (primary->nenv > 0) {
+		ပေႃး (dup_strings(&ret->env, &ret->nenv,
 		    primary->env, primary->nenv) != 0)
 			goto alloc_fail;
-	} else if (additional->nenv) {
-		if (dup_strings(&ret->env, &ret->nenv,
+	} ပေႃးဢမ်ႇ ပေႃး (additional->nenv) {
+		ပေႃး (dup_strings(&ret->env, &ret->nenv,
 		    additional->env, additional->nenv) != 0)
 			goto alloc_fail;
 	}
-	if (primary->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	ပေႃး (primary->npermitopen > 0) {
+		ပေႃး (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    primary->permitopen, primary->npermitopen) != 0)
 			goto alloc_fail;
-	} else if (additional->npermitopen > 0) {
-		if (dup_strings(&ret->permitopen, &ret->npermitopen,
+	} ပေႃးဢမ်ႇ ပေႃး (additional->npermitopen > 0) {
+		ပေႃး (dup_strings(&ret->permitopen, &ret->npermitopen,
 		    additional->permitopen, additional->npermitopen) != 0)
 			goto alloc_fail;
 	}
 
-	if (primary->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	ပေႃး (primary->npermitlisten > 0) {
+		ပေႃး (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    primary->permitlisten, primary->npermitlisten) != 0)
 			goto alloc_fail;
-	} else if (additional->npermitlisten > 0) {
-		if (dup_strings(&ret->permitlisten, &ret->npermitlisten,
+	} ပေႃးဢမ်ႇ ပေႃး (additional->npermitlisten > 0) {
+		ပေႃး (dup_strings(&ret->permitlisten, &ret->npermitlisten,
 		    additional->permitlisten, additional->npermitlisten) != 0)
 			goto alloc_fail;
 	}
@@ -608,9 +608,9 @@ sshauthopt_merge(const struct sshauthopt *primary,
 #undef OPTFLAG_AND
 
 	/* Earliest expiry time should win */
-	if (primary->valid_before != 0)
+	ပေႃး (primary->valid_before != 0)
 		ret->valid_before = primary->valid_before;
-	if (additional->valid_before != 0 &&
+	ပေႃး (additional->valid_before != 0 &&
 	    additional->valid_before < ret->valid_before)
 		ret->valid_before = additional->valid_before;
 
@@ -618,51 +618,51 @@ sshauthopt_merge(const struct sshauthopt *primary,
 	 * When both multiple forced-command are specified, only
 	 * proceed if they are identical, otherwise fail.
 	 */
-	if (primary->force_command != NULL &&
+	ပေႃး (primary->force_command != NULL &&
 	    additional->force_command != NULL) {
-		if (strcmp(primary->force_command,
+		ပေႃး (strcmp(primary->force_command,
 		    additional->force_command) == 0) {
 			/* ok */
 			ret->force_command = strdup(primary->force_command);
-			if (ret->force_command == NULL)
+			ပေႃး (ret->force_command == NULL)
 				goto alloc_fail;
-		} else {
+		} ပေႃးဢမ်ႇ {
 			errstr = "forced command options do not match";
 			goto fail;
 		}
-	} else if (primary->force_command != NULL) {
-		if ((ret->force_command = strdup(
+	} ပေႃးဢမ်ႇ ပေႃး (primary->force_command != NULL) {
+		ပေႃး ((ret->force_command = strdup(
 		    primary->force_command)) == NULL)
 			goto alloc_fail;
-	} else if (additional->force_command != NULL) {
-		if ((ret->force_command = strdup(
+	} ပေႃးဢမ်ႇ ပေႃး (additional->force_command != NULL) {
+		ပေႃး ((ret->force_command = strdup(
 		    additional->force_command)) == NULL)
 			goto alloc_fail;
 	}
 	/* success */
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = NULL;
-	return ret;
+	ပွၵ်ႈ ret;
 
  alloc_fail:
 	errstr = "memory allocation failed";
  fail:
-	if (errstrp != NULL)
+	ပေႃး (errstrp != NULL)
 		*errstrp = errstr;
 	sshauthopt_free(ret);
-	return NULL;
+	ပွၵ်ႈ NULL;
 }
 
 /*
  * Copy options
  */
-struct sshauthopt *
-sshauthopt_copy(const struct sshauthopt *orig)
+sa_nracanaa sshauthopt *
+sshauthopt_copy(const sa_nracanaa sshauthopt *orig)
 {
-	struct sshauthopt *ret;
+	sa_nracanaa sshauthopt *ret;
 
-	if ((ret = sshauthopt_new()) == NULL)
-		return NULL;
+	ပေႃး ((ret = sshauthopt_new()) == NULL)
+		ပွၵ်ႈ NULL;
 
 #define OPTSCALAR(x) ret->x = orig->x
 	OPTSCALAR(permit_port_forwarding_flag);
@@ -679,78 +679,78 @@ sshauthopt_copy(const struct sshauthopt *orig)
 #undef OPTSCALAR
 #define OPTSTRING(x) \
 	do { \
-		if (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
+		ပေႃး (orig->x != NULL && (ret->x = strdup(orig->x)) == NULL) { \
 			sshauthopt_free(ret); \
-			return NULL; \
+			ပွၵ်ႈ NULL; \
 		} \
-	} while (0)
+	} ၶၢဝ်း (0)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
 	OPTSTRING(required_from_host_keys);
 #undef OPTSTRING
 
-	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
+	ပေႃး (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
 	    dup_strings(&ret->permitopen, &ret->npermitopen,
 	    orig->permitopen, orig->npermitopen) != 0 ||
 	    dup_strings(&ret->permitlisten, &ret->npermitlisten,
 	    orig->permitlisten, orig->npermitlisten) != 0) {
 		sshauthopt_free(ret);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-static int
-serialise_array(struct sshbuf *m, char **a, size_t n)
+static puur_naa_nka
+serialise_array(sa_nracanaa sshbuf *m, var_na **a, size_t n)
 {
-	struct sshbuf *b;
+	sa_nracanaa sshbuf *b;
 	size_t i;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 
-	if (n > INT_MAX)
-		return SSH_ERR_INTERNAL_ERROR;
+	ပေႃး (n > INT_MAX)
+		ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR;
 
-	if ((b = sshbuf_new()) == NULL) {
-		return SSH_ERR_ALLOC_FAIL;
+	ပေႃး ((b = sshbuf_new()) == NULL) {
+		ပွၵ်ႈ SSH_ERR_ALLOC_FAIL;
 	}
 	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_put_cstring(b, a[i])) != 0)
+		ပေႃး ((r = sshbuf_put_cstring(b, a[i])) != 0)
 			goto out;
 	}
-	if ((r = sshbuf_put_u32(m, n)) != 0 ||
+	ပေႃး ((r = sshbuf_put_u32(m, n)) != 0 ||
 	    (r = sshbuf_put_stringb(m, b)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-static int
-deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
+static puur_naa_nka
+deserialise_array(sa_nracanaa sshbuf *m, var_na ***ap, size_t *np)
 {
-	char **a = NULL;
+	var_na **a = NULL;
 	size_t i, n = 0;
-	struct sshbuf *b = NULL;
+	sa_nracanaa sshbuf *b = NULL;
 	u_int tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
+	ပေႃး ((r = sshbuf_get_u32(m, &tmp)) != 0 ||
 	    (r = sshbuf_froms(m, &b)) != 0)
 		goto out;
-	if (tmp > INT_MAX) {
+	ပေႃး (tmp > INT_MAX) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 	n = tmp;
-	if (n > 0 && (a = calloc(n, sizeof(*a))) == NULL) {
+	ပေႃး (n > 0 && (a = calloc(n, parimaa_na(*a))) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
+		ပေႃး ((r = sshbuf_get_cstring(b, &a[i], NULL)) != 0)
 			goto out;
 	}
 	/* success */
@@ -760,47 +760,47 @@ deserialise_array(struct sshbuf *m, char ***ap, size_t *np)
 	*np = n;
 	n = 0;
  out:
-	if (a != NULL) {
+	ပေႃး (a != NULL) {
 		for (i = 0; i < n; i++)
 			free(a[i]);
 		free(a);
 	}
 	sshbuf_free(b);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-static int
-serialise_nullable_string(struct sshbuf *m, const char *s)
+static puur_naa_nka
+serialise_nullable_string(sa_nracanaa sshbuf *m, const var_na *s)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
+	ပေႃး ((r = sshbuf_put_u8(m, s == NULL)) != 0 ||
 	    (r = sshbuf_put_cstring(m, s)) != 0)
-		return r;
-	return 0;
+		ပွၵ်ႈ r;
+	ပွၵ်ႈ 0;
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *m, char **sp)
+static puur_naa_nka
+deserialise_nullable_string(sa_nracanaa sshbuf *m, var_na **sp)
 {
-	int r;
+	puur_naa_nka r;
 	u_char flag;
 
 	*sp = NULL;
-	if ((r = sshbuf_get_u8(m, &flag)) != 0 ||
+	ပေႃး ((r = sshbuf_get_u8(m, &flag)) != 0 ||
 	    (r = sshbuf_get_cstring(m, flag ? NULL : sp, NULL)) != 0)
-		return r;
-	return 0;
+		ပွၵ်ႈ r;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
-    int untrusted)
+puur_naa_nka
+sshauthopt_serialise(const sa_nracanaa sshauthopt *opts, sa_nracanaa sshbuf *m,
+    puur_naa_nka untrusted)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 
 	/* Flag options */
-	if ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
+	ပေႃး ((r = sshbuf_put_u8(m, opts->permit_port_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_agent_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_x11_forwarding_flag)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->permit_pty_flag)) != 0 ||
@@ -809,20 +809,20 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = sshbuf_put_u8(m, opts->cert_authority)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->no_require_user_presence)) != 0 ||
 	    (r = sshbuf_put_u8(m, opts->require_verify)) != 0)
-		return r;
+		ပွၵ်ႈ r;
 
 	/* Simple integer options */
-	if ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
-		return r;
+	ပေႃး ((r = sshbuf_put_u64(m, opts->valid_before)) != 0)
+		ပွၵ်ႈ r;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
+	ပေႃး ((r = sshbuf_put_u8(m, opts->force_tun_device == -1)) != 0 ||
 	    (r = sshbuf_put_u32(m, (opts->force_tun_device < 0) ?
 	    0 : (u_int)opts->force_tun_device)) != 0)
-		return r;
+		ပွၵ်ႈ r;
 
 	/* String options; these may be NULL */
-	if ((r = serialise_nullable_string(m,
+	ပေႃး ((r = serialise_nullable_string(m,
 	    untrusted ? "yes" : opts->cert_principals)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? "true" : opts->force_command)) != 0 ||
@@ -830,39 +830,39 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
 	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
-		return r;
+		ပွၵ်ႈ r;
 
 	/* Array options */
-	if ((r = serialise_array(m, opts->env,
+	ပေႃး ((r = serialise_array(m, opts->env,
 	    untrusted ? 0 : opts->nenv)) != 0 ||
 	    (r = serialise_array(m, opts->permitopen,
 	    untrusted ? 0 : opts->npermitopen)) != 0 ||
 	    (r = serialise_array(m, opts->permitlisten,
 	    untrusted ? 0 : opts->npermitlisten)) != 0)
-		return r;
+		ပွၵ်ႈ r;
 
 	/* success */
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
+puur_naa_nka
+sshauthopt_deserialise(sa_nracanaa sshbuf *m, sa_nracanaa sshauthopt **optsp)
 {
-	struct sshauthopt *opts = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshauthopt *opts = NULL;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 	u_char f;
 	u_int tmp;
 
-	if ((opts = calloc(1, sizeof(*opts))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ပေႃး ((opts = calloc(1, parimaa_na(*opts))) == NULL)
+		ပွၵ်ႈ SSH_ERR_ALLOC_FAIL;
 
 	/* Flag options */
 #define OPT_FLAG(x) \
 	do { \
-		if ((r = sshbuf_get_u8(m, &f)) != 0) \
+		ပေႃး ((r = sshbuf_get_u8(m, &f)) != 0) \
 			goto out; \
 		opts->x = f; \
-	} while (0)
+	} ၶၢဝ်း (0)
 	OPT_FLAG(permit_port_forwarding_flag);
 	OPT_FLAG(permit_agent_forwarding_flag);
 	OPT_FLAG(permit_x11_forwarding_flag);
@@ -875,17 +875,17 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 #undef OPT_FLAG
 
 	/* Simple integer options */
-	if ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
+	ပေႃး ((r = sshbuf_get_u64(m, &opts->valid_before)) != 0)
 		goto out;
 
 	/* tunnel number can be negative to indicate "unset" */
-	if ((r = sshbuf_get_u8(m, &f)) != 0 ||
+	ပေႃး ((r = sshbuf_get_u8(m, &f)) != 0 ||
 	    (r = sshbuf_get_u32(m, &tmp)) != 0)
 		goto out;
-	opts->force_tun_device = f ? -1 : (int)tmp;
+	opts->force_tun_device = f ? -1 : (puur_naa_nka)tmp;
 
 	/* String options may be NULL */
-	if ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
+	ပေႃး ((r = deserialise_nullable_string(m, &opts->cert_principals)) != 0 ||
 	    (r = deserialise_nullable_string(m, &opts->force_command)) != 0 ||
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
@@ -894,7 +894,7 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 		goto out;
 
 	/* Array options */
-	if ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
+	ပေႃး ((r = deserialise_array(m, &opts->env, &opts->nenv)) != 0 ||
 	    (r = deserialise_array(m,
 	    &opts->permitopen, &opts->npermitopen)) != 0 ||
 	    (r = deserialise_array(m,
@@ -907,5 +907,5 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 	opts = NULL;
  out:
 	sshauthopt_free(opts);
-	return r;
+	ပွၵ်ႈ r;
 }

@@ -42,128 +42,128 @@
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (puur_naa_nka, void *, size_t), puur_naa_nka fd, void *_s, size_t n,
+    puur_naa_nka (*cb)(void *, size_t), void *cb_arg)
 {
-	char *s = _s;
+	var_na *s = _s;
 	size_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	sa_nracanaa pollfd pfd;
 
 	pfd.fd = fd;
 	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	ၶၢဝ်း (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
 		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		pak_sa -1:
+			ပေႃး (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				ပေႃး (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					ပွၵ်ႈ pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} ပေႃးဢမ်ႇ ပေႃး (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
-		case 0:
+			ပွၵ်ႈ 0;
+		pak_sa 0:
 			errno = EPIPE;
-			return pos;
+			ပွၵ်ႈ pos;
 		default:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			ပေႃး (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				ပွၵ်ႈ pos;
 			}
 		}
 	}
-	return pos;
+	ပွၵ်ႈ pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (puur_naa_nka, void *, size_t), puur_naa_nka fd, void *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	ပွၵ်ႈ atomicio6(f, fd, _s, n, NULL, NULL);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (puur_naa_nka, const sa_nracanaa iovec *, puur_naa_nka), puur_naa_nka fd,
+    const sa_nracanaa iovec *_iov, puur_naa_nka iovcnt,
+    puur_naa_nka (*cb)(void *, size_t), void *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	sa_nracanaa iovec iov_array[IOV_MAX], *iov = iov_array;
+	sa_nracanaa pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	ပေႃး (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		ပွၵ်ႈ 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	memcpy(iov, _iov, (size_t)iovcnt * parimaa_na(*_iov));
 
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#ပေႃးဢမ်ႇ
 	pfd.events = POLLIN|POLLOUT;
 #endif
 	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
 		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		pak_sa -1:
+			ပေႃး (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				ပေႃး (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					ပွၵ်ႈ pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} ပေႃးဢမ်ႇ ပေႃး (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
-		case 0:
+			ပွၵ်ႈ 0;
+		pak_sa 0:
 			errno = EPIPE;
-			return pos;
+			ပွၵ်ႈ pos;
 		default:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			ၶၢဝ်း (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			ပေႃး (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				ပွၵ်ႈ 0;
 			}
-			if (iovcnt == 0)
-				break;
+			ပေႃး (iovcnt == 0)
+				bha_nga;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((var_na *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		ပေႃး (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			ပွၵ်ႈ pos;
 		}
 	}
-	return pos;
+	ပွၵ်ႈ pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (puur_naa_nka, const sa_nracanaa iovec *, puur_naa_nka), puur_naa_nka fd,
+    const sa_nracanaa iovec *_iov, puur_naa_nka iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	ပွၵ်ႈ atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
 }

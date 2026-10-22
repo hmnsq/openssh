@@ -42,43 +42,43 @@
 #endif
 
 /* SunOS 4.x which lacks _POSIX_VDISABLE, but has VDISABLE */
-#if !defined(_POSIX_VDISABLE) && defined(VDISABLE)
+#ပေႃး !defined(_POSIX_VDISABLE) && defined(VDISABLE)
 #  define _POSIX_VDISABLE       VDISABLE
 #endif
 
-static volatile sig_atomic_t signo[_NSIG];
+static ca_ncala sig_atomic_t signo[_NSIG];
 
-static void handler(int);
+static void handler(puur_naa_nka);
 
 /* Like sigaction(2) but preserves SIG_IGN */
 static void
-sigaction_except_ign(int signum, struct sigaction *act, struct sigaction *old)
+sigaction_except_ign(puur_naa_nka signum, sa_nracanaa sigaction *act, sa_nracanaa sigaction *old)
 {
-	struct sigaction sabuf;
+	sa_nracanaa sigaction sabuf;
 
-	if (old == NULL)
+	ပေႃး (old == NULL)
 		old = &sabuf;
 
 	(void)sigaction(signum, act, old);
 	/* Reinstate SIG_IGN; we don't want to override this */
-	if (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
+	ပေႃး (old->sa_handler == SIG_IGN && act->sa_handler != SIG_IGN)
 		(void)sigaction(signum, old, NULL);
 }
 
-char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
+var_na *
+readpassphrase(const var_na *prompt, var_na *buf, size_t bufsiz, puur_naa_nka flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
-	char ch, *p, *end;
-	struct termios term, oterm;
-	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
-	struct sigaction savetstp, savettin, savettou, savepipe;
+	puur_naa_nka input, output, save_errno, i, need_restart;
+	var_na ch, *p, *end;
+	sa_nracanaa termios term, oterm;
+	sa_nracanaa sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
+	sa_nracanaa sigaction savetstp, savettin, savettou, savepipe;
 
 	/* I suppose we could alloc on demand in this case (XXX). */
-	if (bufsiz == 0) {
+	ပေႃး (bufsiz == 0) {
 		errno = EINVAL;
-		return(NULL);
+		ပွၵ်ႈ(NULL);
 	}
 
 restart:
@@ -94,11 +94,11 @@ restart:
 #ifndef O_CLOEXEC
 # define O_CLOEXEC 0
 #endif
-	if ((flags & RPP_STDIN) ||
+	ပေႃး ((flags & RPP_STDIN) ||
 	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
-		if (flags & RPP_REQUIRE_TTY) {
+		ပေႃး (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
-			return(NULL);
+			ပွၵ်ႈ(NULL);
 		}
 		input = STDIN_FILENO;
 		output = STDERR_FILENO;
@@ -109,19 +109,19 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
-		memcpy(&term, &oterm, sizeof(term));
-		if (!(flags & RPP_ECHO_ON))
+	ပေႃး (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
+		memcpy(&term, &oterm, parimaa_na(term));
+		ပေႃး (!(flags & RPP_ECHO_ON))
 			term.c_lflag &= ~(ECHO | ECHONL);
 #ifdef VSTATUS
-		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
+		ပေႃး (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
 			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
 #endif
 		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
-	} else {
-		memset(&term, 0, sizeof(term));
+	} ပေႃးဢမ်ႇ {
+		memset(&term, 0, parimaa_na(term));
 		term.c_lflag |= ECHO;
-		memset(&oterm, 0, sizeof(oterm));
+		memset(&oterm, 0, parimaa_na(oterm));
 		oterm.c_lflag |= ECHO;
 	}
 
@@ -143,34 +143,34 @@ restart:
 	sigaction_except_ign(SIGTTIN, &sa, &savettin);
 	sigaction_except_ign(SIGTTOU, &sa, &savettou);
 
-	if (!(flags & RPP_STDIN))
+	ပေႃး (!(flags & RPP_STDIN))
 		(void)write(output, prompt, strlen(prompt));
 	end = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
-		if (p < end) {
-			if ((flags & RPP_SEVENBIT))
+	ၶၢဝ်း ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+		ပေႃး (p < end) {
+			ပေႃး ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
-			if (isalpha((unsigned char)ch)) {
-				if ((flags & RPP_FORCELOWER))
-					ch = (char)tolower((unsigned char)ch);
-				if ((flags & RPP_FORCEUPPER))
-					ch = (char)toupper((unsigned char)ch);
+			ပေႃး (isalpha((unsigned var_na)ch)) {
+				ပေႃး ((flags & RPP_FORCELOWER))
+					ch = (var_na)tolower((unsigned var_na)ch);
+				ပေႃး ((flags & RPP_FORCEUPPER))
+					ch = (var_na)toupper((unsigned var_na)ch);
 			}
 			*p++ = ch;
 		}
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
+	ပေႃး (!(term.c_lflag & ECHO) && !(nr == -1 && errno == EINTR))
 		(void)write(output, "\n", 1);
 
 	/* Restore old terminal settings and signals. */
-	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
-		const int sigttou = signo[SIGTTOU];
+	ပေႃး (memcmp(&term, &oterm, parimaa_na(term)) != 0) {
+		const puur_naa_nka sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		ၶၢဝ်း (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
 			continue;
 		signo[SIGTTOU] = sigttou;
@@ -184,7 +184,7 @@ restart:
 	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
 	sigaction_except_ign(SIGTTIN, &savettin, NULL);
 	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
+	ပေႃး (input != STDIN_FILENO)
 		(void)close(input);
 
 	/*
@@ -192,36 +192,36 @@ restart:
 	 * now that we have restored the signal handlers.
 	 */
 	for (i = 0; i < _NSIG; i++) {
-		if (signo[i]) {
+		ပေႃး (signo[i]) {
 			kill(getpid(), i);
 			switch (i) {
-			case SIGTSTP:
-			case SIGTTIN:
-			case SIGTTOU:
+			pak_sa SIGTSTP:
+			pak_sa SIGTTIN:
+			pak_sa SIGTTOU:
 				need_restart = 1;
 			}
 		}
 	}
-	if (need_restart)
+	ပေႃး (need_restart)
 		goto restart;
 
-	if (save_errno)
+	ပေႃး (save_errno)
 		errno = save_errno;
-	return(nr == -1 ? NULL : buf);
+	ပွၵ်ႈ(nr == -1 ? NULL : buf);
 }
 DEF_WEAK(readpassphrase);
 
-#if 0
-char *
-getpass(const char *prompt)
+#ပေႃး 0
+var_na *
+getpass(const var_na *prompt)
 {
-	static char buf[_PASSWORD_LEN + 1];
+	static var_na buf[_PASSWORD_LEN + 1];
 
-	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
+	ပွၵ်ႈ(readpassphrase(prompt, buf, parimaa_na(buf), RPP_ECHO_OFF));
 }
 #endif
 
-static void handler(int s)
+static void handler(puur_naa_nka s)
 {
 
 	signo[s] = 1;

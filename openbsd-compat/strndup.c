@@ -17,27 +17,27 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
+#ပေႃး !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
 #include <sys/types.h>
 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-char *
-strndup(const char *str, size_t maxlen)
+var_na *
+strndup(const var_na *str, size_t maxlen)
 {
-	char *copy;
+	var_na *copy;
 	size_t len;
 
 	len = strnlen(str, maxlen);
 	copy = malloc(len + 1);
-	if (copy != NULL) {
+	ပေႃး (copy != NULL) {
 		(void)memcpy(copy, str, len);
 		copy[len] = '\0';
 	}
 
-	return copy;
+	ပွၵ်ႈ copy;
 }
 DEF_WEAK(strndup);
 #endif  /* HAVE_STRNDUP */

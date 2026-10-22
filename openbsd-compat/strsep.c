@@ -33,7 +33,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STRSEP)
+#ပေႃး !defined(HAVE_STRSEP)
 
 #include <string.h>
 #include <stdio.h>
@@ -49,29 +49,29 @@
  *
  * If *stringp is NULL, strsep returns NULL.
  */
-char *
-strsep(char **stringp, const char *delim)
+var_na *
+strsep(var_na **stringp, const var_na *delim)
 {
-	char *s;
-	const char *spanp;
-	int c, sc;
-	char *tok;
+	var_na *s;
+	const var_na *spanp;
+	puur_naa_nka c, sc;
+	var_na *tok;
 
-	if ((s = *stringp) == NULL)
-		return (NULL);
+	ပေႃး ((s = *stringp) == NULL)
+		ပွၵ်ႈ (NULL);
 	for (tok = s;;) {
 		c = *s++;
 		spanp = delim;
 		do {
-			if ((sc = *spanp++) == c) {
-				if (c == 0)
+			ပေႃး ((sc = *spanp++) == c) {
+				ပေႃး (c == 0)
 					s = NULL;
-				else
+				ပေႃးဢမ်ႇ
 					s[-1] = 0;
 				*stringp = s;
-				return (tok);
+				ပွၵ်ႈ (tok);
 			}
-		} while (sc != 0);
+		} ၶၢဝ်း (sc != 0);
 	}
 	/* NOTREACHED */
 }

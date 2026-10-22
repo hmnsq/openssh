@@ -43,17 +43,17 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 	for (i = 0; i < len; i += 16) {
 		fprintf(f, "%.4zu: ", i);
 		for (j = i; j < i + 16; j++) {
-			if (j < len)
+			ပေႃး (j < len)
 				fprintf(f, "%02x ", p[j]);
-			else
+			ပေႃးဢမ်ႇ
 				fprintf(f, "   ");
 		}
 		fprintf(f, " ");
 		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+			ပေႃး (j < len) {
+				ပေႃး  (isascii(p[j]) && isprint(p[j]))
 					fprintf(f, "%c", p[j]);
-				else
+				ပေႃးဢမ်ႇ
 					fprintf(f, ".");
 			}
 		}
@@ -62,298 +62,298 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 }
 
 void
-sshbuf_dump(const struct sshbuf *buf, FILE *f)
+sshbuf_dump(const sa_nracanaa sshbuf *buf, FILE *f)
 {
 	fprintf(f, "buffer len = %zu\n", sshbuf_len(buf));
 	sshbuf_dump_data(sshbuf_ptr(buf), sshbuf_len(buf), f);
 }
 
-char *
-sshbuf_dtob16(const struct sshbuf *buf)
+var_na *
+sshbuf_dtob16(const sa_nracanaa sshbuf *buf)
 {
 	size_t i, j, len = sshbuf_len(buf);
 	const u_char *p = sshbuf_ptr(buf);
-	char *ret;
-	const char hex[] = "0123456789abcdef";
+	var_na *ret;
+	const var_na hex[] = "0123456789abcdef";
 
-	if (len == 0)
-		return strdup("");
-	if (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
-		return NULL;
+	ပေႃး (len == 0)
+		ပွၵ်ႈ strdup("");
+	ပေႃး (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
+		ပွၵ်ႈ NULL;
 	for (i = j = 0; i < len; i++) {
 		ret[j++] = hex[(p[i] >> 4) & 0xf];
 		ret[j++] = hex[p[i] & 0xf];
 	}
 	ret[j] = '\0';
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-static int
-b16tod(const char v)
+static puur_naa_nka
+b16tod(const var_na v)
 {
-	if (v >= '0' && v <= '9')
-		return v - '0';
-	if (v >= 'a' && v <= 'f')
-		return 10 + v - 'a';
-	if (v >= 'A' && v <= 'F')
-		return 10 + v - 'A';
-	return -1;
+	ပေႃး (v >= '0' && v <= '9')
+		ပွၵ်ႈ v - '0';
+	ပေႃး (v >= 'a' && v <= 'f')
+		ပွၵ်ႈ 10 + v - 'a';
+	ပေႃး (v >= 'A' && v <= 'F')
+		ပွၵ်ႈ 10 + v - 'A';
+	ပွၵ်ႈ -1;
 }
 
-struct sshbuf *
-sshbuf_b16tod(const char *b16)
+sa_nracanaa sshbuf *
+sshbuf_b16tod(const var_na *b16)
 {
-	struct sshbuf *ret;
+	sa_nracanaa sshbuf *ret;
 	size_t o;
-	int r, v1, v2;
+	puur_naa_nka r, v1, v2;
 
-	if ((ret = sshbuf_new()) == NULL)
-		return NULL;
+	ပေႃး ((ret = sshbuf_new()) == NULL)
+		ပွၵ်ႈ NULL;
 	for (o = 0; b16[o] != '\0'; o += 2) {
-		if ((v1 = b16tod(b16[o])) == -1 ||
+		ပေႃး ((v1 = b16tod(b16[o])) == -1 ||
 		    (v2 = b16tod(b16[o + 1])) == -1) {
 			sshbuf_free(ret);
-			return NULL;
+			ပွၵ်ႈ NULL;
 		}
-		if ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
+		ပေႃး ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
 			sshbuf_free(ret);
-			return NULL;
+			ပွၵ်ႈ NULL;
 		}
 	}
 	/* success */
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-int
-sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+puur_naa_nka
+sshbuf_dtob64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, puur_naa_nka wrap)
 {
 	size_t i, slen = 0;
-	char *s = NULL;
-	int r;
+	var_na *s = NULL;
+	puur_naa_nka r;
 
-	if (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ပေႃး (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (sshbuf_len(d) == 0)
+		ပွၵ်ႈ 0;
 	slen = ((sshbuf_len(d) + 2) / 3) * 4 + 1;
-	if ((s = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
+	ပေႃး ((s = malloc(slen)) == NULL)
+		ပွၵ်ႈ SSH_ERR_ALLOC_FAIL;
+	ပေႃး (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto fail;
 	}
-	if (wrap) {
+	ပေႃး (wrap) {
 		for (i = 0; s[i] != '\0'; i++) {
-			if ((r = sshbuf_put_u8(b64, s[i])) != 0)
+			ပေႃး ((r = sshbuf_put_u8(b64, s[i])) != 0)
 				goto fail;
-			if (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+			ပေႃး (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 				goto fail;
 		}
-		if ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+		ပေႃး ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 			goto fail;
-	} else {
-		if ((r = sshbuf_put(b64, s, strlen(s))) != 0)
+	} ပေႃးဢမ်ႇ {
+		ပေႃး ((r = sshbuf_put(b64, s, strlen(s))) != 0)
 			goto fail;
 	}
 	/* Success */
 	r = 0;
  fail:
 	freezero(s, slen);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-char *
-sshbuf_dtob64_string(const struct sshbuf *buf, int wrap)
+var_na *
+sshbuf_dtob64_string(const sa_nracanaa sshbuf *buf, puur_naa_nka wrap)
 {
-	struct sshbuf *tmp;
-	char *ret;
+	sa_nracanaa sshbuf *tmp;
+	var_na *ret;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return NULL;
-	if (sshbuf_dtob64(buf, tmp, wrap) != 0) {
+	ပေႃး ((tmp = sshbuf_new()) == NULL)
+		ပွၵ်ႈ NULL;
+	ပေႃး (sshbuf_dtob64(buf, tmp, wrap) != 0) {
 		sshbuf_free(tmp);
-		return NULL;
+		ပွၵ်ႈ NULL;
 	}
 	ret = sshbuf_dup_string(tmp);
 	sshbuf_free(tmp);
-	return ret;
+	ပွၵ်ႈ ret;
 }
 
-int
-sshbuf_b64tod(struct sshbuf *buf, const char *b64)
+puur_naa_nka
+sshbuf_b64tod(sa_nracanaa sshbuf *buf, const var_na *b64)
 {
 	size_t plen = strlen(b64);
-	int nlen, r;
+	puur_naa_nka nlen, r;
 	u_char *p;
 
-	if (plen == 0)
-		return 0;
-	if ((p = malloc(plen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((nlen = b64_pton(b64, p, plen)) < 0) {
+	ပေႃး (plen == 0)
+		ပွၵ်ႈ 0;
+	ပေႃး ((p = malloc(plen)) == NULL)
+		ပွၵ်ႈ SSH_ERR_ALLOC_FAIL;
+	ပေႃး ((nlen = b64_pton(b64, p, plen)) < 0) {
 		freezero(p, plen);
-		return SSH_ERR_INVALID_FORMAT;
+		ပွၵ်ႈ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_put(buf, p, nlen)) < 0) {
+	ပေႃး ((r = sshbuf_put(buf, p, nlen)) < 0) {
 		freezero(p, plen);
-		return r;
+		ပွၵ်ႈ r;
 	}
 	freezero(p, plen);
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+puur_naa_nka
+sshbuf_dtourlb64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, puur_naa_nka wrap)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	puur_naa_nka r = SSH_ERR_INTERNAL_ERROR;
 	u_char *p;
-	struct sshbuf *b = NULL;
+	sa_nracanaa sshbuf *b = NULL;
 	size_t i, l;
 
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ပေႃး (sshbuf_len(d) == 0)
+		ပွၵ်ႈ 0;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ပေႃး ((b = sshbuf_new()) == NULL)
+		ပွၵ်ႈ SSH_ERR_ALLOC_FAIL;
 	/* Encode using regular base64; we'll transform it once done */
-	if ((r = sshbuf_dtob64(d, b, wrap)) != 0)
+	ပေႃး ((r = sshbuf_dtob64(d, b, wrap)) != 0)
 		goto out;
 	/* remove padding from end of encoded string*/
 	for (;;) {
 		l = sshbuf_len(b);
-		if (l <= 1 || sshbuf_ptr(b) == NULL) {
+		ပေႃး (l <= 1 || sshbuf_ptr(b) == NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if (sshbuf_ptr(b)[l - 1] != '=')
-			break;
-		if ((r = sshbuf_consume_end(b, 1)) != 0)
+		ပေႃး (sshbuf_ptr(b)[l - 1] != '=')
+			bha_nga;
+		ပေႃး ((r = sshbuf_consume_end(b, 1)) != 0)
 			goto out;
 	}
 	/* Replace characters with rfc4648 equivalents */
 	l = sshbuf_len(b);
-	if ((p = sshbuf_mutable_ptr(b)) == NULL) {
+	ပေႃး ((p = sshbuf_mutable_ptr(b)) == NULL) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
 	for (i = 0; i < l; i++) {
-		if (p[i] == '+')
+		ပေႃး (p[i] == '+')
 			p[i] = '-';
-		else if (p[i] == '/')
+		ပေႃးဢမ်ႇ ပေႃး (p[i] == '/')
 			p[i] = '_';
 	}
 	r = sshbuf_putb(b64, b);
  out:
 	sshbuf_free(b);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-char *
-sshbuf_dup_string(struct sshbuf *buf)
+var_na *
+sshbuf_dup_string(sa_nracanaa sshbuf *buf)
 {
 	const u_char *p = NULL, *s = sshbuf_ptr(buf);
 	size_t l = sshbuf_len(buf);
-	char *r;
+	var_na *r;
 
-	if (s == NULL || l >= SIZE_MAX)
-		return NULL;
+	ပေႃး (s == NULL || l >= SIZE_MAX)
+		ပွၵ်ႈ NULL;
 	/* accept a nul only as the last character in the buffer */
-	if (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
-		if (p != s + l - 1)
-			return NULL;
+	ပေႃး (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
+		ပေႃး (p != s + l - 1)
+			ပွၵ်ႈ NULL;
 		l--; /* the nul is put back below */
 	}
-	if ((r = malloc(l + 1)) == NULL)
-		return NULL;
-	if (l > 0)
+	ပေႃး ((r = malloc(l + 1)) == NULL)
+		ပွၵ်ႈ NULL;
+	ပေႃး (l > 0)
 		memcpy(r, s, l);
 	r[l] = '\0';
-	return r;
+	ပွၵ်ႈ r;
 }
 
-int
-sshbuf_cmp(const struct sshbuf *b, size_t offset,
+puur_naa_nka
+sshbuf_cmp(const sa_nracanaa sshbuf *b, size_t offset,
     const void *s, size_t len)
 {
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ပေႃး (sshbuf_ptr(b) == NULL)
+		ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR;
+	ပေႃး (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (offset + len > sshbuf_len(b))
+		ပွၵ်ႈ SSH_ERR_MESSAGE_INCOMPLETE;
+	ပေႃး (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
+		ပွၵ်ႈ SSH_ERR_INVALID_FORMAT;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b)
+puur_naa_nka
+sshbuf_equals(const sa_nracanaa sshbuf *a, const sa_nracanaa sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (sshbuf_len(a) == 0)
-		return 0;
-	if (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ပေႃး (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
+		ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR;
+	ပေႃး (sshbuf_len(a) != sshbuf_len(b))
+		ပွၵ်ႈ SSH_ERR_MESSAGE_INCOMPLETE;
+	ပေႃး (sshbuf_len(a) == 0)
+		ပွၵ်ႈ 0;
+	ပေႃး (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		ပွၵ်ႈ SSH_ERR_INVALID_FORMAT;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
+puur_naa_nka
+sshbuf_find(const sa_nracanaa sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp)
 {
 	void *p;
 
-	if (offsetp != NULL)
+	ပေႃး (offsetp != NULL)
 		*offsetp = 0;
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if ((p = memmem(sshbuf_ptr(b) + start_offset,
+	ပေႃး (sshbuf_ptr(b) == NULL)
+		ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR;
+	ပေႃး (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		ပွၵ်ႈ SSH_ERR_INVALID_ARGUMENT;
+	ပေႃး (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
+		ပွၵ်ႈ SSH_ERR_MESSAGE_INCOMPLETE;
+	ပေႃး ((p = memmem(sshbuf_ptr(b) + start_offset,
 	    sshbuf_len(b) - start_offset, s, len)) == NULL)
-		return SSH_ERR_INVALID_FORMAT;
-	if (offsetp != NULL)
+		ပွၵ်ႈ SSH_ERR_INVALID_FORMAT;
+	ပေႃး (offsetp != NULL)
 		*offsetp = (const u_char *)p - sshbuf_ptr(b);
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
-int
-sshbuf_read(int fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
+puur_naa_nka
+sshbuf_read(puur_naa_nka fd, sa_nracanaa sshbuf *buf, size_t maxlen, size_t *rlen)
 {
-	int r, oerrno;
+	puur_naa_nka r, oerrno;
 	size_t adjust;
 	ssize_t rr;
 	u_char *d;
 
-	if (rlen != NULL)
+	ပေႃး (rlen != NULL)
 		*rlen = 0;
-	if ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
-		return r;
+	ပေႃး ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
+		ပွၵ်ႈ r;
 	rr = read(fd, d, maxlen);
 	oerrno = errno;
 
 	/* Adjust the buffer to include only what was actually read */
-	if ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
-		if ((r = sshbuf_consume_end(buf, adjust)) != 0) {
+	ပေႃး ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
+		ပေႃး ((r = sshbuf_consume_end(buf, adjust)) != 0) {
 			/* avoid returning uninitialised data to caller */
 			memset(d + rr, '\0', adjust);
-			return SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
+			ပွၵ်ႈ SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
 		}
 	}
-	if (rr < 0) {
+	ပေႃး (rr < 0) {
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
-	} else if (rr == 0) {
+		ပွၵ်ႈ SSH_ERR_SYSTEM_ERROR;
+	} ပေႃးဢမ်ႇ ပေႃး (rr == 0) {
 		errno = EPIPE;
-		return SSH_ERR_SYSTEM_ERROR;
+		ပွၵ်ႈ SSH_ERR_SYSTEM_ERROR;
 	}
 	/* success */
-	if (rlen != NULL)
+	ပေႃး (rlen != NULL)
 		*rlen = (size_t)rr;
-	return 0;
+	ပွၵ်ႈ 0;
 }

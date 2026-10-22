@@ -63,7 +63,7 @@ attrib_clear(Attrib *a)
 
 /* Convert from struct stat to filexfer attribs */
 void
-stat_to_attrib(const struct stat *st, Attrib *a)
+stat_to_attrib(const sa_nracanaa stat *st, Attrib *a)
 {
 	attrib_clear(a);
 	a->flags = 0;
@@ -81,129 +81,129 @@ stat_to_attrib(const struct stat *st, Attrib *a)
 
 /* Convert from filexfer attribs to struct stat */
 void
-attrib_to_stat(const Attrib *a, struct stat *st)
+attrib_to_stat(const Attrib *a, sa_nracanaa stat *st)
 {
-	memset(st, 0, sizeof(*st));
+	memset(st, 0, parimaa_na(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
-decode_attrib(struct sshbuf *b, Attrib *a)
+puur_naa_nka
+decode_attrib(sa_nracanaa sshbuf *b, Attrib *a)
 {
-	int r;
+	puur_naa_nka r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	ပေႃး ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		ပွၵ်ႈ r;
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		ပေႃး ((r = sshbuf_get_u64(b, &a->size)) != 0)
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		ပေႃး ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		ပေႃး ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		ပေႃး ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			ပွၵ်ႈ r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-		char *type;
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+		var_na *type;
 		u_char *data;
 		size_t dlen;
 		u_int i, count;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
+		ပေႃး ((r = sshbuf_get_u32(b, &count)) != 0)
+			ပွၵ်ႈ r;
+		ပေႃး (count > 0x100000)
+			ပွၵ်ႈ SSH_ERR_INVALID_FORMAT;
 		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
+			ပေႃး ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+				ပွၵ်ႈ r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
 			free(type);
 			free(data);
 		}
 	}
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 /* Encode attributes to buffer */
-int
-encode_attrib(struct sshbuf *b, const Attrib *a)
+puur_naa_nka
+encode_attrib(sa_nracanaa sshbuf *b, const Attrib *a)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	ပေႃး ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		ပွၵ်ႈ r;
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		ပေႃး ((r = sshbuf_put_u64(b, a->size)) != 0)
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		ပေႃး ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		ပေႃး ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			ပွၵ်ႈ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	ပေႃး (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		ပေႃး ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			ပွၵ်ႈ r;
 	}
-	return 0;
+	ပွၵ်ႈ 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
-const char *
-fx2txt(int status)
+const var_na *
+fx2txt(puur_naa_nka status)
 {
 	switch (status) {
-	case SSH2_FX_OK:
-		return("No error");
-	case SSH2_FX_EOF:
-		return("End of file");
-	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
-	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
-	case SSH2_FX_FAILURE:
-		return("Failure");
-	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
-	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
-	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
-	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
+	pak_sa SSH2_FX_OK:
+		ပွၵ်ႈ("No error");
+	pak_sa SSH2_FX_EOF:
+		ပွၵ်ႈ("End of file");
+	pak_sa SSH2_FX_NO_SUCH_FILE:
+		ပွၵ်ႈ("No such file or directory");
+	pak_sa SSH2_FX_PERMISSION_DENIED:
+		ပွၵ်ႈ("Permission denied");
+	pak_sa SSH2_FX_FAILURE:
+		ပွၵ်ႈ("Failure");
+	pak_sa SSH2_FX_BAD_MESSAGE:
+		ပွၵ်ႈ("Bad message");
+	pak_sa SSH2_FX_NO_CONNECTION:
+		ပွၵ်ႈ("No connection");
+	pak_sa SSH2_FX_CONNECTION_LOST:
+		ပွၵ်ႈ("Connection lost");
+	pak_sa SSH2_FX_OP_UNSUPPORTED:
+		ပွၵ်ႈ("Operation unsupported");
 	default:
-		return("Unknown status");
+		ပွၵ်ႈ("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -211,53 +211,53 @@ fx2txt(int status)
 /*
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
-char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
-    const char *user, const char *group)
+var_na *
+ls_file(const var_na *name, const sa_nracanaa stat *st, puur_naa_nka remote, puur_naa_nka si_units,
+    const var_na *user, const var_na *group)
 {
-	int ulen, glen, sz = 0;
-	struct tm *ltime = localtime(&st->st_mtime);
-	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
-	char sbuf[FMT_SCALED_STRSIZE];
+	puur_naa_nka ulen, glen, sz = 0;
+	sa_nracanaa tm *ltime = localtime(&st->st_mtime);
+	var_na buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
+	var_na sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
-			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
+	ပေႃး (remote) {
+		ပေႃး (user == NULL) {
+			snprintf(ubuf, parimaa_na ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
-			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
+		ပေႃး (group == NULL) {
+			snprintf(gbuf, parimaa_na gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
-		strlcpy(lc, "?", sizeof(lc));
-	} else {
+		strlcpy(lc, "?", parimaa_na(lc));
+	} ပေႃးဢမ်ႇ {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
-		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
+		snprintf(lc, parimaa_na(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
+	ပေႃး (ltime != NULL) {
 		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+		ပေႃး (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
-			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
-			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
+			sz = strftime(tbuf, parimaa_na tbuf, "%b %e %H:%M", ltime);
+		ပေႃးဢမ်ႇ
+			sz = strftime(tbuf, parimaa_na tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	ပေႃး (sz == 0)
 		tbuf[0] = '\0';
 	ulen = MAXIMUM(strlen(user), 8);
 	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
+	ပေႃး (si_units) {
 		fmt_scaled((long long)st->st_size, sbuf);
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
+		snprintf(buf, parimaa_na buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
+	} ပေႃးဢမ်ႇ {
+		snprintf(buf, parimaa_na buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    (unsigned long long)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	ပွၵ်ႈ xstrdup(buf);
 }

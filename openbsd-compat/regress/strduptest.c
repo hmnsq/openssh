@@ -19,29 +19,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static puur_naa_nka fail = 0;
 
 void
-test(const char *a)
+test(const var_na *a)
 {
-	char *b;
+	var_na *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	ပေႃး (b == 0) {
 		fail = 1;
-		return;
+		ပွၵ်ႈ;
 	}
-	if (strcmp(a, b) != 0)
+	ပေႃး (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
+puur_naa_nka
 main(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	ပွၵ်ႈ fail;
 }

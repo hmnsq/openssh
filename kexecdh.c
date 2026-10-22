@@ -26,7 +26,7 @@
 
 #include "includes.h"
 
-#if defined(WITH_OPENSSL)
+#ပေႃး defined(WITH_OPENSSL)
 
 #include <sys/types.h>
 
@@ -41,31 +41,31 @@
 #include "sshbuf.h"
 #include "ssherr.h"
 
-int
-kex_ecdh_keypair(struct kex *kex)
+puur_naa_nka
+kex_ecdh_keypair(sa_nracanaa kex *kex)
 {
 	EC_KEY *client_key = NULL;
 	const EC_GROUP *group;
 	const EC_POINT *public_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	sa_nracanaa sshbuf *buf = NULL;
+	puur_naa_nka r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	ပေႃး ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	ပေႃး (EC_KEY_generate_key(client_key) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	group = EC_KEY_get0_group(client_key);
 	public_key = EC_KEY_get0_public_key(client_key);
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ပေႃး ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
+	ပေႃး ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
 	    (r = sshbuf_get_u32(buf, NULL)) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
@@ -80,27 +80,27 @@ kex_ecdh_keypair(struct kex *kex)
  out:
 	EC_KEY_free(client_key);
 	sshbuf_free(buf);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-int
-kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_ecdh_enc(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *client_blob,
+    sa_nracanaa sshbuf **server_blobp, sa_nracanaa sshbuf **shared_secretp)
 {
 	const EC_GROUP *group;
 	const EC_POINT *pub_key;
 	EC_KEY *server_key = NULL;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	sa_nracanaa sshbuf *server_blob = NULL;
+	puur_naa_nka r;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	ပေႃး ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	ပေႃး (EC_KEY_generate_key(server_key) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -111,14 +111,14 @@ kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
 	sshkey_dump_ec_key(server_key);
 #endif
 	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ပေႃး ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
+	ပေႃး ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
 	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
 		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	ပေႃး ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
 	    0, shared_secretp)) != 0)
 		goto out;
 	*server_blobp = server_blob;
@@ -126,33 +126,33 @@ kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
  out:
 	EC_KEY_free(server_key);
 	sshbuf_free(server_blob);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_ecdh_dec_key_group(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *ec_blob,
+    EC_KEY *key, const EC_GROUP *group, puur_naa_nka raw, sa_nracanaa sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	BIGNUM *shared_secret = NULL;
 	EC_POINT *dh_pub = NULL;
 	u_char *kbuf = NULL;
 	size_t klen = 0;
-	int r;
+	puur_naa_nka r;
 
 	*shared_secretp = NULL;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ပေႃး ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
+	ပေႃး ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
 		goto out;
-	if ((dh_pub = EC_POINT_new(group)) == NULL) {
+	ပေႃး ((dh_pub = EC_POINT_new(group)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
+	ပေႃး ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
 		goto out;
 	}
 	sshbuf_reset(buf);
@@ -161,35 +161,35 @@ kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
 	fputs("public key:\n", stderr);
 	sshkey_dump_ec_point(group, dh_pub);
 #endif
-	if (sshkey_ec_validate_public(group, dh_pub) != 0) {
+	ပေႃး (sshkey_ec_validate_public(group, dh_pub) != 0) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
 		goto out;
 	}
 	klen = (EC_GROUP_get_degree(group) + 7) / 8;
-	if ((kbuf = malloc(klen)) == NULL) {
+	ပေႃး ((kbuf = malloc(klen)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	ပေႃး (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (puur_naa_nka)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 #ifdef DEBUG_KEXECDH
 	dump_digest("shared secret", kbuf, klen);
 #endif
-	if (raw) {
-		if ((r = sshbuf_put(buf, kbuf, klen)) != 0)
+	ပေႃး (raw) {
+		ပေႃး ((r = sshbuf_put(buf, kbuf, klen)) != 0)
 			goto out;
-	} else {
-		if ((shared_secret = BN_new()) == NULL) {
+	} ပေႃးဢမ်ႇ {
+		ပေႃး ((shared_secret = BN_new()) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		if (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
+		ပေႃး (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
-		if ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
+		ပေႃး ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
 			goto out;
 	}
 	*shared_secretp = buf;
@@ -199,20 +199,20 @@ kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
 	BN_clear_free(shared_secret);
 	freezero(kbuf, klen);
 	sshbuf_free(buf);
-	return r;
+	ပွၵ်ႈ r;
 }
 
-int
-kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+puur_naa_nka
+kex_ecdh_dec(sa_nracanaa kex *kex, const sa_nracanaa sshbuf *server_blob,
+    sa_nracanaa sshbuf **shared_secretp)
 {
-	int r;
+	puur_naa_nka r;
 
 	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
 	    kex->ec_group, 0, shared_secretp);
 	EC_KEY_free(kex->ec_client_key);
 	kex->ec_client_key = NULL;
-	return r;
+	ပွၵ်ႈ r;
 }
 
 #endif /* WITH_OPENSSL */

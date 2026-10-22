@@ -54,7 +54,7 @@
 #ifndef PKCS11_H
 #define PKCS11_H 1
 
-#if defined(__cplusplus)
+#ပေႃး defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -79,18 +79,18 @@ extern "C" {
 
 /* System dependencies.  */
 
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#ပေႃး defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 
 /* There is a matching pop below.  */
 #pragma pack(push, cryptoki, 1)
 
 #ifdef CRYPTOKI_EXPORTS
 #define CK_SPEC __declspec(dllexport)
-#else
+#ပေႃးဢမ်ႇ
 #define CK_SPEC __declspec(dllimport)
 #endif
 
-#else
+#ပေႃးဢမ်ႇ
 
 #define CK_SPEC
 
@@ -189,20 +189,20 @@ extern "C" {
 
 typedef unsigned long ck_flags_t;
 
-struct ck_version
+sa_nracanaa ck_version
 {
-  unsigned char major;
-  unsigned char minor;
+  unsigned var_na major;
+  unsigned var_na minor;
 };
 
 
-struct ck_info
+sa_nracanaa ck_info
 {
-  struct ck_version cryptoki_version;
-  unsigned char manufacturer_id[32];
+  sa_nracanaa ck_version cryptoki_version;
+  unsigned var_na manufacturer_id[32];
   ck_flags_t flags;
-  unsigned char library_description[32];
-  struct ck_version library_version;
+  unsigned var_na library_description[32];
+  sa_nracanaa ck_version library_version;
 };
 
 
@@ -214,13 +214,13 @@ typedef unsigned long ck_notification_t;
 typedef unsigned long ck_slot_id_t;
 
 
-struct ck_slot_info
+sa_nracanaa ck_slot_info
 {
-  unsigned char slot_description[64];
-  unsigned char manufacturer_id[32];
+  unsigned var_na slot_description[64];
+  unsigned var_na manufacturer_id[32];
   ck_flags_t flags;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
+  sa_nracanaa ck_version hardware_version;
+  sa_nracanaa ck_version firmware_version;
 };
 
 
@@ -230,12 +230,12 @@ struct ck_slot_info
 #define CKF_ARRAY_ATTRIBUTE	(1UL << 30)
 
 
-struct ck_token_info
+sa_nracanaa ck_token_info
 {
-  unsigned char label[32];
-  unsigned char manufacturer_id[32];
-  unsigned char model[16];
-  unsigned char serial_number[16];
+  unsigned var_na label[32];
+  unsigned var_na manufacturer_id[32];
+  unsigned var_na model[16];
+  unsigned var_na serial_number[16];
   ck_flags_t flags;
   unsigned long max_session_count;
   unsigned long session_count;
@@ -247,9 +247,9 @@ struct ck_token_info
   unsigned long free_public_memory;
   unsigned long total_private_memory;
   unsigned long free_private_memory;
-  struct ck_version hardware_version;
-  struct ck_version firmware_version;
-  unsigned char utc_time[16];
+  sa_nracanaa ck_version hardware_version;
+  sa_nracanaa ck_version firmware_version;
+  unsigned var_na utc_time[16];
 };
 
 
@@ -297,7 +297,7 @@ typedef unsigned long ck_state_t;
 #define CKS_RW_SO_FUNCTIONS	(4UL)
 
 
-struct ck_session_info
+sa_nracanaa ck_session_info
 {
   ck_slot_id_t slot_id;
   ck_state_t state;
@@ -504,7 +504,7 @@ typedef unsigned long ck_attribute_type_t;
 #define CKA_VENDOR_DEFINED		(1UL << 31)
 
 
-struct ck_attribute
+sa_nracanaa ck_attribute
 {
   ck_attribute_type_t type;
   void *value;
@@ -512,11 +512,11 @@ struct ck_attribute
 };
 
 
-struct ck_date
+sa_nracanaa ck_date
 {
-  unsigned char year[4];
-  unsigned char month[2];
-  unsigned char day[2];
+  unsigned var_na year[4];
+  unsigned var_na month[2];
+  unsigned var_na day[2];
 };
 
 
@@ -821,7 +821,7 @@ typedef unsigned long ck_mechanism_type_t;
 
 #define CKM_VENDOR_DEFINED		(1UL << 31)
 
-struct ck_mechanism
+sa_nracanaa ck_mechanism
 {
   ck_mechanism_type_t mechanism;
   void *parameter;
@@ -829,7 +829,7 @@ struct ck_mechanism
 };
 
 
-struct ck_mechanism_info
+sa_nracanaa ck_mechanism_info
 {
   unsigned long min_key_size;
   unsigned long max_key_size;
@@ -879,31 +879,31 @@ struct ck_mechanism_info
 #define CKD_SHA384_KDF			(0x7UL)
 #define CKD_SHA512_KDF			(0x8UL)
 
-typedef struct CK_ECDH1_DERIVE_PARAMS {
+typedef sa_nracanaa CK_ECDH1_DERIVE_PARAMS {
 	unsigned long  kdf;
 	unsigned long  ulSharedDataLen;
-	unsigned char *  pSharedData;
+	unsigned var_na *  pSharedData;
 	unsigned long  ulPublicDataLen;
-	unsigned char *  pPublicData;
+	unsigned var_na *  pPublicData;
 } CK_ECDH1_DERIVE_PARAMS;
 
-typedef struct CK_ECMQV_DERIVE_PARAMS {
+typedef sa_nracanaa CK_ECMQV_DERIVE_PARAMS {
 	unsigned long kdf;
 	unsigned long ulSharedDataLen;
-	unsigned char * pSharedData;
+	unsigned var_na * pSharedData;
 	unsigned long ulPublicDataLen;
-	unsigned char * pPublicData;
+	unsigned var_na * pPublicData;
 	unsigned long ulPrivateDataLen;
 	CK_OBJECT_HANDLE hPrivateData;
 	unsigned long ulPublicDataLen2;
-	unsigned char * pPublicData2;
+	unsigned var_na * pPublicData2;
 	CK_OBJECT_HANDLE publicKey;
 } CK_ECMQV_DERIVE_PARAMS;
 
 typedef unsigned long ck_rsa_pkcs_mgf_type_t;
 typedef unsigned long CK_RSA_PKCS_OAEP_SOURCE_TYPE;
 
-typedef struct CK_RSA_PKCS_OAEP_PARAMS {
+typedef sa_nracanaa CK_RSA_PKCS_OAEP_PARAMS {
 	CK_MECHANISM_TYPE hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
 	CK_RSA_PKCS_OAEP_SOURCE_TYPE source;
@@ -911,7 +911,7 @@ typedef struct CK_RSA_PKCS_OAEP_PARAMS {
 	unsigned long ulSourceDataLen;
 } CK_RSA_PKCS_OAEP_PARAMS;
 
-typedef struct CK_RSA_PKCS_PSS_PARAMS {
+typedef sa_nracanaa CK_RSA_PKCS_PSS_PARAMS {
 	ck_mechanism_type_t hashAlg;
 	CK_RSA_PKCS_MGF_TYPE mgf;
 	unsigned long sLen;
@@ -929,7 +929,7 @@ typedef struct CK_RSA_PKCS_PSS_PARAMS {
 
 #define CKZ_DATA_SPECIFIED	(0x00000001UL)
 
-typedef struct CK_GCM_PARAMS {
+typedef sa_nracanaa CK_GCM_PARAMS {
 	void * pIv;
 	unsigned long ulIvLen;
 	unsigned long ulIvBits;
@@ -938,34 +938,34 @@ typedef struct CK_GCM_PARAMS {
 	unsigned long ulTagBits;
 } CK_GCM_PARAMS;
 
-typedef struct CK_CCM_PARAMS {
+typedef sa_nracanaa CK_CCM_PARAMS {
 	unsigned long ulDataLen;
-	unsigned char *pNonce;
+	unsigned var_na *pNonce;
 	unsigned long ulNonceLen;
-	unsigned char *pAAD;
+	unsigned var_na *pAAD;
 	unsigned long ulAADLen;
 	unsigned long ulMACLen;
 } CK_CCM_PARAMS;
 
 /* EDDSA */
-typedef struct CK_EDDSA_PARAMS {
-	unsigned char phFlag;
+typedef sa_nracanaa CK_EDDSA_PARAMS {
+	unsigned var_na phFlag;
 	unsigned long ulContextDataLen;
-	unsigned char *pContextData;
+	unsigned var_na *pContextData;
 } CK_EDDSA_PARAMS;
 
 typedef CK_EDDSA_PARAMS *CK_EDDSA_PARAMS_PTR;
 
 /* XEDDSA */
-typedef struct CK_XEDDSA_PARAMS {
+typedef sa_nracanaa CK_XEDDSA_PARAMS {
 	unsigned long hash;
 } CK_XEDDSA_PARAMS;
 
 typedef CK_XEDDSA_PARAMS *CK_XEDDSA_PARAMS_PTR;
 
-typedef struct CK_AES_CTR_PARAMS {
+typedef sa_nracanaa CK_AES_CTR_PARAMS {
     unsigned long ulCounterBits;
-    unsigned char cb[16];
+    unsigned var_na cb[16];
 } CK_AES_CTR_PARAMS;
 
 typedef CK_AES_CTR_PARAMS *CK_AES_CTR_PARAMS_PTR;
@@ -980,8 +980,8 @@ typedef unsigned long ck_rv_t;
 typedef ck_rv_t (*ck_notify_t) (ck_session_handle_t session,
 				ck_notification_t event, void *application);
 
-struct ck_interface {
-  char * pInterfaceName;
+sa_nracanaa ck_interface {
+  var_na * pInterfaceName;
   void * pFunctionList;
   ck_flags_t flags;
 };
@@ -989,8 +989,8 @@ struct ck_interface {
 #define CKF_INTERFACE_FORK_SAFE	(0x00000001UL)
 
 /* Forward reference.  */
-struct ck_function_list;
-struct ck_function_list_3_0;
+sa_nracanaa ck_function_list;
+sa_nracanaa ck_function_list_3_0;
 
 #define _CK_DECLARE_FUNCTION(name, args)	\
 typedef ck_rv_t (*CK_ ## name) args;		\
@@ -998,17 +998,17 @@ ck_rv_t CK_SPEC name args
 
 _CK_DECLARE_FUNCTION (C_Initialize, (void *init_args));
 _CK_DECLARE_FUNCTION (C_Finalize, (void *reserved));
-_CK_DECLARE_FUNCTION (C_GetInfo, (struct ck_info *info));
+_CK_DECLARE_FUNCTION (C_GetInfo, (sa_nracanaa ck_info *info));
 _CK_DECLARE_FUNCTION (C_GetFunctionList,
-		      (struct ck_function_list **function_list));
+		      (sa_nracanaa ck_function_list **function_list));
 
 _CK_DECLARE_FUNCTION (C_GetSlotList,
-		      (unsigned char token_present, ck_slot_id_t *slot_list,
+		      (unsigned var_na token_present, ck_slot_id_t *slot_list,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetSlotInfo,
-		      (ck_slot_id_t slot_id, struct ck_slot_info *info));
+		      (ck_slot_id_t slot_id, sa_nracanaa ck_slot_info *info));
 _CK_DECLARE_FUNCTION (C_GetTokenInfo,
-		      (ck_slot_id_t slot_id, struct ck_token_info *info));
+		      (ck_slot_id_t slot_id, sa_nracanaa ck_token_info *info));
 _CK_DECLARE_FUNCTION (C_WaitForSlotEvent,
 		      (ck_flags_t flags, ck_slot_id_t *slot, void *reserved));
 _CK_DECLARE_FUNCTION (C_GetMechanismList,
@@ -1017,16 +1017,16 @@ _CK_DECLARE_FUNCTION (C_GetMechanismList,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetMechanismInfo,
 		      (ck_slot_id_t slot_id, ck_mechanism_type_t type,
-		       struct ck_mechanism_info *info));
+		       sa_nracanaa ck_mechanism_info *info));
 _CK_DECLARE_FUNCTION (C_InitToken,
-		      (ck_slot_id_t slot_id, unsigned char *pin,
-		       unsigned long pin_len, unsigned char *label));
+		      (ck_slot_id_t slot_id, unsigned var_na *pin,
+		       unsigned long pin_len, unsigned var_na *label));
 _CK_DECLARE_FUNCTION (C_InitPIN,
-		      (ck_session_handle_t session, unsigned char *pin,
+		      (ck_session_handle_t session, unsigned var_na *pin,
 		       unsigned long pin_len));
 _CK_DECLARE_FUNCTION (C_SetPIN,
-		      (ck_session_handle_t session, unsigned char *old_pin,
-		       unsigned long old_len, unsigned char *new_pin,
+		      (ck_session_handle_t session, unsigned var_na *old_pin,
+		       unsigned long old_len, unsigned var_na *new_pin,
 		       unsigned long new_len));
 
 _CK_DECLARE_FUNCTION (C_OpenSession,
@@ -1037,29 +1037,29 @@ _CK_DECLARE_FUNCTION (C_CloseSession, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CloseAllSessions, (ck_slot_id_t slot_id));
 _CK_DECLARE_FUNCTION (C_GetSessionInfo,
 		      (ck_session_handle_t session,
-		       struct ck_session_info *info));
+		       sa_nracanaa ck_session_info *info));
 _CK_DECLARE_FUNCTION (C_GetOperationState,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
+		       unsigned var_na *operation_state,
 		       unsigned long *operation_state_len));
 _CK_DECLARE_FUNCTION (C_SetOperationState,
 		      (ck_session_handle_t session,
-		       unsigned char *operation_state,
+		       unsigned var_na *operation_state,
 		       unsigned long operation_state_len,
 		       ck_object_handle_t encryption_key,
 		       ck_object_handle_t authentication_key));
 _CK_DECLARE_FUNCTION (C_Login,
 		      (ck_session_handle_t session, ck_user_type_t user_type,
-		       unsigned char *pin, unsigned long pin_len));
+		       unsigned var_na *pin, unsigned long pin_len));
 _CK_DECLARE_FUNCTION (C_Logout, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_CreateObject,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long count, ck_object_handle_t *object));
 _CK_DECLARE_FUNCTION (C_CopyObject,
 		      (ck_session_handle_t session, ck_object_handle_t object,
-		       struct ck_attribute *templ, unsigned long count,
+		       sa_nracanaa ck_attribute *templ, unsigned long count,
 		       ck_object_handle_t *new_object));
 _CK_DECLARE_FUNCTION (C_DestroyObject,
 		      (ck_session_handle_t session,
@@ -1071,16 +1071,16 @@ _CK_DECLARE_FUNCTION (C_GetObjectSize,
 _CK_DECLARE_FUNCTION (C_GetAttributeValue,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_SetAttributeValue,
 		      (ck_session_handle_t session,
 		       ck_object_handle_t object,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_FindObjectsInit,
 		      (ck_session_handle_t session,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long count));
 _CK_DECLARE_FUNCTION (C_FindObjects,
 		      (ck_session_handle_t session,
@@ -1092,201 +1092,201 @@ _CK_DECLARE_FUNCTION (C_FindObjectsFinal,
 
 _CK_DECLARE_FUNCTION (C_EncryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Encrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *encrypted_data,
+		       unsigned var_na *data, unsigned long data_len,
+		       unsigned var_na *encrypted_data,
 		       unsigned long *encrypted_data_len));
 _CK_DECLARE_FUNCTION (C_EncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *part, unsigned long part_len,
+		       unsigned var_na *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_EncryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_encrypted_part,
+		       unsigned var_na *last_encrypted_part,
 		       unsigned long *last_encrypted_part_len));
 
 _CK_DECLARE_FUNCTION (C_DecryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Decrypt,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_data,
+		       unsigned var_na *encrypted_data,
 		       unsigned long encrypted_data_len,
-		       unsigned char *data, unsigned long *data_len));
+		       unsigned var_na *data, unsigned long *data_len));
 _CK_DECLARE_FUNCTION (C_DecryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part, unsigned long *part_len));
+		       unsigned var_na *part, unsigned long *part_len));
 _CK_DECLARE_FUNCTION (C_DecryptFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *last_part,
+		       unsigned var_na *last_part,
 		       unsigned long *last_part_len));
 
 _CK_DECLARE_FUNCTION (C_DigestInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism));
+		       sa_nracanaa ck_mechanism *mechanism));
 _CK_DECLARE_FUNCTION (C_Digest,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *digest,
+		       unsigned var_na *data, unsigned long data_len,
+		       unsigned var_na *digest,
 		       unsigned long *digest_len));
 _CK_DECLARE_FUNCTION (C_DigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned var_na *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_DigestKey,
 		      (ck_session_handle_t session, ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_DigestFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *digest,
+		       unsigned var_na *digest,
 		       unsigned long *digest_len));
 
 _CK_DECLARE_FUNCTION (C_SignInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Sign,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *data, unsigned long data_len,
+		       unsigned var_na *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned var_na *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_SignFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_SignRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *data, unsigned long data_len,
+		       unsigned var_na *signature,
 		       unsigned long *signature_len));
 
 _CK_DECLARE_FUNCTION (C_VerifyInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_Verify,
 		      (ck_session_handle_t session,
-		       unsigned char *data, unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *data, unsigned long data_len,
+		       unsigned var_na *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len));
+		       unsigned var_na *part, unsigned long part_len));
 _CK_DECLARE_FUNCTION (C_VerifyFinal,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyRecoverInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_VerifyRecover,
 		      (ck_session_handle_t session,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long signature_len,
-		       unsigned char *data,
+		       unsigned var_na *data,
 		       unsigned long *data_len));
 
 _CK_DECLARE_FUNCTION (C_DigestEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *part, unsigned long part_len,
+		       unsigned var_na *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptDigestUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part,
+		       unsigned var_na *part,
 		       unsigned long *part_len));
 _CK_DECLARE_FUNCTION (C_SignEncryptUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *part, unsigned long part_len,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *part, unsigned long part_len,
+		       unsigned var_na *encrypted_part,
 		       unsigned long *encrypted_part_len));
 _CK_DECLARE_FUNCTION (C_DecryptVerifyUpdate,
 		      (ck_session_handle_t session,
-		       unsigned char *encrypted_part,
+		       unsigned var_na *encrypted_part,
 		       unsigned long encrypted_part_len,
-		       unsigned char *part,
+		       unsigned var_na *part,
 		       unsigned long *part_len));
 
 _CK_DECLARE_FUNCTION (C_GenerateKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_mechanism *mechanism,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long count,
 		       ck_object_handle_t *key));
 _CK_DECLARE_FUNCTION (C_GenerateKeyPair,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
-		       struct ck_attribute *public_key_template,
+		       sa_nracanaa ck_mechanism *mechanism,
+		       sa_nracanaa ck_attribute *public_key_template,
 		       unsigned long public_key_attribute_count,
-		       struct ck_attribute *private_key_template,
+		       sa_nracanaa ck_attribute *private_key_template,
 		       unsigned long private_key_attribute_count,
 		       ck_object_handle_t *public_key,
 		       ck_object_handle_t *private_key));
 _CK_DECLARE_FUNCTION (C_WrapKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t wrapping_key,
 		       ck_object_handle_t key,
-		       unsigned char *wrapped_key,
+		       unsigned var_na *wrapped_key,
 		       unsigned long *wrapped_key_len));
 _CK_DECLARE_FUNCTION (C_UnwrapKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t unwrapping_key,
-		       unsigned char *wrapped_key,
+		       unsigned var_na *wrapped_key,
 		       unsigned long wrapped_key_len,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long attribute_count,
 		       ck_object_handle_t *key));
 _CK_DECLARE_FUNCTION (C_DeriveKey,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t base_key,
-		       struct ck_attribute *templ,
+		       sa_nracanaa ck_attribute *templ,
 		       unsigned long attribute_count,
 		       ck_object_handle_t *key));
 
 _CK_DECLARE_FUNCTION (C_SeedRandom,
-		      (ck_session_handle_t session, unsigned char *seed,
+		      (ck_session_handle_t session, unsigned var_na *seed,
 		       unsigned long seed_len));
 _CK_DECLARE_FUNCTION (C_GenerateRandom,
 		      (ck_session_handle_t session,
-		       unsigned char *random_data,
+		       unsigned var_na *random_data,
 		       unsigned long random_len));
 
 _CK_DECLARE_FUNCTION (C_GetFunctionStatus, (ck_session_handle_t session));
 _CK_DECLARE_FUNCTION (C_CancelFunction, (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_GetInterfaceList,
-		      (struct ck_interface *interfaces_list,
+		      (sa_nracanaa ck_interface *interfaces_list,
 		       unsigned long *count));
 _CK_DECLARE_FUNCTION (C_GetInterface,
-		      (unsigned char *interface_name,
-		       struct ck_version *version,
-		       struct ck_interface **interface_ptr,
+		      (unsigned var_na *interface_name,
+		       sa_nracanaa ck_version *version,
+		       sa_nracanaa ck_interface **interface_ptr,
 		       ck_flags_t flags));
 
 _CK_DECLARE_FUNCTION (C_LoginUser,
 		      (ck_session_handle_t session,
 		       ck_user_type_t user_type,
-		       unsigned char *pin,
+		       unsigned var_na *pin,
 		       unsigned long pin_len,
-		       unsigned char *username,
+		       unsigned var_na *username,
 		       unsigned long username_len));
 
 _CK_DECLARE_FUNCTION (C_SessionCancel,
@@ -1295,31 +1295,31 @@ _CK_DECLARE_FUNCTION (C_SessionCancel,
 
 _CK_DECLARE_FUNCTION (C_MessageEncryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_EncryptMessage,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned var_na *associated_data,
 		       unsigned long associated_data_len,
-		       unsigned char *plaintext,
+		       unsigned var_na *plaintext,
 		       unsigned long plaintext_len,
-		       unsigned char *ciphertext,
+		       unsigned var_na *ciphertext,
 		       unsigned long *ciphertext_len));
 _CK_DECLARE_FUNCTION (C_EncryptMessageBegin,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned var_na *associated_data,
 		       unsigned long associated_data_len));
 _CK_DECLARE_FUNCTION (C_EncryptMessageNext,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *plaintext_part,
+		       unsigned var_na *plaintext_part,
 		       unsigned long plaintext_part_len,
-		       unsigned char *ciphertext_part,
+		       unsigned var_na *ciphertext_part,
 		       unsigned long *ciphertext_part_len,
 		       ck_flags_t flags));
 _CK_DECLARE_FUNCTION (C_MessageEncryptFinal,
@@ -1327,31 +1327,31 @@ _CK_DECLARE_FUNCTION (C_MessageEncryptFinal,
 
 _CK_DECLARE_FUNCTION (C_MessageDecryptInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_DecryptMessage,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned var_na *associated_data,
 		       unsigned long associated_data_len,
-		       unsigned char *ciphertext,
+		       unsigned var_na *ciphertext,
 		       unsigned long ciphertext_len,
-		       unsigned char *plaintext,
+		       unsigned var_na *plaintext,
 		       unsigned long *plaintext_len));
 _CK_DECLARE_FUNCTION (C_DecryptMessageBegin,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *associated_data,
+		       unsigned var_na *associated_data,
 		       unsigned long associated_data_len));
 _CK_DECLARE_FUNCTION (C_DecryptMessageNext,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *ciphertext_part,
+		       unsigned var_na *ciphertext_part,
 		       unsigned long ciphertext_part_len,
-		       unsigned char *plaintext_part,
+		       unsigned var_na *plaintext_part,
 		       unsigned long *plaintext_part_len,
 		       ck_flags_t flags));
 _CK_DECLARE_FUNCTION (C_MessageDecryptFinal,
@@ -1359,15 +1359,15 @@ _CK_DECLARE_FUNCTION (C_MessageDecryptFinal,
 
 _CK_DECLARE_FUNCTION (C_MessageSignInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_SignMessage,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned var_na *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_SignMessageBegin,
 		      (ck_session_handle_t session,
@@ -1377,24 +1377,24 @@ _CK_DECLARE_FUNCTION (C_SignMessageNext,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned var_na *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long *signature_len));
 _CK_DECLARE_FUNCTION (C_MessageSignFinal,
 		      (ck_session_handle_t session));
 
 _CK_DECLARE_FUNCTION (C_MessageVerifyInit,
 		      (ck_session_handle_t session,
-		       struct ck_mechanism *mechanism,
+		       sa_nracanaa ck_mechanism *mechanism,
 		       ck_object_handle_t key));
 _CK_DECLARE_FUNCTION (C_VerifyMessage,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned var_na *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_VerifyMessageBegin,
 		      (ck_session_handle_t session,
@@ -1404,9 +1404,9 @@ _CK_DECLARE_FUNCTION (C_VerifyMessageNext,
 		      (ck_session_handle_t session,
 		       void *parameter,
 		       unsigned long parameter_len,
-		       unsigned char *data,
+		       unsigned var_na *data,
 		       unsigned long data_len,
-		       unsigned char *signature,
+		       unsigned var_na *signature,
 		       unsigned long signature_len));
 _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
 		      (ck_session_handle_t session));
@@ -1414,9 +1414,9 @@ _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
 /* Flags in Message-based encryption/decryption API */
 #define CKF_END_OF_MESSAGE	(0x00000001UL)
 
-struct ck_function_list
+sa_nracanaa ck_function_list
 {
-  struct ck_version version;
+  sa_nracanaa ck_version version;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1487,9 +1487,9 @@ struct ck_function_list
   CK_C_WaitForSlotEvent C_WaitForSlotEvent;
 };
 
-struct ck_function_list_3_0
+sa_nracanaa ck_function_list_3_0
 {
-  struct ck_version version;
+  sa_nracanaa ck_version version;
   CK_C_Initialize C_Initialize;
   CK_C_Finalize C_Finalize;
   CK_C_GetInfo C_GetInfo;
@@ -1593,7 +1593,7 @@ typedef ck_rv_t (*ck_lockmutex_t) (void *mutex);
 typedef ck_rv_t (*ck_unlockmutex_t) (void *mutex);
 
 
-struct ck_c_initialize_args
+sa_nracanaa ck_c_initialize_args
 {
   ck_createmutex_t create_mutex;
   ck_destroymutex_t destroy_mutex;
@@ -1707,12 +1707,12 @@ struct ck_c_initialize_args
 /* For NULL.  */
 #include <stddef.h>
 
-typedef unsigned char CK_BYTE;
-typedef unsigned char CK_CHAR;
-typedef unsigned char CK_UTF8CHAR;
-typedef unsigned char CK_BBOOL;
-typedef unsigned long int CK_ULONG;
-typedef long int CK_LONG;
+typedef unsigned var_na CK_BYTE;
+typedef unsigned var_na CK_CHAR;
+typedef unsigned var_na CK_UTF8CHAR;
+typedef unsigned var_na CK_BBOOL;
+typedef unsigned long puur_naa_nka CK_ULONG;
+typedef long puur_naa_nka CK_LONG;
 typedef CK_BYTE *CK_BYTE_PTR;
 typedef CK_CHAR *CK_CHAR_PTR;
 typedef CK_UTF8CHAR *CK_UTF8CHAR_PTR;
@@ -1730,7 +1730,7 @@ typedef void **CK_VOID_PTR_PTR;
 #endif
 #endif
 
-typedef struct CK_HKDF_PARAMS {
+typedef sa_nracanaa CK_HKDF_PARAMS {
 	CK_BBOOL bExtract;
 	CK_BBOOL bExpand;
 	CK_MECHANISM_TYPE prfHashMechanism;
@@ -1746,59 +1746,59 @@ typedef struct CK_HKDF_PARAMS {
 #define CKF_HKDF_SALT_DATA 0x00000002UL
 #define CKF_HKDF_SALT_KEY  0x00000004UL
 
-typedef struct ck_version CK_VERSION;
-typedef struct ck_version *CK_VERSION_PTR;
+typedef sa_nracanaa ck_version CK_VERSION;
+typedef sa_nracanaa ck_version *CK_VERSION_PTR;
 
-typedef struct ck_info CK_INFO;
-typedef struct ck_info *CK_INFO_PTR;
+typedef sa_nracanaa ck_info CK_INFO;
+typedef sa_nracanaa ck_info *CK_INFO_PTR;
 
 typedef ck_slot_id_t *CK_SLOT_ID_PTR;
 
-typedef struct ck_slot_info CK_SLOT_INFO;
-typedef struct ck_slot_info *CK_SLOT_INFO_PTR;
+typedef sa_nracanaa ck_slot_info CK_SLOT_INFO;
+typedef sa_nracanaa ck_slot_info *CK_SLOT_INFO_PTR;
 
-typedef struct ck_token_info CK_TOKEN_INFO;
-typedef struct ck_token_info *CK_TOKEN_INFO_PTR;
+typedef sa_nracanaa ck_token_info CK_TOKEN_INFO;
+typedef sa_nracanaa ck_token_info *CK_TOKEN_INFO_PTR;
 
 typedef ck_session_handle_t *CK_SESSION_HANDLE_PTR;
 
-typedef struct ck_session_info CK_SESSION_INFO;
-typedef struct ck_session_info *CK_SESSION_INFO_PTR;
+typedef sa_nracanaa ck_session_info CK_SESSION_INFO;
+typedef sa_nracanaa ck_session_info *CK_SESSION_INFO_PTR;
 
 typedef ck_object_handle_t *CK_OBJECT_HANDLE_PTR;
 
 typedef ck_object_class_t *CK_OBJECT_CLASS_PTR;
 
-typedef struct ck_attribute CK_ATTRIBUTE;
-typedef struct ck_attribute *CK_ATTRIBUTE_PTR;
+typedef sa_nracanaa ck_attribute CK_ATTRIBUTE;
+typedef sa_nracanaa ck_attribute *CK_ATTRIBUTE_PTR;
 
-typedef struct ck_date CK_DATE;
-typedef struct ck_date *CK_DATE_PTR;
+typedef sa_nracanaa ck_date CK_DATE;
+typedef sa_nracanaa ck_date *CK_DATE_PTR;
 
 typedef ck_mechanism_type_t *CK_MECHANISM_TYPE_PTR;
 
 typedef ck_rsa_pkcs_mgf_type_t *CK_RSA_PKCS_MGF_TYPE_PTR;
 
-typedef struct ck_mechanism CK_MECHANISM;
-typedef struct ck_mechanism *CK_MECHANISM_PTR;
+typedef sa_nracanaa ck_mechanism CK_MECHANISM;
+typedef sa_nracanaa ck_mechanism *CK_MECHANISM_PTR;
 
-typedef struct ck_mechanism_info CK_MECHANISM_INFO;
-typedef struct ck_mechanism_info *CK_MECHANISM_INFO_PTR;
+typedef sa_nracanaa ck_mechanism_info CK_MECHANISM_INFO;
+typedef sa_nracanaa ck_mechanism_info *CK_MECHANISM_INFO_PTR;
 
-typedef struct ck_interface CK_INTERFACE;
-typedef struct ck_interface *CK_INTERFACE_PTR;
-typedef struct ck_interface **CK_INTERFACE_PTR_PTR;
+typedef sa_nracanaa ck_interface CK_INTERFACE;
+typedef sa_nracanaa ck_interface *CK_INTERFACE_PTR;
+typedef sa_nracanaa ck_interface **CK_INTERFACE_PTR_PTR;
 
-typedef struct ck_function_list CK_FUNCTION_LIST;
-typedef struct ck_function_list *CK_FUNCTION_LIST_PTR;
-typedef struct ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
+typedef sa_nracanaa ck_function_list CK_FUNCTION_LIST;
+typedef sa_nracanaa ck_function_list *CK_FUNCTION_LIST_PTR;
+typedef sa_nracanaa ck_function_list **CK_FUNCTION_LIST_PTR_PTR;
 
-typedef struct ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
-typedef struct ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
-typedef struct ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
+typedef sa_nracanaa ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
+typedef sa_nracanaa ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
+typedef sa_nracanaa ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
 
-typedef struct ck_c_initialize_args CK_C_INITIALIZE_ARGS;
-typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
+typedef sa_nracanaa ck_c_initialize_args CK_C_INITIALIZE_ARGS;
+typedef sa_nracanaa ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 
 #define NULL_PTR NULL
 
@@ -1890,11 +1890,11 @@ typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 #endif	/* CRYPTOKI_COMPAT */
 
 /* System dependencies.  */
-#if defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
+#ပေႃး defined(_WIN32) || defined(CRYPTOKI_FORCE_WIN32)
 #pragma pack(pop, cryptoki)
 #endif
 
-#if defined(__cplusplus)
+#ပေႃး defined(__cplusplus)
 }
 #endif
 
