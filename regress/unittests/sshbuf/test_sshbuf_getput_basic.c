@@ -5,25 +5,25 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
 
-void sshbuf_getput_basic_tests(void);
+فراغ sshbuf_getput_basic_tests(فراغ);
 
-void
-sshbuf_getput_basic_tests(void)
+فراغ
+sshbuf_getput_basic_tests(فراغ)
 {
-	struct sshbuf *p1, *p2;
-	const u_char *cd;
+	بنية sshbuf *p1, *p2;
+	ثابت u_char *cd;
 	u_char *d, d2[32], x[] = {
 		0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x00, 0x99
 	};
@@ -32,8 +32,8 @@ sshbuf_getput_basic_tests(void)
 	uint16_t v16;
 	u_char v8;
 	size_t s;
-	char *s2;
-	int r;
+	حرف *s2;
+	صحيح r;
 	u_char bn1[] = { 0x00, 0x00, 0x00 };
 	u_char bn2[] = { 0x00, 0x00, 0x01, 0x02 };
 	u_char bn3[] = { 0x00, 0x80, 0x09 };
@@ -54,30 +54,30 @@ sshbuf_getput_basic_tests(void)
 	TEST_DONE();
 
 	TEST_START("POKE_U64");
-	bzero(d2, sizeof(d2));
+	bzero(d2, حجم(d2));
 	POKE_U64(d2, 0x1122334455667788ULL);
 	ASSERT_MEM_EQ(d2, x, 8);
 	TEST_DONE();
 	
 	TEST_START("POKE_U32");
-	bzero(d2, sizeof(d2));
+	bzero(d2, حجم(d2));
 	POKE_U32(d2, 0x11223344);
 	ASSERT_MEM_EQ(d2, x, 4);
 	TEST_DONE();
 	
 	TEST_START("POKE_U16");
-	bzero(d2, sizeof(d2));
+	bzero(d2, حجم(d2));
 	POKE_U16(d2, 0x1122);
 	ASSERT_MEM_EQ(d2, x, 2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, x, 5), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5);
 	cd = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(cd, NULL);
+	ASSERT_PTR_NE(cd, عدم);
 	ASSERT_U8_EQ(cd[0], 0x11);
 	ASSERT_U8_EQ(cd[1], 0x22);
 	ASSERT_U8_EQ(cd[2], 0x33);
@@ -109,7 +109,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_u64");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, x, 10), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 10);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &v64), 0);
@@ -127,7 +127,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_u32");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, x, 10), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 10);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &v32), 0);
@@ -148,7 +148,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_u16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, x, 9), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 9);
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &v16), 0);
@@ -175,7 +175,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_u8");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, x, 2), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 2);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &v8), 0);
@@ -196,7 +196,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u64");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u64(p1, 0x1122334455667788ULL), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 8);
 	ASSERT_MEM_EQ(sshbuf_ptr(p1), x, 8);
@@ -205,7 +205,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u64 exact");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 8), 0);
 	ASSERT_INT_EQ(sshbuf_put_u64(p1, 0x1122334455667788ULL), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 8);
@@ -215,7 +215,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u64 limited");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 7), 0);
 	r = sshbuf_put_u64(p1, 0x1122334455667788ULL);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
@@ -225,7 +225,7 @@ sshbuf_getput_basic_tests(void)
 	
 	TEST_START("sshbuf_put_u32");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x11223344), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4);
 	ASSERT_MEM_EQ(sshbuf_ptr(p1), x, 4);
@@ -234,7 +234,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u32 exact");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 4), 0);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0x11223344), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4);
@@ -244,7 +244,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u32 limited");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 3), 0);
 	r = sshbuf_put_u32(p1, 0x11223344);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
@@ -254,7 +254,7 @@ sshbuf_getput_basic_tests(void)
 	
 	TEST_START("sshbuf_put_u16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u16(p1, 0x1122), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 2);
 	ASSERT_MEM_EQ(sshbuf_ptr(p1), x, 2);
@@ -263,7 +263,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 2), 0);
 	ASSERT_INT_EQ(sshbuf_put_u16(p1, 0x1122), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 2);
@@ -273,7 +273,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_u16 limited");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 1), 0);
 	r = sshbuf_put_u16(p1, 0x1122);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
@@ -283,111 +283,111 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_string");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4 + 4);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x)), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4 + 4);
 	ASSERT_INT_EQ(sshbuf_get_string(p1, &d, &s), 0);
-	ASSERT_SIZE_T_EQ(s, sizeof(x));
-	ASSERT_MEM_EQ(d, x, sizeof(x));
+	ASSERT_SIZE_T_EQ(s, حجم(x));
+	ASSERT_MEM_EQ(d, x, حجم(x));
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4);
-	free(d);
+	حرر(d);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_string exact");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_set_max_size(p1, sizeof(x) + 4), 0);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_set_max_size(p1, حجم(x) + 4), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x)), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	ASSERT_INT_EQ(sshbuf_get_string(p1, &d, &s), 0);
-	ASSERT_SIZE_T_EQ(s, sizeof(x));
-	ASSERT_MEM_EQ(d, x, sizeof(x));
+	ASSERT_SIZE_T_EQ(s, حجم(x));
+	ASSERT_MEM_EQ(d, x, حجم(x));
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
-	free(d);
+	حرر(d);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_string truncated");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x)), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	ASSERT_INT_EQ(sshbuf_consume_end(p1, 1), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 3);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 3);
 	r = sshbuf_get_string(p1, &d, &s);
 	ASSERT_INT_EQ(r, SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 3);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 3);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_string giant");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0xffffffff), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	r = sshbuf_get_string(p1, &d, &s);
 	ASSERT_INT_EQ(r, SSH_ERR_STRING_TOO_LARGE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_cstring giant");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0xffffffff), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	r = sshbuf_get_cstring(p1, &s2, &s);
 	ASSERT_INT_EQ(r, SSH_ERR_STRING_TOO_LARGE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_cstring embedded \\0");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
-	r = sshbuf_get_cstring(p1, &s2, NULL);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x)), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
+	r = sshbuf_get_cstring(p1, &s2, عدم);
 	ASSERT_INT_EQ(r, SSH_ERR_INVALID_FORMAT);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_cstring trailing \\0");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, sizeof(x) - 1), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x) - 1), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4 - 1);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, حجم(x) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x) - 1), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4 - 1);
 	ASSERT_INT_EQ(sshbuf_get_cstring(p1, &s2, &s), 0);
-	ASSERT_SIZE_T_EQ(s, sizeof(x) - 1);
+	ASSERT_SIZE_T_EQ(s, حجم(x) - 1);
 	ASSERT_MEM_EQ(s2, x, s);
-	free(s2);
+	حرر(s2);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_string");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_string(p1, x, sizeof(x)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(x) + 4);
-	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), sizeof(x));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 4, x, sizeof(x));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_string(p1, x, حجم(x)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(x) + 4);
+	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), حجم(x));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 4, x, حجم(x));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_string limited");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_set_max_size(p1, sizeof(x) + 4 - 1), 0);
-	r = sshbuf_put_string(p1, x, sizeof(x));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_set_max_size(p1, حجم(x) + 4 - 1), 0);
+	r = sshbuf_put_string(p1, x, حجم(x));
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
 	sshbuf_free(p1);
@@ -395,8 +395,8 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_string giant");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	r = sshbuf_put_string(p1, (void *)0x01, 0xfffffffc);
+	ASSERT_PTR_NE(p1, عدم);
+	r = sshbuf_put_string(p1, (فراغ *)0x01, 0xfffffffc);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
 	sshbuf_free(p1);
@@ -404,7 +404,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_putf");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	r = sshbuf_putf(p1, "%s %d %x", "hello", 23, 0x5f);
 	ASSERT_INT_EQ(r, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 11);
@@ -414,9 +414,9 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_putb");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	p2 = sshbuf_new();
-	ASSERT_PTR_NE(p2, NULL);
+	ASSERT_PTR_NE(p2, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, "blahblahblah", 12), 0);
 	ASSERT_INT_EQ(sshbuf_putb(p2, p1), 0);
 	sshbuf_free(p1);
@@ -427,68 +427,68 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_put_bignum2_bytes empty buf");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, NULL, 0), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp1));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp1, sizeof(bn_exp1));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, عدم, 0), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp1));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp1, حجم(bn_exp1));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_bignum2_bytes all zeroes");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn1, sizeof(bn1)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp1));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp1, sizeof(bn_exp1));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn1, حجم(bn1)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp1));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp1, حجم(bn_exp1));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_bignum2_bytes simple");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn2+2, sizeof(bn2)-2), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp2));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp2, sizeof(bn_exp2));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn2+2, حجم(bn2)-2), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp2));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp2, حجم(bn_exp2));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_bignum2_bytes leading zero");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn2, sizeof(bn2)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp2));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp2, sizeof(bn_exp2));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn2, حجم(bn2)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp2));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp2, حجم(bn_exp2));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_bignum2_bytes neg");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn3+1, sizeof(bn3)-1), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp3));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp3, sizeof(bn_exp3));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn3+1, حجم(bn3)-1), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp3));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp3, حجم(bn_exp3));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_bignum2_bytes neg and leading zero");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn3, sizeof(bn3)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(bn_exp3));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp3, sizeof(bn_exp3));
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put_bignum2_bytes(p1, bn3, حجم(bn3)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), حجم(bn_exp3));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1), bn_exp3, حجم(bn_exp3));
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_peek_u64");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
 	ASSERT_INT_EQ(sshbuf_peek_u64(p1, 0, &v64), 0);
 	ASSERT_U64_EQ(v64, 0x1122334455667788ULL);
 	ASSERT_INT_EQ(sshbuf_peek_u64(p1, 2, &v64), 0);
 	ASSERT_U64_EQ(v64, 0x3344556677880099ULL);
 	ASSERT_INT_EQ(sshbuf_peek_u64(p1, 3, &v64), SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_peek_u64(p1, sizeof(x), &v64),
+	ASSERT_INT_EQ(sshbuf_peek_u64(p1, حجم(x), &v64),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_peek_u64(p1, 1000, &v64),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
@@ -497,14 +497,14 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_peek_u32");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
 	ASSERT_INT_EQ(sshbuf_peek_u32(p1, 0, &v32), 0);
 	ASSERT_U32_EQ(v32, 0x11223344);
 	ASSERT_INT_EQ(sshbuf_peek_u32(p1, 6, &v32), 0);
 	ASSERT_U32_EQ(v32, 0x77880099);
 	ASSERT_INT_EQ(sshbuf_peek_u32(p1, 7, &v32), SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_peek_u32(p1, sizeof(x), &v32),
+	ASSERT_INT_EQ(sshbuf_peek_u32(p1, حجم(x), &v32),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_peek_u32(p1, 1000, &v32),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
@@ -513,14 +513,14 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_peek_u16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
 	ASSERT_INT_EQ(sshbuf_peek_u16(p1, 0, &v16), 0);
 	ASSERT_U16_EQ(v16, 0x1122);
 	ASSERT_INT_EQ(sshbuf_peek_u16(p1, 8, &v16), 0);
 	ASSERT_U16_EQ(v16, 0x99);
 	ASSERT_INT_EQ(sshbuf_peek_u16(p1, 9, &v16), SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_peek_u16(p1, sizeof(x), &v16),
+	ASSERT_INT_EQ(sshbuf_peek_u16(p1, حجم(x), &v16),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_peek_u16(p1, 1000, &v16),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
@@ -529,13 +529,13 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_peek_u8");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put(p1, x, sizeof(x)), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_put(p1, x, حجم(x)), 0);
 	ASSERT_INT_EQ(sshbuf_peek_u8(p1, 0, &v8), 0);
 	ASSERT_U8_EQ(v8, 0x11);
 	ASSERT_INT_EQ(sshbuf_peek_u8(p1, 9, &v8), 0);
 	ASSERT_U8_EQ(v8, 0x99);
-	ASSERT_INT_EQ(sshbuf_peek_u8(p1, sizeof(x), &v8),
+	ASSERT_INT_EQ(sshbuf_peek_u8(p1, حجم(x), &v8),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_peek_u8(p1, 1000, &v8),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
@@ -544,24 +544,24 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_poke_u64");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke at start of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u64(p1, 0, 0xa1b2c3d4e5f60718ULL), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "a1b2c3d4e5f607180000");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke aligned with end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u64(p1, 2, 0xa1b2c3d4e5f60718ULL), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "0000a1b2c3d4e5f60718");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke past end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u64(p1, 3, 0xa1b2c3d4e5f60718ULL),
 	    SSH_ERR_NO_BUFFER_SPACE);
@@ -571,32 +571,32 @@ sshbuf_getput_basic_tests(void)
 	    SSH_ERR_NO_BUFFER_SPACE);
 	/* ensure failed pokes do not modify buffer */
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "00000000000000000000");
 	sshbuf_free(p1);
-	free(s2);
+	حرر(s2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_poke_u32");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke at start of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u32(p1, 0, 0xa1b2c3d4), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "a1b2c3d4000000000000");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke aligned with end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u32(p1, 6, 0xa1b2c3d4), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "000000000000a1b2c3d4");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke past end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u32(p1, 7, 0xa1b2c3d4),
 	    SSH_ERR_NO_BUFFER_SPACE);
@@ -606,32 +606,32 @@ sshbuf_getput_basic_tests(void)
 	    SSH_ERR_NO_BUFFER_SPACE);
 	/* ensure failed pokes do not modify buffer */
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "00000000000000000000");
 	sshbuf_free(p1);
-	free(s2);
+	حرر(s2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_poke_u16");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke at start of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u16(p1, 0, 0xa1b2), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "a1b20000000000000000");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke aligned with end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u16(p1, 8, 0xa1b2), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "0000000000000000a1b2");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke past end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u16(p1, 9, 0xa1b2),
 	    SSH_ERR_NO_BUFFER_SPACE);
@@ -641,63 +641,63 @@ sshbuf_getput_basic_tests(void)
 	    SSH_ERR_NO_BUFFER_SPACE);
 	/* ensure failed pokes do not modify buffer */
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "00000000000000000000");
 	sshbuf_free(p1);
-	free(s2);
+	حرر(s2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_poke_u8");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke at start of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u8(p1, 0, 0xa1), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "a1000000000000000000");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke aligned with end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u8(p1, 9, 0xa1), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "000000000000000000a1");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke past end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke_u8(p1, 10, 0xa1), SSH_ERR_NO_BUFFER_SPACE);
 	ASSERT_INT_EQ(sshbuf_poke_u8(p1, 1000, 0xa1), SSH_ERR_NO_BUFFER_SPACE);
 	/* ensure failed pokes do not modify buffer */
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "00000000000000000000");
 	sshbuf_free(p1);
-	free(s2);
+	حرر(s2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_poke");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_PTR_NE(p1, عدم);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke at start of buffer */
 	ASSERT_INT_EQ(sshbuf_poke(p1, 0, "hello!", 6), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "68656c6c6f2100000000");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke aligned with end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke(p1, 4, "hello!", 6), 0);
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "0000000068656c6c6f21");
-	free(s2);
+	حرر(s2);
 	sshbuf_reset(p1);
-	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, NULL), 0);
+	ASSERT_INT_EQ(sshbuf_reserve(p1, 10, عدم), 0);
 	/* poke past end of buffer */
 	ASSERT_INT_EQ(sshbuf_poke(p1, 7, "hello!", 6),
 	    SSH_ERR_NO_BUFFER_SPACE);
@@ -707,15 +707,15 @@ sshbuf_getput_basic_tests(void)
 	    SSH_ERR_NO_BUFFER_SPACE);
 	/* ensure failed pokes do not modify buffer */
 	s2 = sshbuf_dtob16(p1);
-	ASSERT_PTR_NE(s2, NULL);
+	ASSERT_PTR_NE(s2, عدم);
 	ASSERT_STRING_EQ(s2, "00000000000000000000");
 	sshbuf_free(p1);
-	free(s2);
+	حرر(s2);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_nulterminated_string");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0), 0); /* hello\0 */
 	ASSERT_INT_EQ(sshbuf_put(p1, "there", 5), 0); /* hello\0there */
@@ -723,12 +723,12 @@ sshbuf_getput_basic_tests(void)
 	/* short maxlen */
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, 1, &s2, &s),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 11); /* Buffer should be unchanged */
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, 4, &s2, &s),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 11); /* Buffer should be unchanged */
 	/* minimum usable maxlen */
@@ -736,28 +736,28 @@ sshbuf_getput_basic_tests(void)
 	ASSERT_STRING_EQ(s2, "hello");
 	ASSERT_SIZE_T_EQ(s, 5);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5); /* "there" remains */
-	free(s2);
+	حرر(s2);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_nulterminated_string un-terminated string");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, "there", 5), 0); /* "there" */
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5);
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, 5, &s2, &s),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5); /* Buffer should be unchanged */
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, 6, &s2, &s),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5); /* Buffer should be unchanged */
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, SIZE_MAX, &s2, &s),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 5);
 	sshbuf_free(p1);
@@ -765,7 +765,7 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_nulterminated_string subsequent strings");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, "there", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0), 0); /* "there\0" */
 	ASSERT_INT_EQ(sshbuf_put(p1, "it is", 5), 0);
@@ -775,21 +775,21 @@ sshbuf_getput_basic_tests(void)
 	ASSERT_STRING_EQ(s2, "there");
 	ASSERT_SIZE_T_EQ(s, 5);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 6);
-	free(s2);
+	حرر(s2);
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, SIZE_MAX, &s2, &s), 0);
 	ASSERT_STRING_EQ(s2, "it is");
 	ASSERT_SIZE_T_EQ(s, 5);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
-	free(s2);
+	حرر(s2);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_nulterminated_string empty buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, SIZE_MAX, &s2, &s),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_PTR_EQ(s2, NULL);
+	ASSERT_PTR_EQ(s2, عدم);
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
 	sshbuf_free(p1);
@@ -797,20 +797,20 @@ sshbuf_getput_basic_tests(void)
 
 	TEST_START("sshbuf_get_nulterminated_string: single nul byte");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1);
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, 0, &s2, &s), 0);
 	ASSERT_STRING_EQ(s2, "");
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
-	free(s2);
+	حرر(s2);
 	sshbuf_free(p1);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_nulterminated_string starts with nul");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, "hello", 5), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0), 0);
@@ -819,12 +819,12 @@ sshbuf_getput_basic_tests(void)
 	ASSERT_STRING_EQ(s2, "");
 	ASSERT_SIZE_T_EQ(s, 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 6);
-	free(s2);
+	حرر(s2);
 	ASSERT_INT_EQ(sshbuf_get_nulterminated_string(p1, SIZE_MAX, &s2, &s), 0);
 	ASSERT_STRING_EQ(s2, "hello");
 	ASSERT_SIZE_T_EQ(s, 5);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
-	free(s2);
+	حرر(s2);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
